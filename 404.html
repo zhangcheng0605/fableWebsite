@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 — Page not found</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100svh;
+      display: grid;
+      place-items: center;
+      background: #0a0a0f;
+      color: #e8e8f0;
+      font-family: "Space Grotesk", system-ui, sans-serif;
+      text-align: center;
+      padding: 24px;
+    }
+    h1 {
+      font-size: clamp(5rem, 20vw, 10rem);
+      line-height: 1;
+      background: linear-gradient(92deg, #7c6cff, #ff6ca8, #4cc9f0);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    p { color: #9a9aad; margin: 16px 0 32px; font-size: 1.1rem; }
+    a {
+      display: inline-block;
+      color: #fff;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 13px 28px;
+      border-radius: 999px;
+      background: linear-gradient(92deg, #7c6cff, #ff6ca8);
+      transition: transform 0.2s ease;
+    }
+    a:hover { transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>404</h1>
+    <p>This page drifted off into the void.</p>
+    <a href="./">Take me home</a>
+  </main>
+</body>
+</html>
