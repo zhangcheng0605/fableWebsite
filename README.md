@@ -6,7 +6,7 @@ A fast, dependency-free personal website. Plain HTML/CSS/JS — no build step, n
 
 - `index.html` — the whole site (hero, about, work, contact)
 - `assets/style.css` — styling, dark/light themes, animations
-- `assets/script.js` — theme toggle, scroll reveals, counters
+- `assets/script.js` — theme toggle, scroll engine (hero parallax, marquee, pinned horizontal work gallery), reveals, counters, card tilt
 - `404.html` — custom not-found page
 - `.github/workflows/deploy-pages.yml` — auto-deploys to GitHub Pages on every push to `main`
 
