@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="assets/style.css">
 </head>
 <body>
+  <div class="progress" id="progressBar" aria-hidden="true"></div>
   <div class="aurora" aria-hidden="true">
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
@@ -40,15 +41,17 @@
   <main id="top">
     <!-- ============ HERO ============ -->
     <section class="hero">
-      <p class="hero-eyebrow reveal">Hello, I'm</p>
-      <h1 class="hero-title">
-        <span class="reveal">Zhang</span>
-        <span class="reveal gradient-text">Cheng</span>
-      </h1>
-      <p class="hero-sub reveal">I build things for the web — thoughtfully designed,<br class="desktop-only"> carefully engineered, and made to last.</p>
-      <div class="hero-cta reveal">
-        <a class="btn btn-primary" href="#work">See my work</a>
-        <a class="btn btn-ghost" href="#contact">Get in touch</a>
+      <div class="hero-inner" id="heroInner">
+        <p class="hero-eyebrow reveal">Hello, I'm</p>
+        <h1 class="hero-title">
+          <span class="line"><span class="line-inner">Zhang</span></span>
+          <span class="line"><span class="line-inner gradient-text">Cheng</span></span>
+        </h1>
+        <p class="hero-sub reveal">I build things for the web — thoughtfully designed,<br class="desktop-only"> carefully engineered, and made to last.</p>
+        <div class="hero-cta reveal">
+          <a class="btn btn-primary" href="#work">See my work</a>
+          <a class="btn btn-ghost" href="#contact">Get in touch</a>
+        </div>
       </div>
       <div class="scroll-hint reveal" aria-hidden="true">
         <div class="scroll-dot"></div>
@@ -62,6 +65,14 @@
       <div class="stat"><span class="stat-num" data-count="12">0</span><span class="stat-label">Happy collaborators</span></div>
       <div class="stat"><span class="stat-num">∞</span><span class="stat-label">Curiosity</span></div>
     </section>
+
+    <!-- ============ MARQUEE ============ -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track" id="marqueeTrack">
+        <span class="marquee-chunk">Engineer&nbsp;— Builder&nbsp;— Designer&nbsp;— Dreamer&nbsp;— Engineer&nbsp;— Builder&nbsp;— Designer&nbsp;— Dreamer&nbsp;—&nbsp;</span>
+        <span class="marquee-chunk">Engineer&nbsp;— Builder&nbsp;— Designer&nbsp;— Dreamer&nbsp;— Engineer&nbsp;— Builder&nbsp;— Designer&nbsp;— Dreamer&nbsp;—&nbsp;</span>
+      </div>
+    </div>
 
     <!-- ============ ABOUT ============ -->
     <section class="section" id="about">
@@ -83,36 +94,50 @@
       </div>
     </section>
 
-    <!-- ============ WORK ============ -->
-    <section class="section" id="work">
-      <h2 class="section-title reveal"><span class="section-index">02</span> Selected work</h2>
-      <div class="work-grid">
-        <article class="card reveal">
-          <div class="card-top card-top-a"><span class="card-emoji">⚡</span></div>
-          <div class="card-body">
-            <h3>Project One</h3>
-            <p>A fast, focused tool that does one thing exceptionally well. Built with performance as a feature.</p>
-            <div class="card-tags"><span>TypeScript</span><span>Vite</span></div>
-          </div>
-        </article>
-        <article class="card reveal">
-          <div class="card-top card-top-b"><span class="card-emoji">🛰️</span></div>
-          <div class="card-body">
-            <h3>Project Two</h3>
-            <p>A data pipeline and dashboard that turns raw noise into decisions people actually make.</p>
-            <div class="card-tags"><span>Python</span><span>PostgreSQL</span></div>
-          </div>
-        </article>
-        <article class="card reveal">
-          <div class="card-top card-top-c"><span class="card-emoji">🎛️</span></div>
-          <div class="card-body">
-            <h3>Project Three</h3>
-            <p>An internal platform that made a slow, manual process disappear into a single click.</p>
-            <div class="card-tags"><span>React</span><span>Node.js</span></div>
-          </div>
-        </article>
+    <!-- ============ WORK (pinned horizontal gallery) ============ -->
+    <section class="work-pin" id="work">
+      <div class="work-sticky">
+        <div class="work-head">
+          <h2 class="section-title reveal"><span class="section-index">02</span> Selected work</h2>
+        </div>
+        <div class="work-track" id="workTrack">
+          <article class="card reveal">
+            <div class="card-top card-top-a"><span class="card-emoji">⚡</span></div>
+            <div class="card-body">
+              <h3>Project One</h3>
+              <p>A fast, focused tool that does one thing exceptionally well. Built with performance as a feature.</p>
+              <div class="card-tags"><span>TypeScript</span><span>Vite</span></div>
+            </div>
+          </article>
+          <article class="card reveal">
+            <div class="card-top card-top-b"><span class="card-emoji">🛰️</span></div>
+            <div class="card-body">
+              <h3>Project Two</h3>
+              <p>A data pipeline and dashboard that turns raw noise into decisions people actually make.</p>
+              <div class="card-tags"><span>Python</span><span>PostgreSQL</span></div>
+            </div>
+          </article>
+          <article class="card reveal">
+            <div class="card-top card-top-c"><span class="card-emoji">🎛️</span></div>
+            <div class="card-body">
+              <h3>Project Three</h3>
+              <p>An internal platform that made a slow, manual process disappear into a single click.</p>
+              <div class="card-tags"><span>React</span><span>Node.js</span></div>
+            </div>
+          </article>
+          <article class="card reveal">
+            <div class="card-top card-top-d"><span class="card-emoji">🌱</span></div>
+            <div class="card-body">
+              <h3>Next up</h3>
+              <p>Something new is always cooking. Have an idea worth building together? Say hi below.</p>
+              <div class="card-tags"><span>Ideas welcome</span></div>
+            </div>
+          </article>
+        </div>
+        <div class="work-head">
+          <p class="work-note reveal">These are placeholders — tell Claude about your real projects and this section will come alive.</p>
+        </div>
       </div>
-      <p class="work-note reveal">These are placeholders — tell Claude about your real projects and this section will come alive.</p>
     </section>
 
     <!-- ============ CONTACT ============ -->
