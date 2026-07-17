@@ -7,7 +7,7 @@ A fast, dependency-free personal website. Plain HTML/CSS/JS — no build step, n
 - `index.html` — the whole site (hero, about, work, contact)
 - `assets/style.css` — styling, dark/light themes, animations
 - `assets/script.js` — theme toggle, scroll engine (hero parallax, marquee, pinned horizontal work gallery, scroll-scrubbed video), reveals, counters, card tilt
-- `assets/scrub/` — placeholder frame sequence for the scroll-scrubbed Motion section (JPEG frames drawn to a canvas; frame-exact scrubbing in both directions on every browser — replace with frames extracted from your own clip)
+- `assets/scrub/` — frame sequence for the scroll-scrubbed Motion section (JPEG frames drawn to a canvas; frame-exact scrubbing in both directions on every browser). Currently 120 frames extracted from a personal clip, cropped to remove platform watermarks.
 - `404.html` — custom not-found page
 - `.github/workflows/deploy-pages.yml` — auto-deploys to GitHub Pages on every push to `main`
 
