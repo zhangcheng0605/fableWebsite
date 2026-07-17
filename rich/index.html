@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Born Rich — a one-shot · Zhang Cheng</title>
+  <meta name="description" content="Born Rich — an AI-generated manga one-shot. What if I'd been born stupid rich? From the school gate to the chairman's office.">
+  <meta property="og:title" content="Born Rich — a manga one-shot">
+  <meta property="og:description" content="What if I'd been born stupid rich? Ten pages, one other timeline. Written with Claude, drawn with gpt-image-2.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="page01.jpg">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💸</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#070605; --ink:#0d0c0a;
+      --ivory:#f4efe4; --muted:#98917f;
+      --gold-1:#f6dd9a; --gold-2:#d4af37; --gold-3:#8a6d1f;
+      --gold-grad:linear-gradient(100deg,var(--gold-1),var(--gold-2) 55%,#b8860b);
+      --edge:rgba(212,175,55,.22);
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:auto}
+    body{background:var(--bg);color:var(--ivory);font-family:Inter,system-ui,sans-serif;line-height:1.6;
+         overflow-x:hidden;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    ::selection{background:rgba(212,175,55,.35)}
+
+    /* ambient: faint gold dust + vignette */
+    .amb{position:fixed;inset:0;z-index:0;pointer-events:none;background:
+      radial-gradient(58vw 42vh at 80% -6%,rgba(212,175,55,.10),transparent 60%),
+      radial-gradient(50vw 38vh at 10% 108%,rgba(212,175,55,.07),transparent 60%)}
+    .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.5;mix-blend-mode:overlay;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+    /* fixed chrome */
+    .chrome{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;
+            align-items:center;padding:20px 26px;pointer-events:none}
+    .chrome>*{pointer-events:auto}
+    .back{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.92rem;color:var(--muted);transition:color .25s}
+    .back:hover{color:var(--gold-1)}
+    .worth{text-align:right;font-family:"JetBrains Mono",monospace}
+    .worth .lbl{font-size:.62rem;letter-spacing:.34em;color:var(--muted)}
+    .worth .val{font-size:clamp(.95rem,2.4vw,1.25rem);font-weight:500;
+      background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .pbar{position:fixed;left:0;bottom:0;right:0;height:3px;z-index:40;transform-origin:0 50%;
+      transform:scaleX(0);background:var(--gold-grad)}
+
+    /* smooth-scroll container */
+    #scroller{position:fixed;top:0;left:0;width:100%;z-index:2;will-change:transform}
+    body.no-smooth #scroller{position:static;will-change:auto}
+
+    /* ============ cover ============ */
+    .cover{position:relative;min-height:100svh;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+    .cover-art{position:absolute;inset:-6% 0;z-index:-1}
+    .cover-art img{width:100%;height:100%;object-fit:cover;object-position:center 22%;filter:grayscale(1) brightness(.62)}
+    .cover-art::after{content:"";position:absolute;inset:0;background:
+      linear-gradient(180deg,rgba(7,6,5,.4),rgba(7,6,5,.05) 35%,rgba(7,6,5,.94) 88%,var(--bg))}
+    .cover-inner{position:relative;text-align:center;padding:0 24px 11svh;max-width:900px}
+    .kicker{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.4em;text-transform:uppercase;
+            color:var(--gold-2);margin-bottom:20px}
+    h1.masthead{font-family:"Playfair Display",serif;font-weight:800;font-style:italic;
+      font-size:clamp(3.4rem,13vw,8.5rem);line-height:.95;letter-spacing:-.01em;
+      background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+      filter:drop-shadow(0 6px 40px rgba(212,175,55,.25))}
+    h1.masthead span{display:block}
+    .cover-sub{margin-top:22px;color:var(--muted);font-size:clamp(.95rem,2.4vw,1.1rem);max-width:520px;margin-inline:auto}
+    .cover-sub b{color:var(--ivory);font-weight:600}
+    .hint{margin:34px auto 0;width:24px;height:40px;border:1.5px solid rgba(212,175,55,.5);border-radius:99px;
+          display:flex;justify-content:center;padding-top:7px}
+    .hint i{width:3px;height:8px;border-radius:99px;background:var(--gold-2);animation:drop 1.9s ease-in-out infinite}
+    @keyframes drop{0%,100%{transform:translateY(0);opacity:1}60%{transform:translateY(13px);opacity:.15}}
+
+    /* intro line-reveal */
+    .mask{overflow:hidden;display:block}
+    .mask>span{display:block;transform:translateY(110%);transition:transform 1.1s cubic-bezier(.22,1,.36,1)}
+    body.loaded .mask>span{transform:none}
+    h1 .mask:nth-child(2)>span{transition-delay:.12s}
+    .fade-in{opacity:0;transition:opacity 1s ease .55s}
+    body.loaded .fade-in{opacity:1}
+
+    /* ============ reader ============ */
+    .reader{position:relative;max-width:720px;margin:0 auto;padding:14svh 20px 6svh;display:flex;
+            flex-direction:column;gap:16svh}
+    .page{position:relative}
+    .frame{position:relative;border:1px solid var(--edge);border-radius:10px;overflow:hidden;background:var(--ink);
+      box-shadow:0 30px 90px rgba(0,0,0,.6),0 0 0 6px rgba(212,175,55,.04);transform:translateZ(0)}
+    .frame::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:inherit;
+      box-shadow:inset 0 1px 0 rgba(246,221,154,.14)}
+    .frame img{display:block;width:100%;height:auto;transform:scale(1.06);will-change:transform}
+    .cap{display:flex;align-items:baseline;gap:14px;margin-top:16px;padding:0 4px}
+    .age{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.3em;white-space:nowrap;
+      color:var(--gold-2);border:1px solid var(--edge);border-radius:99px;padding:5px 12px}
+    .line{font-family:"Space Grotesk",sans-serif;font-size:clamp(.95rem,2.6vw,1.12rem);color:var(--ivory)}
+    .cap .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--edge),transparent)}
+    .pageno{font-family:"JetBrains Mono",monospace;font-size:.66rem;color:var(--muted);letter-spacing:.2em}
+
+    /* reveal choreography */
+    .page{opacity:0;transform:translateY(60px) scale(.97);filter:blur(6px);
+      transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1),filter .9s ease}
+    .page.on{opacity:1;transform:none;filter:none}
+    .page .cap{opacity:0;transform:translateY(14px);transition:opacity .7s ease .25s,transform .7s cubic-bezier(.22,1,.36,1) .25s}
+    .page.on .cap{opacity:1;transform:none}
+
+    /* interstitial quote */
+    .breather{min-height:52svh;display:grid;place-items:center;text-align:center;padding:0 24px}
+    .breather p{font-family:"Playfair Display",serif;font-style:italic;font-weight:600;
+      font-size:clamp(1.5rem,4.6vw,2.6rem);line-height:1.25;max-width:620px;color:var(--ivory)}
+    .breather p em{background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-style:inherit}
+    .breather{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s cubic-bezier(.22,1,.36,1)}
+    .breather.on{opacity:1;transform:none}
+
+    /* ============ end ============ */
+    .endcard{min-height:92svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+             text-align:center;padding:0 24px 8svh;gap:20px}
+    .endcard .fin{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.4em;color:var(--muted)}
+    .endcard h2{font-family:"Playfair Display",serif;font-style:italic;font-weight:800;
+      font-size:clamp(2.4rem,8vw,5rem);line-height:1;background:var(--gold-grad);
+      -webkit-background-clip:text;background-clip:text;color:transparent}
+    .endcard p{color:var(--muted);max-width:480px}
+    .endcta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+    .btn{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.95rem;padding:13px 28px;
+         border-radius:99px;border:1px solid var(--edge);color:var(--ivory);transition:transform .2s,box-shadow .2s;cursor:pointer;background:none}
+    .btn:hover{transform:translateY(-2px)}
+    .btn-gold{background:var(--gold-grad);color:#141005;border:none;box-shadow:0 8px 34px rgba(212,175,55,.3)}
+    .btn-gold:hover{box-shadow:0 12px 44px rgba(212,175,55,.45)}
+    .endcard{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s cubic-bezier(.22,1,.36,1)}
+    .endcard.on{opacity:1;transform:none}
+    .credits{font-size:.82rem;color:var(--muted);margin-top:26px}
+    .credits a{color:var(--gold-2)}
+
+    @media (max-width:600px){
+      .reader{gap:11svh;padding-top:11svh}
+      .cap{flex-wrap:wrap;gap:10px}
+    }
+    @media (prefers-reduced-motion:reduce){
+      .mask>span,.fade-in{transition:none;transform:none;opacity:1}
+      .page,.breather,.endcard{opacity:1;transform:none;filter:none;transition:none}
+      .page .cap{opacity:1;transform:none;transition:none}
+      .frame img{transform:none}
+      .hint i{animation:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="amb" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <div class="chrome">
+    <a class="back" href="../">← zhang cheng</a>
+    <div class="worth" aria-hidden="true">
+      <div class="lbl">NET WORTH</div>
+      <div class="val" id="worth">¥3,000</div>
+    </div>
+  </div>
+  <div class="pbar" id="pbar" aria-hidden="true"></div>
+
+  <div id="scroller">
+    <!-- cover -->
+    <section class="cover">
+      <div class="cover-art" id="coverArt"><img src="page01.jpg" alt="" aria-hidden="true"></div>
+      <div class="cover-inner">
+        <p class="kicker fade-in">An AI-drawn manga one-shot</p>
+        <h1 class="masthead">
+          <span class="mask"><span>Born</span></span>
+          <span class="mask"><span>Rich</span></span>
+        </h1>
+        <p class="cover-sub fade-in">What if I'd been born <b>stupid rich</b>? Ten pages of the other timeline —
+          from the school gate to the chairman's office.</p>
+        <div class="hint fade-in" aria-hidden="true"><i></i></div>
+      </div>
+    </section>
+
+    <!-- pages -->
+    <main class="reader" id="reader"></main>
+
+    <!-- end -->
+    <section class="endcard" id="endcard">
+      <p class="fin">FIN</p>
+      <h2>Back to reality.</h2>
+      <p>No jet, no butler — just me, an AI, and a website. Honestly? Still feels rich.</p>
+      <div class="endcta">
+        <button class="btn btn-gold" id="again">Read it again</button>
+        <a class="btn" href="../#comics">More comics</a>
+      </div>
+      <p class="credits">Written with <a href="https://claude.com" target="_blank" rel="noopener">Claude</a> ·
+        drawn with gpt-image-2 · © Zhang Cheng</p>
+    </section>
+  </div>
+
+  <script>
+    const PAGES = [
+      ["Age 6","Some kids took the bus. I took the Rolls."],
+      ["Age 7","Mom said school lunch builds character. The chef disagreed."],
+      ["Age 9","I failed math. Dad bought the school a library. We called it even."],
+      ["Age 12","Field trips hit different at 40,000 feet."],
+      ["Age 18","Dad promised “something small.” The bow cost more than a car."],
+      ["Age 20","College abroad. Roommates: none. Butler: one."],
+      ["Age 23","Graduation gift? “You start Monday. From the bottom.”"],
+      ["Age 25","The bottom had a corner office. I took notes anyway."],
+      ["Age 30","The day Dad handed me the pen, his hands shook. Mine too."],
+      ["Age 30","Day one at the top. Funny — I kind of miss the school gate."],
+    ];
+    const QUOTE_AFTER = 5; // insert breather after page 5
+    const reader = document.getElementById("reader");
+    PAGES.forEach(([age, line], i) => {
+      const n = String(i + 1).padStart(2, "0");
+      reader.insertAdjacentHTML("beforeend", `
+        <figure class="page">
+          <div class="frame"><img src="page${n}.jpg" alt="Page ${i + 1} — ${line}" width="1024" height="1536"></div>
+          <figcaption class="cap">
+            <span class="age">${age}</span>
+            <span class="line">${line}</span>
+            <span class="rule"></span>
+            <span class="pageno">${n} / ${PAGES.length}</span>
+          </figcaption>
+        </figure>`);
+      if (i + 1 === QUOTE_AFTER) {
+        reader.insertAdjacentHTML("beforeend",
+          `<div class="breather"><p>Money never bought the moment.<br>It just <em>upgraded the seats.</em></p></div>`);
+      }
+    });
+
+    const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    requestAnimationFrame(() => document.body.classList.add("loaded"));
+
+    // reveal choreography
+    const io = new IntersectionObserver((es) => {
+      for (const e of es) if (e.isIntersecting) { e.target.classList.add("on"); io.unobserve(e.target); }
+    }, { threshold: 0.18, rootMargin: "0px 0px -6% 0px" });
+    document.querySelectorAll(".page, .breather, .endcard").forEach((el) => io.observe(el));
+
+    // ---- smooth scroll engine (Lenis-style: native scrollbar, eased transform) ----
+    const scroller = document.getElementById("scroller");
+    const pbar = document.getElementById("pbar");
+    const worthEl = document.getElementById("worth");
+    const coverArt = document.getElementById("coverArt");
+    const frames = [...document.querySelectorAll(".frame img")];
+    const lerp = (a, b, t) => a + (b - a) * t;
+    const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
+
+    const W_START = 3000, W_END = 8.4e9;
+    const fmtWorth = (v) => "¥" + Math.round(v).toLocaleString("en-US");
+
+    if (reduceMotion) {
+      document.body.classList.add("no-smooth");
+      worthEl.textContent = fmtWorth(W_END);
+      pbar.style.transform = "scaleX(1)";
+    } else {
+      let cur = window.scrollY;
+      const setH = () => { document.body.style.height = scroller.scrollHeight + "px"; };
+      setH();
+      addEventListener("resize", setH);
+      addEventListener("load", setH);
+      frames.forEach((im) => im.addEventListener("load", setH));
+
+      const tick = () => {
+        const max = Math.max(scroller.scrollHeight - innerHeight, 1);
+        cur = lerp(cur, window.scrollY, 0.085);
+        if (Math.abs(cur - window.scrollY) < 0.05) cur = window.scrollY;
+        scroller.style.transform = `translate3d(0,${-cur}px,0)`;
+
+        const p = clamp(cur / max, 0, 1);
+        pbar.style.transform = `scaleX(${p})`;
+        // net worth climbs exponentially with reading progress
+        worthEl.textContent = fmtWorth(W_START * Math.pow(W_END / W_START, p));
+
+        // cover parallax + fade
+        if (cur < innerHeight * 1.2) {
+          coverArt.style.transform = `translateY(${cur * 0.35}px)`;
+          coverArt.style.opacity = `${1 - clamp(cur / (innerHeight * 0.9), 0, 1) * 0.9}`;
+        }
+        // inner parallax per page
+        for (const im of frames) {
+          const r = im.parentElement.getBoundingClientRect();
+          if (r.bottom < -80 || r.top > innerHeight + 80) continue;
+          const rel = (r.top + r.height / 2 - innerHeight / 2) / innerHeight;
+          im.style.transform = `scale(1.06) translateY(${(-rel * 3).toFixed(3)}%)`;
+        }
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }
+
+    document.getElementById("again").addEventListener("click", () =>
+      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" }));
+  </script>
+</body>
+</html>
