@@ -438,9 +438,10 @@ body.loaded .line-inner { transform: none; }
 .scrub-stage { display: grid; place-items: center; }
 .scrub-video {
   display: block;
-  width: min(960px, 92vw);
-  height: auto;
-  aspect-ratio: 960 / 540;
+  height: min(64svh, 740px);
+  max-width: 88vw;
+  width: auto;
+  aspect-ratio: 480 / 740;
   background: #0a0a0f;
   border-radius: 22px;
   border: 1px solid var(--line);
