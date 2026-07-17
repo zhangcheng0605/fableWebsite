@@ -83,6 +83,37 @@ const marqueeTrack = document.getElementById("marqueeTrack");
 const workPin = document.getElementById("work");
 const workTrack = document.getElementById("workTrack");
 const blobs = document.querySelectorAll(".blob");
+const scrubPin = document.getElementById("motion");
+const scrubCanvas = document.getElementById("scrubCanvas");
+const scrubCtx = scrubCanvas.getContext("2d");
+
+// Frame-sequence scrub: individual JPEGs drawn to a canvas. Frame-exact
+// in both directions and immune to video-codec seeking quirks.
+const SCRUB_FRAMES = 120;
+const scrubImages = [];
+let scrubCurrent = -1;
+
+function drawScrubFrame(i) {
+  // while frames stream in, fall back to the nearest loaded one
+  let j = i;
+  if (!scrubImages[j].naturalWidth) {
+    for (let d = 1; d < SCRUB_FRAMES; d++) {
+      const lo = scrubImages[j - d], hi = scrubImages[j + d];
+      if (lo && lo.naturalWidth) { j = j - d; break; }
+      if (hi && hi.naturalWidth) { j = j + d; break; }
+    }
+  }
+  if (!scrubImages[j] || !scrubImages[j].naturalWidth || j === scrubCurrent) return;
+  scrubCurrent = j;
+  scrubCtx.drawImage(scrubImages[j], 0, 0, scrubCanvas.width, scrubCanvas.height);
+}
+
+for (let i = 0; i < SCRUB_FRAMES; i++) {
+  const img = new Image();
+  img.src = `assets/scrub/f${String(i).padStart(4, "0")}.jpg`;
+  if (i === 0) img.onload = () => drawScrubFrame(0);
+  scrubImages.push(img);
+}
 
 // The pinned gallery needs the section to be tall enough to "absorb"
 // the horizontal travel; measured from real track width.
@@ -139,6 +170,15 @@ if (!reduceMotion) {
     if (workDistance > 0) {
       const p = clamp((smoothY - workPin.offsetTop) / workDistance, 0, 1);
       workTrack.style.transform = `translateX(${-p * workDistance}px)`;
+    }
+
+    // scroll-scrubbed clip: scroll position IS the playhead, so
+    // scrolling up plays it backward (smoothY makes it glide)
+    {
+      const travel = scrubPin.offsetHeight - vh;
+      const p = clamp((smoothY - scrubPin.offsetTop) / travel, 0, 1);
+      drawScrubFrame(Math.round(p * (SCRUB_FRAMES - 1)));
+      scrubCanvas.style.transform = `scale(${(0.92 + p * 0.08).toFixed(4)})`;
     }
 
     requestAnimationFrame(frame);
