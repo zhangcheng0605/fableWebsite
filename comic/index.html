@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Witch of the Vending Machines — Ch.1 · Zhang Cheng</title>
+  <meta name="description" content="Witch of the Vending Machines — an AI-generated anime comic. Chapter 1: Exact Change.">
+  <meta property="og:title" content="Witch of the Vending Machines — Chapter 1">
+  <meta property="og:description" content="An anime comic set in Tokyo's vending machine network. Wishes here cost honesty.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="page01.jpg">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥤</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0a0a12; --panel:#12121e; --text:#eceaf4; --muted:#8f8ca6;
+      --cyan:#37e6ff; --magenta:#ff3ddc; --edge:rgba(255,255,255,.08);
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
+    body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+      background:radial-gradient(60vw 40vh at 15% 0%,rgba(55,230,255,.07),transparent 60%),
+                 radial-gradient(50vw 40vh at 85% 100%,rgba(255,61,220,.07),transparent 60%)}
+    .wrap{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:0 20px 80px}
+    header{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+    .back{font-family:"Space Grotesk",sans-serif;font-weight:600;color:var(--muted);text-decoration:none;font-size:.95rem;transition:color .2s}
+    .back:hover{color:var(--cyan)}
+    .tag{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+    .titleblock{text-align:center;padding:34px 0 10px}
+    h1{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:clamp(1.9rem,6vw,3.2rem);line-height:1.05;
+       background:linear-gradient(90deg,var(--cyan),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
+    .chapter{margin-top:10px;color:var(--muted);font-size:1rem}
+    .intro{margin:26px auto 40px;max-width:560px;text-align:center;color:var(--muted);font-size:.95rem;line-height:1.7}
+    .page{margin:0 0 34px;background:var(--panel);border:1px solid var(--edge);border-radius:14px;overflow:hidden;
+          box-shadow:0 8px 40px rgba(0,0,0,.45)}
+    .page img{display:block;width:100%;height:auto}
+    .pagenum{padding:10px 16px;font-family:"Space Grotesk",sans-serif;font-size:.8rem;color:var(--muted);
+             letter-spacing:.12em;text-transform:uppercase;border-top:1px solid var(--edge);
+             display:flex;justify-content:space-between}
+    .pagenum b{color:var(--text);font-weight:500}
+    .end{text-align:center;margin-top:60px}
+    .end p{color:var(--muted);margin-bottom:18px}
+    .end .next{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:1.3rem;
+       background:linear-gradient(90deg,var(--magenta),var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+    footer{margin-top:70px;text-align:center;color:var(--muted);font-size:.85rem}
+    footer a{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <a class="back" href="../">← zhang cheng</a>
+      <span class="tag">AI comic · gpt-image-2</span>
+    </header>
+
+    <div class="titleblock">
+      <h1>Witch of the<br>Vending Machines</h1>
+      <p class="chapter">Chapter 1 — Exact Change</p>
+    </div>
+
+    <p class="intro">Somewhere in Tokyo's back streets there is a vending machine that wasn't there yesterday.
+    It doesn't take money. It takes honesty. Story &amp; art generated with AI — written with Claude, drawn with gpt-image-2.</p>
+
+    <div id="pages"></div>
+
+    <div class="end">
+      <p>End of Chapter 1</p>
+      <p class="next">NEXT: EXACT CHANGE</p>
+    </div>
+
+    <footer>
+      <p>© Zhang Cheng · <a href="../">home</a></p>
+    </footer>
+  </div>
+  <script>
+    const captions = [
+      "Cover","02:14 AM","The machine that wasn't there","One strange coin","A Second Chance",
+      "The Witch","Three years ago","REDO","What it really was","Receipts, not second chances",
+      "BEGIN","Somewhere else in Tokyo"
+    ];
+    const holder = document.getElementById('pages');
+    for (let i = 1; i <= 12; i++) {
+      const n = String(i).padStart(2,'0');
+      holder.insertAdjacentHTML('beforeend',
+        `<figure class="page">
+           <img src="page${n}.jpg" alt="Page ${i} — ${captions[i-1]}" loading="lazy">
+           <figcaption class="pagenum"><b>${captions[i-1]}</b><span>${n} / 12</span></figcaption>
+         </figure>`);
+    }
+  </script>
+</body>
+</html>
