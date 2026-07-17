@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Trading Desk — Zhang Cheng</title>
+  <meta name="description" content="Three autonomous AI trading bots running on Alpaca paper accounts — strategies, schedules, risk engine, and the honest P&L. Built and operated by Claude agents.">
+  <meta property="og:title" content="AI Trading Desk — Zhang Cheng">
+  <meta property="og:description" content="Three AI bots, two paper accounts, zero humans on the hourly loop. Real strategies, fake dollars, honest numbers.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#050507; --bg2:#0a0a10; --panel:rgba(255,255,255,.03);
+      --edge:rgba(255,255,255,.09); --text:#f2f1f7; --muted:#9a97ad;
+      --cyan:#38e8ff; --magenta:#ff3ddc; --violet:#8b7bff;
+      --up:#2fd18a; --down:#ff6262;
+      /* chart series (CVD-validated on this surface) */
+      --s-bot:#12a0cc; --s-spy:#8471f5; --s-qqq:#d94fa6; --s-frozen:#b08a2e;
+      --grad:linear-gradient(92deg,var(--cyan),var(--violet) 55%,var(--magenta));
+      --radius:18px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif;
+         -webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.6}
+    ::selection{background:rgba(56,232,255,.25)}
+    a{color:inherit;text-decoration:none}
+    .mono{font-family:"JetBrains Mono",monospace}
+    .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .bg{position:fixed;inset:0;z-index:-2;background:
+        radial-gradient(55vw 45vh at 18% -5%,rgba(56,232,255,.10),transparent 62%),
+        radial-gradient(50vw 42vh at 88% 30%,rgba(255,61,220,.08),transparent 60%),
+        radial-gradient(60vw 50vh at 50% 110%,rgba(139,123,255,.10),transparent 65%)}
+    .gridlines{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+        background-image:linear-gradient(rgba(255,255,255,.024) 1px,transparent 1px),
+                         linear-gradient(90deg,rgba(255,255,255,.024) 1px,transparent 1px);
+        background-size:56px 56px;
+        mask-image:radial-gradient(70vw 70vh at 50% 20%,#000 0%,transparent 80%)}
+
+    /* nav */
+    .nav-wrap{position:fixed;top:18px;left:0;right:0;z-index:50;display:flex;justify-content:center;padding:0 20px}
+    .nav{display:flex;align-items:center;gap:26px;padding:10px 22px;border-radius:99px;
+         background:rgba(10,10,16,.6);border:1px solid var(--edge);
+         backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+    .nav a{font-size:.92rem;color:var(--muted);font-weight:500;transition:color .2s;white-space:nowrap}
+    .nav a:hover{color:var(--text)}
+    .logo{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:1.05rem;color:var(--text)!important}
+    .logo span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+    @media(max-width:560px){.nav{gap:16px;padding:10px 16px}.nav a{font-size:.82rem}}
+
+    /* hero */
+    .hero{min-height:92svh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+          text-align:center;padding:130px 24px 30px;position:relative;overflow:hidden}
+    #candles{position:absolute;inset:auto 0 0 0;width:100%;height:46vh;z-index:-1;opacity:.5;
+             mask-image:linear-gradient(to top,#000 30%,transparent 95%)}
+    .eyebrow{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;
+             color:var(--cyan);margin-bottom:22px}
+    .eyebrow::before{content:"● ";color:var(--magenta);animation:pulse 2s infinite}
+    @keyframes pulse{50%{opacity:.35}}
+    h1.title{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:clamp(2.7rem,8vw,5.6rem);
+             line-height:1.02;letter-spacing:-.02em}
+    .hero-sub{max-width:640px;margin:28px auto 0;color:var(--muted);font-size:clamp(1rem,2.2vw,1.18rem)}
+    .hero-sub b{color:var(--text);font-weight:600}
+    .paper-badge{display:inline-flex;align-items:center;gap:8px;margin-top:26px;padding:8px 18px;border-radius:99px;
+        border:1px dashed rgba(255,184,77,.55);color:#ffcf87;font-family:"JetBrains Mono",monospace;
+        font-size:.78rem;letter-spacing:.06em;background:rgba(255,184,77,.06)}
+    .cta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;justify-content:center}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:99px;
+         font-weight:600;font-size:.95rem;transition:transform .2s,box-shadow .2s;border:1px solid var(--edge)}
+    .btn:hover{transform:translateY(-2px)}
+    .btn-primary{background:var(--grad);color:#08070c;border:none;box-shadow:0 4px 30px rgba(139,123,255,.35)}
+    .btn-primary:hover{box-shadow:0 8px 40px rgba(56,232,255,.4)}
+    .btn-ghost{background:var(--panel)}
+
+    /* ticker tape */
+    .tape-wrap{border-top:1px solid var(--edge);border-bottom:1px solid var(--edge);
+        background:rgba(8,8,14,.7);backdrop-filter:blur(8px);overflow:hidden;padding:10px 0;
+        margin-top:auto;width:100%}
+    .tape{display:flex;gap:44px;width:max-content;animation:scroll 38s linear infinite}
+    .tape-wrap:hover .tape{animation-play-state:paused}
+    @keyframes scroll{to{transform:translateX(-50%)}}
+    .tk{display:flex;gap:9px;align-items:baseline;font-family:"JetBrains Mono",monospace;font-size:.8rem;white-space:nowrap}
+    .tk .sym{color:var(--text);font-weight:700}
+    .tk .px{color:var(--muted)}
+    .tk .chg.up{color:var(--up)} .tk .chg.down{color:var(--down)}
+    @media (prefers-reduced-motion:reduce){.tape{animation:none}}
+
+    /* sections */
+    section{max-width:1080px;margin:0 auto;padding:104px 24px 10px}
+    .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:14px}
+    .sec-index{font-family:"JetBrains Mono",monospace;color:var(--magenta);font-size:.85rem}
+    h2{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:clamp(1.8rem,4.5vw,2.6rem);letter-spacing:-.01em}
+    .sec-sub{color:var(--muted);max-width:680px;margin-bottom:42px}
+    .sec-sub a{color:var(--cyan)}
+
+    /* scoreboard */
+    .board{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+    .tile{border:1px solid var(--edge);border-radius:var(--radius);background:var(--panel);padding:24px 26px;
+          position:relative;overflow:hidden}
+    .tile::after{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:var(--grad);opacity:.5}
+    .tile .k{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+    .tile .v{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:clamp(1.7rem,3.6vw,2.3rem);
+             letter-spacing:-.01em;margin-top:8px;font-variant-numeric:tabular-nums}
+    .tile .d{font-family:"JetBrains Mono",monospace;font-size:.8rem;margin-top:6px}
+    .tile .d.up{color:var(--up)} .tile .d.down{color:var(--down)} .tile .d.flat{color:var(--muted)}
+    .asof{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--muted);margin-top:16px}
+    .asof b{color:#ffcf87;font-weight:500}
+
+    /* bots */
+    .bots{display:grid;gap:20px}
+    .bot{border:1px solid var(--edge);border-radius:22px;background:var(--panel);padding:30px;
+         display:grid;grid-template-columns:1fr 300px;gap:28px;align-items:center;
+         transition:border-color .25s,transform .25s;position:relative;overflow:hidden}
+    .bot:hover{border-color:rgba(56,232,255,.35);transform:translateY(-3px)}
+    @media(max-width:800px){.bot{grid-template-columns:1fr}}
+    .bot .tag{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px}
+    .bot h3{font-family:"Space Grotesk",sans-serif;font-size:1.45rem;margin-bottom:4px}
+    .bot h3 code{font-family:"JetBrains Mono",monospace;font-size:.85rem;color:var(--magenta);font-weight:500;margin-left:8px}
+    .bot p{color:var(--muted);font-size:.95rem;margin-top:10px}
+    .bot p code, .rt p code, .risk-card p code{font-family:"JetBrains Mono",monospace;font-size:.82rem;color:var(--cyan);
+        background:rgba(56,232,255,.08);padding:2px 7px;border-radius:6px}
+    .params{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+    .chip{font-family:"JetBrains Mono",monospace;font-size:.72rem;padding:5px 12px;border-radius:99px;border:1px solid var(--edge);color:var(--muted)}
+    .chip b{color:var(--text);font-weight:500}
+    .bot svg{width:100%;height:auto;border-radius:12px;border:1px solid var(--edge);background:rgba(8,8,14,.6)}
+
+    /* routines */
+    .routines{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
+    .rt{border:1px solid var(--edge);border-radius:var(--radius);background:var(--panel);padding:24px;
+        transition:border-color .25s}
+    .rt:hover{border-color:rgba(139,123,255,.4)}
+    .rt .cron{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--violet);
+        border:1px solid rgba(139,123,255,.35);border-radius:8px;padding:4px 10px;margin-bottom:12px}
+    .rt h3{font-family:"Space Grotesk",sans-serif;font-size:1.08rem;margin-bottom:6px}
+    .rt p{color:var(--muted);font-size:.88rem}
+    .rt .when{font-family:"JetBrains Mono",monospace;font-size:.74rem;color:var(--cyan);margin-top:12px}
+
+    /* money */
+    .ledger{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
+    @media(max-width:760px){.ledger{grid-template-columns:1fr}}
+    .acct{border:1px solid var(--edge);border-radius:var(--radius);background:var(--panel);padding:26px}
+    .acct .name{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+    .acct .eq{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:2rem;margin-top:6px;font-variant-numeric:tabular-nums}
+    .acct .pnl{font-family:"JetBrains Mono",monospace;font-size:.85rem;margin-top:4px}
+    .acct .pnl.up{color:var(--up)} .acct .pnl.down{color:var(--down)}
+    .acct ul{list-style:none;margin-top:16px;display:grid;gap:8px}
+    .acct li{display:flex;justify-content:space-between;font-size:.86rem;color:var(--muted);
+             border-bottom:1px dashed rgba(255,255,255,.07);padding-bottom:8px}
+    .acct li span:last-child{font-family:"JetBrains Mono",monospace;color:var(--text)}
+    .acct li span:last-child.up{color:var(--up)} .acct li span:last-child.down{color:var(--down)}
+    .netline{border:1px solid rgba(47,209,138,.35);background:rgba(47,209,138,.05);border-radius:var(--radius);
+        padding:20px 26px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:46px}
+    .netline .lbl{color:var(--muted);font-size:.9rem}
+    .netline .amt{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:1.7rem;color:var(--up);font-variant-numeric:tabular-nums}
+    .netline .amt small{font-family:"JetBrains Mono",monospace;font-size:.75rem;color:var(--muted);font-weight:400;margin-left:10px}
+
+    /* chart */
+    .chart-card{border:1px solid var(--edge);border-radius:var(--radius);background:var(--panel);padding:26px;margin-bottom:18px}
+    .chart-card h3{font-family:"Space Grotesk",sans-serif;font-size:1.1rem}
+    .chart-card .sub{color:var(--muted);font-size:.85rem;margin-bottom:20px}
+    .bench{display:flex;gap:26px;align-items:flex-end;height:230px;padding:0 6px;position:relative}
+    .bench .col{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;position:relative}
+    .bench .zero{position:absolute;left:0;right:0;top:26px;border-top:1px solid rgba(255,255,255,.25);z-index:1}
+    .bench .zero em{position:absolute;right:0;top:-18px;font-style:normal;font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--muted)}
+    .bar-slot{position:absolute;top:26px;bottom:56px;left:0;right:0;display:flex;justify-content:center}
+    .bar{width:min(58px,60%);border-radius:0 0 4px 4px;transform-origin:top;transform:scaleY(0);
+         transition:transform .9s cubic-bezier(.2,.6,.2,1);cursor:default}
+    .visible .bar{transform:scaleY(1)}
+    .bar-val{position:absolute;left:0;right:0;text-align:center;font-family:"JetBrains Mono",monospace;
+        font-size:.8rem;color:var(--text)}
+    .bar-name{position:absolute;bottom:24px;left:0;right:0;text-align:center;font-size:.8rem;color:var(--muted)}
+    .bar-dollar{position:absolute;bottom:2px;left:0;right:0;text-align:center;font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--muted)}
+    .legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px;font-size:.8rem;color:var(--muted)}
+    .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:7px;vertical-align:-1px}
+    .tooltip{position:fixed;z-index:99;pointer-events:none;background:rgba(10,10,18,.95);border:1px solid var(--edge);
+        border-radius:10px;padding:10px 14px;font-family:"JetBrains Mono",monospace;font-size:.75rem;color:var(--text);
+        opacity:0;transition:opacity .15s;max-width:260px;line-height:1.7}
+    .tooltip b{color:var(--cyan)}
+    table.data{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:8px}
+    table.data th,table.data td{text-align:left;padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.07)}
+    table.data th{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500}
+    table.data td:not(:first-child){font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
+    td.up{color:var(--up)} td.down{color:var(--down)}
+    .swatch{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:8px;vertical-align:0}
+
+    /* composition bars */
+    .comp{margin-top:8px}
+    .comp .row-lbl{display:flex;justify-content:space-between;font-size:.82rem;color:var(--muted);margin:18px 0 8px}
+    .comp .stack{display:flex;height:30px;border-radius:8px;overflow:hidden;gap:2px;background:var(--bg2)}
+    .comp .seg{transition:filter .2s;cursor:default;min-width:3px}
+    .comp .seg:hover{filter:brightness(1.35)}
+
+    /* risk */
+    .risks{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+    .risk-card{border:1px solid var(--edge);border-radius:var(--radius);background:var(--panel);padding:24px}
+    .risk-card .ic{font-size:1.3rem}
+    .risk-card h3{font-family:"Space Grotesk",sans-serif;font-size:1.02rem;margin:10px 0 6px}
+    .risk-card p{color:var(--muted);font-size:.86rem}
+    .risk-card .state{display:inline-block;margin-top:14px;font-family:"JetBrains Mono",monospace;font-size:.7rem;
+        padding:4px 11px;border-radius:99px}
+    .state.armed{color:var(--up);border:1px solid rgba(47,209,138,.4)}
+    .state.info{color:var(--muted);border:1px solid var(--edge)}
+
+    /* terminal */
+    .term{border:1px solid var(--edge);border-radius:14px;overflow:hidden;background:rgba(8,8,14,.75);
+          box-shadow:0 20px 60px rgba(0,0,0,.5);margin-top:26px}
+    .term-bar{display:flex;gap:7px;padding:11px 14px;border-bottom:1px solid var(--edge);align-items:center}
+    .term-bar i{width:11px;height:11px;border-radius:50%;background:#3a3a46}
+    .term-bar i:first-child{background:#ff5f57}.term-bar i:nth-child(2){background:#febc2e}.term-bar i:nth-child(3){background:#28c840}
+    .term-bar span{margin-left:10px;font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--muted)}
+    .term-body{padding:18px 20px;font-family:"JetBrains Mono",monospace;font-size:.78rem;line-height:2;color:var(--muted);min-height:190px}
+    .term-body .t{color:#5a5870}
+    .term-body .buy{color:var(--up)} .term-body .blocked{color:#ffcf87} .term-body .sell{color:var(--down)}
+    .cursor{display:inline-block;width:8px;height:14px;background:var(--cyan);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+    @keyframes blink{50%{opacity:0}}
+
+    /* pipeline */
+    .steps{display:grid;counter-reset:step}
+    .step{display:grid;grid-template-columns:56px 1fr;gap:22px;padding:24px 0;border-bottom:1px solid var(--edge)}
+    .step:last-child{border-bottom:none}
+    .step-num{font-family:"JetBrains Mono",monospace;font-size:1.4rem;color:var(--violet)}
+    .step h3{font-family:"Space Grotesk",sans-serif;font-size:1.1rem;margin-bottom:5px}
+    .step p{color:var(--muted);font-size:.92rem;max-width:680px}
+    .step p code{font-family:"JetBrains Mono",monospace;font-size:.8rem;color:var(--cyan);background:rgba(56,232,255,.08);padding:2px 7px;border-radius:6px}
+
+    .endcta{text-align:center;padding-bottom:40px}
+    footer{text-align:center;color:var(--muted);font-size:.85rem;padding:40px 20px 50px;border-top:1px solid var(--edge);margin-top:90px}
+    footer a{color:var(--text)}
+
+    .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.6,.2,1),transform .7s cubic-bezier(.2,.6,.2,1)}
+    .reveal.visible{opacity:1;transform:none}
+    @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.bar{transition:none;transform:scaleY(1)}}
+  </style>
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+  <div class="gridlines" aria-hidden="true"></div>
+  <div class="tooltip" id="tooltip" role="tooltip"></div>
+
+  <header class="nav-wrap">
+    <nav class="nav">
+      <a class="logo" href="../">Z<span>C</span></a>
+      <a href="../#projects">Projects</a>
+      <a href="#bots">Bots</a>
+      <a href="#routines">Routines</a>
+      <a href="#money">P&amp;L</a>
+      <a href="#risk">Risk</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero" style="max-width:none;padding-left:0;padding-right:0">
+      <canvas id="candles" aria-hidden="true"></canvas>
+      <p class="eyebrow reveal">Autonomous · Live since 2026-07-14 · Paper accounts</p>
+      <h1 class="title reveal">AI <span class="grad-text">Trading</span> Desk</h1>
+      <p class="hero-sub reveal">Three trading bots, two Alpaca paper accounts, <b>zero humans on the hourly loop</b>.
+         Claude agents wrote the strategies, backtested them in a tournament, wired the schedules,
+         and now fire every hour to trade, report, and watchdog themselves.</p>
+      <p class="reveal"><span class="paper-badge">⚠ 100% PAPER MONEY — real strategies, fake dollars, honest numbers</span></p>
+      <div class="cta reveal">
+        <a class="btn btn-primary" href="#money">Show me the money</a>
+        <a class="btn btn-ghost" href="https://github.com/zhangcheng0605/alpaca-paper-trading" target="_blank" rel="noopener">Source on GitHub</a>
+      </div>
+      <div class="tape-wrap reveal" style="margin-top:60px" aria-hidden="true">
+        <div class="tape" id="tape"></div>
+      </div>
+    </section>
+
+    <!-- SCOREBOARD -->
+    <section id="scoreboard">
+      <div class="sec-head reveal"><span class="sec-index">00</span><h2>Scoreboard</h2></div>
+      <p class="sec-sub reveal">Both accounts, as reported by the nightly report Routine. The bots don't get to grade their own homework — every number below comes straight from the Alpaca API.</p>
+      <div class="board reveal">
+        <div class="tile">
+          <div class="k">Stock account</div>
+          <div class="v">$<span class="count" data-to="97924">0</span></div>
+          <div class="d down">▼ −$2,076 · −2.08% since start</div>
+        </div>
+        <div class="tile">
+          <div class="k">Crypto account</div>
+          <div class="v">$<span class="count" data-to="1007016">0</span></div>
+          <div class="d up">▲ +$7,016 · +0.70% since start</div>
+        </div>
+        <div class="tile">
+          <div class="k">Combined P&amp;L</div>
+          <div class="v" style="color:var(--up)">+$<span class="count" data-to="4940">0</span></div>
+          <div class="d flat">across $1.1M paper capital</div>
+        </div>
+        <div class="tile">
+          <div class="k">Open positions</div>
+          <div class="v"><span class="count" data-to="48">0</span></div>
+          <div class="d flat">25 stocks · 23 crypto</div>
+        </div>
+      </div>
+      <p class="asof reveal">as of 2026-07-17 21:20 UTC · <b>paper trading</b> — no real money is at risk, which is exactly why the numbers can be this honest</p>
+    </section>
+
+    <!-- BOTS -->
+    <section id="bots">
+      <div class="sec-head reveal"><span class="sec-index">01</span><h2>The Bots</h2></div>
+      <p class="sec-sub reveal">Each bot tags every order with its own <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan)">client_order_id</code> and only ever sells what it bought itself — three books, politely sharing accounts without stepping on each other.</p>
+      <div class="bots">
+
+        <article class="bot reveal">
+          <div>
+            <p class="tag">Stock account · hourly bars</p>
+            <h3>RSI Bot <code>rsibot-*</code></h3>
+            <p>The original. Watches <b>TSLA, NVDA, PLTR</b> on 1-hour bars and buys fear: when RSI(14) drops
+               below 25 (deeply oversold) it market-buys $5,000, then exits when RSI recovers above 50 — or
+               bails at an 8% stop-loss. The config won a tournament backtest against 10 rival strategies.
+               A challenger (RSI 30/55, no stop) beat it in-sample <i>and</i> out-of-sample once — one more
+               monthly win and it takes the crown under the promotion rule.</p>
+            <div class="params">
+              <span class="chip">RSI(14) <b>&lt;25 buy</b></span><span class="chip"><b>&gt;50 sell</b></span>
+              <span class="chip">stop <b>−8%</b></span><span class="chip"><b>$5k</b>/entry</span>
+              <span class="chip">1h bars</span>
+            </div>
+          </div>
+          <svg viewBox="0 0 300 150" aria-hidden="true">
+            <rect x="0" y="30" width="300" height="45" fill="rgba(255,98,98,.07)"/>
+            <line x1="0" y1="75" x2="300" y2="75" stroke="rgba(255,98,98,.5)" stroke-dasharray="4 4"/>
+            <line x1="0" y1="45" x2="300" y2="45" stroke="rgba(47,209,138,.5)" stroke-dasharray="4 4"/>
+            <text x="6" y="88" fill="#9a97ad" font-size="9" font-family="monospace">RSI 25 — buy zone</text>
+            <text x="6" y="41" fill="#9a97ad" font-size="9" font-family="monospace">RSI 50 — take profit</text>
+            <path d="M0,52 C25,40 40,28 60,38 S95,95 115,102 S150,80 170,58 S205,30 225,40 S265,58 300,44"
+                  fill="none" stroke="#12a0cc" stroke-width="2"/>
+            <circle cx="115" cy="102" r="5" fill="#2fd18a"/>
+            <text x="124" y="106" fill="#2fd18a" font-size="9" font-family="monospace">BUY</text>
+            <circle cx="225" cy="40" r="5" fill="#ff6262"/>
+            <text x="200" y="28" fill="#ff6262" font-size="9" font-family="monospace">SELL</text>
+          </svg>
+        </article>
+
+        <article class="bot reveal">
+          <div>
+            <p class="tag">Stock account · daily bars</p>
+            <h3>Bot v2.1 <code>botv2-*</code></h3>
+            <p>The portfolio manager. Scans a <b>~150-name universe</b> (mega-cap tech core, an AI/semis
+               watchlist, and broad US large-caps) for statistical dips — a close 2σ below its 20-day mean —
+               but only buys names above their 200-day average, and only while SPY itself is in an uptrend.
+               Entries are volatility-sized ($1–3k), take profit back at the mean, stop at −10%, or time-stop
+               after 21 days. It also keeps a 16-name core equal-weighted and benchmarks itself against a
+               "frozen twin" of its own day-one holdings.</p>
+            <div class="params">
+              <span class="chip">dip <b>z &lt; −2</b></span><span class="chip">trend <b>200d MA</b></span>
+              <span class="chip">vol-sized <b>$1–3k</b></span><span class="chip">TP <b>20d mean</b></span>
+              <span class="chip">stop <b>−10%</b></span><span class="chip">time-stop <b>21d</b></span>
+            </div>
+          </div>
+          <svg viewBox="0 0 300 150" aria-hidden="true">
+            <path d="M0,90 C40,84 70,78 110,74 S190,64 240,58 S280,54 300,52" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <text x="228" y="46" fill="#9a97ad" font-size="9" font-family="monospace">20d mean</text>
+            <path d="M0,118 C40,112 80,108 120,104 S200,96 300,84" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+            <path d="M0,80 C20,74 40,66 60,70 S95,86 115,120 S150,96 180,72 S240,50 300,45"
+                  fill="none" stroke="#8471f5" stroke-width="2"/>
+            <circle cx="115" cy="120" r="5" fill="#2fd18a"/>
+            <text x="94" y="138" fill="#2fd18a" font-size="9" font-family="monospace">z=−2.3 BUY</text>
+            <circle cx="196" cy="65" r="5" fill="#ff6262"/>
+            <text x="204" y="80" fill="#ff6262" font-size="9" font-family="monospace">mean → SELL</text>
+          </svg>
+        </article>
+
+        <article class="bot reveal">
+          <div>
+            <p class="tag">Crypto account · 24/7</p>
+            <h3>Crypto Bot <code>cryptobot-*</code></h3>
+            <p>Fully segregated: its own $1M paper account, its own keys, its own schedule — crypto never
+               sleeps, so neither does it. Runs trend-filtered RSI mean reversion (buy &lt;30 in an uptrend,
+               sell &gt;55) on <b>BTC/USD and ETH/USD</b>, sizing each entry at 15% of equity. It trades
+               <i>around</i> a permanent ~$500k core — 70/30 BTC/ETH bought as the crypto twin of the stock
+               account's SPY layer — plus a 26-coin alt sleeve, and it can only ever sell coins from its own
+               tagged book. The core is untouchable.</p>
+            <div class="params">
+              <span class="chip">RSI <b>&lt;30 buy</b></span><span class="chip"><b>&gt;55 sell</b></span>
+              <span class="chip"><b>15%</b> equity/entry</span><span class="chip">BTC · ETH</span>
+              <span class="chip">GTC orders</span><span class="chip">24/7</span>
+            </div>
+          </div>
+          <svg viewBox="0 0 300 150" aria-hidden="true">
+            <rect x="0" y="98" width="300" height="52" fill="rgba(18,160,204,.10)"/>
+            <text x="8" y="140" fill="#9a97ad" font-size="9" font-family="monospace">$500k BTC/ETH core — never sold</text>
+            <path d="M0,96 C30,88 60,92 90,78 S150,58 180,66 S240,40 300,30" fill="none" stroke="#d94fa6" stroke-width="2"/>
+            <path d="M0,102 C40,100 80,96 120,92 S220,78 300,68" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <text x="236" y="82" fill="#9a97ad" font-size="9" font-family="monospace">200d MA</text>
+            <circle cx="90" cy="78" r="5" fill="#2fd18a"/>
+            <text x="60" y="66" fill="#2fd18a" font-size="9" font-family="monospace">dip in uptrend</text>
+          </svg>
+        </article>
+      </div>
+
+      <div class="term reveal" aria-hidden="true">
+        <div class="term-bar"><i></i><i></i><i></i><span>bot.log — live tail</span></div>
+        <div class="term-body" id="botlog"></div>
+      </div>
+    </section>
+
+    <!-- ROUTINES -->
+    <section id="routines">
+      <div class="sec-head reveal"><span class="sec-index">02</span><h2>The Routines</h2></div>
+      <p class="sec-sub reveal">No servers, no GitHub Actions, no cron box under a desk. Every schedule is a <b style="color:var(--text)">Claude Routine</b>: an agent wakes up on a cron, pulls <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan)">main</code>, runs the bot, verifies fills against the broker API, and pushes me a phone notification — then goes back to sleep.</p>
+      <div class="routines">
+        <div class="rt reveal">
+          <span class="cron">35 13-20 * * 1-5</span>
+          <h3>🤖 Stock bots — hourly</h3>
+          <p>Every hour of the US session, runs the RSI bot then Bot v2's dip scan, sequentially — two bots
+             on one account must never trade at the same minute. The 17:35 UTC firing also rebalances the core.</p>
+          <p class="when">13:35–20:35 UTC · Mon–Fri</p>
+        </div>
+        <div class="rt reveal">
+          <span class="cron">5 * * * *</span>
+          <h3>🪙 Crypto bot — 24/7</h3>
+          <p>Fires at five past every hour, every day — crypto never closes. One cycle of the trend-filtered
+             RSI strategy on BTC and ETH, order fills verified before reporting.</p>
+          <p class="when">every hour · around the clock</p>
+        </div>
+        <div class="rt reveal">
+          <span class="cron">20 21 * * *</span>
+          <h3>📊 Daily report</h3>
+          <p>The nightly accountant: P&amp;L, fills, positions, and risk state for both accounts, plus the
+             benchmark table — delivered as a push notification and email after the US close.</p>
+          <p class="when">21:20 UTC · daily</p>
+        </div>
+        <div class="rt reveal">
+          <span class="cron">40 8 1 * *</span>
+          <h3>🏆 Monthly strategy tournament</h3>
+          <p>Re-runs the full backtest tournament on a year of hourly bars. A challenger strategy replaces the
+             incumbent only after beating it in-sample <i>and</i> out-of-sample two months running — no hot-swapping
+             on one lucky backtest.</p>
+          <p class="when">1st of the month · read-only</p>
+        </div>
+        <div class="rt reveal">
+          <span class="cron">50 */2 * * *</span>
+          <h3>🐕 Watchdog</h3>
+          <p>Every two hours an agent audits the other agents: did every Routine fire on schedule? Any rejected
+             orders, runaway trading, or kill-switch breaches? It can re-fire a missed schedule once — anything
+             bigger gets escalated to the human.</p>
+          <p class="when">every 2 hours · guards the guards</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- MONEY -->
+    <section id="money">
+      <div class="sec-head reveal"><span class="sec-index">03</span><h2>The Money</h2></div>
+      <p class="sec-sub reveal">Three trading days in. The stock account caught a semiconductor dip square on the chin; the crypto account's BTC-heavy core carried the whole book. Full transparency — including the part where doing nothing would have beaten the stock bots so far.</p>
+
+      <div class="ledger">
+        <div class="acct reveal">
+          <div class="name">Stocks · started $100,000 on Jul 14</div>
+          <div class="eq">$97,923.59</div>
+          <div class="pnl down">−$2,076.41 · −2.08%</div>
+          <ul>
+            <li><span>Day P&amp;L (Jul 17)</span><span class="down">−$1,176.93 · −1.19%</span></li>
+            <li><span>Biggest winner</span><span class="up">VST +2.23%</span></li>
+            <li><span>Biggest loser</span><span class="down">AMAT −8.27%</span></li>
+            <li><span>Cash reserve</span><span>15.5% of equity</span></li>
+            <li><span>Drawdown vs high-water</span><span>−2.08% (kill switch at −5%)</span></li>
+          </ul>
+        </div>
+        <div class="acct reveal">
+          <div class="name">Crypto · started $1,000,000 on Jul 16</div>
+          <div class="eq">$1,007,016.35</div>
+          <div class="pnl up">+$7,016.35 · +0.70%</div>
+          <ul>
+            <li><span>Day P&amp;L (Jul 17)</span><span class="up">+$7,022.22 · +0.70%</span></li>
+            <li><span>Biggest winner</span><span class="up">BTC core +2.00%</span></li>
+            <li><span>Biggest loser</span><span class="down">DOT −2.03%</span></li>
+            <li><span>Cash reserve</span><span>33.5% of equity</span></li>
+            <li><span>Fills in last 24h</span><span>24 (core + alt sleeve build-out)</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="netline reveal">
+        <span class="lbl">Net across both paper accounts since inception</span>
+        <span class="amt">+$4,939.94 <small>≈ +0.45% on $1.1M — early days</small></span>
+      </div>
+
+      <div class="chart-card reveal">
+        <h3>Bot vs. doing nothing — stock account, since Jul 14</h3>
+        <p class="sub">Return vs three do-nothing rivals: parking $100k in SPY, parking it in QQQ, or freezing the bot's own day-one portfolio and never trading again. Hover the bars for dollar values.</p>
+        <div class="bench" id="bench">
+          <div class="zero"><em>0%</em></div>
+          <div class="col" data-tt="<b>Bot account</b><br>$97,914.08 · −2.09%<br>the live, actively-traded account">
+            <div class="bar-val" style="top:2px">−2.09%</div>
+            <div class="bar-slot"><div class="bar" style="height:60.4%;background:var(--s-bot)"></div></div>
+            <div class="bar-name">Bot account</div><div class="bar-dollar">$97,914</div>
+          </div>
+          <div class="col" data-tt="<b>SPY couch</b><br>$98,983.90 · −1.02%<br>bot is BEHIND by $1,070">
+            <div class="bar-val" style="top:2px">−1.02%</div>
+            <div class="bar-slot"><div class="bar" style="height:29.5%;background:var(--s-spy)"></div></div>
+            <div class="bar-name">SPY couch</div><div class="bar-dollar">$98,984</div>
+          </div>
+          <div class="col" data-tt="<b>QQQ couch</b><br>$96,538.56 · −3.46%<br>bot is AHEAD by $1,376">
+            <div class="bar-val" style="top:2px">−3.46%</div>
+            <div class="bar-slot"><div class="bar" style="height:100%;background:var(--s-qqq)"></div></div>
+            <div class="bar-name">QQQ couch</div><div class="bar-dollar">$96,539</div>
+          </div>
+          <div class="col" data-tt="<b>Frozen twin</b><br>$98,880.13 · −1.12%<br>bot is BEHIND by $966 — the trading itself hasn't added value yet">
+            <div class="bar-val" style="top:2px">−1.12%</div>
+            <div class="bar-slot"><div class="bar" style="height:32.4%;background:var(--s-frozen)"></div></div>
+            <div class="bar-name">Frozen twin</div><div class="bar-dollar">$98,880</div>
+          </div>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--s-bot)"></i>Bot account — live trading</span>
+          <span><i style="background:var(--s-spy)"></i>SPY couch — index &amp; chill</span>
+          <span><i style="background:var(--s-qqq)"></i>QQQ couch — tech index</span>
+          <span><i style="background:var(--s-frozen)"></i>Frozen twin — day-1 picks, never traded</span>
+        </div>
+        <details style="margin-top:18px;color:var(--muted)">
+          <summary style="cursor:pointer;font-size:.85rem">View as table</summary>
+          <table class="data">
+            <thead><tr><th>Portfolio</th><th>Value</th><th>Return</th><th>Gap to bot</th></tr></thead>
+            <tbody>
+              <tr><td><i class="swatch" style="background:var(--s-bot)"></i>Bot account</td><td>$97,914.08</td><td class="down">−2.09%</td><td>—</td></tr>
+              <tr><td><i class="swatch" style="background:var(--s-spy)"></i>SPY couch</td><td>$98,983.90</td><td class="down">−1.02%</td><td class="down">behind $1,069.82</td></tr>
+              <tr><td><i class="swatch" style="background:var(--s-qqq)"></i>QQQ couch</td><td>$96,538.56</td><td class="down">−3.46%</td><td class="up">ahead $1,375.52</td></tr>
+              <tr><td><i class="swatch" style="background:var(--s-frozen)"></i>Frozen twin</td><td>$98,880.13</td><td class="down">−1.12%</td><td class="down">behind $966.05</td></tr>
+            </tbody>
+          </table>
+          <p style="font-size:.78rem;margin-top:10px">SPY/QQQ judge the stock picks; the frozen twin judges whether the trading itself adds value. Verdict after 3 days: too early to call — but it's being measured, every night, automatically.</p>
+        </details>
+      </div>
+
+      <div class="chart-card reveal comp">
+        <h3>What the accounts hold</h3>
+        <p class="sub">Composition by market value. Hover the segments.</p>
+        <div class="row-lbl"><span>Stock account — $97.9k</span><span>25 positions + cash</span></div>
+        <div class="stack" aria-label="Stock account composition">
+          <div class="seg" style="flex:30.3;background:var(--s-spy)" data-tt="<b>SPY index layer</b><br>$29.7k · 30% of the account<br>passive base — no bot may sell it"></div>
+          <div class="seg" style="flex:54.2;background:var(--s-bot)" data-tt="<b>Stock picks</b><br>$53.1k · core basket + dip positions<br>managed by Bot v2 &amp; the RSI bot"></div>
+          <div class="seg" style="flex:15.5;background:rgba(255,255,255,.22)" data-tt="<b>Cash</b><br>$15.2k · 15.5%<br>10% reserve is enforced by risk.py"></div>
+        </div>
+        <div class="row-lbl"><span>Crypto account — $1.007M</span><span>23 positions + cash</span></div>
+        <div class="stack" aria-label="Crypto account composition">
+          <div class="seg" style="flex:34.7;background:var(--s-frozen)" data-tt="<b>BTC core</b><br>$349.6k · 5.45 BTC<br>permanent market-exposure layer"></div>
+          <div class="seg" style="flex:14.8;background:var(--s-qqq)" data-tt="<b>ETH core</b><br>$149.1k · 80.9 ETH<br>the 30 in the 70/30 core"></div>
+          <div class="seg" style="flex:17.0;background:var(--s-bot)" data-tt="<b>Alt sleeve</b><br>~$171k · 21 alts, gold (PAXG), even the meme tier<br>SOL · XRP · ADA · DOGE · PEPE …"></div>
+          <div class="seg" style="flex:33.5;background:rgba(255,255,255,.22)" data-tt="<b>Cash</b><br>$337.5k · 33.5%<br>dry powder for the dip-buyer"></div>
+        </div>
+        <div class="legend">
+          <span><i style="background:var(--s-spy)"></i>SPY layer</span>
+          <span><i style="background:var(--s-frozen)"></i>BTC core</span>
+          <span><i style="background:var(--s-qqq)"></i>ETH core</span>
+          <span><i style="background:var(--s-bot)"></i>bot-managed</span>
+          <span><i style="background:rgba(255,255,255,.22)"></i>cash</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- RISK -->
+    <section id="risk">
+      <div class="sec-head reveal"><span class="sec-index">04</span><h2>The Risk Engine</h2></div>
+      <p class="sec-sub reveal">Autonomous money needs autonomous brakes. Every buy passes through shared, account-wide gates in <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan)">risk.py</code> before it reaches the broker — sells are never blocked, because the exit door stays open.</p>
+      <div class="risks">
+        <div class="risk-card reveal"><div class="ic">🛑</div>
+          <h3>Drawdown kill switch</h3>
+          <p>All buying halts if equity falls more than 5% below its high-water mark — computed statelessly
+             from the broker's own portfolio history, so it can't be gamed by a bot with amnesia.</p>
+          <span class="state armed">ARMED · −2.08% vs HWM</span></div>
+        <div class="risk-card reveal"><div class="ic">💧</div>
+          <h3>Cash reserve floor</h3>
+          <p>No buy may take cash below 10% of equity. The dip-buyer always keeps dry powder for the next dip
+             instead of going all-in on the first one.</p>
+          <span class="state armed">ARMED · 15.5% held</span></div>
+        <div class="risk-card reveal"><div class="ic">📉</div>
+          <h3>Daily loss halt</h3>
+          <p>Bot v2 stops buying for the day if the account drops 2% intraday. Tomorrow is another day; today
+             is done.</p>
+          <span class="state armed">ARMED · day −1.19%</span></div>
+        <div class="risk-card reveal"><div class="ic">📏</div>
+          <h3>Position &amp; order caps</h3>
+          <p>No single name over 5% of equity, max 5 orders per run, no trading in the first or last 5 minutes
+             of the session — no fat fingers, even robotic ones.</p>
+          <span class="state info">STRUCTURAL</span></div>
+        <div class="risk-card reveal"><div class="ic">🏷️</div>
+          <h3>Book isolation</h3>
+          <p>Every order is tagged. A bot can only sell shares its own tag bought — it can't touch the SPY
+             layer, the crypto core, another bot's book, or my manual trades.</p>
+          <span class="state info">STRUCTURAL</span></div>
+        <div class="risk-card reveal"><div class="ic">🧪</div>
+          <h3>Promotion rule</h3>
+          <p>Strategies aren't hot-swapped on one good backtest. A challenger must beat the incumbent
+             in-sample and out-of-sample in two consecutive monthly tournaments — and a human flips the switch.</p>
+          <span class="state info">CHALLENGER AT 1 / 2 WINS</span></div>
+      </div>
+    </section>
+
+    <!-- PIPELINE -->
+    <section id="pipeline">
+      <div class="sec-head reveal"><span class="sec-index">05</span><h2>How a trade happens</h2></div>
+      <p class="sec-sub reveal">From cron tick to phone buzz, with no human in between.</p>
+      <div class="steps">
+        <div class="step reveal"><div class="step-num">01</div>
+          <div><h3>A Routine wakes up</h3>
+          <p>The cron fires and a fresh Claude agent spins up, checks out <code>main</code> — the single source
+             of truth — and installs dependencies. Feature branches never trade.</p></div></div>
+        <div class="step reveal"><div class="step-num">02</div>
+          <div><h3>The bot reads the market</h3>
+          <p>Completed hourly bars only — the still-forming bar is dropped so signals can't peek at the future.
+             RSI, z-scores, and trend filters decide: signal or no signal.</p></div></div>
+        <div class="step reveal"><div class="step-num">03</div>
+          <div><h3>Risk gates vote</h3>
+          <p>Cash reserve, drawdown kill switch, position caps, market-window checks. A
+             <code>BLOCKED</code> line in the log is the system working, not failing.</p></div></div>
+        <div class="step reveal"><div class="step-num">04</div>
+          <div><h3>Order → broker → verify</h3>
+          <p>Tagged market order to the Alpaca paper API. The agent then re-reads the order status from the
+             broker and reports the <i>actual</i> fill — never the intended one.</p></div></div>
+        <div class="step reveal"><div class="step-num">05</div>
+          <div><h3>The human gets one line</h3>
+          <p>A push notification: <code>🪙 BTC/USD: RSI 27.3 OVERSOLD → bought $150,000</code>. The nightly
+             report and the every-2-hours watchdog keep the receipts.</p></div></div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="endcta">
+      <div class="sec-head reveal" style="justify-content:center"><span class="sec-index">06</span><h2>Poke around</h2></div>
+      <p class="sec-sub reveal" style="margin:0 auto 30px">Strategies, backtester, risk engine, and bots — all in the repo. The Routines and the money live in the cloud.</p>
+      <div class="cta reveal" style="margin-top:0">
+        <a class="btn btn-primary" href="https://github.com/zhangcheng0605/alpaca-paper-trading" target="_blank" rel="noopener">alpaca-paper-trading on GitHub</a>
+        <a class="btn btn-ghost" href="../">← Back to the portfolio</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© <span id="year"></span> Zhang Cheng · Autonomous paper trading, honestly reported ·
+       built &amp; operated by <a href="https://claude.com" target="_blank" rel="noopener">Claude</a> agents · numbers as of 2026-07-17</p>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* reveal on scroll */
+    const io = new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}})},{threshold:.08,rootMargin:'0px 0px 120px 0px'});
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+    /* count-up tiles */
+    const cio = new IntersectionObserver((es)=>{es.forEach(e=>{
+      if(!e.isIntersecting) return; cio.unobserve(e.target);
+      const el=e.target, to=+el.dataset.to, t0=performance.now(), dur=1400;
+      const step=(t)=>{const p=Math.min((t-t0)/dur,1), v=Math.round(to*(1-Math.pow(1-p,3)));
+        el.textContent=v.toLocaleString('en-US'); if(p<1) requestAnimationFrame(step);};
+      requestAnimationFrame(step);
+    })},{threshold:.4});
+    document.querySelectorAll('.count').forEach(el=>cio.observe(el));
+
+    /* ticker tape (day moves from the Jul 17 report) */
+    const ticks=[["TSLA",379.85,-2.87],["NVDA",202.64,-2.30],["SPY",743.21,-1.00],["BTC/USD",64098,0.89],
+      ["ETH/USD",1843.43,-0.66],["GOOGL",346.85,-2.15],["AMD",492.95,-1.59],["SOL/USD",74.95,-0.41],
+      ["META",645.04,-2.94],["MU",843.65,-1.12],["XRP/USD",1.09,0.17],["AMAT",526.15,-6.20],
+      ["VST",154.60,1.34],["DOGE/USD",0.072,0.36],["ASML",1746.00,-2.18],["LTC/USD",45.16,0.37]];
+    const tape=document.getElementById('tape');
+    const fmt=(p)=>p>=1000?p.toLocaleString('en-US'):p<1?p.toFixed(3):p.toFixed(2);
+    tape.innerHTML=[...ticks,...ticks].map(([s,p,c])=>
+      `<span class="tk"><span class="sym">${s}</span><span class="px">${fmt(p)}</span>`+
+      `<span class="chg ${c>=0?'up':'down'}">${c>=0?'▲':'▼'} ${Math.abs(c).toFixed(2)}%</span></span>`).join('');
+
+    /* candlestick canvas */
+    const cv=document.getElementById('candles'),cx=cv.getContext('2d');
+    let W,H,candles=[],px=0;
+    function sizeCv(){W=cv.width=cv.offsetWidth*devicePixelRatio;H=cv.height=cv.offsetHeight*devicePixelRatio;}
+    sizeCv();addEventListener('resize',sizeCv);
+    let last=100;
+    function mkCandle(){const o=last,c=o+(Math.random()-.48)*6,h=Math.max(o,c)+Math.random()*3,l=Math.min(o,c)-Math.random()*3;last=c;return{o,c,h,l};}
+    for(let i=0;i<260;i++)candles.push(mkCandle());
+    const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
+    function draw(){
+      cx.clearRect(0,0,W,H);
+      const cw=12*devicePixelRatio,gap=5*devicePixelRatio,n=Math.ceil(W/(cw+gap))+2;
+      const vis=candles.slice(-n);
+      let mn=1e9,mx=-1e9;vis.forEach(k=>{mn=Math.min(mn,k.l);mx=Math.max(mx,k.h);});
+      const y=v=>H-((v-mn)/(mx-mn||1))*(H*.86)-H*.07;
+      vis.forEach((k,i)=>{
+        const x=i*(cw+gap)-px*devicePixelRatio, up=k.c>=k.o,
+              col=up?'rgba(47,209,138,.75)':'rgba(255,98,98,.7)';
+        cx.strokeStyle=col;cx.fillStyle=col;cx.lineWidth=1.4*devicePixelRatio;
+        cx.beginPath();cx.moveTo(x+cw/2,y(k.h));cx.lineTo(x+cw/2,y(k.l));cx.stroke();
+        const top=y(Math.max(k.o,k.c)),hgt=Math.max(Math.abs(y(k.o)-y(k.c)),2);
+        cx.fillRect(x,top,cw,hgt);
+      });
+      if(!reduced){px+=.35;if(px>=17){px=0;candles.push(mkCandle());if(candles.length>400)candles.shift();}}
+      requestAnimationFrame(draw);
+    }
+    draw();
+
+    /* tooltips */
+    const tt=document.getElementById('tooltip');
+    document.querySelectorAll('[data-tt]').forEach(el=>{
+      el.addEventListener('mousemove',e=>{tt.innerHTML=el.dataset.tt;tt.style.opacity=1;
+        const r=tt.getBoundingClientRect();
+        tt.style.left=Math.min(e.clientX+16,innerWidth-r.width-12)+'px';
+        tt.style.top=Math.max(e.clientY-r.height-14,8)+'px';});
+      el.addEventListener('mouseleave',()=>tt.style.opacity=0);
+    });
+
+    /* live-ish bot log */
+    const lines=[
+      ['t','2026-07-17 14:35:12','','TSLA: no signal (RSI 40.6, $379.85, holding=False)'],
+      ['t','2026-07-17 14:35:13','','NVDA: no signal (RSI 55.2, $202.64, holding=False)'],
+      ['t','2026-07-17 16:21:04','buy','SUBMITTED BUY $457 SNPS [dip] z=−2.31 vs 20d mean, vol-sized'],
+      ['t','2026-07-17 16:35:41','blocked','BLOCKED BUY $2,000 GOOGL — would breach 10% cash reserve'],
+      ['t','2026-07-17 18:05:09','','BTC/USD: no signal (RSI 47.9, $64,098, uptrend)'],
+      ['t','2026-07-17 20:50:22','','watchdog: 4/4 routines on schedule, accounts healthy ✅'],
+      ['t','2026-07-17 21:20:30','sell','report: stocks −$1,177 (−1.19%) · crypto +$7,022 (+0.70%)'],
+    ];
+    const logEl=document.getElementById('botlog');let li=0;
+    function addLine(){
+      if(li>=lines.length){logEl.lastChild&&logEl.lastChild.remove();li=0;logEl.innerHTML='';}
+      const[_,ts,cls,msg]=lines[li++];
+      logEl.insertAdjacentHTML('beforeend',`<div><span class="t">${ts}</span> <span class="${cls}">${msg}</span></div>`);
+      logEl.insertAdjacentHTML('beforeend','');
+      setTimeout(addLine, li===1?400:1600);
+    }
+    const lio=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){lio.disconnect();addLine();}})},{threshold:.3});
+    lio.observe(logEl);
+  </script>
+</body>
+</html>
