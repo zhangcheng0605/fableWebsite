@@ -3,188 +3,287 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zhang Cheng — Builder &amp; Engineer</title>
-  <meta name="description" content="Personal website of Zhang Cheng — engineer, builder, and lifelong learner.">
-  <meta property="og:title" content="Zhang Cheng — Builder & Engineer">
-  <meta property="og:description" content="Engineer, builder, and lifelong learner.">
+  <title>Zhang Cheng — AI Engineer & Builder</title>
+  <meta name="description" content="Zhang Cheng — AI engineer. Agentic pipelines, generative media, AI comics. Everything on this site was built and shipped by AI under my direction.">
+  <meta property="og:title" content="Zhang Cheng — AI Engineer & Builder">
+  <meta property="og:description" content="Agentic pipelines, generative media, AI comics — designed, built, and deployed with AI.">
   <meta property="og:type" content="website">
+  <meta property="og:image" content="comic/page01.jpg">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#050507; --bg2:#0a0a10; --panel:rgba(255,255,255,.03);
+      --edge:rgba(255,255,255,.09); --text:#f2f1f7; --muted:#9a97ad;
+      --cyan:#38e8ff; --magenta:#ff3ddc; --violet:#8b7bff;
+      --grad:linear-gradient(92deg,var(--cyan),var(--violet) 55%,var(--magenta));
+      --radius:18px;
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif;
+         -webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.6}
+    ::selection{background:rgba(56,232,255,.25)}
+    /* ambient background */
+    .bg{position:fixed;inset:0;z-index:-2;background:
+        radial-gradient(55vw 45vh at 18% -5%,rgba(56,232,255,.10),transparent 62%),
+        radial-gradient(50vw 42vh at 88% 30%,rgba(255,61,220,.08),transparent 60%),
+        radial-gradient(60vw 50vh at 50% 110%,rgba(139,123,255,.10),transparent 65%)}
+    .gridlines{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+        background-image:linear-gradient(rgba(255,255,255,.024) 1px,transparent 1px),
+                         linear-gradient(90deg,rgba(255,255,255,.024) 1px,transparent 1px);
+        background-size:56px 56px;
+        mask-image:radial-gradient(70vw 70vh at 50% 20%,#000 0%,transparent 80%)}
+    a{color:inherit;text-decoration:none}
+    .mono{font-family:"JetBrains Mono",monospace}
+    .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+    /* nav */
+    .nav-wrap{position:fixed;top:18px;left:0;right:0;z-index:50;display:flex;justify-content:center;padding:0 20px}
+    .nav{display:flex;align-items:center;gap:26px;padding:10px 22px;border-radius:99px;
+         background:rgba(10,10,16,.6);border:1px solid var(--edge);
+         backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+    .nav a{font-size:.92rem;color:var(--muted);font-weight:500;transition:color .2s}
+    .nav a:hover{color:var(--text)}
+    .logo{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:1.05rem;color:var(--text)!important}
+    .logo span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+    /* hero */
+    .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+          text-align:center;padding:120px 24px 60px;position:relative}
+    .eyebrow{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;
+             color:var(--cyan);margin-bottom:22px}
+    .eyebrow::before{content:"● ";color:var(--magenta)}
+    h1.title{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:clamp(3rem,9vw,6.2rem);
+             line-height:1.02;letter-spacing:-.02em}
+    .hero-sub{max-width:600px;margin:28px auto 0;color:var(--muted);font-size:clamp(1rem,2.2vw,1.2rem)}
+    .hero-sub b{color:var(--text);font-weight:600}
+    .cta{display:flex;gap:14px;margin-top:40px;flex-wrap:wrap;justify-content:center}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:99px;
+         font-weight:600;font-size:.95rem;transition:transform .2s,box-shadow .2s;border:1px solid var(--edge)}
+    .btn:hover{transform:translateY(-2px)}
+    .btn-primary{background:var(--grad);color:#08070c;border:none;box-shadow:0 4px 30px rgba(139,123,255,.35)}
+    .btn-primary:hover{box-shadow:0 8px 40px rgba(56,232,255,.4)}
+    .btn-ghost{background:var(--panel)}
+    .hero-terminal{margin-top:64px;width:min(620px,92vw);text-align:left;border-radius:14px;overflow:hidden;
+        border:1px solid var(--edge);background:rgba(8,8,14,.75);backdrop-filter:blur(10px);
+        box-shadow:0 20px 60px rgba(0,0,0,.5)}
+    .term-bar{display:flex;gap:7px;padding:11px 14px;border-bottom:1px solid var(--edge)}
+    .term-bar i{width:11px;height:11px;border-radius:50%;background:#3a3a46}
+    .term-bar i:first-child{background:#ff5f57}.term-bar i:nth-child(2){background:#febc2e}.term-bar i:nth-child(3){background:#28c840}
+    .term-body{padding:18px 20px;font-family:"JetBrains Mono",monospace;font-size:.82rem;line-height:1.9;color:var(--muted)}
+    .term-body .p{color:var(--cyan)}
+    .term-body .ok{color:#28c840}
+    .cursor{display:inline-block;width:8px;height:15px;background:var(--cyan);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+    @keyframes blink{50%{opacity:0}}
+
+    /* sections */
+    section{max-width:1060px;margin:0 auto;padding:110px 24px 10px}
+    .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:14px}
+    .sec-index{font-family:"JetBrains Mono",monospace;color:var(--magenta);font-size:.85rem}
+    h2{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:clamp(1.8rem,4.5vw,2.7rem);letter-spacing:-.01em}
+    .sec-sub{color:var(--muted);max-width:640px;margin-bottom:44px}
+
+    /* project cards */
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px}
+    .card{position:relative;border-radius:var(--radius);border:1px solid var(--edge);background:var(--panel);
+          padding:28px;overflow:hidden;transition:transform .25s,border-color .25s;display:flex;flex-direction:column}
+    .card:hover{transform:translateY(-4px);border-color:rgba(56,232,255,.35)}
+    .card::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:var(--grad);opacity:0;transition:opacity .25s}
+    .card:hover::before{opacity:1}
+    .card .tag{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+               color:var(--cyan);margin-bottom:14px}
+    .card h3{font-family:"Space Grotesk",sans-serif;font-size:1.25rem;margin-bottom:10px}
+    .card p{color:var(--muted);font-size:.95rem;flex:1}
+    .card .foot{margin-top:20px;display:flex;gap:8px;flex-wrap:wrap}
+    .chip{font-size:.75rem;padding:5px 12px;border-radius:99px;border:1px solid var(--edge);color:var(--muted)}
+    .card .link{margin-top:18px;font-weight:600;font-size:.9rem;color:var(--cyan)}
+    .card .link::after{content:" →";transition:margin .2s}
+    .card:hover .link::after{margin-left:4px}
+
+    /* comic feature */
+    .comic-feature{display:flex;gap:40px;align-items:center;flex-wrap:wrap;border:1px solid var(--edge);
+        border-radius:22px;padding:34px;background:
+        linear-gradient(120deg,rgba(56,232,255,.06),rgba(255,61,220,.06));position:relative;overflow:hidden}
+    .comic-feature img{width:250px;max-width:60vw;border-radius:12px;box-shadow:0 18px 50px rgba(0,0,0,.55);
+        transition:transform .3s}
+    .comic-feature:hover img{transform:scale(1.025) rotate(-.5deg)}
+    .comic-info{flex:1;min-width:260px}
+    .comic-info h3{font-family:"Space Grotesk",sans-serif;font-size:clamp(1.5rem,3.5vw,2.1rem);line-height:1.15;margin-bottom:14px}
+    .comic-info p{color:var(--muted);margin-bottom:22px;max-width:480px}
+    .badge{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.16em;
+        text-transform:uppercase;color:var(--magenta);border:1px solid rgba(255,61,220,.4);border-radius:99px;
+        padding:5px 13px;margin-bottom:16px}
+
+    /* process */
+    .steps{display:grid;gap:0;counter-reset:step}
+    .step{display:grid;grid-template-columns:56px 1fr;gap:22px;padding:26px 0;border-bottom:1px solid var(--edge)}
+    .step:last-child{border-bottom:none}
+    .step-num{font-family:"JetBrains Mono",monospace;font-size:1.5rem;color:var(--violet)}
+    .step h3{font-family:"Space Grotesk",sans-serif;font-size:1.15rem;margin-bottom:6px}
+    .step p{color:var(--muted);font-size:.95rem;max-width:640px}
+    .step p code{font-family:"JetBrains Mono",monospace;font-size:.82rem;color:var(--cyan);
+        background:rgba(56,232,255,.08);padding:2px 7px;border-radius:6px}
+
+    /* contact */
+    .contact{text-align:center;padding-bottom:60px}
+    .email{display:inline-block;font-family:"Space Grotesk",sans-serif;font-weight:600;
+        font-size:clamp(1.3rem,4vw,2.2rem);margin:22px 0 26px}
+    .email:hover .grad-text{filter:brightness(1.25)}
+    .socials{display:flex;gap:20px;justify-content:center;color:var(--muted)}
+    .socials a:hover{color:var(--text)}
+
+    footer{text-align:center;color:var(--muted);font-size:.85rem;padding:40px 20px 50px;border-top:1px solid var(--edge);margin-top:90px}
+    footer a{color:var(--text)}
+
+    /* reveal */
+    .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.6,.2,1),transform .7s cubic-bezier(.2,.6,.2,1)}
+    .reveal.visible{opacity:1;transform:none}
+    @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+  </style>
 </head>
 <body>
-  <div class="progress" id="progressBar" aria-hidden="true"></div>
-  <div class="aurora" aria-hidden="true">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
-  </div>
-  <div class="grain" aria-hidden="true"></div>
+  <div class="bg" aria-hidden="true"></div>
+  <div class="gridlines" aria-hidden="true"></div>
 
   <header class="nav-wrap">
     <nav class="nav">
-      <a class="logo" href="#top" aria-label="Home">Z<span>C</span></a>
-      <div class="nav-links">
-        <a href="#about">About</a>
-        <a href="#work">Work</a>
-        <a href="#comics">Comics</a>
-        <a href="#contact">Contact</a>
-      </div>
-      <button class="theme-toggle" id="themeToggle" aria-label="Toggle color theme">
-        <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
-        <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
-      </button>
+      <a class="logo" href="#top">Z<span>C</span></a>
+      <a href="#projects">Projects</a>
+      <a href="#comics">Comics</a>
+      <a href="#process">Process</a>
+      <a href="#contact">Contact</a>
     </nav>
   </header>
 
   <main id="top">
-    <!-- ============ HERO ============ -->
-    <section class="hero">
-      <div class="hero-inner" id="heroInner">
-        <p class="hero-eyebrow reveal">Hello, I'm</p>
-        <h1 class="hero-title">
-          <span class="line"><span class="line-inner">Zhang</span></span>
-          <span class="line"><span class="line-inner gradient-text">Cheng</span></span>
-        </h1>
-        <p class="hero-sub reveal">I build things for the web — thoughtfully designed,<br class="desktop-only"> carefully engineered, and made to last.</p>
-        <div class="hero-cta reveal">
-          <a class="btn btn-primary" href="#work">See my work</a>
-          <a class="btn btn-ghost" href="#contact">Get in touch</a>
-        </div>
+    <!-- HERO -->
+    <section class="hero" style="max-width:none">
+      <p class="eyebrow reveal">AI Engineer · Agentic Systems · Generative Media</p>
+      <h1 class="title reveal">Zhang <span class="grad-text">Cheng</span></h1>
+      <p class="hero-sub reveal">I don't just use AI — I direct it. Everything on this site, from the code to the comics,
+        was <b>designed, generated, and deployed by AI agents</b> under my direction.</p>
+      <div class="cta reveal">
+        <a class="btn btn-primary" href="#projects">See the work</a>
+        <a class="btn btn-ghost" href="#process">How it's built</a>
       </div>
-      <div class="scroll-hint reveal" aria-hidden="true">
-        <div class="scroll-dot"></div>
-      </div>
-    </section>
-
-    <!-- ============ STATS STRIP ============ -->
-    <section class="stats reveal">
-      <div class="stat"><span class="stat-num" data-count="7">0</span><span class="stat-label">Years building</span></div>
-      <div class="stat"><span class="stat-num" data-count="24">0</span><span class="stat-label">Projects shipped</span></div>
-      <div class="stat"><span class="stat-num" data-count="12">0</span><span class="stat-label">Happy collaborators</span></div>
-      <div class="stat"><span class="stat-num">∞</span><span class="stat-label">Curiosity</span></div>
-    </section>
-
-    <!-- ============ MARQUEE ============ -->
-    <div class="marquee" aria-hidden="true">
-      <div class="marquee-track" id="marqueeTrack">
-        <span class="marquee-chunk">Engineer&nbsp;— Builder&nbsp;— Designer&nbsp;— Dreamer&nbsp;— Engineer&nbsp;— Builder&nbsp;— Designer&nbsp;— Dreamer&nbsp;—&nbsp;</span>
-        <span class="marquee-chunk">Engineer&nbsp;— Builder&nbsp;— Designer&nbsp;— Dreamer&nbsp;— Engineer&nbsp;— Builder&nbsp;— Designer&nbsp;— Dreamer&nbsp;—&nbsp;</span>
-      </div>
-    </div>
-
-    <!-- ============ ABOUT ============ -->
-    <section class="section" id="about">
-      <h2 class="section-title reveal"><span class="section-index">01</span> About</h2>
-      <div class="about-grid">
-        <p class="about-lead reveal">I'm an engineer who cares about the details — the kind you don't notice until they're missing.</p>
-        <div class="about-body reveal">
-          <p>I enjoy working across the stack: shaping ideas into interfaces, wiring them to solid backends, and shipping them to real users. When I'm not writing code, I'm probably reading about how things work or taking them apart to find out.</p>
-          <p>Currently open to interesting problems and good conversations.</p>
-        </div>
-      </div>
-      <div class="chips reveal">
-        <span class="chip">TypeScript</span>
-        <span class="chip">Python</span>
-        <span class="chip">React</span>
-        <span class="chip">Node.js</span>
-        <span class="chip">Cloud &amp; DevOps</span>
-        <span class="chip">UI Design</span>
-      </div>
-    </section>
-
-    <!-- ============ WORK (pinned horizontal gallery) ============ -->
-    <section class="work-pin" id="work">
-      <div class="work-sticky">
-        <div class="work-head">
-          <h2 class="section-title reveal"><span class="section-index">02</span> Selected work</h2>
-        </div>
-        <div class="work-track" id="workTrack">
-          <article class="card reveal">
-            <div class="card-top card-top-a"><span class="card-emoji">⚡</span></div>
-            <div class="card-body">
-              <h3>Project One</h3>
-              <p>A fast, focused tool that does one thing exceptionally well. Built with performance as a feature.</p>
-              <div class="card-tags"><span>TypeScript</span><span>Vite</span></div>
-            </div>
-          </article>
-          <article class="card reveal">
-            <div class="card-top card-top-b"><span class="card-emoji">🛰️</span></div>
-            <div class="card-body">
-              <h3>Project Two</h3>
-              <p>A data pipeline and dashboard that turns raw noise into decisions people actually make.</p>
-              <div class="card-tags"><span>Python</span><span>PostgreSQL</span></div>
-            </div>
-          </article>
-          <article class="card reveal">
-            <div class="card-top card-top-c"><span class="card-emoji">🎛️</span></div>
-            <div class="card-body">
-              <h3>Project Three</h3>
-              <p>An internal platform that made a slow, manual process disappear into a single click.</p>
-              <div class="card-tags"><span>React</span><span>Node.js</span></div>
-            </div>
-          </article>
-          <article class="card reveal">
-            <div class="card-top card-top-d"><span class="card-emoji">🌱</span></div>
-            <div class="card-body">
-              <h3>Next up</h3>
-              <p>Something new is always cooking. Have an idea worth building together? Say hi below.</p>
-              <div class="card-tags"><span>Ideas welcome</span></div>
-            </div>
-          </article>
-        </div>
-        <div class="work-head">
-          <p class="work-note reveal">These are placeholders — tell Claude about your real projects and this section will come alive.</p>
+      <div class="hero-terminal reveal" aria-hidden="true">
+        <div class="term-bar"><i></i><i></i><i></i></div>
+        <div class="term-body">
+          <div><span class="p">$</span> claude "write ch.1, draw 12 pages, ship it"</div>
+          <div><span class="ok">✓</span> storyline approved &nbsp;<span class="ok">✓</span> 12 pages · gpt-image-2</div>
+          <div><span class="ok">✓</span> deployed → zhangcheng0605.github.io/fableWebsite/comic <span class="cursor"></span></div>
         </div>
       </div>
     </section>
 
-    <!-- ============ COMICS ============ -->
-    <section class="section" id="comics">
-      <h2 class="section-title reveal"><span class="section-index">03</span> Comics</h2>
-      <p class="work-note reveal">AI-generated anime comics — written with Claude, drawn with gpt-image-2.</p>
-      <a class="reveal" href="comic/" style="display:flex;flex-wrap:wrap;gap:28px;align-items:center;text-decoration:none;color:inherit;background:rgba(127,127,160,.08);border:1px solid rgba(127,127,160,.25);border-radius:16px;padding:24px;margin-top:18px">
-        <img src="comic/page01.jpg" alt="Witch of the Vending Machines — cover" loading="lazy" style="width:210px;max-width:42vw;border-radius:10px;display:block;box-shadow:0 8px 30px rgba(0,0,0,.35)">
-        <div style="flex:1;min-width:230px">
-          <h3 style="font-family:'Space Grotesk',sans-serif;font-size:1.45rem;margin-bottom:10px;background:linear-gradient(90deg,#37e6ff,#ff3ddc);-webkit-background-clip:text;background-clip:text;color:transparent">Witch of the Vending Machines</h3>
-          <p style="opacity:.75;line-height:1.65;margin-bottom:16px">Somewhere in Tokyo's back streets there is a vending machine that wasn't there yesterday. It doesn't take money — it takes honesty. Neon-noir urban fantasy, one wish at a time.</p>
-          <span class="btn btn-primary">Read Chapter 1 →</span>
+    <!-- PROJECTS -->
+    <section id="projects">
+      <div class="sec-head reveal"><span class="sec-index">01</span><h2>AI Projects</h2></div>
+      <p class="sec-sub reveal">Real, shipped systems — not demos. Each one runs end-to-end with an AI agent in the loop.</p>
+      <div class="grid">
+        <article class="card reveal">
+          <p class="tag">Flagship · Generative pipeline</p>
+          <h3>AI Comic Factory</h3>
+          <p>A full comic production line: Claude writes the storyline and panel scripts, gpt-image-2 renders 12 consistent
+             neon-noir pages via locked character prompts, and an agent composites, optimizes, and publishes the finished
+             chapter to this site — from idea to live URL in a single session.</p>
+          <div class="foot"><span class="chip">Claude Agents</span><span class="chip">gpt-image-2</span><span class="chip">Prompt engineering</span></div>
+          <a class="link" href="comic/">Read the result</a>
+        </article>
+        <article class="card reveal">
+          <p class="tag">Autonomous · Self-improving</p>
+          <h3>Self-Evolving Portrait Engine</h3>
+          <p>A scheduled agent that generates one portrait of a consistent character every morning, mutates exactly one
+             creative dimension per day, rewrites its own prompt to persist the evolution, and folds my natural-language
+             feedback into tomorrow's generation. A living, self-editing prompt.</p>
+          <div class="foot"><span class="chip">Scheduled agents</span><span class="chip">Image generation</span><span class="chip">Feedback loops</span></div>
+          <a class="link" href="#process">See the method</a>
+        </article>
+        <article class="card reveal">
+          <p class="tag">Meta · Agentic deployment</p>
+          <h3>This Website</h3>
+          <p>Designed, coded, and deployed end-to-end by an AI agent — including driving a real browser to commit to
+             GitHub. I set the direction; the agent handled design systems, image pipelines, QA, and production pushes.
+             You're looking at the portfolio piece right now.</p>
+          <div class="foot"><span class="chip">Browser automation</span><span class="chip">CI-free deploys</span><span class="chip">GitHub Pages</span></div>
+          <a class="link" href="#process">How it works</a>
+        </article>
+      </div>
+    </section>
+
+    <!-- COMICS -->
+    <section id="comics">
+      <div class="sec-head reveal"><span class="sec-index">02</span><h2>AI Comics</h2></div>
+      <p class="sec-sub reveal">Original stories, 100% AI-drawn. Written with Claude, rendered with gpt-image-2.</p>
+      <a class="comic-feature reveal" href="comic/">
+        <img src="comic/page01.jpg" alt="Witch of the Vending Machines — Chapter 1 cover" loading="lazy">
+        <div class="comic-info">
+          <span class="badge">Chapter 1 · 12 pages · Live now</span>
+          <h3>Witch of the <span class="grad-text">Vending Machines</span></h3>
+          <p>Somewhere in Tokyo's back streets there is a vending machine that wasn't there yesterday.
+             It doesn't take money — it takes honesty. A neon-noir urban fantasy, one wish at a time.</p>
+          <span class="btn btn-primary">Read Chapter 1</span>
         </div>
       </a>
     </section>
 
-    <!-- ============ MOTION (scroll-scrubbed video) ============ -->
-    <section class="scrub-pin" id="motion">
-      <div class="scrub-sticky">
-        <div class="work-head">
-          <h2 class="section-title reveal"><span class="section-index">04</span> Motion</h2>
+    <!-- PROCESS -->
+    <section id="process">
+      <div class="sec-head reveal"><span class="sec-index">03</span><h2>How it's made</h2></div>
+      <p class="sec-sub reveal">The honest pipeline — shared openly, because directing AI well is the actual skill.</p>
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step-num">01</div>
+          <div><h3>Direct, don't micromanage</h3>
+          <p>I give the agent intent and constraints — <code>"anime comic, my website, make it live"</code> — and approve
+             at checkpoints: storyline, art style, publish. High-level direction, verifiable outcomes.</p></div>
         </div>
-        <div class="scrub-stage">
-          <canvas id="scrubCanvas" class="scrub-video" width="480" height="740" role="img" aria-label="A little girl offering bread to a street cat — scrubbed by scrolling"></canvas>
+        <div class="step reveal">
+          <div class="step-num">02</div>
+          <div><h3>Lock the creative system</h3>
+          <p>Consistency comes from engineering: frozen character sheets and one style string —
+             <code>1990s anime cel · neon-noir Tokyo · cyan/magenta</code> — injected verbatim into every gpt-image-2 call.</p></div>
         </div>
-        <div class="work-head">
-          <p class="work-note reveal">Scroll up and down — the moment plays forward and backward with you.</p>
+        <div class="step reveal">
+          <div class="step-num">03</div>
+          <div><h3>Build resilient pipelines</h3>
+          <p>Async background jobs for 12 parallel renders, polling within sandbox timeouts, automatic retries,
+             web-optimized output (35MB → 5MB). When the environment fights back, the pipeline adapts.</p></div>
+        </div>
+        <div class="step reveal">
+          <div class="step-num">04</div>
+          <div><h3>Ship autonomously, verify ruthlessly</h3>
+          <p>The agent drives a real browser to commit to GitHub, then verifies the live URL, the rendered DOM,
+             and the pixels before calling it done. No deploy is "done" until production says so.</p></div>
         </div>
       </div>
     </section>
 
-    <!-- ============ CONTACT ============ -->
-    <section class="section contact" id="contact">
-      <h2 class="section-title reveal"><span class="section-index">05</span> Contact</h2>
-      <p class="contact-lead reveal">Have an idea, a project, or just want to say hi?</p>
-      <a class="contact-email reveal" href="mailto:zhangcheng1997@gmail.com">zhangcheng1997@gmail.com</a>
-      <div class="contact-links reveal">
+    <!-- CONTACT -->
+    <section id="contact" class="contact">
+      <div class="sec-head reveal" style="justify-content:center"><span class="sec-index">04</span><h2>Let's build</h2></div>
+      <p class="sec-sub reveal" style="margin:0 auto">Looking for someone who can turn AI capability into shipped product? Say hi.</p>
+      <a class="email reveal" href="mailto:zhangcheng1997@gmail.com"><span class="grad-text">zhangcheng1997@gmail.com</span></a>
+      <div class="socials reveal">
         <a href="https://github.com/zhangcheng0605" target="_blank" rel="noopener">GitHub</a>
       </div>
     </section>
   </main>
 
-  <footer class="footer">
-    <p>© <span id="year"></span> Zhang Cheng · Built with <a href="https://claude.com/claude-code" target="_blank" rel="noopener">Claude Code</a> · Hosted on GitHub Pages</p>
+  <footer>
+    <p>© <span id="year"></span> Zhang Cheng · Directed by a human, built by AI ·
+       <a href="https://claude.com" target="_blank" rel="noopener">Claude</a> × gpt-image-2 · GitHub Pages</p>
   </footer>
 
-  <script src="assets/script.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
+    },{threshold:.12});
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  </script>
 </body>
 </html>
