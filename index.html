@@ -152,8 +152,16 @@
     @keyframes ltdcorner{0%,49%{opacity:1}50%,100%{opacity:.38}}
     .comic-feature.is-ltd .btn-primary{background:linear-gradient(100deg,#fff3d6,#ffc861 46%,#ff9d3d);
         color:#1a1004;border:none}
+    .comic-series.is-ltd{border-color:rgba(255,200,97,.5);
+        background:linear-gradient(120deg,rgba(255,200,97,.10),rgba(255,157,61,.13))}
+    .comic-series.is-ltd::after{content:"LIMITED";color:#1a1004;
+        background:linear-gradient(100deg,#fff3d6,#ffc861 50%,#ff9d3d);
+        box-shadow:0 6px 20px rgba(255,157,61,.45);animation:ltdcorner 1.1s steps(1,end) infinite}
+    .comic-series.is-ltd .chapter:hover{border-color:rgba(255,200,97,.6);background:rgba(255,200,97,.07)}
+    .comic-series.is-ltd .btn-primary{background:linear-gradient(100deg,#fff3d6,#ffc861 46%,#ff9d3d);
+        color:#1a1004;border:none}
     @media (prefers-reduced-motion:reduce){
-      .badge-ltd,.comic-feature.is-ltd::after{animation:none;opacity:1}}
+      .badge-ltd,.comic-feature.is-ltd::after,.comic-series.is-ltd::after{animation:none;opacity:1}}
 
     /* comic series (one comic, multiple chapters) */
     .comic-series{border:1px solid rgba(255,61,220,.45);border-radius:22px;padding:34px;position:relative;
@@ -282,18 +290,40 @@
     <section id="comics">
       <div class="sec-head reveal"><span class="sec-index">02</span><h2>AI Comics</h2></div>
       <p class="sec-sub reveal">Original stories, 100% AI-drawn. Written and rendered by AI agents.</p>
-      <a class="comic-feature reveal is-ltd" href="seen/" style="margin-bottom:22px">
-        <img src="seen/p17_02.jpg" alt="SEEN — Chapter 1: Good Morning, Everyone cover" loading="lazy">
-        <div class="comic-info">
-          <span class="badge badge-ltd">⚡ Limited Time Manga · Chapter 1 · 41 panels</span>
-          <h3><span class="grad-gold">SEEN</span> — Good Morning, Everyone</h3>
-          <p>Everyone likes Ethan Cole. He holds the lift, buys the coffee, laughs at the joke — and watches his
-             own work presented as somebody else's. Then one Monday he can hear every thought in the building,
-             and above every head floats a small glowing number: that person's lifetime lie count.
-             His own reads <b>1,203</b>.</p>
-          <span class="btn btn-primary">Read SEEN — Chapter 1</span>
+      <div class="comic-series reveal is-ltd" style="margin-bottom:22px">
+        <div class="series-head">
+          <span class="badge badge-ltd">⚡ Limited Time Manga · Ongoing Series · 2 Chapters</span>
+          <h3><span class="grad-gold">SEEN</span> — Corporate Slave with Superpowers</h3>
+          <p>Ethan Cole is the guy everyone likes. One Monday he can hear every thought in the building,
+             and above every head floats that person's lifetime lie count. It should make him unstoppable.
+             It doesn't — because he can't use any of it without revealing how he knows.</p>
         </div>
-      </a>
+        <div class="chapter-list">
+          <a class="chapter" href="seen2/">
+            <img src="seen2/c2_p12_03.jpg" alt="SEEN — Chapter 2: After Hours cover" loading="lazy">
+            <div class="chapter-info">
+              <span class="badge badge-ltd">⚡ New · Chapter 2 · 69 panels</span>
+              <h4>Chapter 2 — After <span class="grad-gold">Hours</span></h4>
+              <p>The kindest person in the building has told 60,109 lies, every one of them to cover for
+                 somebody else. The honest one has told 9, and it has cost her her career. And in a parking
+                 garage at midnight, Marcus Reid's counter climbs while he says nothing at all —
+                 because it was never counting what people say.</p>
+              <span class="btn btn-primary">Read Chapter 2</span>
+            </div>
+          </a>
+          <a class="chapter" href="seen/">
+            <img src="seen/p17_02.jpg" alt="SEEN — Chapter 1: Good Morning, Everyone cover" loading="lazy">
+            <div class="chapter-info">
+              <span class="badge">Chapter 1 · 41 panels</span>
+              <h4>Chapter 1 — Good Morning, <span class="grad-gold">Everyone</span></h4>
+              <p>He holds the lift, buys the coffee, laughs at the joke — and watches his own work
+                 presented as somebody else's. Then the numbers arrive. Marcus reads 148,662 and climbing.
+                 His own reads 1,203.</p>
+              <span class="btn btn-primary">Read Chapter 1</span>
+            </div>
+          </a>
+        </div>
+      </div>
       <div class="comic-series reveal">
         <div class="series-head">
           <span class="badge badge-new">★ New Chapter · Ongoing Series · 3 Chapters</span>
