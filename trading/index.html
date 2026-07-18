@@ -234,6 +234,41 @@
     .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.6,.2,1),transform .7s cubic-bezier(.2,.6,.2,1)}
     .reveal.visible{opacity:1;transform:none}
     @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.bar{transition:none;transform:scaleY(1)}}
+    /* --- postmortem --- */
+    .findings{display:grid;gap:16px}
+    .finding{border:1px solid var(--edge);border-radius:var(--radius);background:var(--panel);padding:26px 28px}
+    .finding h3{font-family:"Space Grotesk",sans-serif;font-size:1.08rem;margin:12px 0 10px;line-height:1.35}
+    .finding p{color:var(--muted);font-size:.88rem;line-height:1.65;margin:0 0 10px}
+    .finding p:last-child{margin-bottom:0}
+    .finding code{font-family:"JetBrains Mono",monospace;font-size:.82em;color:var(--cyan);
+        background:rgba(56,232,255,.07);padding:1px 5px;border-radius:5px}
+    .finding em{color:var(--text);font-style:normal}
+    .sev{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.08em;
+        padding:4px 11px;border-radius:99px}
+    .sev-high{color:var(--down);border:1px solid rgba(255,98,98,.45);background:rgba(255,98,98,.07)}
+    .sev-med{color:#e2b33f;border:1px solid rgba(226,179,63,.4);background:rgba(226,179,63,.06)}
+    .sev-low{color:var(--muted);border:1px solid var(--edge)}
+    .finding .worst{color:var(--text);border-left:2px solid var(--down);padding-left:14px}
+    .finding .evidence{font-family:"JetBrains Mono",monospace;font-size:.76rem;color:var(--muted);
+        background:rgba(0,0,0,.35);border:1px solid var(--edge);border-radius:10px;
+        padding:12px 14px;margin:14px 0;overflow-x:auto;white-space:pre}
+    .finding .evidence span{display:block;color:var(--violet);font-size:.68rem;margin-bottom:6px}
+    .finding .fix{color:var(--text);font-size:.85rem}
+    .finding .fix b{color:var(--up);font-weight:600}
+    .sub-head{font-family:"Space Grotesk",sans-serif;font-size:1.25rem;margin:52px 0 18px}
+    .incidents{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+    .incident{border:1px solid var(--edge);border-radius:var(--radius);background:var(--panel);padding:24px}
+    .incident h4{font-family:"Space Grotesk",sans-serif;font-size:.98rem;margin:10px 0 8px;line-height:1.4}
+    .incident p{color:var(--muted);font-size:.85rem;line-height:1.6;margin:0}
+    .inc-tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.64rem;letter-spacing:.08em;
+        color:var(--up);border:1px solid rgba(47,209,138,.4);padding:3px 10px;border-radius:99px}
+    .verdict{margin-top:52px;border:1px solid var(--edge);border-radius:var(--radius);
+        background:linear-gradient(180deg,rgba(139,123,255,.07),transparent);padding:30px 32px}
+    .verdict h3{font-family:"Space Grotesk",sans-serif;font-size:1.15rem;margin:0 0 14px}
+    .verdict p{color:var(--muted);font-size:.9rem;line-height:1.7;margin:0 0 12px}
+    .verdict p:last-child{margin-bottom:0}
+    .verdict b{color:var(--text)}
+    @media(max-width:640px){.finding{padding:22px 20px}.verdict{padding:24px 22px}}
   </style>
 </head>
 <body>
@@ -249,6 +284,7 @@
       <a href="#routines">Routines</a>
       <a href="#money">P&amp;L</a>
       <a href="#risk">Risk</a>
+      <a href="#postmortem">Postmortem</a>
     </nav>
   </header>
 
@@ -620,8 +656,148 @@
     </section>
 
     <!-- CTA -->
+
+    <!-- POSTMORTEM -->
+    <section id="postmortem">
+      <div class="sec-head reveal"><span class="sec-index">06</span><h2>What this doesn't prove</h2></div>
+      <p class="sec-sub reveal">Everything above is the system working as designed. This section is the part that
+         doesn't. A backtest picked these strategies, and the backtest has real defects — one of them a bug I
+         found by re-reading my own out-of-sample split. Written down here because a number you haven't tried
+         to break isn't evidence.</p>
+
+      <div class="findings">
+
+        <div class="finding reveal">
+          <span class="sev sev-high">BUG · confirmed</span>
+          <h3>My out-of-sample test recomputes indicators on the slice</h3>
+          <p>The tournament splits each symbol 70/30 and scores the tail as out-of-sample. But it calls
+             <code>strategy(part)</code> on the <em>truncated</em> frame, so every rolling window restarts from
+             scratch inside the test set instead of carrying history across the split.</p>
+          <p>A 200-bar trend filter on a 110-bar out-of-sample window is entirely undefined — the strategy can
+             never signal and scores as flat, which reads as "no edge" when it actually means "never ran."
+             Reproducing it on 1,200 synthetic hourly bars: the first 199 bars of every out-of-sample window are
+             unconditionally flat, and the strategy takes 2 round trips as written against 3 with the indicator
+             computed on full history — 37 bars in the market instead of 68.</p>
+          <p class="worst">The strategy this hits hardest is <code>rsi_reversion_trend</code> — the trend-filtered
+             dip logic Bot v2 actually trades. The out-of-sample number meant to validate the live strategy is
+             the least trustworthy number in the table.</p>
+          <div class="evidence"><span>strategies.py</span>WARMUP_BARS = 200  # declared, and never imported by backtest.py</div>
+          <p class="fix"><b>Fix:</b> compute signals on the full series, then slice — or enforce the warmup
+             constant that's already sitting there unused.</p>
+        </div>
+
+        <div class="finding reveal">
+          <span class="sev sev-high">BIAS</span>
+          <h3>I picked the four symbols already knowing how they did</h3>
+          <p>The default universe is TSLA, NVDA, PLTR and SPY — names that are famous in 2026 precisely because
+             they went up. A long-only dip-buyer tested on assets with strong upward drift looks good almost
+             regardless of whether the signal has merit: buy any dip in a rising asset and wait.</p>
+          <p>Nothing in the sample was delisted, halted, or went to zero, so the tournament has never once been
+             asked what the strategy does when a name simply doesn't come back. Keeping
+             <code>buy_and_hold</code> in the tournament as a control was the right instinct — but the control
+             can't rescue a universe chosen with hindsight.</p>
+          <p class="fix"><b>Fix:</b> a survivorship-free universe including names that died, and a
+             point-in-time index membership list rather than today's winners.</p>
+        </div>
+
+        <div class="finding reveal">
+          <span class="sev sev-med">STATISTICS</span>
+          <h3>The winner is the maximum of 44 noisy estimates</h3>
+          <p>Eleven strategies across four symbols, ranked by average Sharpe. The maximum of many noisy
+             estimates is biased upward even when every strategy in the pool is worthless — the more variants I
+             try, the better the best one looks for reasons that have nothing to do with edge.</p>
+          <p>The promotion rule genuinely helps here, and it's the part of this project I'd defend: a challenger
+             must win in-sample <em>and</em> out-of-sample in two consecutive monthly tournaments before a human
+             flips the switch. But the monthly re-runs pull overlapping windows, so the same "out-of-sample"
+             data gets reused every month and decays into in-sample.</p>
+          <p class="fix"><b>Fix:</b> deflate the Sharpe for the number of trials, and hold back a window the
+             tournament is never allowed to see until a strategy is up for promotion.</p>
+        </div>
+
+        <div class="finding reveal">
+          <span class="sev sev-med">STATISTICS</span>
+          <h3>Annualizing a two-month Sharpe</h3>
+          <p>The default run is 59 days of 5-minute bars, annualized by <code>sqrt(78 × 252)</code>. That scaling
+             assumes bar returns are independent — but a strategy that holds a position across many bars produces
+             heavily autocorrelated returns, so the annualized figure overstates. Two months is also a single
+             regime. The resulting confidence interval comfortably contains zero, and I was reading these numbers
+             to one decimal place.</p>
+          <p class="fix"><b>Fix:</b> report the Sharpe with an error bar, or don't annualize a sample this short.</p>
+        </div>
+
+        <div class="finding reveal">
+          <span class="sev sev-med">COSTS</span>
+          <h3>Costs are a flat haircut, and fills are free</h3>
+          <p>5 bps per side on stocks, 25 on crypto, charged per position flip. No market impact, no queue
+             position, no partial fills, no spread widening. Spreads blow out exactly when a mean-reversion
+             signal fires — the model charges the same 5 bps in a calm tape as in a panic, which is the one
+             moment it matters.</p>
+          <p>Live is no stricter: paper fills market orders against the quote with no impact and no rejection,
+             and signals come off the free IEX feed, which is a fraction of consolidated volume rather than the
+             NBBO a real order would meet. A $150k crypto order clearing instantly at the touch is not a thing
+             that happens to real money.</p>
+          <p class="fix"><b>Fix:</b> model cost as a function of spread and realized volatility, and haircut
+             paper fills before believing any of it.</p>
+        </div>
+
+        <div class="finding reveal">
+          <span class="sev sev-low">MISMATCH</span>
+          <h3>The backtest and the live bot don't trade at the same moment</h3>
+          <p>The backtester assumes execution at the bar close. The live Routine fires at 35 minutes past the
+             hour and acts on the most recently completed bar — so a real entry happens minutes after, and at a
+             different price from, the one the backtest scored. Small on hourly bars. Not zero, and it always
+             cuts the same direction on fast-moving names.</p>
+        </div>
+
+        <div class="finding reveal">
+          <span class="sev sev-low">DATA</span>
+          <h3>The backtester silently changes data source</h3>
+          <p><code>get_bars</code> catches any Alpaca failure and falls back to Yahoo with a warning on stderr.
+             The monthly tournament runs without keys — so it re-ranks strategies on Yahoo data, with different
+             adjustments and session boundaries, and then reports on strategies that trade Alpaca data. The
+             source is recorded in <code>df.attrs</code> and never printed in the ranking, so a mixed-source
+             comparison looks identical to a clean one.</p>
+          <p class="fix"><b>Fix:</b> tag every result with its source and refuse to rank across sources.</p>
+        </div>
+
+      </div>
+
+      <h3 class="sub-head reveal">Two things that actually broke</h3>
+      <div class="incidents">
+        <div class="incident reveal">
+          <span class="inc-tag">RESOLVED</span>
+          <h4>I committed API keys and GitHub revoked them for me</h4>
+          <p>An early commit carried Alpaca credentials. GitHub's secret scanning caught them and auto-revoked
+             the pair before I noticed — the failure mode that saved me is the one I should have built. Keys now
+             live outside the repository entirely and never touch a commit, private repo or not.</p>
+        </div>
+        <div class="incident reveal">
+          <span class="inc-tag">RESOLVED</span>
+          <h4>Two bots on one account traded against each other</h4>
+          <p>The RSI bot and Bot v2 shared a stock account, and nothing stopped one from selling what the other
+             had just bought — or from either touching the passive SPY layer. Fixed by partitioning: every order
+             carries its own tag, each bot may only sell what its own tag bought, TSLA/NVDA/PLTR belong
+             exclusively to the RSI bot, and the index layer belongs to no bot at all. Account-wide limits moved
+             out of both bots into a shared risk module, because a limit that lives inside one bot doesn't bind
+             the other.</p>
+        </div>
+      </div>
+
+      <div class="verdict reveal">
+        <h3>So what do the numbers say?</h3>
+        <p>Three days in, the stock account is behind SPY by $1,070 and behind its own frozen twin by $966 —
+           that second gap is the honest one, because it says the trading itself has subtracted value rather
+           than the picks being wrong. Crypto is up 0.70%, almost entirely from a core position the bot isn't
+           allowed to sell.</p>
+        <p><b>None of that means anything yet.</b> Three days is noise. A win would have been noise too, and I'd
+           like to think I'd be saying so with the same confidence. The reason to publish it is that the
+           measurement runs nightly, automatically, against benchmarks chosen before the result was known — so
+           in six months there'll be something here worth reading, whichever way it goes.</p>
+      </div>
+    </section>
+
     <section class="endcta">
-      <div class="sec-head reveal" style="justify-content:center"><span class="sec-index">06</span><h2>Poke around</h2></div>
+      <div class="sec-head reveal" style="justify-content:center"><span class="sec-index">07</span><h2>Poke around</h2></div>
       <p class="sec-sub reveal" style="margin:0 auto 30px">Strategies, backtester, risk engine, and bots — all in the repo. The Routines and the money live in the cloud.</p>
       <div class="cta reveal" style="margin-top:0">
         <a class="btn btn-primary" href="https://github.com/zhangcheng0605/alpaca-paper-trading" target="_blank" rel="noopener">alpaca-paper-trading on GitHub</a>
