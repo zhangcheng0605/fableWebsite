@@ -134,6 +134,28 @@
         box-shadow:0 6px 20px rgba(255,61,220,.4)}
     @media (prefers-reduced-motion:reduce){.badge-new{animation:none}}
 
+    /* comic series (one comic, multiple chapters) */
+    .comic-series{border:1px solid rgba(255,61,220,.45);border-radius:22px;padding:34px;position:relative;
+        overflow:hidden;background:linear-gradient(120deg,rgba(56,232,255,.10),rgba(255,61,220,.12))}
+    .comic-series::after{content:"NEW";position:absolute;top:20px;right:-42px;transform:rotate(45deg);
+        width:150px;text-align:center;padding:7px 0;font-family:"JetBrains Mono",monospace;font-size:.68rem;
+        letter-spacing:.22em;font-weight:700;color:#06060e;
+        background:linear-gradient(100deg,var(--cyan),var(--magenta));box-shadow:0 6px 20px rgba(255,61,220,.4)}
+    .series-head{max-width:640px;margin-bottom:28px}
+    .series-head h3{font-family:"Space Grotesk",sans-serif;font-size:clamp(1.6rem,4vw,2.3rem);
+        line-height:1.12;margin-bottom:14px}
+    .series-head p{color:var(--muted);margin:0}
+    .chapter-list{display:flex;flex-direction:column;gap:18px}
+    .chapter{display:flex;gap:26px;align-items:center;flex-wrap:wrap;border:1px solid var(--edge);
+        border-radius:16px;padding:20px;background:rgba(6,6,14,.35);transition:border-color .25s,background .25s}
+    .chapter:hover{border-color:rgba(255,61,220,.45);background:rgba(255,61,220,.06)}
+    .chapter img{width:130px;max-width:34vw;border-radius:10px;box-shadow:0 12px 34px rgba(0,0,0,.5);
+        transition:transform .3s}
+    .chapter:hover img{transform:scale(1.03) rotate(-.5deg)}
+    .chapter-info{flex:1;min-width:240px}
+    .chapter-info h4{font-family:"Space Grotesk",sans-serif;font-size:1.15rem;margin-bottom:12px}
+    .chapter-info p{color:var(--muted);margin-bottom:18px;max-width:480px;font-size:.95rem}
+
     /* process */
     .steps{display:grid;gap:0;counter-reset:step}
     .step{display:grid;grid-template-columns:56px 1fr;gap:22px;padding:26px 0;border-bottom:1px solid var(--edge)}
@@ -248,27 +270,37 @@
     <section id="comics">
       <div class="sec-head reveal"><span class="sec-index">02</span><h2>AI Comics</h2></div>
       <p class="sec-sub reveal">Original stories, 100% AI-drawn. Written with Claude, rendered with gpt-image-2.</p>
-      <a class="comic-feature is-new reveal" href="comic2/">
-        <img src="comic2/page01.jpg" alt="Witch of the Vending Machines — Chapter 2: Exact Change cover" loading="lazy">
-        <div class="comic-info">
-          <span class="badge badge-new">★ New · Chapter 2 · 14 pages</span>
-          <h3>Exact <span class="grad-text">Change</span></h3>
-          <p>Yui got her second chance. This morning her closest friend looked straight at her
-             and asked if they'd met. The machines don't make anything — they only move it,
-             and everything she bought was paid for by somebody else.</p>
-          <span class="btn btn-primary">Read Chapter 2</span>
-        </div>
-      </a>
-      <a class="comic-feature reveal" href="comic/">
-        <img src="comic/page01.jpg" alt="Witch of the Vending Machines — Chapter 1 cover" loading="lazy">
-        <div class="comic-info">
-          <span class="badge">Chapter 1 · 12 pages</span>
+      <div class="comic-series reveal">
+        <div class="series-head">
+          <span class="badge badge-new">★ New Chapter · Ongoing Series · 2 Chapters</span>
           <h3>Witch of the <span class="grad-text">Vending Machines</span></h3>
           <p>Somewhere in Tokyo's back streets there is a vending machine that wasn't there yesterday.
              It doesn't take money — it takes honesty. A neon-noir urban fantasy, one wish at a time.</p>
-          <span class="btn btn-primary">Read Chapter 1</span>
         </div>
-      </a>
+        <div class="chapter-list">
+          <a class="chapter" href="comic2/">
+            <img src="comic2/page01.jpg" alt="Witch of the Vending Machines — Chapter 2: Exact Change cover" loading="lazy">
+            <div class="chapter-info">
+              <span class="badge badge-new">★ New · Chapter 2 · 14 pages</span>
+              <h4>Chapter 2 — Exact <span class="grad-text">Change</span></h4>
+              <p>Yui got her second chance. This morning her closest friend looked straight at her
+                 and asked if they'd met. The machines don't make anything — they only move it,
+                 and everything she bought was paid for by somebody else.</p>
+              <span class="btn btn-primary">Read Chapter 2</span>
+            </div>
+          </a>
+          <a class="chapter" href="comic/">
+            <img src="comic/page01.jpg" alt="Witch of the Vending Machines — Chapter 1 cover" loading="lazy">
+            <div class="chapter-info">
+              <span class="badge">Chapter 1 · 12 pages</span>
+              <h4>Chapter 1 — Where It <span class="grad-text">Begins</span></h4>
+              <p>The machine that wasn't there yesterday, and the first coin that was never money.
+                 It doesn't take money — it takes honesty. One wish at a time.</p>
+              <span class="btn btn-primary">Read Chapter 1</span>
+            </div>
+          </a>
+        </div>
+      </div>
       <a class="comic-feature reveal" href="rich/" style="margin-top:22px">
         <img src="rich/page01.jpg" alt="Born Rich — manga one-shot cover" loading="lazy">
         <div class="comic-info">
