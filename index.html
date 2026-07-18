@@ -187,11 +187,14 @@
         line-height:1.14;margin-bottom:14px}
     .desk .blurb{color:var(--muted);margin-bottom:26px;max-width:560px;font-size:.97rem}
     .desk-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:24px}
-    .stat{border:1px solid var(--edge);border-radius:14px;padding:14px 15px;background:rgba(6,6,14,.42)}
+    .stat{border:1px solid var(--edge);border-radius:14px;padding:14px 15px;background:rgba(6,6,14,.42);
+        min-width:0;overflow:hidden}
     .stat .k{font-family:"JetBrains Mono",monospace;font-size:.63rem;letter-spacing:.13em;
-        text-transform:uppercase;color:var(--muted);margin-bottom:8px}
-    .stat .v{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:1.32rem;line-height:1.1}
-    .stat .d{font-family:"JetBrains Mono",monospace;font-size:.68rem;margin-top:7px;color:var(--muted)}
+        text-transform:uppercase;color:var(--muted);margin-bottom:8px;overflow-wrap:anywhere}
+    .stat .v{font-family:"Space Grotesk",sans-serif;font-weight:700;line-height:1.1;
+        font-size:clamp(1.02rem,1.45vw,1.32rem);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .stat .d{font-family:"JetBrains Mono",monospace;font-size:.68rem;margin-top:7px;color:var(--muted);
+        overflow-wrap:anywhere}
     .stat .d.up{color:#2fd18a}.stat .d.down{color:#ff6262}
     .desk .foot{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
     .desk-cta{display:flex;gap:12px;flex-wrap:wrap}
@@ -333,7 +336,7 @@
             <div class="desk-stats">
               <div class="stat">
                 <div class="k">Account equity</div>
-                <div class="v">$<span class="count" data-to="1007016">1,007,016</span></div>
+                <div class="v">$<span class="count" data-to="1007016" data-unit="M" data-dp="3">1.007M</span></div>
                 <div class="d up">▲ +$7,016 · +0.70%</div>
               </div>
               <div class="stat">
@@ -343,7 +346,7 @@
               </div>
               <div class="stat">
                 <div class="k">Untouchable core</div>
-                <div class="v">$<span class="count" data-to="500000">500,000</span></div>
+                <div class="v">$<span class="count" data-to="500000" data-unit="k">500k</span></div>
                 <div class="d">70/30 BTC/ETH · never sold</div>
               </div>
               <div class="stat">
@@ -598,8 +601,13 @@
       const els = [...document.querySelectorAll('.count')];
       if (!els.length) return;
       const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const fmt = n => Math.round(n).toLocaleString('en-US');
-      if (reduce){ els.forEach(el => el.textContent = fmt(+el.dataset.to)); return; }
+      const fmt = (n, el) => {                              // unit-aware: keeps big values short so they can't outgrow the card
+        const u = el.dataset.unit;
+        if (u === 'M') return (n / 1e6).toFixed(+(el.dataset.dp ?? 2)) + 'M';
+        if (u === 'k') return Math.round(n / 1e3).toLocaleString('en-US') + 'k';
+        return Math.round(n).toLocaleString('en-US');
+      };
+      if (reduce){ els.forEach(el => el.textContent = fmt(+el.dataset.to, el)); return; }
       const cio = new IntersectionObserver(es => es.forEach(e => {
         if (!e.isIntersecting || document.hidden) return;   // hidden tab: rAF is frozen, leave the real number in place
         cio.unobserve(e.target);
@@ -608,9 +616,9 @@
         requestAnimationFrame(function step(t){              // first real frame proves rAF is live before we blank it
           if (t0 === null) t0 = t;
           const k = Math.min(1, (t - t0) / D);
-          el.textContent = fmt(to * (1 - Math.pow(1 - k, 3)));
+          el.textContent = fmt(to * (1 - Math.pow(1 - k, 3)), el);
           if (k < 1) requestAnimationFrame(step);
-          else el.textContent = fmt(to);
+          else el.textContent = fmt(to, el);
         });
       }), {threshold:.4});
       els.forEach(el => cio.observe(el));
