@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<!-- SEEN · panel reader · limited-time drop -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEEN — Chapter 3: Deeper · Zhang Cheng</title>
+  <meta name="description" content="SEEN — an AI-drawn office manga. Chapter 3: Deeper. The power has layers, every one of them costs him a piece of his own memory, and Marcus has had it longer.">
+  <meta property="og:title" content="SEEN — Chapter 3: Deeper">
+  <meta property="og:description" content="Every layer he unlocks burns a hole in his own memory. And there is one man in the building he cannot read at all.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="c3_p06_02.jpg">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👁</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0d0a06; --ink:#15100a;
+      --text:#f6efe2; --muted:#a2937c;
+      --gold:#ffc861; --amber:#ff9d3d; --cream:#fff3d6;
+      --grad:linear-gradient(100deg,var(--cream),var(--gold) 46%,var(--amber));
+      --edge:rgba(255,200,120,.18);
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:auto}
+    body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.6;
+         overflow-x:hidden;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    ::selection{background:rgba(255,200,97,.32)}
+
+    .amb{position:fixed;inset:0;z-index:0;pointer-events:none;background:
+      radial-gradient(60vw 44vh at 80% -8%,rgba(255,200,97,.13),transparent 62%),
+      radial-gradient(54vw 42vh at 6% 106%,rgba(255,157,61,.09),transparent 62%)}
+    .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.4;mix-blend-mode:overlay;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+    .chrome{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;
+            align-items:center;padding:20px 26px;pointer-events:none}
+    .chrome>*{pointer-events:auto}
+    .back{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.92rem;color:var(--muted);transition:color .25s}
+    .back:hover{color:var(--gold)}
+    .meter{text-align:right;font-family:"JetBrains Mono",monospace}
+    .meter .lbl{font-size:.62rem;letter-spacing:.34em;color:var(--muted)}
+    .meter .val{font-size:clamp(.95rem,2.4vw,1.25rem);font-weight:500;
+      background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .pbar{position:fixed;left:0;bottom:0;right:0;height:3px;z-index:40;transform-origin:0 50%;
+      transform:scaleX(0);background:var(--grad);box-shadow:0 0 14px rgba(255,200,97,.5)}
+
+    /* limited-time flag, flashing */
+    .ltd{position:fixed;left:50%;transform:translateX(-50%);top:16px;z-index:41;
+      font-family:"JetBrains Mono",monospace;font-size:.6rem;font-weight:700;letter-spacing:.24em;
+      text-transform:uppercase;color:#1a1004;background:var(--grad);border-radius:99px;padding:6px 14px;
+      white-space:nowrap;animation:ltdflash 1.15s steps(1,end) infinite;box-shadow:0 6px 22px rgba(255,157,61,.42)}
+    @keyframes ltdflash{0%,49%{opacity:1;filter:none}50%,100%{opacity:.32;filter:saturate(.45)}}
+
+    #scroller{position:fixed;top:0;left:0;width:100%;z-index:2;will-change:transform}
+    body.no-smooth #scroller{position:static;will-change:auto}
+
+    /* ============ cover ============ */
+    .cover{position:relative;min-height:100svh;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+    .cover-art{position:absolute;inset:-6% 0;z-index:-1}
+    .cover-art img{width:100%;height:100%;object-fit:cover;object-position:center 26%;filter:saturate(.75) brightness(.6) contrast(1.04)}
+    .cover-art::after{content:"";position:absolute;inset:0;background:
+      linear-gradient(180deg,rgba(13,10,6,.5),rgba(13,10,6,.06) 34%,rgba(13,10,6,.95) 88%,var(--bg))}
+    .cover-inner{position:relative;text-align:center;padding:0 24px 11svh;max-width:900px}
+    .kicker{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.4em;text-transform:uppercase;
+            color:var(--gold);margin-bottom:20px}
+    h1.masthead{font-family:"Space Grotesk",sans-serif;font-weight:700;
+      font-size:clamp(3.4rem,17vw,10rem);line-height:.9;letter-spacing:.02em;
+      background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+      filter:drop-shadow(0 4px 38px rgba(255,200,97,.34))}
+    h1.masthead span{display:block}
+    .subtitle{font-family:"Space Grotesk",sans-serif;font-weight:600;margin-top:14px;
+      font-size:clamp(1rem,3.4vw,1.5rem);color:var(--cream)}
+    .cover-sub{margin-top:18px;color:var(--muted);font-size:clamp(.95rem,2.4vw,1.1rem);max-width:560px;margin-inline:auto}
+    .cover-sub b{color:var(--text);font-weight:600}
+    .hint{margin:34px auto 0;width:24px;height:40px;border:1.5px solid rgba(255,200,97,.5);border-radius:99px;
+          display:flex;justify-content:center;padding-top:7px}
+    .hint i{width:3px;height:8px;border-radius:99px;background:var(--gold);animation:drop 1.9s ease-in-out infinite}
+    @keyframes drop{0%,100%{transform:translateY(0);opacity:1}60%{transform:translateY(13px);opacity:.15}}
+
+    .mask{overflow:hidden;display:block}
+    .mask>span{display:block;transform:translateY(110%);transition:transform 1.1s cubic-bezier(.22,1,.36,1)}
+    body.loaded .mask>span{transform:none}
+    .fade-in{opacity:0;transition:opacity 1s ease .55s}
+    body.loaded .fade-in{opacity:1}
+
+    /* ============ reader ============ */
+    .reader{position:relative;max-width:760px;margin:0 auto;padding:12svh 20px 6svh;display:flex;
+            flex-direction:column;gap:13svh}
+    .page{position:relative}
+    .frame{position:relative;border:1px solid var(--edge);border-radius:14px;overflow:hidden;background:var(--ink);
+      box-shadow:0 30px 90px rgba(0,0,0,.62),0 0 0 1px rgba(255,200,97,.05),0 0 60px rgba(255,157,61,.07);transform:translateZ(0)}
+    .frame::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:inherit;
+      box-shadow:inset 0 1px 0 rgba(255,230,180,.18)}
+    .frame img{display:block;width:100%;height:auto;transform:scale(1.05);will-change:transform}
+
+    /* the words: under the panel, high contrast, always legible */
+    .cap{display:block;margin-top:16px;padding:15px 18px 17px;border-radius:12px;border:1px solid var(--edge);
+      background:rgba(24,17,9,.78)}
+    .cap-top{display:flex;align-items:center;gap:12px;margin-bottom:9px}
+    .tag{font-family:"JetBrains Mono",monospace;font-size:.63rem;letter-spacing:.26em;white-space:nowrap;
+      text-transform:uppercase;color:var(--gold);border:1px solid var(--edge);border-radius:99px;padding:4px 11px}
+    .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--edge),transparent)}
+    .pageno{font-family:"JetBrains Mono",monospace;font-size:.63rem;color:var(--muted);letter-spacing:.2em;white-space:nowrap}
+    .line{display:block;font-family:"Space Grotesk",sans-serif;font-weight:500;
+      font-size:clamp(1.02rem,2.9vw,1.24rem);line-height:1.45;color:var(--cream)}
+    .line em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:700}
+    .line q{quotes:"\201C" "\201D";color:#fff9ec}
+
+    .page{opacity:0;transform:translateY(60px) scale(.97);filter:blur(6px);
+      transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1),filter .9s ease}
+    .page.on{opacity:1;transform:none;filter:none}
+    .page .cap{opacity:0;transform:translateY(14px);transition:opacity .7s ease .25s,transform .7s cubic-bezier(.22,1,.36,1) .25s}
+    .page.on .cap{opacity:1;transform:none}
+
+    .breather{min-height:46svh;display:grid;place-items:center;text-align:center;padding:0 24px}
+    .breather p{font-family:"Space Grotesk",sans-serif;font-style:italic;font-weight:500;
+      font-size:clamp(1.4rem,4.4vw,2.5rem);line-height:1.25;max-width:660px;color:var(--text)}
+    .breather p em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-style:inherit}
+    .breather{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s cubic-bezier(.22,1,.36,1)}
+    .breather.on{opacity:1;transform:none}
+
+    .endcard{min-height:92svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+             text-align:center;padding:0 24px 8svh;gap:18px}
+    .endcard .fin{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.4em;color:var(--muted)}
+    .endcard h2{font-family:"Space Grotesk",sans-serif;font-weight:700;letter-spacing:-.01em;
+      font-size:clamp(2.2rem,7.5vw,4.6rem);line-height:1;background:var(--grad);
+      -webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 30px rgba(255,157,61,.28))}
+    .endcard p{color:var(--muted);max-width:500px}
+    .endcta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+    .btn{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.95rem;padding:13px 28px;
+         border-radius:99px;border:1px solid var(--edge);color:var(--text);transition:transform .2s,box-shadow .2s;cursor:pointer;background:none}
+    .btn:hover{transform:translateY(-2px)}
+    .btn-gold{background:var(--grad);color:#1a1004;border:none;box-shadow:0 8px 34px rgba(255,200,97,.3)}
+    .btn-gold:hover{box-shadow:0 12px 44px rgba(255,157,61,.42)}
+    .endcard{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s cubic-bezier(.22,1,.36,1)}
+    .endcard.on{opacity:1;transform:none}
+    .credits{font-size:.82rem;color:var(--muted);margin-top:26px}
+    .credits a{color:var(--gold)}
+
+    @media (max-width:600px){
+      .reader{gap:9svh;padding-top:10svh}
+      .ltd{font-size:.52rem;letter-spacing:.16em;padding:5px 10px;top:56px}
+    }
+    @media (prefers-reduced-motion:reduce){
+      .mask>span,.fade-in{transition:none;transform:none;opacity:1}
+      .page,.breather,.endcard{opacity:1;transform:none;filter:none;transition:none}
+      .page .cap{opacity:1;transform:none;transition:none}
+      .frame img{transform:none}
+      .hint i,.ltd{animation:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="amb" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <div class="chrome">
+    <a class="back" href="../">← zhang cheng</a>
+    <div class="meter" aria-hidden="true">
+      <div class="lbl">LAYER</div>
+      <div class="val" id="meter">0</div>
+    </div>
+  </div>
+  <div class="ltd">★ Limited Time Manga ★</div>
+  <div class="pbar" id="pbar" aria-hidden="true"></div>
+
+  <div id="scroller">
+    <section class="cover">
+      <div class="cover-art" id="coverArt"><img src="c3_p06_02.jpg" alt="" aria-hidden="true"></div>
+      <div class="cover-inner">
+        <p class="kicker fade-in">Limited time · Chapter 3 — Deeper</p>
+        <h1 class="masthead"><span class="mask"><span>SEEN</span></span></h1>
+        <p class="subtitle fade-in">Chapter 3 — Deeper</p>
+        <p class="cover-sub fade-in">The power has <b>layers.</b> He can aim it. He can reach through a handshake and stand inside your worst
+           memory. He can put a thought <b>into</b> your head that you will defend as your own. Every one of them
+           burns a hole in his own memory &mdash; and there is one man in this building he <b>cannot read at all.</b></p>
+        <div class="hint fade-in" aria-hidden="true"><i></i></div>
+      </div>
+    </section>
+
+    <main class="reader" id="reader"></main>
+
+    <section class="endcard" id="endcard">
+      <p class="fin">END OF CHAPTER 3</p>
+      <h2>There were always two.</h2>
+      <p>Marcus has the same power. Marcus has had it longer. And above his lie count sits a second number that Ethan has only just gone deep enough to see.</p>
+      <div class="endcta">
+        <button class="btn btn-gold" id="again">Read it again</button>
+        <a class="btn" href="../seen2/">&larr; Chapter 2</a>
+        <a class="btn" href="../seen/">&larr; Chapter 1</a>
+        <a class="btn" href="../#comics">More comics</a>
+      </div>
+      <p class="credits">SEEN &middot; Chapter 3 &middot; 81 panels &middot; Written and drawn with AI &middot; &copy; Zhang Cheng</p>
+    </section>
+  </div>
+
+  <script>
+    // [file, tag, caption] — one narration line per panel
+    const PANELS = [
+      ["c3_p01_01","Who Is This?","He types it three times before he sends it. <q>Who is this?</q> The number is not in his contacts and never has been."],
+      ["c3_p01_02","Three Dots","They appear. They stop. They appear again. Whoever is on the other end is deciding how much to tell him."],
+      ["c3_p01_03","The Summons","<q>B2. The machine. 11pm. Come alone or don't come.</q> He has told nobody about that machine. Not one person, not once."],
+      ["c3_p02_01","11:04 PM","He goes. Of course he goes. Basement level two, four minutes late — and there is nobody down there waiting for him."],
+      ["c3_p02_02","Alone With It","Just him and the vending machine that did this to him. He almost says hello to it. Which is when he notices the cable."],
+      ["c3_p02_03","Unplugged","Coiled neatly on the floor. Dust thick on the socket. It has not been connected to anything for <em>years.</em>"],
+      ["c3_p02_04","It Wakes Up","He touches the glass and the whole machine hums into life anyway. One slot lights up for him. The slot is <em>empty.</em>"],
+      ["c3_p03_01","Market Open","Trading floor, 9:30. Two hundred people, two hundred minds, every one of them screaming numbers at the same time."],
+      ["c3_p03_02","Drowning","It arrives as one solid wall of noise — he cannot pull a single voice out of it. His vision starts going white at the edges."],
+      ["c3_p03_03","Going Down","His legs stop taking instructions. He gets one hand onto a railing, and that is the only reason he doesn't hit the floor."],
+      ["c3_p04_01","Pick One","There is one thing left to try. Not block it out — <em>aim.</em> Pick one voice out of two hundred and hold on to it."],
+      ["c3_p04_02","Silence","And the entire floor drops to a hum. <em>Layer two.</em> He didn't discover it. It was that or pass out."],
+      ["c3_p04_03","Quiet","Quiet. God, quiet. Three weeks of every thought in the building, and he had forgotten what his own head sounds like."],
+      ["c3_p05_01","Greg","He tests it. Locks onto Greg — and everyone else goes soft and far away, like a radio playing in another flat."],
+      ["c3_p05_02","Chloe","Chloe next. Same result. Clean, single, one voice at a time. For the first time since this started, he gets to <em>choose.</em>"],
+      ["c3_p05_03","Anyone","A stranger in the lift. It works on anyone he points it at. For about an hour he is something close to happy."],
+      ["c3_p05_04","The Catch","What he works out too late: while he is focused he is blind and deaf to everything else. The room can move around him and he will never know."],
+      ["c3_p06_01","The One That Matters","So try the one that matters. Marcus Reid, forty feet away, mid-handshake with somebody. Lock on."],
+      ["c3_p06_02","KSSSHHHHH","<em>Static.</em> Not silence — a blank white roar, like a jammed signal. Marcus is the one person in this building he cannot read."],
+      ["c3_p06_03","Nosebleed","He tastes it before he feels it."],
+      ["c3_p07_01","Again","He wipes his face and goes back in harder. He needs to know whether the wall is Marcus, or whether it is him."],
+      ["c3_p07_02","Worse","Worse. The roar doesn't thin out under pressure. It pushes <em>back.</em>"],
+      ["c3_p07_03","Blood On The Cuff","White shirt. He will have to explain that to somebody. He cannot read one thought in that man's head — and the counter still works perfectly."],
+      ["c3_p08_01","The Handkerchief","<q>Hey. Hey. You're grey. Sit down.</q> Marcus is genuinely concerned. Marcus offers him a handkerchief."],
+      ["c3_p08_02","The Asymmetry","A hundred and forty-nine thousand lies ticking over in front of him — above a completely silent head. He can see that Marcus lies constantly, and no way on earth to learn <em>about what.</em>"],
+      ["c3_p08_03","Jamie","She sees the blood and the state of him. She doesn't ask. She puts a bottle of water on his desk and walks away without a word — and she means it kindly, which is exactly what makes it the coldest thing anyone does to him all chapter."],
+      ["c3_p09_01","The Hand","<q>Big day tomorrow. No hard feelings about the numbers, yeah?</q> The man who stole Chloe's deck puts his hand out."],
+      ["c3_p09_02","Contact","Skin on skin — and Ethan goes straight through the thoughts and out the other side of them."],
+      ["c3_p10_01","11:47 PM, Last Tuesday","<em>Layer three.</em> Not a thought. A <em>memory.</em> And he is not watching it — he is <em>inside</em> it, in another man's body, last Tuesday night."],
+      ["c3_p10_02","Hands That Aren't His","On a keyboard that isn't his. The file copying. The progress bar crawling. He feels every second of it from the inside."],
+      ["c3_p10_03","The Worst Part","And the man felt <em>good</em> about it. Small, warm, satisfied. That is the part Ethan has to carry around now."],
+      ["c3_p11_01","Two Seconds","<q>—whoa, hey, are you—</q> He comes back on his knees in the middle of the office, hand still gripped. Two seconds of real time have passed."],
+      ["c3_p11_02","First Hole","Shaken, checking himself, he reaches for his mother's phone number. It isn't there. Not forgotten — <em>removed.</em> As though it was never in him."],
+      ["c3_p11_03","The Price","Something of his, for something of theirs. Every deep read takes one. And it does not ask him which."],
+      ["c3_p12_01","Quarterly Review","Forty people in the big room. And Chloe's stolen deck goes up on the screen, exactly as planned."],
+      ["c3_p12_02","The Claim","<q>—and the margin model is entirely my team's work.</q>"],
+      ["c3_p12_03","Not Twice","Last time he sat still and said nothing and hated himself for a week. He is not doing that twice."],
+      ["c3_p13_01","Focus","He locks on and the room drops away. Now he can hear what the man is saying and what he is thinking, side by side, sentence by sentence."],
+      ["c3_p13_02","The Gap","Every line coming out of his mouth has a second line running underneath it, and they do not match anywhere."],
+      ["c3_p13_03","Slide Four","<q>Sorry — slide four. Where did the 8% come from?</q>"],
+      ["c3_p14_01","+1","<q>It's... a blended assumption, off the base case—</q> The counter above him ticks. Ethan watches it happen in real time."],
+      ["c3_p14_02","Which One's Yours","<q>It isn't. Slide nine contradicts it. Which one's yours?</q>"],
+      ["c3_p14_03","Stacking","<q>I— the team built the underlying—</q> <em>+1. +1. +1.</em> He is lying faster than he can think now."],
+      ["c3_p14_04","He Can't Stop","Three more in eight seconds, and Ethan can see every single one of them land."],
+      ["c3_p15_01","The Kill","<q>Last Tuesday, 11:47 PM, you copied that file off her machine.</q>"],
+      ["c3_p15_02","Silence","Forty people. Nobody breathes."],
+      ["c3_p15_03","Right About Everything","The time. The file. The machine. All of it. Surgical, public, and completely correct."],
+      ["c3_p16_01","And The Room Turns","Not one person in it thinks <em>Ethan was right.</em> They think: <em>where did that come from</em> — <em>he's been sitting on this?</em> — <em>he humiliated him.</em>"],
+      ["c3_p16_02","Alone In It","He was right about every single thing, and he has never been more alone in a room in his life."],
+      ["c3_p17_01","For Her","<q>Chloe — it's yours. Everyone knows now.</q>"],
+      ["c3_p17_02","Thanks","<q>Thanks.</q> And underneath it, clear as glass: <em>why didn't you say something last week, when it would still have been mine?</em>"],
+      ["c3_p17_03","Right, And Still Lost","He did the brave thing a week too late. It bought him nothing except two more people who now think less of him."],
+      ["c3_p18_01","Sonya","No powers. Just a stubborn honest woman and an invoice that won't reconcile. <q>This vendor has no office. I drove there. It's a mailbox.</q>"],
+      ["c3_p18_02","Monday","<q>Four invoices. Same signatory. I'm taking it to Audit on Monday.</q> Her counter sits at <em>9</em> and does not move."],
+      ["c3_p18_03","Two Things She Doesn't Know","She is completely right. And Marcus already knows she is looking. Ethan is the only person alive holding both of those facts at once."],
+      ["c3_p19_01","Please","<q>Sonya. Drop it. Please.</q> <q>No.</q>"],
+      ["c3_p19_02","Wanting It","And out of pure animal panic for her, he <em>wants</em> it — hard, and aimed, the same way he learned to aim on the trading floor."],
+      ["c3_p19_03","A Soft Click","Something goes <em>in.</em> <em>Layer four.</em> Not control — a suggestion, which she will experience as entirely her own."],
+      ["c3_p20_01","Blink","She stops mid-sentence. Blinks. Frowns at nothing at all."],
+      ["c3_p20_02","Probably Nothing","<q>...actually — you know what, it's probably nothing.</q>"],
+      ["c3_p20_03","9 &rarr; 10","He has just put a lie inside the most honest person he has ever met. And she will defend it to anyone, because she believes it is hers."],
+      ["c3_p21_01","Give Me Your Hand","<q>Wait— wait, give me your hand—</q> He goes back in to find it and tear it out."],
+      ["c3_p21_02","Nine And One","Nine lies, all of them hers, every one of them earned. And a tenth sitting in the middle of them like it grew there."],
+      ["c3_p21_03","A Graft","It isn't a splinter he can pull out. It's a graft, and it has already taken. <em>Push does not reverse.</em>"],
+      ["c3_p22_01","Let Go","<q>...Ethan. Let go.</q> She is looking at him with polite confusion — the way you look at a stranger holding your hand too long."],
+      ["c3_p22_02","Second Hole","And something else of his went, paying for that. He doesn't know what. He can only feel the shape of where it used to be."],
+      ["c3_p23_01","Inventory","Alone at his desk at night, he starts a list. <em>Things I can't find any more.</em>"],
+      ["c3_p23_02","The List","1. My mother's number. &nbsp;2. The name of my first manager. &nbsp;3. — &nbsp;4."],
+      ["c3_p23_03","The Fourth","There is a fourth. He can feel the exact shape of the gap. He cannot remember what was in it."],
+      ["c3_p24_01","Fortieth Floor","<q>Come in. Sit anywhere.</q> The whole city through the glass. Marcus has never called him up here before."],
+      ["c3_p24_02","The Offer","<q>Chief of Staff. You'd report to me. Nobody else.</q> Inner circle. Twelve years of career in a single sentence."],
+      ["c3_p25_01","Every Word","<q>What you did in that review was the first honest act I've seen in this building in four years.</q>"],
+      ["c3_p25_02","Not Moving","<em>149,071.</em> And it does not move. Not once, not by one, through the entire offer."],
+      ["c3_p25_03","All Of It True","The man with a hundred and forty-nine thousand lies is telling him the complete truth, and Ethan has no idea what to do with that."],
+      ["c3_p25_04","Yes","<q>Yes.</q>"],
+      ["c3_p26_01","Going Down","<q>There's a place on the ground floor that does a decent lunch. Nobody knows about it.</q> Warm, easy, completely ordinary."],
+      ["c3_p26_02","One More Time","And out of reflex, because he cannot help it any more, Ethan focuses on him one last time."],
+      ["c3_p27_01","Static","The same white roar. The same wall. Nothing has ever come through it."],
+      ["c3_p27_02","Except This","And then, for half a second, one clear thought walks straight through: <q>There it is. Layer four. That took you longer than it took me.</q>"],
+      ["c3_p27_03","He Has It Too","Marcus has the same power. Marcus has had it longer. And Marcus has known about Ethan this entire time."],
+      ["c3_p28_01","There Were Always Two","<em>149,071.</em> And directly above it, visible only now that Ethan has gone deep enough to see it — <em>a second number.</em>"]
+    ];
+    const BREATHERS = {
+      17: "He can pick one voice out of two hundred now.<br>He just can&rsquo;t hear anything <em>coming.</em>",
+      34: "Something of his,<br>for something of theirs.<br>It does not ask <em>which.</em>",
+      49: "He was right about every single thing.<br>And he still <em>lost.</em>",
+      64: "He is now a source of the exact thing<br>his power exists to <em>detect.</em>"
+    };
+
+    const reader = document.getElementById("reader");
+    PANELS.forEach(function (p, i) {
+      var file = p[0], tag = p[1], line = p[2];
+      var n = String(i + 1).padStart(2, "0");
+      var alt = line.replace(/<[^>]+>/g, "").replace(/"/g, "");
+      reader.insertAdjacentHTML("beforeend",
+        '<figure class="page">' +
+          '<div class="frame"><img src="' + file + '.jpg" alt="Panel ' + (i + 1) + ' — ' + alt + '" loading="lazy"></div>' +
+          '<figcaption class="cap">' +
+            '<span class="cap-top"><span class="tag">' + tag + '</span><span class="rule"></span>' +
+            '<span class="pageno">' + n + ' / ' + PANELS.length + '</span></span>' +
+            '<span class="line">' + line + '</span>' +
+          '</figcaption>' +
+        '</figure>');
+      if (BREATHERS[i + 1]) {
+        reader.insertAdjacentHTML("beforeend", '<div class="breather"><p>' + BREATHERS[i + 1] + '</p></div>');
+      }
+    });
+
+    var reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    requestAnimationFrame(function () { document.body.classList.add("loaded"); });
+
+    var io = new IntersectionObserver(function (es) {
+      for (var k = 0; k < es.length; k++) {
+        if (es[k].isIntersecting) { es[k].target.classList.add("on"); io.unobserve(es[k].target); }
+      }
+    }, { threshold: 0.14, rootMargin: "0px 0px -5% 0px" });
+    document.querySelectorAll(".page, .breather, .endcard").forEach(function (el) { io.observe(el); });
+
+    var scroller = document.getElementById("scroller");
+    var pbar = document.getElementById("pbar");
+    var meterEl = document.getElementById("meter");
+    var coverArt = document.getElementById("coverArt");
+    var frames = [].slice.call(document.querySelectorAll(".frame img"));
+    var lerp = function (a, b, t) { return a + (b - a) * t; };
+    var clamp = function (v, lo, hi) { return Math.min(Math.max(v, lo), hi); };
+
+    var FINAL = 1203;
+    var fmt = function (p) { return "LAYER " + Math.min(4, Math.floor(p * 4) + 1); };
+
+    if (reduceMotion) {
+      document.body.classList.add("no-smooth");
+      meterEl.textContent = "LAYER 4";
+      pbar.style.transform = "scaleX(1)";
+    } else {
+      var cur = window.scrollY;
+      var setH = function () { document.body.style.height = scroller.scrollHeight + "px"; };
+      setH();
+      addEventListener("resize", setH);
+      addEventListener("load", setH);
+      frames.forEach(function (im) { im.addEventListener("load", setH); });
+      setInterval(setH, 1000);
+
+      var tick = function () {
+        var max = Math.max(scroller.scrollHeight - innerHeight, 1);
+        cur = lerp(cur, window.scrollY, 0.085);
+        if (Math.abs(cur - window.scrollY) < 0.05) cur = window.scrollY;
+        scroller.style.transform = "translate3d(0," + (-cur) + "px,0)";
+
+        var p = clamp(cur / max, 0, 1);
+        pbar.style.transform = "scaleX(" + p + ")";
+        meterEl.textContent = fmt(p);
+
+        if (cur < innerHeight * 1.2) {
+          coverArt.style.transform = "translateY(" + (cur * 0.35) + "px)";
+          coverArt.style.opacity = String(1 - clamp(cur / (innerHeight * 0.9), 0, 1) * 0.9);
+        }
+        for (var j = 0; j < frames.length; j++) {
+          var im = frames[j];
+          var r = im.parentElement.getBoundingClientRect();
+          if (r.bottom < -80 || r.top > innerHeight + 80) continue;
+          var rel = (r.top + r.height / 2 - innerHeight / 2) / innerHeight;
+          im.style.transform = "scale(1.05) translateY(" + (-rel * 2.6).toFixed(3) + "%)";
+        }
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }
+
+    document.getElementById("again").addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+    });
+  </script>
+</body>
+</html>
