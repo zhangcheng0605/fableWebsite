@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zhang Cheng — AI Engineer & Builder</title>
-  <meta name="description" content="Zhang Cheng — AI engineer. Agentic pipelines, generative media, AI comics. Everything on this site was built and shipped by AI under my direction.">
+  <meta name="description" content="Zhang Cheng — AI engineer. A 24/7 autonomous crypto trading bot, agentic pipelines, generative media, AI comics. Everything on this site was built and shipped by AI under my direction.">
   <meta property="og:title" content="Zhang Cheng — AI Engineer & Builder">
-  <meta property="og:description" content="New: Witch of the Vending Machines, Chapter 3 — No Refunds. Agentic pipelines, generative media, AI comics.">
+  <meta property="og:description" content="Live: a 24/7 autonomous crypto trading bot running its own $1M paper account. Plus agentic pipelines, generative media, and AI comics.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="comic3/page01.jpg">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
@@ -163,6 +163,66 @@
     @media (prefers-reduced-motion:reduce){
       .badge-ltd,.comic-feature.is-ltd::after,.comic-series.is-ltd::after{animation:none;opacity:1}}
 
+    /* ===== LIVE TRADING DESK — flagship band ===== */
+    .grad-up{background:linear-gradient(100deg,#8affc9,#2fd18a 48%,#38e8ff);
+        -webkit-background-clip:text;background-clip:text;color:transparent}
+    .desk{position:relative;overflow:hidden;border-radius:22px;padding:34px;
+        border:1px solid rgba(47,209,138,.42);
+        background:linear-gradient(120deg,rgba(47,209,138,.10),rgba(56,232,255,.06) 56%,rgba(139,123,255,.09))}
+    .desk::after{content:"LIVE";position:absolute;top:20px;right:-42px;transform:rotate(45deg);
+        width:150px;text-align:center;padding:7px 0;font-family:"JetBrains Mono",monospace;
+        font-size:.68rem;letter-spacing:.22em;font-weight:700;color:#04150d;
+        background:linear-gradient(100deg,#8affc9,#2fd18a 52%,#38e8ff);
+        box-shadow:0 6px 20px rgba(47,209,138,.42);animation:livecorner 1.6s ease-in-out infinite}
+    @keyframes livecorner{0%,100%{opacity:1}50%{opacity:.5}}
+    .desk-grid{display:grid;grid-template-columns:1.18fr .82fr;gap:36px;align-items:center}
+    .live{display:inline-flex;align-items:center;gap:9px;font-family:"JetBrains Mono",monospace;
+        font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:#2fd18a;
+        border:1px solid rgba(47,209,138,.42);border-radius:99px;padding:5px 14px;margin-bottom:16px}
+    .live i{width:7px;height:7px;border-radius:50%;background:#2fd18a;
+        box-shadow:0 0 0 0 rgba(47,209,138,.7);animation:livedot 1.8s ease-out infinite}
+    @keyframes livedot{0%{box-shadow:0 0 0 0 rgba(47,209,138,.65)}
+        70%{box-shadow:0 0 0 9px rgba(47,209,138,0)}100%{box-shadow:0 0 0 0 rgba(47,209,138,0)}}
+    .desk h3{font-family:"Space Grotesk",sans-serif;font-size:clamp(1.55rem,3.8vw,2.2rem);
+        line-height:1.14;margin-bottom:14px}
+    .desk .blurb{color:var(--muted);margin-bottom:26px;max-width:560px;font-size:.97rem}
+    .desk-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+    .stat{border:1px solid var(--edge);border-radius:14px;padding:14px 15px;background:rgba(6,6,14,.42)}
+    .stat .k{font-family:"JetBrains Mono",monospace;font-size:.63rem;letter-spacing:.13em;
+        text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+    .stat .v{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:1.32rem;line-height:1.1}
+    .stat .d{font-family:"JetBrains Mono",monospace;font-size:.68rem;margin-top:7px;color:var(--muted)}
+    .stat .d.up{color:#2fd18a}.stat .d.down{color:#ff6262}
+    .desk .foot{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+    .desk-cta{display:flex;gap:12px;flex-wrap:wrap}
+    .btn-live{background:linear-gradient(100deg,#8affc9,#2fd18a 48%,#38e8ff);color:#04150d;border:none;
+        box-shadow:0 4px 30px rgba(47,209,138,.32)}
+    .btn-live:hover{box-shadow:0 8px 40px rgba(47,209,138,.45)}
+    .asof{font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--muted);
+        margin-top:20px;line-height:1.7}
+    .asof b{color:var(--text);font-weight:500}
+    .desk-chart{border:1px solid var(--edge);border-radius:16px;background:rgba(6,6,14,.5);padding:14px}
+    .desk-chart svg{display:block;width:100%;height:auto}
+    .desk-chart .cap{font-family:"JetBrains Mono",monospace;font-size:.66rem;color:var(--muted);
+        margin-top:10px;text-align:center}
+    .desk-sib{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+    .sib{border:1px solid var(--edge);border-radius:14px;padding:16px 18px;background:var(--panel);
+        transition:border-color .25s,transform .25s}
+    .sib:hover{border-color:rgba(56,232,255,.35);transform:translateY(-2px)}
+    .sib .k{font-family:"JetBrains Mono",monospace;font-size:.63rem;letter-spacing:.13em;
+        text-transform:uppercase;color:var(--cyan);margin-bottom:7px}
+    .sib h4{font-family:"Space Grotesk",sans-serif;font-size:1rem;margin-bottom:5px}
+    .sib p{color:var(--muted);font-size:.86rem;margin:0}
+    @media (max-width:880px){.desk-grid{grid-template-columns:1fr}
+        .desk-stats{grid-template-columns:repeat(2,1fr)}
+        .desk-sib{grid-template-columns:1fr}}
+    /* nav live dot */
+    .nav-live{display:inline-flex;align-items:center;gap:7px}
+    .nav-live i{width:6px;height:6px;border-radius:50%;background:#2fd18a;
+        animation:livedot 1.8s ease-out infinite}
+    @media (prefers-reduced-motion:reduce){
+      .desk::after,.live i,.nav-live i{animation:none;opacity:1}}
+
     /* comic series (one comic, multiple chapters) */
     .comic-series{border:1px solid rgba(255,61,220,.45);border-radius:22px;padding:34px;position:relative;
         overflow:hidden;background:linear-gradient(120deg,rgba(56,232,255,.10),rgba(255,61,220,.12))}
@@ -223,7 +283,7 @@
     <nav class="nav">
       <a class="logo" href="#top">Z<span>C</span></a>
       <a href="#projects">Projects</a>
-      <a href="trading/">Trading</a>
+      <a href="trading/" class="nav-live">Trading <i></i></a>
       <a href="#comics">Comics <span style="color:var(--magenta);font-size:.7em;vertical-align:super">NEW</span></a>
       <a href="#process">Process</a>
       <a href="#contact">Contact</a>
@@ -238,33 +298,121 @@
       <div class="plx" data-plx="0.22"><p class="hero-sub reveal">I don't just use AI — I direct it. Everything on this site, from the code to the comics,
         was <b>designed, generated, and deployed by AI agents</b> under my direction.</p></div>
       <div class="plx" data-plx="0.14"><div class="cta reveal">
-        <a class="btn btn-primary" href="#projects">See the work</a>
+        <a class="btn btn-primary" href="#desk">See the live desk</a>
         <a class="btn btn-ghost" href="#process">How it's built</a>
       </div></div>
       <div class="plx" data-plx="0.06"><div class="hero-terminal reveal" aria-hidden="true">
         <div class="term-bar"><i></i><i></i><i></i></div>
         <div class="term-body">
-          <div><span class="p">$</span> agent "write ch.1, draw 12 pages, ship it"</div>
-          <div><span class="ok">✓</span> storyline approved &nbsp;<span class="ok">✓</span> 12 pages · AI-rendered</div>
-          <div><span class="ok">✓</span> deployed → zhangcheng0605.github.io/fableWebsite/comic3 <span class="cursor"></span></div>
+          <div><span class="p">$</span> agent routine crypto-bot --cycle</div>
+          <div><span class="ok">✓</span> BTC/USD RSI 28.4 · uptrend confirmed · BUY 15% equity</div>
+          <div><span class="ok">✓</span> 23 positions · equity $1,007,016 · ▲ +0.70% <span class="cursor"></span></div>
         </div>
       </div></div>
     </section>
 
+    <!-- FLAGSHIP — LIVE TRADING DESK -->
+    <section id="desk">
+      <div class="sec-head reveal"><span class="sec-index">01</span><h2>Live Trading Desk</h2></div>
+      <p class="sec-sub reveal">Three AI trading bots run two Alpaca paper accounts with nobody on the hourly loop.
+         This is the one that never sleeps.</p>
+
+      <div class="desk reveal">
+        <div class="desk-grid">
+          <div class="desk-main">
+            <span class="live"><i></i>Live · 24/7 · fires 5 past every hour</span>
+            <h3><span class="grad-up">Crypto Bot</span> — autonomous, segregated, always on</h3>
+            <p class="blurb">Its own $1M paper account, its own keys, its own schedule. Trend-filtered RSI mean
+               reversion on BTC/USD and ETH/USD: buys below RSI 30 while the trend holds, sells above 55, sizing
+               every entry at 15% of equity. It trades <i>around</i> a permanent ~$500k 70/30 BTC/ETH core it is
+               not allowed to touch, plus a 26-coin alt sleeve — and it can only ever sell coins from its own
+               tagged book.</p>
+
+            <div class="desk-stats">
+              <div class="stat">
+                <div class="k">Account equity</div>
+                <div class="v">$<span class="count" data-to="1007016">0</span></div>
+                <div class="d up">▲ +$7,016 · +0.70%</div>
+              </div>
+              <div class="stat">
+                <div class="k">Open positions</div>
+                <div class="v"><span class="count" data-to="23">0</span></div>
+                <div class="d">BTC · ETH · alt sleeve</div>
+              </div>
+              <div class="stat">
+                <div class="k">Untouchable core</div>
+                <div class="v">$<span class="count" data-to="500000">0</span></div>
+                <div class="d">70/30 BTC/ETH · never sold</div>
+              </div>
+              <div class="stat">
+                <div class="k">Humans in the loop</div>
+                <div class="v">0</div>
+                <div class="d">a watchdog agent audits it</div>
+              </div>
+            </div>
+
+            <div class="foot">
+              <span class="chip">RSI &lt;30 buy</span><span class="chip">&gt;55 sell</span>
+              <span class="chip">15% equity/entry</span><span class="chip">Alpaca API</span>
+              <span class="chip">GTC orders</span><span class="chip">Agent routines</span>
+            </div>
+
+            <div class="desk-cta">
+              <a class="btn btn-live" href="trading/#bots">Open the trading desk</a>
+              <a class="btn btn-ghost" href="https://github.com/zhangcheng0605/alpaca-paper-trading" target="_blank" rel="noopener">Source on GitHub</a>
+            </div>
+
+            <p class="asof">as of <b>2026-07-17 21:20 UTC</b> · live since <b>2026-07-14</b> ·
+               <b>100% paper money</b> — real strategies, fake dollars, honest numbers.</p>
+          </div>
+
+          <div class="desk-chart" aria-hidden="true">
+            <svg viewBox="0 0 320 216" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient id="eqfill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#2fd18a" stop-opacity=".30"/>
+                  <stop offset="100%" stop-color="#2fd18a" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <rect x="0" y="150" width="320" height="66" rx="8" fill="rgba(56,232,255,.09)"/>
+              <text x="10" y="196" fill="#9a97ad" font-size="9" font-family="monospace">$500k BTC/ETH core — never sold</text>
+              <line x1="0" y1="150" x2="320" y2="150" stroke="rgba(56,232,255,.28)" stroke-width="1"/>
+              <path d="M0,118 C42,112 76,116 108,104 S168,84 202,90 S262,62 320,44"
+                    fill="none" stroke="rgba(255,255,255,.16)" stroke-width="1.4" stroke-dasharray="5 4"/>
+              <text x="238" y="38" fill="#9a97ad" font-size="9" font-family="monospace">200d MA</text>
+              <path d="M0,112 C30,104 58,110 88,96 S140,66 168,78 S214,52 250,44 S292,30 320,24 L320,150 L0,150 Z"
+                    fill="url(#eqfill)"/>
+              <path d="M0,112 C30,104 58,110 88,96 S140,66 168,78 S214,52 250,44 S292,30 320,24"
+                    fill="none" stroke="#2fd18a" stroke-width="2.2" stroke-linecap="round"/>
+              <circle cx="88" cy="96" r="4.5" fill="#2fd18a"/>
+              <text x="52" y="86" fill="#2fd18a" font-size="9" font-family="monospace">dip in uptrend</text>
+              <circle cx="320" cy="24" r="4" fill="#8affc9"/>
+              <text x="196" y="18" fill="#8affc9" font-size="9" font-family="monospace">+0.70% since launch</text>
+            </svg>
+            <p class="cap">crypto account equity · Jul 14 → Jul 17 · paper</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="desk-sib">
+        <a class="sib" href="trading/#bots">
+          <div class="k">Stock account · hourly</div>
+          <h4>RSI Bot</h4>
+          <p>TSLA · NVDA · PLTR on 1h bars. Buys RSI &lt;25, exits &gt;50, −8% stop. Won a 10-strategy tournament backtest.</p>
+        </a>
+        <a class="sib" href="trading/#bots">
+          <div class="k">Stock account · daily</div>
+          <h4>Bot v2.1 — dip scanner</h4>
+          <p>Scans ~150 names for 2σ dips above the 200d MA. Vol-sized entries, −10% stop, 21-day time-stop.</p>
+        </a>
+      </div>
+    </section>
+
     <!-- PROJECTS -->
     <section id="projects">
-      <div class="sec-head reveal"><span class="sec-index">01</span><h2>AI Projects</h2></div>
+      <div class="sec-head reveal"><span class="sec-index">02</span><h2>AI Projects</h2></div>
       <p class="sec-sub reveal">Real, shipped systems — not demos. Each one runs end-to-end with an AI agent in the loop.</p>
       <div class="grid">
-        <article class="card reveal">
-          <p class="tag">Flagship · Autonomous trading</p>
-          <h3>AI Trading Desk</h3>
-          <p>Three AI trading bots on two Alpaca paper accounts — RSI mean reversion, a 150-name dip scanner,
-             and a 24/7 crypto bot — scheduled as agent routines that trade, report nightly, and watchdog each
-             other. Tournament-backtested strategies, hard risk gates, and honest P&amp;L, published live.</p>
-          <div class="foot"><span class="chip">Agent routines</span><span class="chip">Alpaca API</span><span class="chip">Backtesting</span><span class="chip">Risk engine</span></div>
-          <a class="link" href="trading/">Visit the trading desk</a>
-        </article>
         <article class="card reveal">
           <p class="tag">Generative pipeline</p>
           <h3>AI Comic Factory</h3>
@@ -288,7 +436,7 @@
 
     <!-- COMICS -->
     <section id="comics">
-      <div class="sec-head reveal"><span class="sec-index">02</span><h2>AI Comics</h2></div>
+      <div class="sec-head reveal"><span class="sec-index">03</span><h2>AI Comics</h2></div>
       <p class="sec-sub reveal">Original stories, 100% AI-drawn. Written and rendered by AI agents.</p>
       <div class="comic-series reveal is-ltd" style="margin-bottom:22px">
         <div class="series-head">
@@ -390,7 +538,7 @@
 
     <!-- PROCESS -->
     <section id="process">
-      <div class="sec-head reveal"><span class="sec-index">03</span><h2>How it's made</h2></div>
+      <div class="sec-head reveal"><span class="sec-index">04</span><h2>How it's made</h2></div>
       <p class="sec-sub reveal">The honest pipeline — shared openly, because directing AI well is the actual skill.</p>
       <div class="steps">
         <div class="step reveal">
@@ -422,7 +570,7 @@
 
     <!-- CONTACT -->
     <section id="contact" class="contact">
-      <div class="sec-head reveal" style="justify-content:center"><span class="sec-index">04</span><h2>Let's build</h2></div>
+      <div class="sec-head reveal" style="justify-content:center"><span class="sec-index">05</span><h2>Let's build</h2></div>
       <p class="sec-sub reveal" style="margin:0 auto">Looking for someone who can turn AI capability into shipped product? Say hi.</p>
       <a class="email reveal" href="mailto:zhangcheng1997@gmail.com"><span class="grad-text">zhangcheng1997@gmail.com</span></a>
       <div class="socials reveal">
@@ -442,6 +590,26 @@
       entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
     },{threshold:.12});
     document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+    /* count-up on the live desk stats */
+    (function(){
+      const els = [...document.querySelectorAll('.count')];
+      if (!els.length) return;
+      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const fmt = n => Math.round(n).toLocaleString('en-US');
+      if (reduce){ els.forEach(el => el.textContent = fmt(+el.dataset.to)); return; }
+      const cio = new IntersectionObserver(es => es.forEach(e => {
+        if (!e.isIntersecting) return;
+        cio.unobserve(e.target);
+        const el = e.target, to = +el.dataset.to, t0 = performance.now(), D = 1500;
+        (function step(t){
+          const k = Math.min(1, (t - t0) / D);
+          el.textContent = fmt(to * (1 - Math.pow(1 - k, 3)));
+          if (k < 1) requestAnimationFrame(step);
+        })(t0);
+      }), {threshold:.4});
+      els.forEach(el => cio.observe(el));
+    })();
 
     /* ============================================================
        Cinematic scroll-scrubbed film background.
