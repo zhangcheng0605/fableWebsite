@@ -331,17 +331,17 @@
             <div class="desk-stats">
               <div class="stat">
                 <div class="k">Account equity</div>
-                <div class="v">$<span class="count" data-to="1007016">0</span></div>
+                <div class="v">$<span class="count" data-to="1007016">1,007,016</span></div>
                 <div class="d up">▲ +$7,016 · +0.70%</div>
               </div>
               <div class="stat">
                 <div class="k">Open positions</div>
-                <div class="v"><span class="count" data-to="23">0</span></div>
+                <div class="v"><span class="count" data-to="23">23</span></div>
                 <div class="d">BTC · ETH · alt sleeve</div>
               </div>
               <div class="stat">
                 <div class="k">Untouchable core</div>
-                <div class="v">$<span class="count" data-to="500000">0</span></div>
+                <div class="v">$<span class="count" data-to="500000">500,000</span></div>
                 <div class="d">70/30 BTC/ETH · never sold</div>
               </div>
               <div class="stat">
@@ -599,14 +599,17 @@
       const fmt = n => Math.round(n).toLocaleString('en-US');
       if (reduce){ els.forEach(el => el.textContent = fmt(+el.dataset.to)); return; }
       const cio = new IntersectionObserver(es => es.forEach(e => {
-        if (!e.isIntersecting) return;
+        if (!e.isIntersecting || document.hidden) return;   // hidden tab: rAF is frozen, leave the real number in place
         cio.unobserve(e.target);
-        const el = e.target, to = +el.dataset.to, t0 = performance.now(), D = 1500;
-        (function step(t){
+        const el = e.target, to = +el.dataset.to, D = 1500;
+        let t0 = null;
+        requestAnimationFrame(function step(t){              // first real frame proves rAF is live before we blank it
+          if (t0 === null) t0 = t;
           const k = Math.min(1, (t - t0) / D);
           el.textContent = fmt(to * (1 - Math.pow(1 - k, 3)));
           if (k < 1) requestAnimationFrame(step);
-        })(t0);
+          else el.textContent = fmt(to);
+        });
       }), {threshold:.4});
       els.forEach(el => cio.observe(el));
     })();
