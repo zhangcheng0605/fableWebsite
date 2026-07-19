@@ -15,7 +15,7 @@
   <style>
     :root{
       --bg:#050507; --bg2:#0a0a10; --panel:rgba(255,255,255,.03);
-      --edge:rgba(255,255,255,.09); --text:#f2f1f7; --muted:#9a97ad;
+      --edge:rgba(255,255,255,.09); --text:#f2f1f7; --muted:#f2f1f7;
       --cyan:#38e8ff; --magenta:#ff3ddc; --violet:#8b7bff;
       --up:#2fd18a; --down:#ff6262;
       /* chart series (CVD-validated on this surface) */
@@ -213,7 +213,7 @@
     .term-bar i:first-child{background:#ff5f57}.term-bar i:nth-child(2){background:#febc2e}.term-bar i:nth-child(3){background:#28c840}
     .term-bar span{margin-left:10px;font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--muted)}
     .term-body{padding:18px 20px;font-family:"JetBrains Mono",monospace;font-size:.78rem;line-height:2;color:var(--muted);min-height:190px}
-    .term-body .t{color:#5a5870}
+    .term-body .t{color:var(--text)}
     .term-body .buy{color:var(--up)} .term-body .blocked{color:#ffcf87} .term-body .sell{color:var(--down)}
     .cursor{display:inline-block;width:8px;height:14px;background:var(--cyan);vertical-align:-2px;animation:blink 1s steps(1) infinite}
     @keyframes blink{50%{opacity:0}}
