@@ -9,17 +9,29 @@
   <meta property="og:description" content="What if I'd been born stupid rich? Ten pages, one other timeline. Written and drawn with AI.">
   <meta property="og:type" content="article">
   <meta property="og:image" content="page01.jpg">
+  <meta name="theme-color" content="#070605">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💸</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#070605; --ink:#0d0c0a;
-      --ivory:#f4efe4; --muted:#f4efe4;
+      /* design tokens — shadcn/ui architecture, gold-noir brand */
+      --background:#070605; --foreground:#f4efe4;
+      --card:rgba(255,255,255,.03); --card-foreground:#f4efe4;
+      --muted-bg:rgba(255,255,255,.05); --muted-foreground:#b3ab94;
+      --border:rgba(212,175,55,.22); --input:rgba(212,175,55,.3);
+      --ring:#d4af37;
+      --primary:#d4af37; --primary-foreground:#141005;
+      --accent:#f6dd9a; --accent-foreground:#141005;
+      --destructive:#ff6262;
+      --radius:18px; --radius-sm:calc(var(--radius)*.6); --radius-lg:calc(var(--radius)*1.25);
+      /* legacy vars, remapped onto the token layer */
+      --bg:var(--background); --ink:#0d0c0a;
+      --ivory:var(--foreground); --muted:var(--muted-foreground);
       --gold-1:#f6dd9a; --gold-2:#d4af37; --gold-3:#8a6d1f;
       --gold-grad:linear-gradient(100deg,var(--gold-1),var(--gold-2) 55%,#b8860b);
-      --edge:rgba(212,175,55,.22);
+      --edge:var(--border);
     }
     *{margin:0;padding:0;box-sizing:border-box}
     html{scroll-behavior:auto}
@@ -27,6 +39,12 @@
          overflow-x:hidden;-webkit-font-smoothing:antialiased}
     a{color:inherit;text-decoration:none}
     ::selection{background:rgba(212,175,55,.35)}
+    h1,h2,h3,h4{text-wrap:balance}
+    :focus-visible{outline:2px solid var(--ring);outline-offset:3px;border-radius:4px}
+    .btn:focus-visible{outline-offset:4px}
+    .skip-link{position:fixed;top:-100px;left:16px;z-index:100;padding:10px 18px;border-radius:99px;
+      background:var(--primary);color:var(--primary-foreground);font-weight:600;transition:top .2s}
+    .skip-link:focus{top:16px}
 
     /* ambient: faint gold dust + vignette */
     .amb{position:fixed;inset:0;z-index:0;pointer-events:none;background:
@@ -39,7 +57,8 @@
     .chrome{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;
             align-items:center;padding:20px 26px;pointer-events:none}
     .chrome>*{pointer-events:auto}
-    .back{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.92rem;color:var(--muted);transition:color .25s}
+    .back{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.92rem;color:var(--muted);transition:color .25s;
+          padding:10px 14px;margin:-10px -14px}
     .back:hover{color:var(--gold-1)}
     .worth{text-align:right;font-family:"JetBrains Mono",monospace}
     .worth .lbl{font-size:.62rem;letter-spacing:.34em;color:var(--muted)}
@@ -122,8 +141,10 @@
     .endcard p{color:var(--muted);max-width:480px}
     .endcta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:10px}
     .btn{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.95rem;padding:13px 28px;
-         border-radius:99px;border:1px solid var(--edge);color:var(--ivory);transition:transform .2s,box-shadow .2s;cursor:pointer;background:none}
+         border-radius:99px;border:1px solid var(--edge);color:var(--ivory);transition:transform .2s,box-shadow .2s;cursor:pointer;background:none;
+         display:inline-flex;align-items:center;justify-content:center;min-height:44px}
     .btn:hover{transform:translateY(-2px)}
+    .btn:active{transform:translateY(0) scale(.98)}
     .btn-gold{background:var(--gold-grad);color:#141005;border:none;box-shadow:0 8px 34px rgba(212,175,55,.3)}
     .btn-gold:hover{box-shadow:0 12px 44px rgba(212,175,55,.45)}
     .endcard{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s cubic-bezier(.22,1,.36,1)}
@@ -141,10 +162,13 @@
       .page .cap{opacity:1;transform:none;transition:none}
       .frame img{transform:none}
       .hint i{animation:none}
+      .skip-link{transition:none}
     }
   </style>
+  <link rel="stylesheet" href="../assets/fx.css">
 </head>
 <body>
+  <a class="skip-link" href="#reader">Skip to comic</a>
   <div class="amb" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
 
@@ -286,5 +310,6 @@
     document.getElementById("again").addEventListener("click", () =>
       window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" }));
   </script>
+  <script src="../assets/fx.js" defer></script>
 </body>
 </html>

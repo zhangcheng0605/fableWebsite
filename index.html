@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#050507">
   <title>Zhang Cheng — AI Engineer & Builder</title>
   <meta name="description" content="Zhang Cheng — AI engineer. A 24/7 autonomous crypto trading bot, agentic pipelines, generative media, AI comics. Everything on this site was built and shipped by AI under my direction.">
   <meta property="og:title" content="Zhang Cheng — AI Engineer & Builder">
@@ -15,14 +16,24 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#050507; --bg2:#0a0a10; --panel:rgba(255,255,255,.03);
-      --edge:rgba(255,255,255,.09); --text:#f2f1f7; --muted:#f2f1f7;
+      /* design tokens — shadcn/ui architecture, neon-noir brand */
+      --background:#050507; --foreground:#f2f1f7;
+      --card:rgba(255,255,255,.03); --card-foreground:#f2f1f7;
+      --muted-bg:rgba(255,255,255,.05); --muted-foreground:#a8a5c0;
+      --border:rgba(255,255,255,.10); --input:rgba(255,255,255,.15);
+      --ring:#38e8ff;
+      --primary:#38e8ff; --primary-foreground:#08070c;
+      --accent:#ff3ddc; --accent-foreground:#08070c;
+      --destructive:#ff6262;
+      --radius:18px; --radius-sm:calc(var(--radius)*.6); --radius-lg:calc(var(--radius)*1.25);
+      /* legacy vars remapped onto the token layer */
+      --bg:var(--background); --bg2:#0a0a10; --panel:var(--card);
+      --edge:var(--border); --text:var(--foreground); --muted:var(--muted-foreground);
       --cyan:#38e8ff; --magenta:#ff3ddc; --violet:#8b7bff;
       --grad:linear-gradient(92deg,var(--cyan),var(--violet) 55%,var(--magenta));
-      --radius:18px;
     }
     *{margin:0;padding:0;box-sizing:border-box}
-    html{scroll-behavior:smooth}
+    html{scroll-behavior:smooth;scroll-padding-top:96px}
     body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif;
          -webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.6}
     ::selection{background:rgba(56,232,255,.25)}
@@ -39,16 +50,25 @@
         background-size:56px 56px;
         mask-image:radial-gradient(70vw 70vh at 50% 20%,#000 0%,transparent 80%)}
     a{color:inherit;text-decoration:none}
+    /* accessibility: focus rings (shadcn), skip link, balanced headings */
+    :focus-visible{outline:2px solid var(--ring);outline-offset:3px;border-radius:4px}
+    .btn:focus-visible,a.chapter:focus-visible,.sib:focus-visible{outline-offset:4px}
+    .skip-link{position:fixed;top:-100px;left:16px;z-index:100;padding:10px 18px;border-radius:99px;
+      background:var(--primary);color:var(--primary-foreground);font-weight:600;transition:top .2s}
+    .skip-link:focus{top:16px}
+    h1,h2,h3,h4{text-wrap:balance}
     .mono{font-family:"JetBrains Mono",monospace}
     .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 
     /* nav */
     .nav-wrap{position:fixed;top:18px;left:0;right:0;z-index:50;display:flex;justify-content:center;padding:0 20px}
-    .nav{display:flex;align-items:center;gap:26px;padding:10px 22px;border-radius:99px;
+    .nav{display:flex;align-items:center;gap:26px;padding:4px 20px;border-radius:99px;
          background:rgba(10,10,16,.6);border:1px solid var(--edge);
          backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
-    .nav a{font-size:.92rem;color:var(--muted);font-weight:500;transition:color .2s}
+    .nav a{font-size:.92rem;color:var(--muted);font-weight:500;transition:color .2s;padding:8px 2px}
     .nav a:hover{color:var(--text)}
+    @media(max-width:640px){.nav{gap:14px;padding:8px 16px;max-width:calc(100vw - 32px);overflow-x:auto;
+      scrollbar-width:none}.nav::-webkit-scrollbar{display:none}.nav a{font-size:.82rem}}
     .logo{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:1.05rem;color:var(--text)!important}
     .logo span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
 
@@ -64,8 +84,10 @@
     .hero-sub b{color:var(--text);font-weight:600}
     .cta{display:flex;gap:14px;margin-top:40px;flex-wrap:wrap;justify-content:center}
     .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:99px;
-         font-weight:600;font-size:.95rem;transition:transform .2s,box-shadow .2s;border:1px solid var(--edge)}
+         font-weight:600;font-size:.95rem;transition:transform .2s,box-shadow .2s;border:1px solid var(--edge);
+         cursor:pointer;min-height:44px}
     .btn:hover{transform:translateY(-2px)}
+    .btn:active{transform:translateY(0) scale(.98)}
     .btn-primary{background:var(--grad);color:#08070c;border:none;box-shadow:0 4px 30px rgba(139,123,255,.35)}
     .btn-primary:hover{box-shadow:0 8px 40px rgba(56,232,255,.4)}
     .btn-ghost{background:var(--panel)}
@@ -276,10 +298,13 @@
     .reveal.visible{opacity:1;transform:none}
     /* layered parallax wrappers (transform applied by JS; reveal animates the child, so no conflict) */
     .plx{will-change:transform}
-    @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+    @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}
+      .cursor{animation:none;opacity:1}}
   </style>
+  <link rel="stylesheet" href="assets/fx.css">
 </head>
 <body>
+  <a class="skip-link" href="#desk">Skip to content</a>
   <canvas id="film" aria-hidden="true"></canvas>
   <div class="bg" aria-hidden="true"></div>
   <div class="gridlines" aria-hidden="true"></div>
@@ -734,6 +759,7 @@
       requestAnimationFrame(tick);
     })();
   </script>
+  <script src="assets/fx.js" defer></script>
 </body>
 </html>
 

@@ -8,27 +8,44 @@
   <meta property="og:title" content="AI Trading Desk — Zhang Cheng">
   <meta property="og:description" content="Three AI bots, two paper accounts, zero humans on the hourly loop. Real strategies, fake dollars, honest numbers.">
   <meta property="og:type" content="website">
+  <meta name="theme-color" content="#050507">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#050507; --bg2:#0a0a10; --panel:rgba(255,255,255,.03);
-      --edge:rgba(255,255,255,.09); --text:#f2f1f7; --muted:#f2f1f7;
+      /* design tokens — shadcn/ui architecture, neon-noir brand */
+      --background:#050507; --foreground:#f2f1f7;
+      --card:rgba(255,255,255,.03); --card-foreground:#f2f1f7;
+      --muted-bg:rgba(255,255,255,.05); --muted-foreground:#a8a5c0;
+      --border:rgba(255,255,255,.10); --input:rgba(255,255,255,.15);
+      --ring:#38e8ff;
+      --primary:#38e8ff; --primary-foreground:#08070c;
+      --accent:#ff3ddc; --accent-foreground:#08070c;
+      --destructive:#ff6262;
+      --radius:18px; --radius-sm:calc(var(--radius)*.6); --radius-lg:calc(var(--radius)*1.25);
+      /* legacy vars, remapped onto the token layer */
+      --bg:var(--background); --bg2:#0a0a10; --panel:var(--card);
+      --edge:var(--border); --text:var(--foreground); --muted:var(--muted-foreground);
       --cyan:#38e8ff; --magenta:#ff3ddc; --violet:#8b7bff;
       --up:#2fd18a; --down:#ff6262;
       /* chart series (CVD-validated on this surface) */
       --s-bot:#12a0cc; --s-spy:#8471f5; --s-qqq:#d94fa6; --s-frozen:#b08a2e;
       --grad:linear-gradient(92deg,var(--cyan),var(--violet) 55%,var(--magenta));
-      --radius:18px;
     }
     *{margin:0;padding:0;box-sizing:border-box}
-    html{scroll-behavior:smooth}
+    html{scroll-behavior:smooth;scroll-padding-top:96px}
     body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif;
          -webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.6}
     ::selection{background:rgba(56,232,255,.25)}
     a{color:inherit;text-decoration:none}
+    :focus-visible{outline:2px solid var(--ring);outline-offset:3px;border-radius:4px}
+    .btn:focus-visible,a.chapter:focus-visible,.sib:focus-visible{outline-offset:4px}
+    .skip-link{position:fixed;top:-100px;left:16px;z-index:100;padding:10px 18px;border-radius:99px;
+      background:var(--primary);color:var(--primary-foreground);font-weight:600;transition:top .2s}
+    .skip-link:focus{top:16px}
+    h1,h2,h3,h4{text-wrap:balance}
     .mono{font-family:"JetBrains Mono",monospace}
     .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
     .bg{position:fixed;inset:0;z-index:-2;background:
@@ -43,14 +60,14 @@
 
     /* nav */
     .nav-wrap{position:fixed;top:18px;left:0;right:0;z-index:50;display:flex;justify-content:center;padding:0 20px}
-    .nav{display:flex;align-items:center;gap:26px;padding:10px 22px;border-radius:99px;
+    .nav{display:flex;align-items:center;gap:26px;padding:4px 22px;border-radius:99px;
          background:rgba(10,10,16,.6);border:1px solid var(--edge);
          backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
-    .nav a{font-size:.92rem;color:var(--muted);font-weight:500;transition:color .2s;white-space:nowrap}
+    .nav a{font-size:.92rem;color:var(--muted);font-weight:500;transition:color .2s;white-space:nowrap;padding:8px 2px}
     .nav a:hover{color:var(--text)}
     .logo{font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:1.05rem;color:var(--text)!important}
     .logo span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-    @media(max-width:560px){.nav{gap:16px;padding:10px 16px}.nav a{font-size:.82rem}}
+    @media(max-width:560px){.nav{gap:16px;padding:4px 16px}.nav a{font-size:.82rem}}
 
     /* hero */
     .hero{min-height:92svh;display:flex;flex-direction:column;justify-content:center;align-items:center;
@@ -68,10 +85,13 @@
     .paper-badge{display:inline-flex;align-items:center;gap:8px;margin-top:26px;padding:8px 18px;border-radius:99px;
         border:1px dashed rgba(255,184,77,.55);color:#ffcf87;font-family:"JetBrains Mono",monospace;
         font-size:.78rem;letter-spacing:.06em;background:rgba(255,184,77,.06)}
+    .paper-badge .lucide{width:18px;height:18px;color:#ffcf87;vertical-align:-3px;flex:none}
     .cta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;justify-content:center}
     .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:99px;
-         font-weight:600;font-size:.95rem;transition:transform .2s,box-shadow .2s;border:1px solid var(--edge)}
+         font-weight:600;font-size:.95rem;transition:transform .2s,box-shadow .2s;border:1px solid var(--edge);
+         cursor:pointer;min-height:44px}
     .btn:hover{transform:translateY(-2px)}
+    .btn:active{transform:translateY(0) scale(.98)}
     .btn-primary{background:var(--grad);color:#08070c;border:none;box-shadow:0 4px 30px rgba(139,123,255,.35)}
     .btn-primary:hover{box-shadow:0 8px 40px rgba(56,232,255,.4)}
     .btn-ghost{background:var(--panel)}
@@ -136,6 +156,7 @@
     .rt .cron{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--violet);
         border:1px solid rgba(139,123,255,.35);border-radius:8px;padding:4px 10px;margin-bottom:12px}
     .rt h3{font-family:"Space Grotesk",sans-serif;font-size:1.08rem;margin-bottom:6px}
+    .rt h3 .lucide{width:20px;height:20px;vertical-align:-4px;margin-right:8px;color:var(--cyan)}
     .rt p{color:var(--muted);font-size:.88rem}
     .rt .when{font-family:"JetBrains Mono",monospace;font-size:.74rem;color:var(--cyan);margin-top:12px}
 
@@ -198,6 +219,7 @@
     .risks{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
     .risk-card{border:1px solid var(--edge);border-radius:var(--radius);background:var(--panel);padding:24px}
     .risk-card .ic{font-size:1.3rem}
+    .risk-card .ic .lucide{width:22px;height:22px;color:var(--cyan)}
     .risk-card h3{font-family:"Space Grotesk",sans-serif;font-size:1.02rem;margin:10px 0 6px}
     .risk-card p{color:var(--muted);font-size:.86rem}
     .risk-card .state{display:inline-block;margin-top:14px;font-family:"JetBrains Mono",monospace;font-size:.7rem;
@@ -233,9 +255,11 @@
 
     .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.6,.2,1),transform .7s cubic-bezier(.2,.6,.2,1)}
     .reveal.visible{opacity:1;transform:none}
-    @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.bar{transition:none;transform:scaleY(1)}}
+    @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.bar{transition:none;transform:scaleY(1)}
+      .eyebrow::before{animation:none}.cursor{animation:none;opacity:1}}
     /* --- postmortem --- */
     .findings{display:grid;gap:16px}
+    .finding{min-width:0}
     .finding{border:1px solid var(--edge);border-radius:var(--radius);background:var(--panel);padding:26px 28px}
     .finding h3{font-family:"Space Grotesk",sans-serif;font-size:1.08rem;margin:12px 0 10px;line-height:1.35}
     .finding p{color:var(--muted);font-size:.88rem;line-height:1.65;margin:0 0 10px}
@@ -270,8 +294,10 @@
     .verdict b{color:var(--text)}
     @media(max-width:640px){.finding{padding:22px 20px}.verdict{padding:24px 22px}}
   </style>
+  <link rel="stylesheet" href="../assets/fx.css">
 </head>
 <body>
+  <a class="skip-link" href="#scoreboard">Skip to content</a>
   <div class="bg" aria-hidden="true"></div>
   <div class="gridlines" aria-hidden="true"></div>
   <div class="tooltip" id="tooltip" role="tooltip"></div>
@@ -297,7 +323,7 @@
       <p class="hero-sub reveal">Three trading bots, two Alpaca paper accounts, <b>zero humans on the hourly loop</b>.
          AI agents wrote the strategies, backtested them in a tournament, wired the schedules,
          and now fire every hour to trade, report, and watchdog themselves.</p>
-      <p class="reveal"><span class="paper-badge">⚠ 100% PAPER MONEY — real strategies, fake dollars, honest numbers</span></p>
+      <p class="reveal"><span class="paper-badge"><svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 20h16a2 2 0 0 0 1.73-2Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg> 100% PAPER MONEY — real strategies, fake dollars, honest numbers</span></p>
       <div class="cta reveal">
         <a class="btn btn-primary" href="#money">Show me the money</a>
         <a class="btn btn-ghost" href="https://github.com/zhangcheng0605/alpaca-paper-trading-shareout" target="_blank" rel="noopener">Source on GitHub</a>
@@ -442,28 +468,28 @@
       <div class="routines">
         <div class="rt reveal">
           <span class="cron">35 13-20 * * 1-5</span>
-          <h3>🤖 Stock bots — hourly</h3>
+          <h3><svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>Stock bots — hourly</h3>
           <p>Every hour of the US session, runs the RSI bot then Bot v2's dip scan, sequentially — two bots
              on one account must never trade at the same minute. The 17:35 UTC firing also rebalances the core.</p>
           <p class="when">13:35–20:35 UTC · Mon–Fri</p>
         </div>
         <div class="rt reveal">
           <span class="cron">5 * * * *</span>
-          <h3>🪙 Crypto bot — 24/7</h3>
+          <h3><svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/></svg>Crypto bot — 24/7</h3>
           <p>Fires at five past every hour, every day — crypto never closes. One cycle of the trend-filtered
              RSI strategy on BTC and ETH, order fills verified before reporting.</p>
           <p class="when">every hour · around the clock</p>
         </div>
         <div class="rt reveal">
           <span class="cron">20 21 * * *</span>
-          <h3>📊 Daily report</h3>
+          <h3><svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>Daily report</h3>
           <p>The nightly accountant: P&amp;L, fills, positions, and risk state for both accounts, plus the
              benchmark table — delivered as a push notification and email after the US close.</p>
           <p class="when">21:20 UTC · daily</p>
         </div>
         <div class="rt reveal">
           <span class="cron">40 8 1 * *</span>
-          <h3>🏆 Monthly strategy tournament</h3>
+          <h3><svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>Monthly strategy tournament</h3>
           <p>Re-runs the full backtest tournament on a year of hourly bars. A challenger strategy replaces the
              incumbent only after beating it in-sample <i>and</i> out-of-sample two months running — no hot-swapping
              on one lucky backtest.</p>
@@ -471,7 +497,7 @@
         </div>
         <div class="rt reveal">
           <span class="cron">50 */2 * * *</span>
-          <h3>🐕 Watchdog</h3>
+          <h3><svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>Watchdog</h3>
           <p>Every two hours an agent audits the other agents: did every Routine fire on schedule? Any rejected
              orders, runaway trading, or kill-switch breaches? It can re-fire a missed schedule once — anything
              bigger gets escalated to the human.</p>
@@ -521,22 +547,22 @@
         <p class="sub">Return vs three do-nothing rivals: parking $100k in SPY, parking it in QQQ, or freezing the bot's own day-one portfolio and never trading again. Hover the bars for dollar values.</p>
         <div class="bench" id="bench">
           <div class="zero"><em>0%</em></div>
-          <div class="col" data-tt="<b>Bot account</b><br>$97,914.08 · −2.09%<br>the live, actively-traded account">
+          <div class="col" tabindex="0" role="img" aria-label="Bot account: $97,914.08, −2.09% — the live, actively-traded account" data-tt="<b>Bot account</b><br>$97,914.08 · −2.09%<br>the live, actively-traded account">
             <div class="bar-val" style="top:2px">−2.09%</div>
             <div class="bar-slot"><div class="bar" style="height:60.4%;background:var(--s-bot)"></div></div>
             <div class="bar-name">Bot account</div><div class="bar-dollar">$97,914</div>
           </div>
-          <div class="col" data-tt="<b>SPY couch</b><br>$98,983.90 · −1.02%<br>bot is BEHIND by $1,070">
+          <div class="col" tabindex="0" role="img" aria-label="SPY couch: $98,983.90, −1.02% — bot is BEHIND by $1,070" data-tt="<b>SPY couch</b><br>$98,983.90 · −1.02%<br>bot is BEHIND by $1,070">
             <div class="bar-val" style="top:2px">−1.02%</div>
             <div class="bar-slot"><div class="bar" style="height:29.5%;background:var(--s-spy)"></div></div>
             <div class="bar-name">SPY couch</div><div class="bar-dollar">$98,984</div>
           </div>
-          <div class="col" data-tt="<b>QQQ couch</b><br>$96,538.56 · −3.46%<br>bot is AHEAD by $1,376">
+          <div class="col" tabindex="0" role="img" aria-label="QQQ couch: $96,538.56, −3.46% — bot is AHEAD by $1,376" data-tt="<b>QQQ couch</b><br>$96,538.56 · −3.46%<br>bot is AHEAD by $1,376">
             <div class="bar-val" style="top:2px">−3.46%</div>
             <div class="bar-slot"><div class="bar" style="height:100%;background:var(--s-qqq)"></div></div>
             <div class="bar-name">QQQ couch</div><div class="bar-dollar">$96,539</div>
           </div>
-          <div class="col" data-tt="<b>Frozen twin</b><br>$98,880.13 · −1.12%<br>bot is BEHIND by $966 — the trading itself hasn't added value yet">
+          <div class="col" tabindex="0" role="img" aria-label="Frozen twin: $98,880.13, −1.12% — bot is BEHIND by $966 — the trading itself hasn't added value yet" data-tt="<b>Frozen twin</b><br>$98,880.13 · −1.12%<br>bot is BEHIND by $966 — the trading itself hasn't added value yet">
             <div class="bar-val" style="top:2px">−1.12%</div>
             <div class="bar-slot"><div class="bar" style="height:32.4%;background:var(--s-frozen)"></div></div>
             <div class="bar-name">Frozen twin</div><div class="bar-dollar">$98,880</div>
@@ -568,16 +594,16 @@
         <p class="sub">Composition by market value. Hover the segments.</p>
         <div class="row-lbl"><span>Stock account — $97.9k</span><span>25 positions + cash</span></div>
         <div class="stack" aria-label="Stock account composition">
-          <div class="seg" style="flex:30.3;background:var(--s-spy)" data-tt="<b>SPY index layer</b><br>$29.7k · 30% of the account<br>passive base — no bot may sell it"></div>
-          <div class="seg" style="flex:54.2;background:var(--s-bot)" data-tt="<b>Stock picks</b><br>$53.1k · core basket + dip positions<br>managed by Bot v2 &amp; the RSI bot"></div>
-          <div class="seg" style="flex:15.5;background:rgba(255,255,255,.22)" data-tt="<b>Cash</b><br>$15.2k · 15.5%<br>10% reserve is enforced by risk.py"></div>
+          <div class="seg" tabindex="0" role="img" aria-label="SPY index layer: $29.7k, 30% of the account — passive base, no bot may sell it" style="flex:30.3;background:var(--s-spy)" data-tt="<b>SPY index layer</b><br>$29.7k · 30% of the account<br>passive base — no bot may sell it"></div>
+          <div class="seg" tabindex="0" role="img" aria-label="Stock picks: $53.1k, core basket + dip positions — managed by Bot v2 &amp; the RSI bot" style="flex:54.2;background:var(--s-bot)" data-tt="<b>Stock picks</b><br>$53.1k · core basket + dip positions<br>managed by Bot v2 &amp; the RSI bot"></div>
+          <div class="seg" tabindex="0" role="img" aria-label="Cash: $15.2k, 15.5% — 10% reserve is enforced by risk.py" style="flex:15.5;background:rgba(255,255,255,.22)" data-tt="<b>Cash</b><br>$15.2k · 15.5%<br>10% reserve is enforced by risk.py"></div>
         </div>
         <div class="row-lbl"><span>Crypto account — $1.007M</span><span>23 positions + cash</span></div>
         <div class="stack" aria-label="Crypto account composition">
-          <div class="seg" style="flex:34.7;background:var(--s-frozen)" data-tt="<b>BTC core</b><br>$349.6k · 5.45 BTC<br>permanent market-exposure layer"></div>
-          <div class="seg" style="flex:14.8;background:var(--s-qqq)" data-tt="<b>ETH core</b><br>$149.1k · 80.9 ETH<br>the 30 in the 70/30 core"></div>
-          <div class="seg" style="flex:17.0;background:var(--s-bot)" data-tt="<b>Alt sleeve</b><br>~$171k · 21 alts, gold (PAXG), even the meme tier<br>SOL · XRP · ADA · DOGE · PEPE …"></div>
-          <div class="seg" style="flex:33.5;background:rgba(255,255,255,.22)" data-tt="<b>Cash</b><br>$337.5k · 33.5%<br>dry powder for the dip-buyer"></div>
+          <div class="seg" tabindex="0" role="img" aria-label="BTC core: $349.6k, 5.45 BTC — permanent market-exposure layer" style="flex:34.7;background:var(--s-frozen)" data-tt="<b>BTC core</b><br>$349.6k · 5.45 BTC<br>permanent market-exposure layer"></div>
+          <div class="seg" tabindex="0" role="img" aria-label="ETH core: $149.1k, 80.9 ETH — the 30 in the 70/30 core" style="flex:14.8;background:var(--s-qqq)" data-tt="<b>ETH core</b><br>$149.1k · 80.9 ETH<br>the 30 in the 70/30 core"></div>
+          <div class="seg" tabindex="0" role="img" aria-label="Alt sleeve: about $171k, 21 alts, gold (PAXG), even the meme tier — SOL, XRP, ADA, DOGE, PEPE and more" style="flex:17.0;background:var(--s-bot)" data-tt="<b>Alt sleeve</b><br>~$171k · 21 alts, gold (PAXG), even the meme tier<br>SOL · XRP · ADA · DOGE · PEPE …"></div>
+          <div class="seg" tabindex="0" role="img" aria-label="Cash: $337.5k, 33.5% — dry powder for the dip-buyer" style="flex:33.5;background:rgba(255,255,255,.22)" data-tt="<b>Cash</b><br>$337.5k · 33.5%<br>dry powder for the dip-buyer"></div>
         </div>
         <div class="legend">
           <span><i style="background:var(--s-spy)"></i>SPY layer</span>
@@ -594,32 +620,32 @@
       <div class="sec-head reveal"><span class="sec-index">04</span><h2>The Risk Engine</h2></div>
       <p class="sec-sub reveal">Autonomous money needs autonomous brakes. Every buy passes through shared, account-wide gates in <code style="font-family:'JetBrains Mono',monospace;color:var(--cyan)">risk.py</code> before it reaches the broker — sells are never blocked, because the exit door stays open.</p>
       <div class="risks">
-        <div class="risk-card reveal"><div class="ic">🛑</div>
+        <div class="risk-card reveal"><div class="ic"><svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16h.01"/><path d="M12 8v4"/><path d="M15.312 2a2 2 0 0 1 1.414.586l4.688 4.688A2 2 0 0 1 22 8.688v6.624a2 2 0 0 1-.586 1.414l-4.688 4.688a2 2 0 0 1-1.414.586H8.688a2 2 0 0 1-1.414-.586l-4.688-4.688A2 2 0 0 1 2 15.312V8.688a2 2 0 0 1 .586-1.414l4.688-4.688A2 2 0 0 1 8.688 2z"/></svg></div>
           <h3>Drawdown kill switch</h3>
           <p>All buying halts if equity falls more than 5% below its high-water mark — computed statelessly
              from the broker's own portfolio history, so it can't be gamed by a bot with amnesia.</p>
           <span class="state armed">ARMED · −2.08% vs HWM</span></div>
-        <div class="risk-card reveal"><div class="ic">💧</div>
+        <div class="risk-card reveal"><div class="ic"><svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/></svg></div>
           <h3>Cash reserve floor</h3>
           <p>No buy may take cash below 10% of equity. The dip-buyer always keeps dry powder for the next dip
              instead of going all-in on the first one.</p>
           <span class="state armed">ARMED · 15.5% held</span></div>
-        <div class="risk-card reveal"><div class="ic">📉</div>
+        <div class="risk-card reveal"><div class="ic"><svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg></div>
           <h3>Daily loss halt</h3>
           <p>Bot v2 stops buying for the day if the account drops 2% intraday. Tomorrow is another day; today
              is done.</p>
           <span class="state armed">ARMED · day −1.19%</span></div>
-        <div class="risk-card reveal"><div class="ic">📏</div>
+        <div class="risk-card reveal"><div class="ic"><svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.3 8.7a2.4 2.4 0 0 1 0-3.4l2.6-2.6a2.4 2.4 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg></div>
           <h3>Position &amp; order caps</h3>
           <p>No single name over 5% of equity, max 5 orders per run, no trading in the first or last 5 minutes
              of the session — no fat fingers, even robotic ones.</p>
           <span class="state info">STRUCTURAL</span></div>
-        <div class="risk-card reveal"><div class="ic">🏷️</div>
+        <div class="risk-card reveal"><div class="ic"><svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5" fill="currentColor"/></svg></div>
           <h3>Book isolation</h3>
           <p>Every order is tagged. A bot can only sell shares its own tag bought — it can't touch the SPY
              layer, the crypto core, another bot's book, or my manual trades.</p>
           <span class="state info">STRUCTURAL</span></div>
-        <div class="risk-card reveal"><div class="ic">🧪</div>
+        <div class="risk-card reveal"><div class="ic"><svg class="lucide" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2v6a2 2 0 0 0 .245.96l5.51 10.08A2 2 0 0 1 18 22H6a2 2 0 0 1-1.755-2.96l5.51-10.08A2 2 0 0 0 10 8V2"/><path d="M6.453 15h11.094"/><path d="M8.5 2h7"/></svg></div>
           <h3>Promotion rule</h3>
           <p>Strategies aren't hot-swapped on one good backtest. A challenger must beat the incumbent
              in-sample and out-of-sample in two consecutive monthly tournaments — and a human flips the switch.</p>
@@ -875,6 +901,12 @@
         tt.style.left=Math.min(e.clientX+16,innerWidth-r.width-12)+'px';
         tt.style.top=Math.max(e.clientY-r.height-14,8)+'px';});
       el.addEventListener('mouseleave',()=>tt.style.opacity=0);
+      /* keyboard access: same tooltip on focus, anchored to the element */
+      el.addEventListener('focus',()=>{tt.innerHTML=el.dataset.tt;tt.style.opacity=1;
+        const r=tt.getBoundingClientRect(),b=el.getBoundingClientRect();
+        tt.style.left=Math.max(8,Math.min(b.left,innerWidth-r.width-12))+'px';
+        tt.style.top=Math.max(b.top-r.height-14,8)+'px';});
+      el.addEventListener('blur',()=>tt.style.opacity=0);
     });
 
     /* live-ish bot log */
@@ -898,5 +930,6 @@
     const lio=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){lio.disconnect();addLine();}})},{threshold:.3});
     lio.observe(logEl);
   </script>
+  <script src="../assets/fx.js" defer></script>
 </body>
 </html>
