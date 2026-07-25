@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prompt Injection — a typing game planned and built by AI · Zhang Cheng</title>
+  <meta name="description" content="A typing-defence game where hostile prompts descend toward your context window. The design document was written by one AI model; every line of code was written by another.">
+  <meta property="og:title" content="Prompt Injection — a typing game planned and built by AI">
+  <meta property="og:description" content="One model wrote the design document. A second model implemented it across nine modules in parallel. No human wrote code or assets. Play it in your browser.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#101410">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9000;</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* Site tokens — Ink & Lantern, matching the homepage */
+    :root{
+      --background:#101410; --background-2:#151a14;
+      --foreground:#f4eeda;
+      --card:rgba(244,238,218,.045);
+      --muted-foreground:#b5ac93;
+      --border:rgba(233,180,85,.16);
+      --primary:#e9b455; --gold-2:#f2d789;
+      --accent:#e05a3a; --jade:#7fd6b2;
+      --radius:18px;
+      --grad:linear-gradient(100deg,var(--gold-2),var(--primary) 45%,var(--accent));
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    body{
+      background:var(--background);
+      color:var(--foreground);
+      font-family:Inter,system-ui,-apple-system,sans-serif;
+      -webkit-font-smoothing:antialiased;
+      line-height:1.6;
+    }
+    a{color:inherit}
+    .skip-link{
+      position:absolute;left:-9999px;top:0;padding:.6rem 1rem;background:var(--primary);
+      color:#221604;border-radius:0 0 8px 0;z-index:100;font-weight:600
+    }
+    .skip-link:focus{left:0}
+    :focus-visible{outline:2px solid var(--primary);outline-offset:3px}
+
+    .bar{
+      display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
+      padding:.85rem clamp(1rem,4vw,2.5rem);
+      border-bottom:1px solid var(--border);
+      background:var(--background-2);
+    }
+    .back{
+      font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.04em;
+      text-decoration:none;color:var(--muted-foreground);
+      padding:.35rem .7rem;border:1px solid var(--border);border-radius:999px;
+      transition:color .2s,border-color .2s
+    }
+    .back:hover{color:var(--primary);border-color:var(--primary)}
+    .bar h1{
+      margin:0;font-family:"Playfair Display",serif;font-weight:600;
+      font-size:clamp(1.05rem,2.4vw,1.4rem);letter-spacing:.01em
+    }
+    .bar .by{
+      font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--muted-foreground);
+      letter-spacing:.03em
+    }
+    .bar .by b{color:var(--primary);font-weight:500}
+    .spacer{flex:1}
+    .hint{
+      font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--muted-foreground)
+    }
+
+    /* The game is 1280x720 internally and letterboxes to whatever box it is given. */
+    .stage{
+      width:100%;
+      aspect-ratio:16/9;
+      max-height:calc(100svh - 132px);
+      background:#0a0e14;
+      position:relative;
+    }
+    .stage iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+
+    .below{
+      max-width:74ch;margin:0 auto;
+      padding:clamp(1.6rem,5vw,3rem) clamp(1rem,4vw,2rem) 4rem;
+      display:flex;flex-direction:column;gap:1.1rem
+    }
+    .below h2{
+      margin:0;font-family:"Playfair Display",serif;font-weight:600;
+      font-size:clamp(1.3rem,3vw,1.7rem)
+    }
+    .below p{margin:0;color:var(--muted-foreground)}
+    .below p b,.below p strong{color:var(--foreground);font-weight:500}
+    .pipeline{
+      display:grid;gap:.75rem;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+      margin:.4rem 0
+    }
+    .step{
+      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+      padding:1rem 1.1rem
+    }
+    .step .k{
+      font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.08em;
+      text-transform:uppercase;color:var(--primary);margin:0 0 .35rem
+    }
+    .step p{margin:0;font-size:.9rem}
+    .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:.2rem 0}
+    .chip{
+      font-family:"JetBrains Mono",monospace;font-size:.7rem;
+      padding:.25rem .6rem;border:1px solid var(--border);border-radius:999px;
+      color:var(--muted-foreground)
+    }
+    .keys{display:flex;flex-wrap:wrap;gap:1rem;font-size:.9rem;color:var(--muted-foreground)}
+    kbd{
+      font-family:"JetBrains Mono",monospace;font-size:.78rem;
+      background:rgba(244,238,218,.07);border:1px solid var(--border);
+      border-radius:6px;padding:.12rem .42rem;color:var(--foreground)
+    }
+    .cta{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:.5rem}
+    .btn{
+      text-decoration:none;font-size:.86rem;font-weight:500;
+      padding:.6rem 1.1rem;border-radius:999px;border:1px solid var(--border);
+      transition:border-color .2s,color .2s
+    }
+    .btn-primary{background:var(--grad);color:#221604;border-color:transparent;font-weight:600}
+    .btn-ghost:hover{border-color:var(--primary);color:var(--primary)}
+    .note{font-size:.82rem;color:var(--muted-foreground);border-left:2px solid var(--border);padding-left:.9rem}
+
+    @media (max-width:640px){
+      .stage{max-height:none}
+      .bar h1{width:100%}
+    }
+    @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#game">Skip to the game</a>
+
+  <div class="bar">
+    <a class="back" href="../">&larr; Zhang Cheng</a>
+    <h1>Prompt Injection</h1>
+    <span class="by">planned by <b>Fable 5</b> · built by <b>Opus 5</b></span>
+    <span class="spacer"></span>
+    <span class="hint">click the game, then type</span>
+  </div>
+
+  <div class="stage" id="game">
+    <iframe src="game.html" title="Prompt Injection — a typing defence game"
+            allow="autoplay" loading="eager"></iframe>
+  </div>
+
+  <div class="below">
+    <h2>Two models, one pipeline</h2>
+    <p>Hostile prompts descend toward your context window and you are the alignment layer.
+      Type a word to lock on, finish it to destroy it. Every fifth wave a full injection
+      attack arrives as a phrase you dismantle word by word.</p>
+    <p>The interesting part isn't the game — it's how it was made. One model wrote the
+      design document. A different model implemented it. <b>No human wrote any code or
+      any asset.</b></p>
+
+    <div class="pipeline">
+      <div class="step">
+        <p class="k">The plan</p>
+        <p><b>Claude Fable 5</b> wrote a full design document — enemy speeds, difficulty
+          formulas, scoring, and a motion-design section specifying every animation — before
+          any code existed. It was never revised to match the result.</p>
+      </div>
+      <div class="step">
+        <p class="k">The build</p>
+        <p><b>Claude Opus 5</b> fixed an interface contract first, then had nine agents write
+          nine modules <b>in parallel</b> against it. Integration, four independent verifier
+          agents, then fix rounds.</p>
+      </div>
+      <div class="step">
+        <p class="k">The proof</p>
+        <p>An acceptance gate drives the finished game in a real browser: 21 checks covering
+          scoring, the boss fight, death and restart, frame rate under load, and zero runtime
+          errors.</p>
+      </div>
+    </div>
+
+    <div class="chips">
+      <span class="chip">Canvas 2D</span>
+      <span class="chip">Zero dependencies</span>
+      <span class="chip">Zero network requests</span>
+      <span class="chip">5,555 lines</span>
+      <span class="chip">One file</span>
+      <span class="chip">WebAudio — no sound files</span>
+    </div>
+
+    <p class="note">Everything you hear is synthesised at runtime and everything you see is
+      drawn procedurally — there isn't a single image or audio file in the project. Profiling
+      cut the background from 4,361 draw calls per frame to 316.</p>
+
+    <div class="keys">
+      <span><kbd>A</kbd>–<kbd>Z</kbd> type</span>
+      <span><kbd>Enter</kbd> start / retry</span>
+      <span><kbd>Esc</kbd> drop lock</span>
+      <span><kbd>M</kbd> mute</span>
+    </div>
+
+    <div class="cta">
+      <a class="btn btn-primary" href="game.html">Open fullscreen</a>
+      <a class="btn btn-ghost" href="https://github.com/zhangcheng0605/fableGame" target="_blank" rel="noopener">Source &amp; design doc</a>
+      <a class="btn btn-ghost" href="../">Back to portfolio</a>
+    </div>
+  </div>
+</body>
+</html>
