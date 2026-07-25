@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zhang Cheng — AI Engineer & Builder</title>
-  <meta name="description" content="Zhang Cheng — AI engineer directing autonomous agents that ship real systems: a 24/7 crypto trading desk on a $1M paper account, agentic pipelines, and published generative media. Everything here was built and deployed by AI under my direction.">
+  <meta name="description" content="Zhang Cheng — Senior Engineer, Enterprise AI at Mediacorp (Singapore). I direct autonomous agents that ship real systems: a 24/7 trading desk, ~20 enterprise GenAI rollouts, agentic pipelines, and published generative media.">
   <meta property="og:title" content="Zhang Cheng — AI Engineer & Builder">
   <meta property="og:description" content="I direct AI agents that ship real systems: an autonomous trading desk, agentic deploy pipelines, and three published comic series. 0 humans on the hourly loop.">
   <meta property="og:type" content="website">
@@ -240,6 +240,37 @@
     .cap-card h3{font-family:"Playfair Display",serif;font-size:1.15rem;margin-bottom:14px}
     .cap-card .chips{display:flex;gap:8px;flex-wrap:wrap}
 
+    /* experience */
+    .xp{display:grid;gap:18px}
+    .role{border:1px solid var(--border);border-radius:var(--radius);background:var(--card);
+      padding:26px 28px;display:grid;grid-template-columns:200px 1fr;gap:26px;
+      transition:border-color .25s;position:relative;overflow:hidden}
+    .role:hover{border-color:rgba(233,180,85,.42)}
+    .role .when{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--gold);
+      letter-spacing:.06em;line-height:1.8}
+    .role .when .loc{display:block;color:var(--muted-foreground)}
+    .role h3{font-family:"Playfair Display",serif;font-size:1.3rem}
+    .role .org{color:var(--muted-foreground);font-size:.9rem;margin-top:2px}
+    .role ul{margin:12px 0 0 17px;color:var(--muted-foreground);font-size:.93rem;display:grid;gap:7px}
+    .role li::marker{color:var(--gold)}
+    .role .m{color:var(--jade);font-family:"JetBrains Mono",monospace;font-size:.85em}
+    @media(max-width:760px){.role{grid-template-columns:1fr;gap:10px}}
+    .duo{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-top:18px}
+    .mini{border:1px solid var(--border);border-radius:var(--radius);background:var(--card);padding:24px 26px;
+      position:relative;overflow:hidden}
+    .mini h4{font-family:"Playfair Display",serif;font-size:1.1rem;margin-bottom:14px}
+    .mini .item{padding:10px 0;border-bottom:1px dashed rgba(233,180,85,.14)}
+    .mini .item:last-child{border-bottom:none;padding-bottom:0}
+    .mini .item b{display:block;font-weight:600;font-size:.95rem}
+    .mini .item span{color:var(--muted-foreground);font-size:.85rem}
+    .mini .item .yr{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--gold);float:right;margin-left:12px}
+    .quote{margin-top:24px;border:1px solid var(--border);border-left:3px solid var(--gold);
+      border-radius:0 var(--radius) var(--radius) 0;background:var(--card);padding:24px 28px}
+    .quote p{font-family:"Playfair Display",serif;font-style:italic;font-size:1.08rem;line-height:1.6;
+      color:var(--foreground)}
+    .quote footer{margin-top:12px;font-family:"JetBrains Mono",monospace;font-size:.72rem;
+      color:var(--muted-foreground);letter-spacing:.06em}
+
     /* process */
     .steps{display:grid;gap:0}
     .step{display:grid;grid-template-columns:56px 1fr;gap:22px;padding:26px 0;border-bottom:1px solid var(--border)}
@@ -286,7 +317,7 @@
       <a href="#projects">Projects</a>
       <a href="trading/" class="nav-live">Trading <i></i></a>
       <a href="#stories">Stories</a>
-      <a href="#process">Process</a>
+      <a href="#experience">Experience</a>
       <a href="#contact">Contact</a>
     </nav>
   </header>
@@ -298,7 +329,7 @@
         <canvas class="cinema" data-src="assets/film/city/f%04d.webp" data-src-sm="assets/film/city-sm/f%04d.webp" data-frames="140" data-poster="0.9" aria-hidden="true"></canvas>
         <div class="shade" aria-hidden="true"></div>
         <div class="band-content" id="heroContent">
-          <p class="eyebrow reveal">AI Engineer · Agentic Systems · Generative Media</p>
+          <p class="eyebrow reveal">Senior Engineer, Enterprise AI · Mediacorp · Singapore</p>
           <h1 class="title reveal">Zhang <span class="grad-text">Cheng</span></h1>
           <p class="hero-sub reveal">I don't just use AI — <b>I direct it.</b> Autonomous agents I command
             trade a live desk, deploy this website, and publish original stories. Scroll: the film plays as you go.</p>
@@ -309,7 +340,7 @@
           <div class="hero-stats reveal">
             <div class="hstat"><div class="v">3 bots · 24/7</div><div class="k">autonomous trading desk</div></div>
             <div class="hstat"><div class="v">$1.1M</div><div class="k">paper capital under agents</div></div>
-            <div class="hstat"><div class="v">300+</div><div class="k">published AI panels</div></div>
+            <div class="hstat"><div class="v">~20</div><div class="k">GenAI rollouts at Mediacorp</div></div>
             <div class="hstat"><div class="v">0</div><div class="k">humans on the hourly loop</div></div>
           </div>
         </div>
@@ -542,17 +573,19 @@
         <div class="cap-card reveal">
           <h3>AI &amp; Agents</h3>
           <div class="chips">
-            <span class="chip">Agent orchestration</span><span class="chip">Scheduled routines</span>
+            <span class="chip">Agent orchestration</span><span class="chip">MCP connectors</span>
+            <span class="chip">RAG &amp; vector databases</span><span class="chip">LLM evaluation</span>
             <span class="chip">Prompt systems</span><span class="chip">Image-gen pipelines</span>
-            <span class="chip">Character consistency</span><span class="chip">Self-verification</span>
+            <span class="chip">OpenAI · Claude · Codex</span>
           </div>
         </div>
         <div class="cap-card reveal">
-          <h3>Engineering</h3>
+          <h3>Engineering &amp; Operations</h3>
           <div class="chips">
             <span class="chip">Python</span><span class="chip">JavaScript</span>
-            <span class="chip">Browser automation</span><span class="chip">Async pipelines</span>
-            <span class="chip">GitHub Pages</span><span class="chip">Design systems</span>
+            <span class="chip">n8n workflows</span><span class="chip">Jira SM automation</span>
+            <span class="chip">Browser automation</span><span class="chip">Incident response</span>
+            <span class="chip">ERP integration</span>
           </div>
         </div>
         <div class="cap-card reveal">
@@ -560,15 +593,99 @@
           <div class="chips">
             <span class="chip">Alpaca API</span><span class="chip">Backtesting</span>
             <span class="chip">Risk management</span><span class="chip">Statistics</span>
-            <span class="chip">Tournament selection</span><span class="chip">Honest reporting</span>
+            <span class="chip">Big data (Hadoop/Hive)</span><span class="chip">Honest reporting</span>
           </div>
         </div>
       </div>
     </section>
 
+    <!-- ===== EXPERIENCE ===== -->
+    <section class="wrap" id="experience">
+      <div class="sec-head reveal"><span class="sec-index">05</span><h2>Experience</h2></div>
+      <p class="sec-sub reveal">Six years of shipping enterprise systems and driving AI adoption —
+        <b>Singapore-based</b>, fully fluent in English and native Mandarin.</p>
+
+      <div class="xp">
+        <article class="role rt reveal">
+          <div class="when">Jul 2024 — Present<span class="loc">Singapore · on-site</span></div>
+          <div>
+            <h3>Senior Engineer, Enterprise AI</h3>
+            <p class="org">Mediacorp — Singapore's national media network, ~3,000 staff</p>
+            <ul>
+              <li>Drive AI adoption for ~3,000 staff: <span class="m">~20 GenAI solutions</span> rolled out
+                  (custom GPTs, Copilot, ChatGPT Enterprise &amp; Codex enablement), plus a conversational
+                  assistant reaching <span class="m">~200 monthly users</span> in its first month</li>
+              <li>Co-manage a multi-million-SGD, <span class="m">7-project government AI programme</span> —
+                  blockers cleared at a <span class="m">3-day median</span>, structured risk management cut rework <span class="m">~20%</span></li>
+              <li>Automated support operations with n8n + Jira Service Management — manual triage down
+                  <span class="m">~30%</span> across HR, Legal, and Procurement queues</li>
+              <li>Run rapid evaluations of LLMs, agentic tooling, and vector databases (capability,
+                  security, cost) to gate pilot-to-production decisions</li>
+            </ul>
+          </div>
+        </article>
+        <article class="role rt reveal">
+          <div class="when">Dec 2021 — Jun 2024<span class="loc">Singapore · on-site</span></div>
+          <div>
+            <h3>Software Implementation Consultant</h3>
+            <p class="org">Yonyou (Singapore) — enterprise software vendor</p>
+            <ul>
+              <li>Last line of defense for live enterprise accounts — <span class="m">~99% uptime</span>,
+                  critical incidents resolved in <span class="m">~3 hours</span> on average across ERP, office
+                  automation, IoT, and API integrations</li>
+              <li>Shipped <span class="m">~15 enhancements per quarter</span> at
+                  <span class="m">95% on-time delivery</span>, cutting recurring support tickets <span class="m">~30%</span></li>
+              <li>Raised a key account's adoption from <span class="m">60% to 95%</span> by converting
+                  skeptics into champions — the escalation bridge to HQ engineering, in English and Mandarin</li>
+            </ul>
+          </div>
+        </article>
+        <article class="role rt reveal">
+          <div class="when">May — Nov 2021<span class="loc">Singapore</span></div>
+          <div>
+            <h3>Product Manager (Internship)</h3>
+            <p class="org">Zyllem — logistics SaaS</p>
+            <ul>
+              <li>Market research, user stories, module design, and UX improvements that raised early
+                  user feedback from <span class="m">4.1 to 4.3 / 5</span></li>
+            </ul>
+          </div>
+        </article>
+      </div>
+
+      <div class="duo">
+        <div class="mini incident reveal">
+          <h4>Hackathons</h4>
+          <div class="item"><span class="yr">2026</span><b>Café Codex Hackathon</b>
+            <span>GPT-5.5 + Image 2.0 build — "less vibing, more harnessing"</span></div>
+          <div class="item"><span class="yr">2026</span><b>TinyFish × OpenAI Hackathon</b>
+            <span>Buzo — an AI nightlife concierge surfacing events no other app can see, via parallel stealth-crawled live signals (team build)</span></div>
+          <div class="item"><span class="yr">2026</span><b>MeDo Hackathon — HackAtlas</b>
+            <span>AI teammate-matching copilot scoring real builders across 7 dimensions, PRD to live demo</span></div>
+        </div>
+        <div class="mini incident reveal">
+          <h4>Education &amp; Certifications</h4>
+          <div class="item"><span class="yr">2019–2022</span><b>BSc Information Technology — University of Wollongong</b>
+            <span>Python, web &amp; mobile development, big data (Hadoop/Hive), databases · High Distinction in Mathematics for IT</span></div>
+          <div class="item"><span class="yr">2014–2017</span><b>Diploma — Temasek Polytechnic</b></div>
+          <div class="item"><span class="yr">2026</span><b>Anthropic — Introduction to Model Context Protocol</b>
+            <span>MCP client/server architecture, tools, connector patterns</span></div>
+          <div class="item"><span class="yr">2026</span><b>Anthropic — Claude Code 101</b>
+            <span>Agentic coding workflows, subagents, harness configuration</span></div>
+        </div>
+      </div>
+
+      <blockquote class="quote reveal">
+        <p>"Zac is a genuinely thoughtful engineer. At Mediacorp, he has been closely involved in AI
+           engineering and solutioning — building AI agents, integrating them into real workflows, and
+           testing them with the rigour the domain demands. He is technically fluent across the stack."</p>
+        <footer>— Wanting Hu · AI Engineer, Mediacorp · LinkedIn recommendation, 2026</footer>
+      </blockquote>
+    </section>
+
     <!-- ===== PROCESS ===== -->
     <section class="wrap" id="process">
-      <div class="sec-head reveal"><span class="sec-index">05</span><h2>How it's made</h2></div>
+      <div class="sec-head reveal"><span class="sec-index">06</span><h2>How it's made</h2></div>
       <p class="sec-sub reveal">The honest pipeline — shared openly, because directing AI well is the actual skill.</p>
       <div class="steps">
         <div class="step reveal">
@@ -610,6 +727,7 @@
               The vanguard is already marching.</p>
             <a class="email reveal" href="mailto:zhangcheng1997@gmail.com"><span class="grad-text">zhangcheng1997@gmail.com</span></a>
             <div class="socials reveal">
+              <a href="https://www.linkedin.com/in/zhangcheng1997" target="_blank" rel="noopener">LinkedIn</a>
               <a href="https://github.com/zhangcheng0605" target="_blank" rel="noopener">GitHub</a>
               <a href="trading/">Live trading desk</a>
             </div>
