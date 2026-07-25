@@ -4,49 +4,77 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>404 — Page not found</title>
+  <meta name="theme-color" content="#050507">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <style>
+    :root {
+      /* design tokens — shadcn/ui architecture, neon-noir brand */
+      --background:#050507; --foreground:#f2f1f7;
+      --card:rgba(255,255,255,.03); --card-foreground:#f2f1f7;
+      --muted-bg:rgba(255,255,255,.05); --muted-foreground:#a8a5c0;
+      --border:rgba(255,255,255,.10); --input:rgba(255,255,255,.15);
+      --ring:#38e8ff;
+      --primary:#38e8ff; --primary-foreground:#08070c;
+      --accent:#ff3ddc; --accent-foreground:#08070c;
+      --destructive:#ff6262;
+      --radius:18px; --radius-sm:calc(var(--radius)*.6); --radius-lg:calc(var(--radius)*1.25);
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       min-height: 100svh;
       display: grid;
       place-items: center;
-      background: #0a0a0f;
-      color: #e8e8f0;
+      background: var(--background);
+      color: var(--foreground);
       font-family: "Space Grotesk", system-ui, sans-serif;
       text-align: center;
       padding: 24px;
     }
+    ::selection { background: rgba(56,232,255,.28); }
+    :focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; border-radius: 4px; }
+    h1,h2,h3,h4 { text-wrap: balance; }
     h1 {
       font-size: clamp(5rem, 20vw, 10rem);
       line-height: 1;
-      background: linear-gradient(92deg, #7c6cff, #ff6ca8, #4cc9f0);
+      background: linear-gradient(92deg, #38e8ff, #8b7bff 55%, #ff3ddc);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
     }
-    p { color: #f2f1f7; margin: 16px 0 32px; font-size: 1.1rem; }
+    p { color: var(--muted-foreground); margin: 16px 0 32px; font-size: 1.1rem; }
     a {
-      display: inline-block;
-      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      cursor: pointer;
+      color: var(--primary-foreground);
       text-decoration: none;
       font-weight: 600;
       padding: 13px 28px;
       border-radius: 999px;
-      background: linear-gradient(92deg, #7c6cff, #ff6ca8);
+      background: linear-gradient(92deg, #38e8ff, #8b7bff 55%, #ff3ddc);
       transition: transform 0.2s ease;
     }
     a:hover { transform: translateY(-2px); }
+    a:active { transform: translateY(0) scale(.98); }
+    a:focus-visible { outline-offset: 4px; border-radius: 999px; }
+    @media (prefers-reduced-motion: reduce) {
+      a { transition: none; }
+      a:hover, a:active { transform: none; }
+    }
   </style>
+  <link rel="stylesheet" href="https://zhangcheng0605.github.io/fableWebsite/assets/fx.css">
 </head>
 <body>
   <main>
     <h1>404</h1>
     <p>This page drifted off into the void.</p>
-    <a href="./">Take me home</a>
+    <a href="https://zhangcheng0605.github.io/fableWebsite/">Take me home</a>
   </main>
+  <script src="https://zhangcheng0605.github.io/fableWebsite/assets/fx.js" defer></script>
 </body>
 </html>

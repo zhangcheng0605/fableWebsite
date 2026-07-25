@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#07070f">
   <title>Witch of the Vending Machines — Ch.2 · Zhang Cheng</title>
   <meta name="description" content="Witch of the Vending Machines — an AI-generated anime comic. Chapter 2: Exact Change.">
   <meta property="og:title" content="Witch of the Vending Machines — Chapter 2: Exact Change">
@@ -16,11 +17,22 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#07070f; --ink:#0b0b16;
-      --text:#eceaf4; --muted:#eceaf4;
+      /* design tokens — shadcn/ui architecture, neon-noir brand */
+      --background:#07070f; --foreground:#f2f1f7;
+      --card:rgba(255,255,255,.03); --card-foreground:#f2f1f7;
+      --muted-bg:rgba(255,255,255,.05); --muted-foreground:#a9a6c3;
+      --border:rgba(255,255,255,.10); --input:rgba(255,255,255,.15);
+      --ring:#38e8ff;
+      --primary:#38e8ff; --primary-foreground:#08070c;
+      --accent:#ff3ddc; --accent-foreground:#08070c;
+      --destructive:#ff6262;
+      --radius:18px; --radius-sm:calc(var(--radius)*.6); --radius-lg:calc(var(--radius)*1.25);
+      /* legacy vars, remapped to tokens */
+      --bg:var(--background); --ink:#0b0b16;
+      --text:var(--foreground); --muted:var(--muted-foreground);
       --cyan:#37e6ff; --magenta:#ff3ddc; --violet:#a26bff;
       --neon-grad:linear-gradient(100deg,var(--cyan),var(--violet) 52%,var(--magenta));
-      --edge:rgba(120,200,255,.16);
+      --edge:var(--border);
     }
     *{margin:0;padding:0;box-sizing:border-box}
     html{scroll-behavior:auto}
@@ -28,6 +40,12 @@
          overflow-x:hidden;-webkit-font-smoothing:antialiased}
     a{color:inherit;text-decoration:none}
     ::selection{background:rgba(55,230,255,.35)}
+    :focus-visible{outline:2px solid var(--ring);outline-offset:3px;border-radius:4px}
+    .btn:focus-visible,a.chapter:focus-visible,.sib:focus-visible{outline-offset:4px}
+    h1,h2,h3,h4{text-wrap:balance}
+    .skip-link{position:fixed;top:-100px;left:16px;z-index:100;padding:10px 18px;border-radius:99px;
+      background:var(--primary);color:var(--primary-foreground);font-weight:600;transition:top .2s}
+    .skip-link:focus{top:16px}
 
     /* ambient: neon bloom + grain */
     .amb{position:fixed;inset:0;z-index:0;pointer-events:none;background:
@@ -40,7 +58,7 @@
     .chrome{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;
             align-items:center;padding:20px 26px;pointer-events:none}
     .chrome>*{pointer-events:auto}
-    .back{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.92rem;color:var(--muted);transition:color .25s}
+    .back{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.92rem;color:var(--muted);transition:color .25s;padding:10px 14px;margin:-10px -14px}
     .back:hover{color:var(--cyan)}
     .meter{text-align:right;font-family:"JetBrains Mono",monospace}
     .meter .lbl{font-size:.62rem;letter-spacing:.34em;color:var(--muted)}
@@ -123,8 +141,10 @@
     .endcard p{color:var(--muted);max-width:480px}
     .endcta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:10px}
     .btn{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.95rem;padding:13px 28px;
-         border-radius:99px;border:1px solid var(--edge);color:var(--text);transition:transform .2s,box-shadow .2s;cursor:pointer;background:none}
+         border-radius:99px;border:1px solid var(--edge);color:var(--text);transition:transform .2s,box-shadow .2s;cursor:pointer;background:none;
+         min-height:44px;display:inline-flex;align-items:center;justify-content:center}
     .btn:hover{transform:translateY(-2px)}
+    .btn:active{transform:translateY(0) scale(.98)}
     .btn-neon{background:var(--neon-grad);color:#06060e;border:none;box-shadow:0 8px 34px rgba(55,230,255,.28)}
     .btn-neon:hover{box-shadow:0 12px 44px rgba(255,61,220,.4)}
     .endcard{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s cubic-bezier(.22,1,.36,1)}
@@ -144,8 +164,10 @@
       .hint i{animation:none}
     }
   </style>
+  <link rel="stylesheet" href="../assets/fx.css">
 </head>
 <body>
+  <a class="skip-link" href="#reader">Skip to comic</a>
   <div class="amb" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
 
@@ -183,7 +205,8 @@
       <h2>No Refunds.</h2>
       <p>Every machine in the corridor is selling the same product now, and there is one left. Chapter 3 is counting her change.</p>
       <div class="endcta">
-        <button class="btn btn-neon" id="again">Read it again</button>
+        <a class="btn btn-neon" href="../comic3/">Read Chapter 3 →</a>
+        <button class="btn" id="again">Read it again</button>
         <a class="btn" href="../comic/">← Read Chapter 1</a>
         <a class="btn" href="../#comics">More comics</a>
       </div>
@@ -215,7 +238,7 @@
       const n = String(i + 1).padStart(2, "0");
       reader.insertAdjacentHTML("beforeend", `
         <figure class="page">
-          <div class="frame"><img src="page${n}.jpg" alt="Page ${i + 1} — ${line}" loading="lazy"></div>
+          <div class="frame"><img src="page${n}.jpg" width="1400" height="2100" alt="Page ${i + 1} — ${line}" loading="lazy"></div>
           <figcaption class="cap">
             <span class="tag">${tag}</span>
             <span class="line">${line}</span>
@@ -293,5 +316,6 @@
     document.getElementById("again").addEventListener("click", () =>
       window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" }));
   </script>
+  <script src="../assets/fx.js" defer></script>
 </body>
 </html>

@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d0a06">
   <title>SEEN — Chapter 1: Good Morning, Everyone · Zhang Cheng</title>
   <meta name="description" content="SEEN — an AI-drawn office manga. Chapter 1: Good Morning, Everyone. He can hear every thought in the building, and above every head floats a number.">
   <meta property="og:title" content="SEEN — Chapter 1: Good Morning, Everyone">
@@ -16,11 +17,22 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#0d0a06; --ink:#15100a;
-      --text:#f6efe2; --muted:#f6efe2;
+      /* design tokens — shadcn/ui architecture, neon-noir brand (SEEN gold reader keeps its own bg/ink/edge) */
+      --background:#0d0a06; --foreground:#f6efe2;
+      --card:rgba(255,255,255,.03); --card-foreground:#f6efe2;
+      --muted-bg:rgba(255,255,255,.05); --muted-foreground:#cabfa6;
+      --border:rgba(255,200,120,.18); --input:rgba(255,255,255,.15);
+      --ring:#ffc861;
+      --primary:#ffc861; --primary-foreground:#1a1004;
+      --accent:#ff9d3d; --accent-foreground:#1a1004;
+      --destructive:#ff6262;
+      --radius:18px; --radius-sm:calc(var(--radius)*.6); --radius-lg:calc(var(--radius)*1.25);
+      /* legacy vars, remapped onto the token layer */
+      --bg:var(--background); --ink:#15100a;
+      --text:var(--foreground); --muted:var(--muted-foreground);
       --gold:#ffc861; --amber:#ff9d3d; --cream:#fff3d6;
       --grad:linear-gradient(100deg,var(--cream),var(--gold) 46%,var(--amber));
-      --edge:rgba(255,200,120,.18);
+      --edge:var(--border);
     }
     *{margin:0;padding:0;box-sizing:border-box}
     html{scroll-behavior:auto}
@@ -28,6 +40,12 @@
          overflow-x:hidden;-webkit-font-smoothing:antialiased}
     a{color:inherit;text-decoration:none}
     ::selection{background:rgba(255,200,97,.32)}
+    :focus-visible{outline:2px solid var(--ring);outline-offset:3px;border-radius:4px}
+    .btn:focus-visible,a.chapter:focus-visible,.sib:focus-visible{outline-offset:4px}
+    h1,h2,h3,h4{text-wrap:balance}
+    .skip-link{position:fixed;top:-100px;left:16px;z-index:100;padding:10px 18px;border-radius:99px;
+      background:var(--primary);color:var(--primary-foreground);font-weight:600;transition:top .2s}
+    .skip-link:focus{top:16px}
 
     .amb{position:fixed;inset:0;z-index:0;pointer-events:none;background:
       radial-gradient(60vw 44vh at 80% -8%,rgba(255,200,97,.13),transparent 62%),
@@ -38,7 +56,8 @@
     .chrome{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;
             align-items:center;padding:20px 26px;pointer-events:none}
     .chrome>*{pointer-events:auto}
-    .back{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.92rem;color:var(--muted);transition:color .25s}
+    .back{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.92rem;color:var(--muted);transition:color .25s;
+          padding:10px 14px;margin:-10px -14px}
     .back:hover{color:var(--gold)}
     .meter{text-align:right;font-family:"JetBrains Mono",monospace}
     .meter .lbl{font-size:.62rem;letter-spacing:.34em;color:var(--muted)}
@@ -131,8 +150,10 @@
     .endcard p{color:var(--muted);max-width:500px}
     .endcta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:10px}
     .btn{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.95rem;padding:13px 28px;
+         display:inline-flex;align-items:center;justify-content:center;min-height:44px;
          border-radius:99px;border:1px solid var(--edge);color:var(--text);transition:transform .2s,box-shadow .2s;cursor:pointer;background:none}
     .btn:hover{transform:translateY(-2px)}
+    .btn:active{transform:translateY(0) scale(.98)}
     .btn-gold{background:var(--grad);color:#1a1004;border:none;box-shadow:0 8px 34px rgba(255,200,97,.3)}
     .btn-gold:hover{box-shadow:0 12px 44px rgba(255,157,61,.42)}
     .endcard{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s cubic-bezier(.22,1,.36,1)}
@@ -152,8 +173,10 @@
       .hint i,.ltd{animation:none}
     }
   </style>
+  <link rel="stylesheet" href="../assets/fx.css">
 </head>
 <body>
+  <a class="skip-link" href="#reader">Skip to comic</a>
   <div class="amb" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
 
@@ -246,14 +269,18 @@
       33: "Not malice. Something worse:<br><em>indifference.</em>"
     };
 
+    // intrinsic panel sizes (px) — lets the browser reserve space before images load (no CLS)
+    const DIMS={"p01_01":[1024,576],"p01_02":[1122,748],"p01_03":[1122,1122],"p02_01":[1400,788],"p02_02":[1122,748],"p02_03":[1122,748],"p03_01":[1122,748],"p03_02":[816,1020],"p04_01":[1400,788],"p04_02":[1122,1122],"p05_01":[1024,1280],"p05_02":[1120,630],"p05_03":[1023,682],"p06_01":[1400,788],"p06_02":[1122,1122],"p06_03":[1400,600],"p07_01":[1122,748],"p07_02":[1120,1400],"p07_03":[1120,630],"p08_01":[1400,788],"p08_02":[1122,748],"p09_01":[1120,1400],"p09_02":[1024,1024],"p09_03":[1023,1023],"p09_04":[1122,748],"p10_01":[1120,1400],"p10_02":[1400,600],"p11_01":[900,600],"p11_02":[1120,630],"p12_01":[1120,1400],"p12_02":[1023,682],"p13_01":[1120,1400],"p13_02":[1400,788],"p14_01":[1122,748],"p14_02":[1400,788],"p15_01":[1120,1400],"p16_01":[1008,567],"p16_02":[1086,1086],"p16_03":[1122,1122],"p17_01":[1084,1355],"p17_02":[1120,1400]};
+
     const reader = document.getElementById("reader");
     PANELS.forEach(function (p, i) {
       var file = p[0], tag = p[1], line = p[2];
       var n = String(i + 1).padStart(2, "0");
       var alt = line.replace(/<[^>]+>/g, "").replace(/"/g, "");
+      var d = DIMS[file], size = d ? ' width="' + d[0] + '" height="' + d[1] + '"' : "";
       reader.insertAdjacentHTML("beforeend",
         '<figure class="page">' +
-          '<div class="frame"><img src="' + file + '.jpg" alt="Panel ' + (i + 1) + ' — ' + alt + '" loading="lazy"></div>' +
+          '<div class="frame"><img src="' + file + '.jpg" alt="Panel ' + (i + 1) + ' — ' + alt + '"' + size + ' loading="lazy"></div>' +
           '<figcaption class="cap">' +
             '<span class="cap-top"><span class="tag">' + tag + '</span><span class="rule"></span>' +
             '<span class="pageno">' + n + ' / ' + PANELS.length + '</span></span>' +
@@ -329,5 +356,6 @@
       window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
     });
   </script>
+  <script src="../assets/fx.js" defer></script>
 </body>
 </html>

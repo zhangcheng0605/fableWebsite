@@ -1,0 +1,29 @@
+/* fx.css — Antigravity-inspired dynamic interaction layer
+   Pointer-reactive glow, 3D tilt, magnetic buttons, weightless drift.
+   Loaded by every page; fx.js drives the motion. Effects self-disable
+   under prefers-reduced-motion and on coarse pointers. */
+
+/* cursor spotlight — a soft light that tracks the pointer across a card */
+.fx-glow{position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;
+  transition:opacity .35s ease;
+  background:radial-gradient(320px circle at var(--fx-x,50%) var(--fx-y,50%),
+    rgba(56,232,255,.13),rgba(255,61,220,.05) 45%,transparent 70%)}
+.fx-on>.fx-glow{opacity:1}
+
+/* while fx.js drives an element's transform: own compositor layer, and CSS
+   transitions must release the transform property (colors/opacity keep fading) */
+.fx-active{will-change:transform;
+  transition-property:border-color,background-color,box-shadow,opacity,filter,color!important}
+
+/* nav link hover — gradient underline slide (fine pointers and keyboard) */
+.nav a{position:relative}
+.nav a::after{content:"";position:absolute;left:10%;right:10%;bottom:-2px;height:1.5px;
+  border-radius:2px;background:linear-gradient(90deg,#38e8ff,#ff3ddc);
+  transform:scaleX(0);transform-origin:50% 50%;transition:transform .25s ease;opacity:.9}
+.nav a:hover::after,.nav a:focus-visible::after{transform:scaleX(1)}
+.nav a.logo::after{display:none}
+
+@media (prefers-reduced-motion:reduce){
+  .fx-glow{display:none}
+  .nav a::after{transition:none}
+}
