@@ -5,9 +5,9 @@
 
 /* cursor spotlight — a soft light that tracks the pointer across a card */
 .fx-glow{position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;
-  transition:opacity .35s ease;
-  background:radial-gradient(320px circle at var(--fx-x,50%) var(--fx-y,50%),
-    rgba(56,232,255,.13),rgba(255,61,220,.05) 45%,transparent 70%)}
+  transition:opacity .25s ease;
+  background:radial-gradient(380px circle at var(--fx-x,50%) var(--fx-y,50%),
+    rgba(56,232,255,.24),rgba(255,61,220,.10) 45%,transparent 70%)}
 .fx-on>.fx-glow{opacity:1}
 
 /* while fx.js drives an element's transform: own compositor layer, and CSS

@@ -15,12 +15,12 @@
   var MAGNET = ['.btn', '.back'];
   var FLOAT = ['.hero-terminal', '.paper-badge'];
 
-  var MAX_TILT = 5;      // deg
-  var LIFT = -4;         // px, matches the CSS hover lift
-  var MAG_PULL = 0.22;   // fraction of pointer offset
-  var MAG_MAX = 6;       // px
-  var FLOAT_AMP = 4;     // px
-  var FLOAT_PERIOD = 6000; // ms
+  var MAX_TILT = 8;      // deg
+  var LIFT = -6;         // px, matches the CSS hover lift
+  var MAG_PULL = 0.3;   // fraction of pointer offset
+  var MAG_MAX = 10;       // px
+  var FLOAT_AMP = 7;     // px
+  var FLOAT_PERIOD = 5000; // ms
 
   function $all(sels) {
     var seen = [];
