@@ -30,7 +30,7 @@
       canvas: canvas,
       ctx: canvas.getContext('2d'),
       section: canvas.closest('.cinema-sec') || canvas.parentElement,
-      maxw: parseInt(canvas.dataset.maxw, 10) || ((small && canvas.dataset.srcSm) ? 1080 : 2304),
+      maxw: parseInt(canvas.dataset.maxw, 10) || ((small && canvas.dataset.srcSm) ? 1080 : 2736),
       N: N,
       imgs: new Array(N),
       ready: new Array(N),
@@ -119,7 +119,7 @@
   }
 
   function resizeAll() {
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var dpr = Math.min(window.devicePixelRatio || 1, 3);
     bands.forEach(function (band) {
       var r = band.canvas.getBoundingClientRect();
       var w = r.width * dpr;
