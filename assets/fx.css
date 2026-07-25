@@ -7,7 +7,7 @@
 .fx-glow{position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;
   transition:opacity .25s ease;
   background:radial-gradient(380px circle at var(--fx-x,50%) var(--fx-y,50%),
-    rgba(56,232,255,.24),rgba(255,61,220,.10) 45%,transparent 70%)}
+    rgba(242,215,137,.20),rgba(224,90,58,.10) 45%,transparent 70%)}
 .fx-on>.fx-glow{opacity:1}
 
 /* while fx.js drives an element's transform: own compositor layer, and CSS
@@ -18,7 +18,7 @@
 /* nav link hover — gradient underline slide (fine pointers and keyboard) */
 .nav a{position:relative}
 .nav a::after{content:"";position:absolute;left:10%;right:10%;bottom:-2px;height:1.5px;
-  border-radius:2px;background:linear-gradient(90deg,#38e8ff,#ff3ddc);
+  border-radius:2px;background:linear-gradient(90deg,#f2d789,#e05a3a);
   transform:scaleX(0);transform-origin:50% 50%;transition:transform .25s ease;opacity:.9}
 .nav a:hover::after,.nav a:focus-visible::after{transform:scaleX(1)}
 .nav a.logo::after{display:none}
