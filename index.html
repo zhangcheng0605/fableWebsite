@@ -202,20 +202,37 @@
     .card .link::after{content:" \2192";transition:margin .2s}
     .card:hover .link::after{margin-left:4px}
 
-    /* stories showcase */
-    .stories{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
-    .chapter{position:relative;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);
-      background:var(--card);transition:transform .25s,border-color .25s;display:flex;flex-direction:column}
-    .chapter:hover{transform:translateY(-4px);border-color:rgba(233,180,85,.45)}
-    .chapter img{width:100%;aspect-ratio:4/3;object-fit:cover;object-position:center 25%;display:block;
-      filter:saturate(1.05);transition:transform .4s}
-    .chapter:hover img{transform:scale(1.04)}
-    .chapter .body{padding:20px 22px 24px;display:flex;flex-direction:column;flex:1}
-    .chapter .badge{font-family:"JetBrains Mono",monospace;font-size:.64rem;letter-spacing:.16em;
-      text-transform:uppercase;color:var(--gold);margin-bottom:8px}
-    .chapter h3{font-family:"Playfair Display",serif;font-size:1.2rem;margin-bottom:8px}
-    .chapter p{color:var(--muted-foreground);font-size:.88rem;flex:1}
-    .chapter .link{margin-top:14px;font-weight:600;font-size:.88rem;color:var(--gold)}
+    /* stories showcase — each series gets a full feature row */
+    .series{display:grid;grid-template-columns:minmax(240px,340px) 1fr;gap:44px;align-items:center;
+      border:1px solid var(--border);border-radius:22px;background:var(--card);padding:36px;
+      position:relative;overflow:hidden;transition:border-color .25s;margin-bottom:28px}
+    .series:hover{border-color:rgba(233,180,85,.45)}
+    .series-cover{border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.55);
+      border:1px solid rgba(233,180,85,.2)}
+    .series-cover img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;transition:transform .45s}
+    .series:hover .series-cover img{transform:scale(1.035)}
+    .series .badge{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.18em;
+      text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+    .series h3{font-family:"Playfair Display",serif;font-size:clamp(1.8rem,3.8vw,2.5rem);line-height:1.1}
+    .series .logline{color:var(--muted-foreground);margin:14px 0 24px;max-width:580px;font-size:.98rem}
+    .ch-list{display:flex;flex-direction:column;gap:10px;margin-bottom:26px}
+    .chapter{display:flex;align-items:baseline;gap:14px;border:1px solid var(--border);border-radius:12px;
+      padding:13px 18px;transition:border-color .2s,background .2s;background:rgba(16,20,16,.35)}
+    .chapter:hover{border-color:rgba(233,180,85,.5);background:rgba(233,180,85,.06)}
+    .chapter b{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--gold);
+      letter-spacing:.1em;white-space:nowrap;font-weight:500}
+    .chapter .t{font-weight:600;font-size:.95rem;flex:1;min-width:0}
+    .chapter .n{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--muted-foreground);white-space:nowrap}
+    .chapter .new{font-family:"JetBrains Mono",monospace;font-size:.6rem;letter-spacing:.14em;font-weight:700;
+      color:#221604;background:var(--grad);padding:3px 10px;border-radius:99px}
+    .series.flip{grid-template-columns:1fr minmax(240px,340px)}
+    .series.flip .series-cover{order:2}
+    @media(max-width:860px){
+      .series,.series.flip{grid-template-columns:1fr;gap:26px;padding:26px}
+      .series-cover{max-width:320px;margin:0 auto}
+      .series.flip .series-cover{order:0}
+      .chapter{flex-wrap:wrap;row-gap:4px}
+    }
 
     /* capabilities */
     .caps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
@@ -278,7 +295,7 @@
     <!-- ===== HERO — jade city, scroll-scrubbed ===== -->
     <section class="cinema-sec" id="hero" style="height:260svh">
       <div class="sticky">
-        <canvas class="cinema" data-src="assets/film/city/f%04d.jpg" data-frames="140" data-poster="0.9" aria-hidden="true"></canvas>
+        <canvas class="cinema" data-src="assets/film/city/f%04d.webp" data-src-sm="assets/film/city-sm/f%04d.webp" data-frames="140" data-poster="0.9" aria-hidden="true"></canvas>
         <div class="shade" aria-hidden="true"></div>
         <div class="band-content" id="heroContent">
           <p class="eyebrow reveal">AI Engineer · Agentic Systems · Generative Media</p>
@@ -456,7 +473,7 @@
     <!-- ===== INTERLUDE — golden gate ===== -->
     <section class="cinema-sec" style="height:220svh" aria-label="Cinematic interlude">
       <div class="sticky">
-        <canvas class="cinema" data-src="assets/film/gate/f%04d.jpg" data-frames="100" data-poster="0.5" data-lazy="1" aria-hidden="true"></canvas>
+        <canvas class="cinema" data-src="assets/film/gate/f%04d.webp" data-src-sm="assets/film/gate-sm/f%04d.webp" data-frames="100" data-poster="0.5" data-lazy="1" aria-hidden="true"></canvas>
         <div class="shade" aria-hidden="true"></div>
         <div class="band-content">
           <p class="band-quote reveal">Directed by a human.<br><em>Built by an army of agents.</em></p>
@@ -470,38 +487,50 @@
       <div class="sec-head reveal"><span class="sec-index">03</span><h2>Original Stories</h2></div>
       <p class="sec-sub reveal">100% AI-drawn, agent-written, published here. Locked character sheets and one
         style string keep every panel consistent.</p>
-      <div class="stories">
-        <a class="chapter reveal" href="seen/">
-          <img src="seen3/c3_p16_02.jpg" alt="SEEN — corporate manga series cover" loading="lazy" width="1300" height="975">
-          <div class="body">
-            <p class="badge">Ongoing series · 3 chapters · 191 panels</p>
-            <h3>SEEN</h3>
-            <p>A corporate slave wakes up hearing every thought in the building — and above every head floats
-               that person's lifetime lie count. He can't use any of it without revealing how he knows.</p>
-            <span class="link">Start Chapter 1 &#8594;</span>
+      <article class="series comic-feature reveal">
+        <div class="series-cover"><img src="seen3/c3_p16_02.jpg" alt="SEEN — corporate manga series cover" loading="lazy" width="971" height="1619"></div>
+        <div>
+          <p class="badge">Ongoing series · Psychological office manga · 191 panels</p>
+          <h3>SEEN</h3>
+          <p class="logline">Ethan Cole is the guy everyone likes. One Monday he can hear every thought in the
+             building, and above every head floats that person's lifetime lie count. It should make him
+             unstoppable. It doesn't — because he can't use any of it without revealing how he knows.</p>
+          <div class="ch-list">
+            <a class="chapter" href="seen/"><b>CH.1</b><span class="t">Good Morning, Everyone</span><span class="n">41 panels</span></a>
+            <a class="chapter" href="seen2/"><b>CH.2</b><span class="t">After Hours</span><span class="n">69 panels</span></a>
+            <a class="chapter" href="seen3/"><b>CH.3</b><span class="t">Deeper</span><span class="n">81 panels</span><span class="new">NEW</span></a>
           </div>
-        </a>
-        <a class="chapter reveal" href="comic/">
-          <img src="comic3/page01.jpg" alt="Witch of the Vending Machines — neon-noir comic cover" loading="lazy" width="1400" height="1050">
-          <div class="body">
-            <p class="badge">Ongoing series · 3 chapters · 40 pages</p>
-            <h3>Witch of the Vending Machines</h3>
-            <p>Somewhere in Tokyo's back streets there is a vending machine that wasn't there yesterday.
-               It doesn't take money — it takes honesty. One wish at a time.</p>
-            <span class="link">Start Chapter 1 &#8594;</span>
+          <a class="btn btn-primary" href="seen/">Start reading</a>
+        </div>
+      </article>
+
+      <article class="series comic-feature flip reveal">
+        <div class="series-cover"><img src="comic3/page01.jpg" alt="Witch of the Vending Machines — neon-noir comic cover" loading="lazy" width="1400" height="2100"></div>
+        <div>
+          <p class="badge">Ongoing series · Neon-noir urban fantasy · 40 pages</p>
+          <h3>Witch of the Vending Machines</h3>
+          <p class="logline">Somewhere in Tokyo's back streets there is a vending machine that wasn't there
+             yesterday. It doesn't take money — it takes honesty. A wish at a time, and every fulfilled wish
+             leaves someone working the night shift.</p>
+          <div class="ch-list">
+            <a class="chapter" href="comic/"><b>CH.1</b><span class="t">Where It Begins</span><span class="n">12 pages</span></a>
+            <a class="chapter" href="comic2/"><b>CH.2</b><span class="t">Exact Change</span><span class="n">14 pages</span></a>
+            <a class="chapter" href="comic3/"><b>CH.3</b><span class="t">No Refunds</span><span class="n">14 pages</span><span class="new">NEW</span></a>
           </div>
-        </a>
-        <a class="chapter reveal" href="rich/">
-          <img src="rich/page01.jpg" alt="Born Rich — black and white manga one-shot cover" loading="lazy" width="1024" height="768">
-          <div class="body">
-            <p class="badge">One-shot · 10 pages</p>
-            <h3>Born Rich</h3>
-            <p>What if I'd been born stupid rich? From a chauffeured school run to the chairman's office —
-               a black-and-white manga about the other timeline.</p>
-            <span class="link">Read the one-shot &#8594;</span>
-          </div>
-        </a>
-      </div>
+          <a class="btn btn-primary" href="comic/">Start reading</a>
+        </div>
+      </article>
+
+      <article class="series comic-feature reveal">
+        <div class="series-cover"><img src="rich/page01.jpg" alt="Born Rich — black and white manga one-shot cover" loading="lazy" width="1024" height="1536"></div>
+        <div>
+          <p class="badge">One-shot · Black &amp; white manga · 10 pages</p>
+          <h3>Born Rich</h3>
+          <p class="logline">What if I'd been born stupid rich? From a chauffeured school run to the chairman's
+             office — a manga about the other timeline. Same face, aging page by page.</p>
+          <a class="btn btn-primary" href="rich/">Read the one-shot</a>
+        </div>
+      </article>
     </section>
 
     <!-- ===== CAPABILITIES ===== -->
@@ -572,7 +601,7 @@
     <!-- ===== CONTACT — vanguard band ===== -->
     <section class="cinema-sec" id="contact" style="height:200svh" aria-label="Contact">
       <div class="sticky">
-        <canvas class="cinema" data-src="assets/film/vanguard/f%04d.jpg" data-frames="60" data-poster="0.6" data-lazy="1" aria-hidden="true"></canvas>
+        <canvas class="cinema" data-src="assets/film/vanguard/f%04d.webp" data-src-sm="assets/film/vanguard-sm/f%04d.webp" data-frames="60" data-poster="0.6" data-lazy="1" aria-hidden="true"></canvas>
         <div class="shade" aria-hidden="true"></div>
         <div class="band-content">
           <div class="contact-inner">
