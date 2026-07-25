@@ -5,26 +5,32 @@
    scrolling up rewinds it. Frames are JPEG stills drawn to canvas — frame-exact
    scrubbing in both directions, no <video> seek jank.
 
-   Smoothness strategy:
+   Smoothness + sharpness strategy:
+   - responsive source: data-src-sm (1080w) on small viewports, data-src (2304w) otherwise
    - progressive preload: every 8th frame first, then fill (6 connections)
-   - nearest-loaded frame is drawn while the rest stream in
+   - nearest-loaded frame is drawn while the rest stream in; frames pre-decode
+     off the main thread (img.decode) so scrub draws never block
    - eased scrub (lerp) so wheel steps feel like camera inertia
    - lazy sequences (data-lazy) only start loading when the band nears the viewport
    - one shared rAF loop; offscreen bands skip their draw entirely
-   - DPR capped at 1.5; reduced-motion gets a static poster frame */
+   - DPR up to 2, canvas backing capped at source width (data-maxw) — no wasted
+     fill-rate, no soft upscaling beyond what the footage carries
+   - reduced-motion gets a static poster frame */
 (function () {
   'use strict';
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var small = Math.min(screen.width || 1e4, innerWidth) <= 820;
   var bands = [];
 
   function setup(canvas) {
-    var src = canvas.dataset.src;
+    var src = (small && canvas.dataset.srcSm) ? canvas.dataset.srcSm : canvas.dataset.src;
     var N = parseInt(canvas.dataset.frames, 10) || 0;
     if (!src || !N) return;
     var band = {
       canvas: canvas,
       ctx: canvas.getContext('2d'),
       section: canvas.closest('.cinema-sec') || canvas.parentElement,
+      maxw: parseInt(canvas.dataset.maxw, 10) || ((small && canvas.dataset.srcSm) ? 1080 : 2304),
       N: N,
       imgs: new Array(N),
       ready: new Array(N),
@@ -74,8 +80,13 @@
         im.onload = im.onerror = function () {
           band.inflight--;
           if (im.naturalWidth) {
-            band.ready[i] = true;
-            if (nearest(band, Math.round(band.shown)) === i) draw(band, i, true);
+            /* pre-decode off the main thread so the scrub never hits a raw frame */
+            var mark = function () {
+              band.ready[i] = true;
+              if (nearest(band, Math.round(band.shown)) === i) draw(band, i, true);
+            };
+            if (im.decode) im.decode().then(mark, mark);
+            else mark();
           }
           pump(band);
         };
@@ -108,11 +119,16 @@
   }
 
   function resizeAll() {
-    var dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
     bands.forEach(function (band) {
       var r = band.canvas.getBoundingClientRect();
-      band.canvas.width = Math.round(r.width * dpr);
-      band.canvas.height = Math.round(r.height * dpr);
+      var w = r.width * dpr;
+      /* never exceed source resolution — full sharpness, no wasted fill-rate */
+      var k = w > band.maxw ? band.maxw / w : 1;
+      band.canvas.width = Math.round(w * k);
+      band.canvas.height = Math.round(r.height * dpr * k);
+      band.ctx.imageSmoothingEnabled = true;
+      band.ctx.imageSmoothingQuality = 'high';
       draw(band, nearest(band, Math.round(band.shown)), true);
     });
   }
@@ -131,6 +147,18 @@
       band.shown += (band.target - band.shown) * 0.16;
       if (Math.abs(band.target - band.shown) < 0.01) band.shown = band.target;
       draw(band, nearest(band, Math.round(band.shown)));
+      /* decode-ahead: warm the frames the eased scrub is heading toward, so
+         draws hit pre-decoded images instead of blocking on a sync decode */
+      if (Math.abs(band.target - band.shown) > 0.4) {
+        var dir = band.target >= band.shown ? 1 : -1;
+        var base = Math.round(band.shown);
+        for (var k = 1; k <= 12; k++) {
+          var idx = base + dir * k;
+          if (idx < 0 || idx >= band.N) break;
+          var im = band.imgs[idx];
+          if (im && im.complete && im.naturalWidth && im.decode) im.decode().catch(function () {});
+        }
+      }
     });
     requestAnimationFrame(tick);
   }
