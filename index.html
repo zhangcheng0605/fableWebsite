@@ -4,288 +4,334 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Zhang Cheng — AI Engineer &amp; Builder</title>
-  <meta name="description" content="Zhang Cheng — Senior Engineer, Enterprise AI at Mediacorp (Singapore). Three things live here: AI-drawn manga, three built projects (a browser game, an autonomous trading desk, a 3D campus), and six years of shipping enterprise systems.">
+  <meta name="description" content="Zhang Cheng — Senior Engineer, Enterprise AI at Mediacorp (Singapore). AI-drawn manga, a browser game, an autonomous trading desk, a 3D campus, and six years of shipping enterprise systems.">
   <meta property="og:title" content="Zhang Cheng — AI Engineer &amp; Builder">
   <meta property="og:description" content="AI-drawn manga, a browser game, an autonomous paper-trading desk, and a 3D campus that builds as you scroll. Directed by a human, built by agents.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="assets/film/still-city.jpg">
-  <meta name="theme-color" content="#101410">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#127982;</text></svg>">
+  <meta property="og:image" content="assets/thumbs/campus.jpg">
+  <meta name="theme-color" content="#fdf4ff">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#127752;</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Quicksand:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/fx.css">
   <style>
     :root{
-      /* design tokens — shadcn/ui architecture · Ink & Lantern theme
-         (palette drawn from the film: jade mist, lantern gold, ember, crimson) */
-      --background:#101410; --background-2:#151a14;
-      --foreground:#f4eeda;
-      --card:rgba(244,238,218,.045); --card-foreground:#f4eeda;
-      /* body text is the same near-white as headings — over a moving film, a
-         dimmed grey stops being readable, so nothing here is greyed out */
-      --muted-bg:rgba(244,238,218,.07); --muted-foreground:#f4eeda;
-      --border:rgba(233,180,85,.16); --input:rgba(233,180,85,.24);
-      --ring:#e9b455;
-      --primary:#e9b455; --primary-foreground:#221604;
-      --accent:#e05a3a; --accent-foreground:#fff4e4;
-      --jade:#7fd6b2; --crimson:#e05a3a; --gold:#e9b455; --gold-2:#f2d789;
-      --radius:18px; --radius-sm:calc(var(--radius)*.6); --radius-lg:calc(var(--radius)*1.25);
-      /* legacy aliases */
-      --bg:var(--background); --text:var(--foreground); --muted:var(--muted-foreground);
-      --edge:var(--border); --panel:var(--card);
-      --grad:linear-gradient(100deg,var(--gold-2),var(--gold) 45%,var(--crimson));
-      --slab:rgba(16,20,16,.95); /* nearly solid, so the film never fights the text */
+      /* candy-neon theme — sunshine, rainbows, and Angelic-Buster purple.
+         One ink colour for ALL text: dark violet on a light page, no greys. */
+      --bg:#fdf4ff;
+      --ink:#38235c;
+      --pink:#ff3fae; --pink-soft:#ffb7e2;
+      --purple:#8b3dff; --violet:#6428d8;
+      --cyan:#25c4ff; --gold:#ffb830; --green:#12b981;
+      --card:#ffffff;
+      --border:rgba(139,61,255,.20); --border-pink:rgba(255,63,174,.30);
+      /* full rainbow for decoration; the darker trio for anything with white
+         text on it (buttons, marquee, contact band) so contrast holds */
+      --rainbow:linear-gradient(95deg,#ff3fae,#8b3dff 34%,#25c4ff 68%,#ffd166);
+      --cta:linear-gradient(95deg,#ef1f96,#7a2df0 46%,#0f9fe0);
+      --radius:24px;
+      --shadow-pink:0 12px 38px rgba(255,63,174,.25);
+      --shadow-purple:0 14px 44px rgba(139,61,255,.22);
     }
     *{margin:0;padding:0;box-sizing:border-box}
-    html{scroll-behavior:smooth;scroll-padding-top:96px}
-    body{background:var(--background);color:var(--foreground);
-         font-family:Inter,system-ui,-apple-system,sans-serif;
+    html{scroll-behavior:smooth;scroll-padding-top:92px;overflow-x:clip}
+    body{background:var(--bg);color:var(--ink);
+         font-family:Quicksand,Inter,system-ui,-apple-system,sans-serif;font-weight:500;
          -webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.65}
-    ::selection{background:rgba(233,180,85,.32)}
+    ::selection{background:rgba(255,63,174,.25)}
     a{color:inherit;text-decoration:none}
-    h1,h2,h3,h4{text-wrap:balance}
+    h1,h2,h3,h4{font-family:"Baloo 2",Quicksand,sans-serif;text-wrap:balance;line-height:1.12}
+    b,strong{font-weight:700}
     img{display:block;max-width:100%}
     .mono{font-family:"JetBrains Mono",monospace}
-    .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-    :focus-visible{outline:2px solid var(--ring);outline-offset:3px;border-radius:4px}
-    .btn:focus-visible,a.chapter:focus-visible{outline-offset:4px}
+    :focus-visible{outline:3px solid var(--purple);outline-offset:3px;border-radius:6px}
     .skip-link{position:fixed;top:-100px;left:16px;z-index:100;padding:10px 18px;border-radius:99px;
-      background:var(--primary);color:var(--primary-foreground);font-weight:600;transition:top .2s}
+      background:var(--pink);color:#fff;font-weight:700;transition:top .2s}
     .skip-link:focus{top:16px}
 
-    /* ===== the film plays behind everything, on a loop ===== */
-    .film{position:fixed;inset:0;z-index:-3;overflow:hidden;background:var(--background-2)}
-    .film canvas{display:block;width:100%;height:100%}
-    .film-scrim{position:fixed;inset:0;z-index:-2;pointer-events:none;background:
-      linear-gradient(180deg,rgba(16,20,16,.62) 0%,rgba(16,20,16,.34) 26%,
-                      rgba(16,20,16,.5) 62%,rgba(16,20,16,.78) 100%)}
-    .grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.4;mix-blend-mode:overlay;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.04'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+    /* ===== bright aurora background ===== */
+    .bg{position:fixed;inset:0;z-index:-2;pointer-events:none;background:
+        radial-gradient(62vw 52vh at 12% 6%,rgba(255,183,226,.55),transparent 65%),
+        radial-gradient(56vw 46vh at 88% 16%,rgba(178,140,255,.45),transparent 65%),
+        radial-gradient(72vw 60vh at 50% 108%,rgba(126,216,255,.5),transparent 70%),
+        linear-gradient(180deg,#fff4fd,#f4e9ff 45%,#eaf6ff)}
+    .bg::before,.bg::after{content:"";position:absolute;width:52vw;height:52vw;border-radius:50%;
+      filter:blur(90px);opacity:.5;will-change:transform}
+    .bg::before{left:-14vw;top:-16vw;background:radial-gradient(circle,#ffb7e2,transparent 65%);
+      animation:blob1 26s ease-in-out infinite alternate}
+    .bg::after{right:-16vw;bottom:-18vw;background:radial-gradient(circle,#a3e2ff,transparent 65%);
+      animation:blob2 32s ease-in-out infinite alternate}
+    @keyframes blob1{to{transform:translate(9vw,7vh) scale(1.15)}}
+    @keyframes blob2{to{transform:translate(-8vw,-6vh) scale(1.12)}}
 
-    /* ===== nav ===== */
-    .nav-wrap{position:fixed;top:18px;left:0;right:0;z-index:50;display:flex;justify-content:center;padding:0 20px}
-    .nav{display:flex;align-items:center;gap:24px;padding:4px 20px;border-radius:99px;
-         background:rgba(18,20,15,.72);border:1px solid var(--border);
-         backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
-    .nav a{font-size:.92rem;color:var(--muted-foreground);font-weight:500;transition:color .2s;padding:8px 2px;white-space:nowrap}
-    .nav a:hover{color:var(--foreground)}
-    .logo{font-family:"Playfair Display",serif;font-weight:700;font-size:1.1rem;color:var(--foreground)!important}
-    .logo span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+    /* fairy-dust canvas — above everything, never catches a click */
+    #fairydust{position:fixed;inset:0;z-index:80;pointer-events:none}
+    /* rainbow scroll-progress bar */
+    #rainbowbar{position:fixed;top:0;left:0;height:5px;width:0;z-index:70;background:var(--cta);
+      border-radius:0 99px 99px 0;box-shadow:0 1px 10px rgba(255,63,174,.5)}
+
+    /* ===== nav — full-width bar, DJI style ===== */
+    .nav-wrap{position:fixed;top:0;left:0;right:0;z-index:50;
+      background:rgba(255,255,255,.9);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+      border-bottom:1px solid rgba(139,61,255,.14)}
+    .nav{display:flex;align-items:center;gap:clamp(14px,2.2vw,34px);
+      padding:10px clamp(16px,3.5vw,56px)}
+    .nav a{font-size:.95rem;font-weight:700;color:var(--ink);padding:8px 2px;white-space:nowrap;transition:color .2s}
+    .nav a:hover{color:var(--pink)}
+    .logo{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.35rem}
+    .logo span{background:var(--rainbow);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .nav .spacer{flex:1}
     .nav-live{display:inline-flex;align-items:center;gap:7px}
-    .nav-live i{width:6px;height:6px;border-radius:50%;background:var(--jade);animation:livedot 1.8s ease-out infinite}
-    @keyframes livedot{0%{box-shadow:0 0 0 0 rgba(127,214,178,.6)}70%{box-shadow:0 0 0 9px rgba(127,214,178,0)}100%{box-shadow:0 0 0 0 rgba(127,214,178,0)}}
-    @media(max-width:820px){.nav{gap:14px;padding:2px 16px;max-width:calc(100vw - 32px);overflow-x:auto;scrollbar-width:none}
-      .nav::-webkit-scrollbar{display:none}.nav a{font-size:.82rem}}
+    .nav-live i{width:7px;height:7px;border-radius:50%;background:var(--green);animation:livedot 1.8s ease-out infinite}
+    @keyframes livedot{0%{box-shadow:0 0 0 0 rgba(18,185,129,.55)}70%{box-shadow:0 0 0 9px rgba(18,185,129,0)}100%{box-shadow:0 0 0 0 rgba(18,185,129,0)}}
+    .nav-cta{background:var(--cta);color:#fff!important;border-radius:99px;padding:9px 20px!important;
+      box-shadow:var(--shadow-pink);font-weight:800}
+    .nav-cta:hover{filter:brightness(1.08)}
+    @media(max-width:880px){
+      .nav{gap:16px;overflow-x:auto;scrollbar-width:none;padding:8px 16px}
+      .nav::-webkit-scrollbar{display:none}
+      .nav a{font-size:.85rem}
+      .nav .spacer{display:none}
+      .nav-cta{padding:7px 14px!important}
+    }
+
+    /* fx.css ships lantern-gold hover glows for the dark pages —
+       recolour them to candy for this one */
+    .fx-glow{background:radial-gradient(380px circle at var(--fx-x,50%) var(--fx-y,50%),
+      rgba(255,63,174,.16),rgba(37,196,255,.12) 45%,transparent 70%)}
+    .nav a::after{background:linear-gradient(90deg,#ff3fae,#8b3dff,#25c4ff)}
+
+    /* ===== full-width bands ===== */
+    .band{position:relative;width:100%;overflow:hidden;padding:clamp(64px,7vw,110px) 0}
+    .band-inner{max-width:1560px;margin:0 auto;padding:0 clamp(20px,4vw,64px)}
+    .band-manga{background:rgba(255,255,255,.6)}
+    .band-projects{background:rgba(240,230,255,.65)}
+    .band-xp{background:rgba(255,255,255,.6)}
+
+    .sec-head{display:flex;align-items:center;gap:16px;margin-bottom:14px}
+    .sec-index{font-family:"JetBrains Mono",monospace;font-size:.8rem;color:var(--pink);
+      background:#fff;border:2px solid var(--border-pink);border-radius:99px;padding:3px 14px}
+    h2{font-weight:800;font-size:clamp(2.1rem,4.6vw,3.4rem);letter-spacing:.005em;
+      background:linear-gradient(95deg,#e51f8f,#7a2df0 55%,#0f9fe0);
+      -webkit-background-clip:text;background-clip:text;color:transparent}
+    .sec-sub{max-width:760px;margin-bottom:44px;font-size:1.05rem}
+
+    /* floating decorations — they live in the side space the old layout left empty */
+    .deco{position:absolute;z-index:1;font-size:clamp(26px,3.6vw,54px);pointer-events:none;user-select:none;
+      filter:drop-shadow(0 8px 20px rgba(255,63,174,.3));
+      animation:bob 7s ease-in-out infinite}
+    @keyframes bob{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-24px) rotate(6deg)}}
+    @media(max-width:760px){.deco-lg{display:none}}
 
     /* ===== hero ===== */
-    .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;
-      text-align:center;padding:130px 24px 96px;position:relative}
-    .eyebrow{font-family:"JetBrains Mono",monospace;font-size:.76rem;letter-spacing:.24em;text-transform:uppercase;
-      color:var(--gold-2);margin-bottom:20px;text-shadow:0 2px 18px rgba(0,0,0,.85)}
-    .eyebrow::before{content:"\25C6  ";color:var(--crimson)}
-    h1.title{font-family:"Playfair Display",serif;font-weight:700;font-size:clamp(3rem,9.5vw,6.6rem);
-      line-height:1.02;letter-spacing:.01em;text-shadow:0 6px 50px rgba(0,0,0,.9)}
-    h1.title .grad-text{filter:drop-shadow(0 2px 24px rgba(233,180,85,.35))}
-    .hero-sub{max-width:660px;margin:24px auto 0;color:var(--foreground);font-size:clamp(1rem,2.3vw,1.22rem);
-      text-shadow:0 2px 16px rgba(0,0,0,.95)}
-    .hero-sub b{color:#fff;font-weight:600}
+    .hero{position:relative;min-height:88svh;display:flex;flex-direction:column;justify-content:center;
+      align-items:center;text-align:center;padding:130px 24px 90px;overflow:hidden}
+    .eyebrow{font-family:"JetBrains Mono",monospace;font-size:.76rem;letter-spacing:.22em;text-transform:uppercase;
+      color:var(--violet);background:#fff;border:2px solid var(--border);border-radius:99px;
+      padding:8px 18px;margin-bottom:26px;box-shadow:var(--shadow-purple)}
+    h1.title{font-weight:800;font-size:clamp(3.2rem,9.5vw,7rem);letter-spacing:.01em;color:var(--ink)}
+    /* the darker trio, not the full rainbow — the gold tail went too pale on
+       a light page and the last letters of the name washed out */
+    h1.title .grad-text{background:var(--cta);-webkit-background-clip:text;background-clip:text;color:transparent;
+      filter:drop-shadow(0 4px 22px rgba(255,63,174,.35))}
+    .hero-sub{max-width:680px;margin:22px auto 0;font-size:clamp(1.02rem,2.3vw,1.25rem)}
     .cta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;justify-content:center}
-    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 26px;border-radius:99px;
-      font-weight:600;font-size:.93rem;min-height:44px;cursor:pointer;
-      transition:transform .2s,box-shadow .2s,border-color .2s,color .2s;border:1px solid var(--border)}
-    .btn:hover{transform:translateY(-2px)}
-    .btn:active{transform:translateY(0) scale(.98)}
-    .btn-primary{background:var(--grad);color:var(--primary-foreground);border:none;
-      box-shadow:0 6px 34px rgba(233,180,85,.35)}
-    .btn-primary:hover{box-shadow:0 10px 44px rgba(233,180,85,.5)}
-    .btn-ghost{background:rgba(16,20,16,.55);backdrop-filter:blur(8px)}
-    .btn-ghost:hover{border-color:var(--gold);color:var(--gold-2)}
-    .hero-stats{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:46px}
-    .hstat{border:1px solid var(--border);border-radius:14px;padding:12px 20px;
-      background:rgba(16,20,16,.62);text-align:left}
-    .hstat .v{font-family:"Playfair Display",serif;font-weight:700;font-size:1.22rem;color:var(--gold-2);white-space:nowrap}
-    .hstat .k{font-family:"JetBrains Mono",monospace;font-size:.6rem;letter-spacing:.14em;
-      text-transform:uppercase;color:var(--muted-foreground);margin-top:3px}
-    .scroll-hint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);
-      font-family:"JetBrains Mono",monospace;font-size:.64rem;letter-spacing:.3em;text-transform:uppercase;
-      color:var(--foreground);animation:hintdrop 2.2s ease-in-out infinite}
-    @keyframes hintdrop{0%,100%{transform:translate(-50%,0);opacity:.8}55%{transform:translate(-50%,10px);opacity:.3}}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 30px;border-radius:99px;
+      font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1rem;min-height:48px;cursor:pointer;
+      transition:transform .2s,box-shadow .2s,filter .2s;border:2px solid transparent}
+    .btn:hover{transform:translateY(-3px)}
+    .btn:active{transform:translateY(0) scale(.97)}
+    .btn-primary{background:var(--cta);color:#fff;box-shadow:var(--shadow-pink)}
+    .btn-primary:hover{box-shadow:0 16px 48px rgba(255,63,174,.4);filter:brightness(1.06)}
+    .btn-ghost{background:#fff;border-color:var(--border);color:var(--violet)}
+    .btn-ghost:hover{border-color:var(--pink);color:var(--pink)}
+    .hero-stats{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:50px}
+    .hstat{background:#fff;border:2px solid var(--border);border-radius:18px;padding:14px 24px;
+      text-align:left;box-shadow:var(--shadow-purple)}
+    .hstat .v{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.35rem;white-space:nowrap;
+      background:var(--cta);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .hstat .k{font-family:"JetBrains Mono",monospace;font-size:.6rem;letter-spacing:.13em;
+      text-transform:uppercase;margin-top:3px}
+    .scroll-hint{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);
+      font-family:"Baloo 2",sans-serif;font-weight:700;font-size:.9rem;color:var(--violet);
+      animation:hintdrop 2.2s ease-in-out infinite}
+    @keyframes hintdrop{0%,100%{transform:translate(-50%,0);opacity:.9}55%{transform:translate(-50%,10px);opacity:.4}}
     @media(max-width:700px){
-      .hero{padding:104px 20px 80px}
-      .hero-sub{font-size:.97rem;margin-top:18px}
-      .hero-stats{display:grid;grid-template-columns:1fr 1fr;width:100%;max-width:380px;gap:8px;margin-top:32px}
-      .hstat{padding:10px 12px}
-      .hstat .v{font-size:1.02rem}
-      .hstat .k{font-size:.55rem}
+      .hero{padding:110px 18px 76px;min-height:78svh}
+      .hero-stats{display:grid;grid-template-columns:1fr 1fr;width:100%;max-width:400px;gap:10px;margin-top:34px}
+      .hstat{padding:11px 14px}
+      .hstat .v{font-size:1.05rem}
+      .hstat .k{font-size:.54rem}
       .scroll-hint{display:none}
     }
 
-    /* ===== the three slabs ===== */
-    .slab{position:relative;max-width:1160px;margin:0 auto 28px;padding:clamp(26px,4.6vw,62px);
-      background:var(--slab);border:1px solid var(--border);border-radius:26px;overflow:hidden}
-    .slab::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:var(--grad);opacity:.5}
-    .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:14px}
-    .sec-index{font-family:"JetBrains Mono",monospace;color:var(--crimson);font-size:.85rem}
-    h2{font-family:"Playfair Display",serif;font-weight:700;font-size:clamp(1.9rem,4.6vw,2.9rem);letter-spacing:.005em}
-    .sec-sub{color:var(--muted-foreground);max-width:700px;margin-bottom:40px;font-size:1.02rem}
-    .sec-sub b{color:var(--foreground);font-weight:500}
-    @media(max-width:820px){.slab{margin:0 12px 16px;border-radius:20px}}
+    /* ===== rainbow marquee — deliberately edge to edge =====
+       The bar is tilted and slightly oversized so it bleeds past both edges;
+       the clip wrapper swallows that overflow so the page never scrolls
+       sideways. */
+    .marquee-clip{overflow:hidden;width:100%;padding:22px 0}
+    .marquee{position:relative;width:100%;overflow:hidden;background:var(--cta);
+      padding:13px 0;transform:rotate(-1.1deg) scale(1.03);box-shadow:0 10px 40px rgba(139,61,255,.3)}
+    .marquee-track{display:flex;gap:0;white-space:nowrap;width:max-content;
+      animation:slide 26s linear infinite}
+    .marquee-track span{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.02rem;
+      letter-spacing:.14em;text-transform:uppercase;color:#fff;padding:0 22px}
+    @keyframes slide{to{transform:translateX(-50%)}}
 
-    /* ===== 01 · manga ===== */
-    .series{padding-bottom:34px;margin-bottom:34px;border-bottom:1px solid var(--border)}
+    /* ===== manga ===== */
+    .series{padding-bottom:38px;margin-bottom:38px;border-bottom:2px dashed rgba(139,61,255,.18)}
     .series:last-child{padding-bottom:0;margin-bottom:0;border-bottom:none}
     .series-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
-      flex-wrap:wrap;margin-bottom:20px}
-    .badge{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.16em;
-      text-transform:uppercase;color:var(--gold);margin-bottom:8px}
-    .series h3{font-family:"Playfair Display",serif;font-size:clamp(1.6rem,3.4vw,2.2rem);line-height:1.1}
-    .logline{color:var(--muted-foreground);margin-top:10px;max-width:620px;font-size:.97rem}
-    .thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
-    a.chapter{position:relative;display:flex;flex-direction:column;border:1px solid var(--border);
-      border-radius:16px;overflow:hidden;background:rgba(16,20,16,.5);
-      transition:border-color .25s,transform .25s}
-    a.chapter:hover{border-color:rgba(233,180,85,.5);transform:translateY(-4px)}
-    .thumb{display:block;position:relative;overflow:hidden;background:var(--background-2)}
+      flex-wrap:wrap;margin-bottom:22px}
+    .badge{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.14em;
+      text-transform:uppercase;color:var(--pink);margin-bottom:8px}
+    .series h3{font-weight:800;font-size:clamp(1.7rem,3.4vw,2.4rem)}
+    .logline{margin-top:10px;max-width:640px;font-size:.98rem}
+    .thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+    a.chapter{position:relative;display:flex;flex-direction:column;background:var(--card);
+      border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;
+      transition:border-color .25s,transform .25s,box-shadow .25s}
+    a.chapter:hover{border-color:var(--pink);transform:translateY(-6px);box-shadow:var(--shadow-pink)}
+    .thumb{display:block;position:relative;overflow:hidden;background:#f4e9ff}
     .thumb img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
     a.chapter:hover .thumb img{transform:scale(1.05)}
     .thumb.wide{aspect-ratio:16/9}
     .thumb.tall{aspect-ratio:3/4}
-    .meta{display:flex;flex-direction:column;gap:3px;padding:14px 16px 16px}
+    .meta{display:flex;flex-direction:column;gap:3px;padding:15px 18px 17px}
     .meta b{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.12em;
-      color:var(--gold);font-weight:500}
-    .meta .t{font-weight:600;font-size:.96rem}
-    .meta .n{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--muted-foreground)}
-    .meta .new{position:absolute;top:12px;right:12px;font-family:"JetBrains Mono",monospace;
-      font-size:.58rem;letter-spacing:.14em;font-weight:700;color:#221604;background:var(--grad);
-      padding:3px 10px;border-radius:99px}
+      color:var(--pink);font-weight:500}
+    .meta .t{font-family:"Baloo 2",sans-serif;font-weight:700;font-size:1.05rem}
+    .meta .n{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--violet)}
+    .meta .new{position:absolute;top:14px;right:14px;font-family:"Baloo 2",sans-serif;
+      font-size:.68rem;letter-spacing:.1em;font-weight:800;color:#fff;background:var(--cta);
+      padding:4px 12px;border-radius:99px;box-shadow:var(--shadow-pink)}
 
-    /* ===== 02 · the three projects =====
-       Each tile is one big link: thumbnail, copy, and a full-width button you
-       cannot miss. Nothing inside is separately clickable, so the whole card is
-       the target. */
-    .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
-    @media(max-width:1000px){.tiles{grid-template-columns:1fr}}
-    a.tile{position:relative;display:flex;flex-direction:column;border-radius:var(--radius);
-      border:1px solid var(--border);background:var(--card);overflow:hidden;
+    /* ===== projects ===== */
+    .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+    @media(max-width:1020px){.tiles{grid-template-columns:1fr}}
+    a.tile{position:relative;display:flex;flex-direction:column;background:var(--card);
+      border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;
       transition:transform .25s,border-color .25s,box-shadow .25s}
-    a.tile:hover{transform:translateY(-6px);border-color:rgba(233,180,85,.55);
-      box-shadow:0 22px 60px rgba(0,0,0,.5)}
-    a.tile:focus-visible{outline:2px solid var(--ring);outline-offset:4px}
-    .tile-thumb{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--background-2);
-      border-bottom:1px solid var(--border)}
+    a.tile:hover{transform:translateY(-7px);border-color:var(--pink);box-shadow:var(--shadow-pink)}
+    .tile-thumb{position:relative;aspect-ratio:16/9;overflow:hidden;background:#f4e9ff;
+      border-bottom:2px solid var(--border)}
     .tile-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
     a.tile:hover .tile-thumb img{transform:scale(1.06)}
-    .tile-thumb::after{content:"";position:absolute;inset:0;pointer-events:none;
-      background:linear-gradient(180deg,rgba(16,20,16,.12) 0,transparent 42%,rgba(16,20,16,.55) 100%)}
     .tile-body{display:flex;flex-direction:column;flex:1;padding:24px 26px 26px}
     .tile .tag{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.14em;
-      text-transform:uppercase;color:var(--gold);margin-bottom:10px;line-height:1.5;flex:none}
-    .tile h3{font-family:"Playfair Display",serif;font-size:1.55rem;margin-bottom:10px}
-    .tile p{color:var(--foreground);font-size:.95rem;flex:none}
+      text-transform:uppercase;color:var(--pink);margin-bottom:10px;line-height:1.5;flex:none}
+    .tile h3{font-weight:800;font-size:1.6rem;margin-bottom:10px}
+    .tile p{font-size:.96rem;flex:none}
     .tile .desc{flex:1}
-    .tile .metric{font-family:"JetBrains Mono",monospace;font-size:.73rem;color:var(--jade);margin-top:16px}
+    .tile .metric{font-family:"JetBrains Mono",monospace;font-size:.73rem;color:var(--violet);margin-top:16px}
     .tile .foot{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
-    /* the button */
     .tile-cta{margin-top:22px;display:flex;align-items:center;justify-content:center;gap:12px;
-      min-height:66px;padding:16px 22px;border-radius:16px;text-align:center;
-      background:var(--grad);color:var(--primary-foreground);
-      font-weight:800;font-size:clamp(1.02rem,1.5vw,1.16rem);
-      box-shadow:0 10px 34px rgba(233,180,85,.3);
-      transition:box-shadow .25s,filter .25s}
+      min-height:66px;padding:16px 22px;border-radius:18px;text-align:center;
+      background:var(--cta);color:#fff;font-family:"Baloo 2",sans-serif;
+      font-weight:800;font-size:clamp(1.05rem,1.5vw,1.2rem);
+      box-shadow:var(--shadow-pink);transition:box-shadow .25s,filter .25s}
     .tile-cta i{font-style:normal;font-size:1.25em;line-height:1;transition:transform .25s}
-    a.tile:hover .tile-cta{box-shadow:0 16px 48px rgba(233,180,85,.55);filter:brightness(1.07)}
+    a.tile:hover .tile-cta{box-shadow:0 16px 48px rgba(255,63,174,.45);filter:brightness(1.07)}
     a.tile:hover .tile-cta i{transform:translateX(5px)}
-    /* OneSheet: same treatment, laid out wide */
-    a.tile-wide{margin-top:22px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);align-items:stretch}
+    a.tile-wide{margin-top:24px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);align-items:stretch}
     a.tile-wide .tile-thumb{aspect-ratio:auto;height:100%;min-height:250px;
-      border-bottom:none;border-right:1px solid var(--border)}
-    a.tile-wide .tile-thumb::after{background:linear-gradient(90deg,transparent 50%,rgba(16,20,16,.55) 100%)}
+      border-bottom:none;border-right:2px solid var(--border)}
     a.tile-wide .tile-body{padding:28px 30px 30px}
-    @media(max-width:820px){
+    @media(max-width:860px){
       a.tile-wide{grid-template-columns:1fr}
       a.tile-wide .tile-thumb{aspect-ratio:16/9;height:auto;min-height:0;
-        border-right:none;border-bottom:1px solid var(--border)}
+        border-right:none;border-bottom:2px solid var(--border)}
     }
-    .live{display:inline-flex;align-items:center;gap:7px;color:var(--jade)}
-    .live i{width:7px;height:7px;border-radius:50%;background:var(--jade);animation:livedot 1.8s ease-out infinite}
-    .chip{font-size:.75rem;padding:5px 12px;border-radius:99px;border:1px solid var(--border);color:var(--foreground)}
+    .live{display:inline-flex;align-items:center;gap:7px;color:var(--green)}
+    .live i{width:7px;height:7px;border-radius:50%;background:var(--green);animation:livedot 1.8s ease-out infinite}
+    .chip{font-size:.76rem;font-weight:600;padding:5px 13px;border-radius:99px;
+      background:#f3e9ff;border:1px solid var(--border);color:var(--violet)}
 
-    /* ===== 03 · experience ===== */
-    .xp{display:grid;gap:18px}
-    .role{border:1px solid var(--border);border-radius:var(--radius);background:var(--card);
-      padding:26px 28px;display:grid;grid-template-columns:200px 1fr;gap:26px;
-      transition:border-color .25s;position:relative;overflow:hidden}
-    .role:hover{border-color:rgba(233,180,85,.42)}
-    .role .when{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--gold);
+    /* stagger the grids so they pop in one after another */
+    .thumbs a.chapter:nth-child(2),.tiles a.tile:nth-child(2){transition-delay:.09s}
+    .thumbs a.chapter:nth-child(3),.tiles a.tile:nth-child(3){transition-delay:.18s}
+    .reveal.visible{transition-delay:0s}
+    .reveal.visible:nth-child(2){transition-delay:.09s}
+    .reveal.visible:nth-child(3){transition-delay:.18s}
+
+    /* ===== experience ===== */
+    .xp{display:grid;gap:20px}
+    .role{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);
+      padding:28px 30px;display:grid;grid-template-columns:210px 1fr;gap:26px;
+      transition:border-color .25s,box-shadow .25s}
+    .role:hover{border-color:var(--pink);box-shadow:var(--shadow-purple)}
+    .role .when{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--pink);
       letter-spacing:.06em;line-height:1.8}
-    .role .when .loc{display:block;color:var(--muted-foreground)}
-    .role h3{font-family:"Playfair Display",serif;font-size:1.3rem}
-    .role .org{color:var(--muted-foreground);font-size:.9rem;margin-top:2px}
-    .role ul{margin:12px 0 0 17px;color:var(--muted-foreground);font-size:.93rem;display:grid;gap:7px}
-    .role li::marker{color:var(--gold)}
-    .role .m{color:var(--jade);font-family:"JetBrains Mono",monospace;font-size:.85em}
+    .role .when .loc{display:block;color:var(--violet)}
+    .role h3{font-weight:800;font-size:1.35rem}
+    .role .org{font-size:.92rem;margin-top:2px}
+    .role ul{margin:12px 0 0 17px;font-size:.94rem;display:grid;gap:7px}
+    .role li::marker{color:var(--pink)}
+    .role .m{color:var(--violet);font-family:"JetBrains Mono",monospace;font-size:.85em;font-weight:500}
     @media(max-width:760px){.role{grid-template-columns:1fr;gap:10px;padding:22px}}
-    .duo{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-top:18px}
-    .mini{border:1px solid var(--border);border-radius:var(--radius);background:var(--card);padding:24px 26px;
-      position:relative;overflow:hidden}
-    .mini h4{font-family:"Playfair Display",serif;font-size:1.1rem;margin-bottom:14px}
-    .mini .item{padding:10px 0;border-bottom:1px dashed rgba(233,180,85,.14)}
+    .duo{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:20px;margin-top:20px}
+    .mini{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:24px 26px}
+    .mini h4{font-weight:800;font-size:1.15rem;margin-bottom:14px}
+    .mini .item{padding:10px 0;border-bottom:1px dashed rgba(255,63,174,.25)}
     .mini .item:last-child{border-bottom:none;padding-bottom:0}
-    .mini .item b{display:block;font-weight:600;font-size:.95rem}
-    .mini .item span{color:var(--muted-foreground);font-size:.85rem}
-    .mini .item .yr{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--gold);float:right;margin-left:12px}
-    .cat{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;
-      color:var(--jade);margin:38px 0 16px;display:flex;align-items:center;gap:14px}
-    .cat::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
-    .caps{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px}
-    .cap-card{border:1px solid var(--border);border-radius:var(--radius);background:var(--card);padding:24px 26px}
-    .cap-card h4{font-family:"Playfair Display",serif;font-size:1.05rem;margin-bottom:13px}
+    .mini .item b{display:block;font-weight:700;font-size:.96rem}
+    .mini .item span{font-size:.86rem}
+    .mini .item .yr{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--pink);float:right;margin-left:12px}
+    .cat{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;
+      color:var(--pink);margin:44px 0 18px;display:flex;align-items:center;gap:14px}
+    .cat::after{content:"";flex:1;height:2px;border-radius:2px;
+      background:linear-gradient(90deg,rgba(255,63,174,.4),transparent)}
+    .caps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+    .cap-card{background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:24px 26px}
+    .cap-card h4{font-weight:800;font-size:1.1rem;margin-bottom:13px}
     .cap-card .chips{display:flex;gap:8px;flex-wrap:wrap}
-    .quote{margin-top:30px;border:1px solid var(--border);border-left:3px solid var(--gold);
-      border-radius:0 var(--radius) var(--radius) 0;background:var(--card);padding:24px 28px}
-    .quote p{font-family:"Playfair Display",serif;font-style:italic;font-size:1.06rem;line-height:1.6;
-      color:var(--foreground)}
+    .quote{margin-top:32px;background:var(--card);border:2px solid var(--border);
+      border-left:6px solid var(--pink);border-radius:0 var(--radius) var(--radius) 0;padding:26px 30px}
+    .quote p{font-size:1.06rem;line-height:1.6;font-style:italic}
     .quote footer{margin-top:12px;font-family:"JetBrains Mono",monospace;font-size:.72rem;
-      color:var(--muted-foreground);letter-spacing:.06em;border:none;padding:0;text-align:left;background:none}
+      color:var(--violet);letter-spacing:.06em}
 
-    /* ===== contact ===== */
-    .slab-contact{text-align:center;padding-top:clamp(40px,6vw,76px);padding-bottom:clamp(40px,6vw,76px)}
-    .slab-contact h2{font-size:clamp(2rem,5.4vw,3.2rem)}
-    .slab-contact p{margin-top:14px;color:var(--muted-foreground);max-width:620px;margin-left:auto;margin-right:auto}
-    .email{display:inline-block;font-family:"Playfair Display",serif;font-weight:600;
-      font-size:clamp(1.2rem,3.4vw,1.9rem);margin:24px 0 6px}
-    .email:hover .grad-text{filter:brightness(1.25)}
-    .socials{display:flex;gap:20px;justify-content:center;color:var(--muted-foreground);margin-top:12px;flex-wrap:wrap}
-    .socials a{padding:8px 6px}
-    .socials a:hover{color:var(--foreground)}
+    /* ===== contact — full-bleed rainbow ===== */
+    .band-contact{background:linear-gradient(120deg,#ef1f96,#7a2df0 42%,#0f9fe0 82%,#12b981);
+      text-align:center;color:#fff}
+    .band-contact h2{background:none;-webkit-text-fill-color:#fff;color:#fff;
+      text-shadow:0 4px 30px rgba(60,20,120,.35)}
+    .band-contact p{margin-top:14px;max-width:640px;margin-left:auto;margin-right:auto;
+      font-weight:600;text-shadow:0 2px 14px rgba(60,20,120,.3)}
+    .email{display:inline-block;font-family:"Baloo 2",sans-serif;font-weight:800;
+      font-size:clamp(1.2rem,3.4vw,1.9rem);margin:28px 0 8px;background:#fff;color:var(--violet);
+      padding:14px 34px;border-radius:99px;box-shadow:0 14px 44px rgba(60,20,120,.35);
+      transition:transform .2s,box-shadow .2s}
+    .email:hover{transform:translateY(-3px);box-shadow:0 20px 54px rgba(60,20,120,.45)}
+    .socials{display:flex;gap:14px;justify-content:center;margin-top:20px;flex-wrap:wrap}
+    .socials a{font-weight:700;padding:9px 20px;border-radius:99px;border:2px solid rgba(255,255,255,.65);
+      transition:background .2s,color .2s}
+    .socials a:hover{background:#fff;color:var(--violet)}
 
-    footer{text-align:center;color:var(--muted-foreground);font-size:.85rem;padding:44px 20px 54px}
-    footer a{color:var(--foreground)}
+    footer{text-align:center;font-size:.88rem;padding:44px 20px 54px}
+    footer a{font-weight:700;color:var(--violet)}
 
-    /* reveal */
-    .reveal{opacity:0;transform:translateY(26px);transition:opacity .7s cubic-bezier(.2,.6,.2,1),transform .7s cubic-bezier(.2,.6,.2,1)}
+    /* ===== springy reveals ===== */
+    .reveal{opacity:0;transform:translateY(34px) scale(.96) rotate(-.6deg);
+      transition:opacity .7s cubic-bezier(.34,1.45,.5,1),transform .7s cubic-bezier(.34,1.45,.5,1)}
     .reveal.visible{opacity:1;transform:none}
     @media (prefers-reduced-motion:reduce){
       .reveal{opacity:1;transform:none;transition:none}
-      .nav-live i,.live i,.scroll-hint{animation:none;opacity:1}
+      .nav-live i,.live i,.scroll-hint,.deco,.bg::before,.bg::after{animation:none}
+      .marquee{transform:none}
+      .marquee-track{animation:none}
       html{scroll-behavior:auto}
-      .tile:hover,a.chapter:hover,.btn:hover{transform:none}
-      a.chapter:hover .thumb img{transform:none}
+      a.tile:hover,a.chapter:hover,.btn:hover,.email:hover{transform:none}
+      a.tile:hover .tile-thumb img,a.chapter:hover .thumb img{transform:none}
     }
   </style>
 </head>
 <body>
   <a class="skip-link" href="#manga">Skip to content</a>
-
-  <!-- The film loops behind the whole page: 140 frames drawn to a fixed
-       canvas, ping-ponging so there is no cut. Reduced motion gets one still. -->
-  <div class="film" aria-hidden="true">
-    <canvas class="cinema" data-src="assets/film/city-sm/f%04d.webp" data-frames="140"
-            data-loop="12" data-maxw="1080" data-poster="0.9"></canvas>
-  </div>
-  <div class="film-scrim" aria-hidden="true"></div>
-  <div class="grain" aria-hidden="true"></div>
+  <div class="bg" aria-hidden="true"></div>
+  <div id="rainbowbar" aria-hidden="true"></div>
+  <canvas id="fairydust" aria-hidden="true"></canvas>
 
   <header class="nav-wrap">
     <nav class="nav" aria-label="Site">
@@ -295,17 +341,24 @@
       <a href="trading/" class="nav-live">Trading <i></i></a>
       <a href="campus/">3D Campus</a>
       <a href="#experience">Experience</a>
-      <a href="#contact">Contact</a>
+      <span class="spacer"></span>
+      <a href="#contact" class="nav-cta">Contact</a>
     </nav>
   </header>
 
   <main id="top">
     <!-- ===== HERO ===== -->
     <section class="hero" aria-label="Introduction">
+      <span class="deco" style="left:6%;top:18%" aria-hidden="true">&#127752;</span>
+      <span class="deco" style="right:7%;top:22%;animation-delay:1.2s" aria-hidden="true">&#11088;</span>
+      <span class="deco deco-lg" style="left:12%;bottom:24%;animation-delay:.6s" aria-hidden="true">&#129498;</span>
+      <span class="deco deco-lg" style="right:12%;bottom:28%;animation-delay:1.8s" aria-hidden="true">&#128150;</span>
+      <span class="deco deco-lg" style="left:46%;top:9%;animation-delay:2.4s" aria-hidden="true">&#10024;</span>
+
       <p class="eyebrow">Senior Engineer, Enterprise AI · Mediacorp · Singapore</p>
       <h1 class="title">Zhang <span class="grad-text">Cheng</span></h1>
       <p class="hero-sub">I don't just use AI — <b>I direct it.</b> Agents I command draw the manga,
-        trade a live desk, and build the 3D campus below. Three things live on this page.</p>
+        trade a live desk, and build the 3D campus below. Move your mouse — they left fairy dust everywhere.</p>
       <div class="cta">
         <a class="btn btn-primary" href="#manga">Read the manga</a>
         <a class="btn btn-ghost" href="#projects">See the projects</a>
@@ -316,290 +369,316 @@
         <div class="hstat"><div class="v">~20</div><div class="k">GenAI rollouts at Mediacorp</div></div>
         <div class="hstat"><div class="v">0</div><div class="k">humans on the hourly loop</div></div>
       </div>
-      <p class="scroll-hint" aria-hidden="true">Scroll</p>
+      <p class="scroll-hint" aria-hidden="true">Scroll — it gets magical &darr;</p>
     </section>
 
+    <!-- full-bleed rainbow marquee -->
+    <div class="marquee-clip" aria-hidden="true">
+    <div class="marquee">
+      <div class="marquee-track">
+        <span>&#10022; Manga</span><span>&#10022; Games</span><span>&#10022; Live Trading</span>
+        <span>&#10022; 3D Campus</span><span>&#10022; OneSheet</span><span>&#10022; Built by AI agents</span>
+        <span>&#10022; Manga</span><span>&#10022; Games</span><span>&#10022; Live Trading</span>
+        <span>&#10022; 3D Campus</span><span>&#10022; OneSheet</span><span>&#10022; Built by AI agents</span>
+      </div>
+    </div>
+    </div>
+
     <!-- ===== 01 · MANGA ===== -->
-    <section class="slab" id="manga">
-      <div class="sec-head reveal"><span class="sec-index">01</span><h2>Manga</h2></div>
-      <p class="sec-sub reveal">Three series, seven chapters, <b>241 pages and panels</b> — all AI-drawn and
-        agent-written, published here. Frozen character sheets and one locked style string keep every
-        page consistent. Pick a chapter.</p>
+    <section class="band band-manga" id="manga">
+      <span class="deco deco-lg" style="left:1.5%;top:120px;animation-delay:.4s" aria-hidden="true">&#127800;</span>
+      <span class="deco deco-lg" style="right:1.5%;bottom:140px;animation-delay:1.4s" aria-hidden="true">&#11088;</span>
+      <div class="band-inner">
+        <div class="sec-head reveal"><span class="sec-index">01</span><h2>Manga</h2></div>
+        <p class="sec-sub reveal">Three series, seven chapters, <b>241 pages and panels</b> — all AI-drawn and
+          agent-written, published here. Frozen character sheets and one locked style string keep every
+          page consistent. Pick a chapter.</p>
 
-      <article class="series reveal">
-        <div class="series-head">
-          <div>
-            <p class="badge">Ongoing · psychological office manga · 191 panels</p>
-            <h3>SEEN</h3>
-            <p class="logline">Ethan Cole is the guy everyone likes. One Monday he can hear every thought in
-              the building, and above every head floats that person's lifetime lie count. It should make him
-              unstoppable. It doesn't — because he can't use any of it without revealing how he knows.</p>
+        <article class="series reveal">
+          <div class="series-head">
+            <div>
+              <p class="badge">Ongoing · psychological office manga · 191 panels</p>
+              <h3>SEEN</h3>
+              <p class="logline">Ethan Cole is the guy everyone likes. One Monday he can hear every thought in
+                the building, and above every head floats that person's lifetime lie count. It should make him
+                unstoppable. It doesn't — because he can't use any of it without revealing how he knows.</p>
+            </div>
+            <a class="btn btn-ghost" href="seen/">Start reading</a>
           </div>
-          <a class="btn btn-ghost" href="seen/">Start reading</a>
-        </div>
-        <div class="thumbs">
-          <a class="chapter" href="seen/">
-            <span class="thumb wide"><img src="seen/p01_01.jpg" alt="SEEN chapter 1, opening panel" loading="lazy" width="1024" height="576"></span>
-            <span class="meta"><b>CH.1</b><span class="t">Good Morning, Everyone</span><span class="n">41 panels</span></span>
-          </a>
-          <a class="chapter" href="seen2/">
-            <span class="thumb wide"><img src="seen2/c2_p01_01.jpg" alt="SEEN chapter 2, opening panel" loading="lazy" width="1300" height="732"></span>
-            <span class="meta"><b>CH.2</b><span class="t">After Hours</span><span class="n">69 panels</span></span>
-          </a>
-          <a class="chapter" href="seen3/">
-            <span class="thumb wide"><img src="seen3/c3_p01_01.jpg" alt="SEEN chapter 3, opening panel" loading="lazy" width="1254" height="1254"></span>
-            <span class="meta"><b>CH.3</b><span class="t">Deeper</span><span class="n">81 panels</span><span class="new">NEW</span></span>
-          </a>
-        </div>
-      </article>
+          <div class="thumbs">
+            <a class="chapter" href="seen/">
+              <span class="thumb wide"><img src="seen/p01_01.jpg" alt="SEEN chapter 1, opening panel" loading="lazy" width="1024" height="576"></span>
+              <span class="meta"><b>CH.1</b><span class="t">Good Morning, Everyone</span><span class="n">41 panels</span></span>
+            </a>
+            <a class="chapter" href="seen2/">
+              <span class="thumb wide"><img src="seen2/c2_p01_01.jpg" alt="SEEN chapter 2, opening panel" loading="lazy" width="1300" height="732"></span>
+              <span class="meta"><b>CH.2</b><span class="t">After Hours</span><span class="n">69 panels</span></span>
+            </a>
+            <a class="chapter" href="seen3/">
+              <span class="thumb wide"><img src="seen3/c3_p01_01.jpg" alt="SEEN chapter 3, opening panel" loading="lazy" width="1254" height="1254"></span>
+              <span class="meta"><b>CH.3</b><span class="t">Deeper</span><span class="n">81 panels</span><span class="new">NEW</span></span>
+            </a>
+          </div>
+        </article>
 
-      <article class="series reveal">
-        <div class="series-head">
-          <div>
-            <p class="badge">Ongoing · neon-noir urban fantasy · 40 pages</p>
-            <h3>Witch of the Vending Machines</h3>
-            <p class="logline">Somewhere in Tokyo's back streets there is a vending machine that wasn't there
-              yesterday. It doesn't take money — it takes honesty. A wish at a time, and every fulfilled wish
-              leaves someone working the night shift.</p>
+        <article class="series reveal">
+          <div class="series-head">
+            <div>
+              <p class="badge">Ongoing · neon-noir urban fantasy · 40 pages</p>
+              <h3>Witch of the Vending Machines</h3>
+              <p class="logline">Somewhere in Tokyo's back streets there is a vending machine that wasn't there
+                yesterday. It doesn't take money — it takes honesty. A wish at a time, and every fulfilled wish
+                leaves someone working the night shift.</p>
+            </div>
+            <a class="btn btn-ghost" href="comic/">Start reading</a>
           </div>
-          <a class="btn btn-ghost" href="comic/">Start reading</a>
-        </div>
-        <div class="thumbs">
-          <a class="chapter" href="comic/">
-            <span class="thumb tall"><img src="comic/page01.jpg" alt="Witch of the Vending Machines chapter 1, first page" loading="lazy" width="1024" height="1536"></span>
-            <span class="meta"><b>CH.1</b><span class="t">Where It Begins</span><span class="n">12 pages</span></span>
-          </a>
-          <a class="chapter" href="comic2/">
-            <span class="thumb tall"><img src="comic2/page01.jpg" alt="Witch of the Vending Machines chapter 2, first page" loading="lazy" width="1400" height="2100"></span>
-            <span class="meta"><b>CH.2</b><span class="t">Exact Change</span><span class="n">14 pages</span></span>
-          </a>
-          <a class="chapter" href="comic3/">
-            <span class="thumb tall"><img src="comic3/page01.jpg" alt="Witch of the Vending Machines chapter 3, first page" loading="lazy" width="1400" height="2100"></span>
-            <span class="meta"><b>CH.3</b><span class="t">No Refunds</span><span class="n">14 pages</span><span class="new">NEW</span></span>
-          </a>
-        </div>
-      </article>
+          <div class="thumbs">
+            <a class="chapter" href="comic/">
+              <span class="thumb tall"><img src="comic/page01.jpg" alt="Witch of the Vending Machines chapter 1, first page" loading="lazy" width="1024" height="1536"></span>
+              <span class="meta"><b>CH.1</b><span class="t">Where It Begins</span><span class="n">12 pages</span></span>
+            </a>
+            <a class="chapter" href="comic2/">
+              <span class="thumb tall"><img src="comic2/page01.jpg" alt="Witch of the Vending Machines chapter 2, first page" loading="lazy" width="1400" height="2100"></span>
+              <span class="meta"><b>CH.2</b><span class="t">Exact Change</span><span class="n">14 pages</span></span>
+            </a>
+            <a class="chapter" href="comic3/">
+              <span class="thumb tall"><img src="comic3/page01.jpg" alt="Witch of the Vending Machines chapter 3, first page" loading="lazy" width="1400" height="2100"></span>
+              <span class="meta"><b>CH.3</b><span class="t">No Refunds</span><span class="n">14 pages</span><span class="new">NEW</span></span>
+            </a>
+          </div>
+        </article>
 
-      <article class="series reveal">
-        <div class="series-head">
-          <div>
-            <p class="badge">One-shot · black &amp; white manga · 10 pages</p>
-            <h3>Born Rich</h3>
-            <p class="logline">What if I'd been born stupid rich? From a chauffeured school run to the
-              chairman's office — a manga about the other timeline. Same face, aging page by page.</p>
+        <article class="series reveal">
+          <div class="series-head">
+            <div>
+              <p class="badge">One-shot · black &amp; white manga · 10 pages</p>
+              <h3>Born Rich</h3>
+              <p class="logline">What if I'd been born stupid rich? From a chauffeured school run to the
+                chairman's office — a manga about the other timeline. Same face, aging page by page.</p>
+            </div>
+            <a class="btn btn-ghost" href="rich/">Read the one-shot</a>
           </div>
-          <a class="btn btn-ghost" href="rich/">Read the one-shot</a>
-        </div>
-        <div class="thumbs">
-          <a class="chapter" href="rich/">
-            <span class="thumb tall"><img src="rich/page01.jpg" alt="Born Rich, first page" loading="lazy" width="1024" height="1536"></span>
-            <span class="meta"><b>ONE-SHOT</b><span class="t">Born Rich</span><span class="n">10 pages</span></span>
-          </a>
-        </div>
-      </article>
+          <div class="thumbs">
+            <a class="chapter" href="rich/">
+              <span class="thumb tall"><img src="rich/page01.jpg" alt="Born Rich, first page" loading="lazy" width="1024" height="1536"></span>
+              <span class="meta"><b>ONE-SHOT</b><span class="t">Born Rich</span><span class="n">10 pages</span></span>
+            </a>
+          </div>
+        </article>
+      </div>
     </section>
 
     <!-- ===== 02 · PROJECTS ===== -->
-    <section class="slab" id="projects">
-      <div class="sec-head reveal"><span class="sec-index">02</span><h2>Projects</h2></div>
-      <p class="sec-sub reveal">Four things you can open right now — a game, a live trading desk, a 3D city
-        block, and a spreadsheet engine. <b>All of them were built by AI agents under my direction.</b>
-        Click any card.</p>
+    <section class="band band-projects" id="projects">
+      <span class="deco deco-lg" style="right:1.5%;top:130px;animation-delay:.9s" aria-hidden="true">&#127808;</span>
+      <span class="deco deco-lg" style="left:1.5%;bottom:160px;animation-delay:2s" aria-hidden="true">&#10024;</span>
+      <div class="band-inner">
+        <div class="sec-head reveal"><span class="sec-index">02</span><h2>Projects</h2></div>
+        <p class="sec-sub reveal">Four things you can open right now — a game, a live trading desk, a 3D city
+          block, and a spreadsheet engine. <b>All of them were built by AI agents under my direction.</b>
+          Click any card.</p>
 
-      <div class="tiles">
-        <a class="tile reveal" href="prompt-injection/" aria-label="Play the game — Prompt Injection">
+        <div class="tiles">
+          <a class="tile reveal" href="prompt-injection/" aria-label="Play the game — Prompt Injection">
+            <div class="tile-thumb">
+              <img src="assets/thumbs/game.jpg" width="1280" height="720" loading="lazy"
+                   alt="Prompt Injection in play: hostile prompt words descending through code rain toward the player's context window">
+            </div>
+            <div class="tile-body">
+              <p class="tag">Playable · browser game</p>
+              <h3>Games</h3>
+              <p class="desc"><b>Prompt Injection</b> — hostile prompts descend toward your context window and
+                you are the alignment layer. One model wrote the full design document; a second built it as
+                nine modules in parallel.</p>
+              <p class="metric">5,555 lines · one file · 0 humans coding</p>
+              <div class="foot"><span class="chip">Canvas 2D</span><span class="chip">Multi-agent build</span></div>
+              <span class="tile-cta">Play the game <i aria-hidden="true">&rarr;</i></span>
+            </div>
+          </a>
+
+          <a class="tile reveal" href="trading/" aria-label="Open the desk — the live autonomous trading desk">
+            <div class="tile-thumb">
+              <img src="assets/thumbs/trading.jpg" width="1280" height="720" loading="lazy"
+                   alt="The trading desk's money page: both paper accounts with day P&amp;L, biggest winner and loser, cash reserve and drawdown">
+            </div>
+            <div class="tile-body">
+              <p class="tag"><span class="live"><i></i>Live</span> · paper money</p>
+              <h3>Stock Trading Project</h3>
+              <p class="desc">Three autonomous bots on two Alpaca paper accounts: a crypto bot trading around a
+                permanent $500k BTC/ETH core, an hourly stock bot, and a daily 2&sigma; dip scanner — behind six
+                independent risk gates.</p>
+              <p class="metric">$1.1M paper capital · fires 5 past every hour · 0 humans in the loop</p>
+              <div class="foot"><span class="chip">Python</span><span class="chip">Alpaca API</span><span class="chip">Risk engine</span></div>
+              <span class="tile-cta">Open the live desk <i aria-hidden="true">&rarr;</i></span>
+            </div>
+          </a>
+
+          <a class="tile reveal" href="campus/" aria-label="Build the campus — the 3D media campus">
+            <div class="tile-thumb">
+              <img src="assets/thumbs/campus.jpg" width="1280" height="720" loading="lazy"
+                   alt="The finished 3D campus: a curved glass hull over a green-glass podium, theatre drums, lawns and trees">
+            </div>
+            <div class="tile-body">
+              <p class="tag">Interactive · three.js</p>
+              <h3>3D Campus</h3>
+              <p class="desc">A media campus that flies itself together as you scroll — ground, podium, drums,
+                hull, sky terrace, roof, trees, then the plaza and the people on it. Every mesh is written in
+                code, every texture painted at runtime.</p>
+              <p class="metric">1,027 meshes · 93k triangles · 0 assets downloaded</p>
+              <div class="foot"><span class="chip">three.js</span><span class="chip">GLB / OBJ export</span></div>
+              <span class="tile-cta">Build the campus <i aria-hidden="true">&rarr;</i></span>
+            </div>
+          </a>
+        </div>
+
+        <a class="tile tile-wide reveal" href="onesheet/" aria-label="Open the sheet — OneSheet">
           <div class="tile-thumb">
-            <img src="assets/thumbs/game.jpg" width="1280" height="720" loading="lazy"
-                 alt="Prompt Injection in play: hostile prompt words descending through code rain toward the player's context window">
+            <img src="assets/thumbs/onesheet.jpg" width="1280" height="720" loading="lazy"
+                 alt="OneSheet open on a loan calculator: formulas, sparklines, a live chart and draggable inputs">
           </div>
           <div class="tile-body">
-            <p class="tag">Playable · browser game</p>
-            <h3>Games</h3>
-            <p class="desc"><b>Prompt Injection</b> — hostile prompts descend toward your context window and
-              you are the alignment layer. One model wrote the full design document; a second built it as
-              nine modules in parallel.</p>
-            <p class="metric">5,555 lines · one file · 0 humans coding</p>
-            <div class="foot"><span class="chip">Canvas 2D</span><span class="chip">Multi-agent build</span></div>
-            <span class="tile-cta">Play the game <i aria-hidden="true">&rarr;</i></span>
-          </div>
-        </a>
-
-        <a class="tile reveal" href="trading/" aria-label="Open the desk — the live autonomous trading desk">
-          <div class="tile-thumb">
-            <img src="assets/thumbs/trading.jpg" width="1280" height="720" loading="lazy"
-                 alt="The trading desk's money page: both paper accounts with day P&amp;L, biggest winner and loser, cash reserve and drawdown">
-          </div>
-          <div class="tile-body">
-            <p class="tag"><span class="live"><i></i>Live</span> · paper money</p>
-            <h3>Stock Trading Project</h3>
-            <p class="desc">Three autonomous bots on two Alpaca paper accounts: a crypto bot trading around a
-              permanent $500k BTC/ETH core, an hourly stock bot, and a daily 2&sigma; dip scanner — behind six
-              independent risk gates.</p>
-            <p class="metric">$1.1M paper capital · fires 5 past every hour · 0 humans in the loop</p>
-            <div class="foot"><span class="chip">Python</span><span class="chip">Alpaca API</span><span class="chip">Risk engine</span></div>
-            <span class="tile-cta">Open the live desk <i aria-hidden="true">&rarr;</i></span>
-          </div>
-        </a>
-
-        <a class="tile reveal" href="campus/" aria-label="Build the campus — the 3D media campus">
-          <div class="tile-thumb">
-            <img src="assets/thumbs/campus.jpg" width="1280" height="720" loading="lazy"
-                 alt="The finished 3D campus: a curved glass hull over a green-glass podium, theatre drums, lawns and trees">
-          </div>
-          <div class="tile-body">
-            <p class="tag">Interactive · three.js</p>
-            <h3>3D Campus</h3>
-            <p class="desc">A media campus that flies itself together as you scroll — ground, podium, drums,
-              hull, sky terrace, roof, trees, then the plaza and the people on it. Every mesh is written in
-              code, every texture painted at runtime: no model files, no image files.</p>
-            <p class="metric">1,027 meshes · 93k triangles · 0 assets downloaded</p>
-            <div class="foot"><span class="chip">three.js</span><span class="chip">GLB / OBJ export</span></div>
-            <span class="tile-cta">Build the campus <i aria-hidden="true">&rarr;</i></span>
+            <p class="tag">Tool · one offline HTML file</p>
+            <h3>OneSheet</h3>
+            <p class="desc">A real spreadsheet in a single file — a Pratt-parsed formula engine, an incremental
+              dependency graph, a virtualised grid over 3.5M cells, and genuine .xlsx import. One agent wrote
+              the spec, another built every line of it.</p>
+            <p class="metric">~45 functions · 260 KB · 0 frameworks</p>
+            <div class="foot"><span class="chip">Formula engine</span><span class="chip">Dependency graph</span><span class="chip">Vanilla JS</span></div>
+            <span class="tile-cta">Open the sheet <i aria-hidden="true">&rarr;</i></span>
           </div>
         </a>
       </div>
-
-      <a class="tile tile-wide reveal" href="onesheet/" aria-label="Open the sheet — OneSheet">
-        <div class="tile-thumb">
-          <img src="assets/thumbs/onesheet.jpg" width="1280" height="720" loading="lazy"
-               alt="OneSheet open on a loan calculator: formulas, sparklines, a live chart and draggable inputs">
-        </div>
-        <div class="tile-body">
-          <p class="tag">Tool · one offline HTML file</p>
-          <h3>OneSheet</h3>
-          <p class="desc">A real spreadsheet in a single file — a Pratt-parsed formula engine, an incremental
-            dependency graph, a virtualised grid over 3.5M cells, and genuine .xlsx import. One agent wrote
-            the spec, another built every line of it.</p>
-          <p class="metric">~45 functions · 260 KB · 0 frameworks</p>
-          <div class="foot"><span class="chip">Formula engine</span><span class="chip">Dependency graph</span><span class="chip">Vanilla JS</span></div>
-          <span class="tile-cta">Open the sheet <i aria-hidden="true">&rarr;</i></span>
-        </div>
-      </a>
     </section>
 
     <!-- ===== 03 · EXPERIENCE ===== -->
-    <section class="slab" id="experience">
-      <div class="sec-head reveal"><span class="sec-index">03</span><h2>Experience</h2></div>
-      <p class="sec-sub reveal">Six years of shipping enterprise systems and driving AI adoption —
-        <b>Singapore-based</b>, fully fluent in English and native Mandarin.</p>
+    <section class="band band-xp" id="experience">
+      <span class="deco deco-lg" style="left:1.5%;top:140px;animation-delay:1.1s" aria-hidden="true">&#127802;</span>
+      <span class="deco deco-lg" style="right:1.5%;bottom:180px;animation-delay:.3s" aria-hidden="true">&#129703;</span>
+      <div class="band-inner">
+        <div class="sec-head reveal"><span class="sec-index">03</span><h2>Experience</h2></div>
+        <p class="sec-sub reveal">Six years of shipping enterprise systems and driving AI adoption —
+          <b>Singapore-based</b>, fully fluent in English and native Mandarin.</p>
 
-      <div class="xp">
-        <article class="role rt reveal">
-          <div class="when">Jul 2024 — Present<span class="loc">Singapore · on-site</span></div>
-          <div>
-            <h3>Senior Engineer, Enterprise AI</h3>
-            <p class="org">Mediacorp — Singapore's national media network, ~3,000 staff</p>
-            <ul>
-              <li>Drive AI adoption for ~3,000 staff: <span class="m">~20 GenAI solutions</span> rolled out
-                  (custom GPTs, Copilot, ChatGPT Enterprise &amp; Codex enablement), plus a conversational
-                  assistant reaching <span class="m">~200 monthly users</span> in its first month</li>
-              <li>Co-manage a multi-million-SGD, <span class="m">7-project government AI programme</span> —
-                  blockers cleared at a <span class="m">3-day median</span>, structured risk management cut rework <span class="m">~20%</span></li>
-              <li>Automated support operations with n8n + Jira Service Management — manual triage down
-                  <span class="m">~30%</span> across HR, Legal, and Procurement queues</li>
-              <li>Run rapid evaluations of LLMs, agentic tooling, and vector databases (capability,
-                  security, cost) to gate pilot-to-production decisions</li>
-            </ul>
+        <div class="xp">
+          <article class="role rt reveal">
+            <div class="when">Jul 2024 — Present<span class="loc">Singapore · on-site</span></div>
+            <div>
+              <h3>Senior Engineer, Enterprise AI</h3>
+              <p class="org">Mediacorp — Singapore's national media network, ~3,000 staff</p>
+              <ul>
+                <li>Drive AI adoption for ~3,000 staff: <span class="m">~20 GenAI solutions</span> rolled out
+                    (custom GPTs, Copilot, ChatGPT Enterprise &amp; Codex enablement), plus a conversational
+                    assistant reaching <span class="m">~200 monthly users</span> in its first month</li>
+                <li>Co-manage a multi-million-SGD, <span class="m">7-project government AI programme</span> —
+                    blockers cleared at a <span class="m">3-day median</span>, structured risk management cut rework <span class="m">~20%</span></li>
+                <li>Automated support operations with n8n + Jira Service Management — manual triage down
+                    <span class="m">~30%</span> across HR, Legal, and Procurement queues</li>
+                <li>Run rapid evaluations of LLMs, agentic tooling, and vector databases (capability,
+                    security, cost) to gate pilot-to-production decisions</li>
+              </ul>
+            </div>
+          </article>
+          <article class="role rt reveal">
+            <div class="when">Dec 2021 — Jun 2024<span class="loc">Singapore · on-site</span></div>
+            <div>
+              <h3>Software Implementation Consultant</h3>
+              <p class="org">Yonyou (Singapore) — enterprise software vendor</p>
+              <ul>
+                <li>Last line of defense for live enterprise accounts — <span class="m">~99% uptime</span>,
+                    critical incidents resolved in <span class="m">~3 hours</span> on average across ERP, office
+                    automation, IoT, and API integrations</li>
+                <li>Shipped <span class="m">~15 enhancements per quarter</span> at
+                    <span class="m">95% on-time delivery</span>, cutting recurring support tickets <span class="m">~30%</span></li>
+                <li>Raised a key account's adoption from <span class="m">60% to 95%</span> by converting
+                    skeptics into champions — the escalation bridge to HQ engineering, in English and Mandarin</li>
+              </ul>
+            </div>
+          </article>
+          <article class="role rt reveal">
+            <div class="when">May — Nov 2021<span class="loc">Singapore</span></div>
+            <div>
+              <h3>Product Manager (Internship)</h3>
+              <p class="org">Zyllem — logistics SaaS</p>
+              <ul>
+                <li>Market research, user stories, module design, and UX improvements that raised early
+                    user feedback from <span class="m">4.1 to 4.3 / 5</span></li>
+              </ul>
+            </div>
+          </article>
+        </div>
+
+        <div class="duo">
+          <div class="mini incident reveal">
+            <h4>Hackathons</h4>
+            <div class="item"><span class="yr">2026</span><b>Café Codex Hackathon</b>
+              <span>GPT-5.5 + Image 2.0 build — "less vibing, more harnessing"</span></div>
+            <div class="item"><span class="yr">2026</span><b>TinyFish × OpenAI Hackathon</b>
+              <span>Buzo — an AI nightlife concierge surfacing events no other app can see, via parallel stealth-crawled live signals (team build)</span></div>
+            <div class="item"><span class="yr">2026</span><b>MeDo Hackathon — HackAtlas</b>
+              <span>AI teammate-matching copilot scoring real builders across 7 dimensions, PRD to live demo</span></div>
           </div>
-        </article>
-        <article class="role rt reveal">
-          <div class="when">Dec 2021 — Jun 2024<span class="loc">Singapore · on-site</span></div>
-          <div>
-            <h3>Software Implementation Consultant</h3>
-            <p class="org">Yonyou (Singapore) — enterprise software vendor</p>
-            <ul>
-              <li>Last line of defense for live enterprise accounts — <span class="m">~99% uptime</span>,
-                  critical incidents resolved in <span class="m">~3 hours</span> on average across ERP, office
-                  automation, IoT, and API integrations</li>
-              <li>Shipped <span class="m">~15 enhancements per quarter</span> at
-                  <span class="m">95% on-time delivery</span>, cutting recurring support tickets <span class="m">~30%</span></li>
-              <li>Raised a key account's adoption from <span class="m">60% to 95%</span> by converting
-                  skeptics into champions — the escalation bridge to HQ engineering, in English and Mandarin</li>
-            </ul>
+          <div class="mini incident reveal">
+            <h4>Education &amp; Certifications</h4>
+            <div class="item"><span class="yr">2019–2022</span><b>BSc Information Technology — University of Wollongong</b>
+              <span>Python, web &amp; mobile development, big data (Hadoop/Hive), databases · High Distinction in Mathematics for IT</span></div>
+            <div class="item"><span class="yr">2014–2017</span><b>Diploma — Temasek Polytechnic</b></div>
+            <div class="item"><span class="yr">2026</span><b>Anthropic — Introduction to Model Context Protocol</b>
+              <span>MCP client/server architecture, tools, connector patterns</span></div>
+            <div class="item"><span class="yr">2026</span><b>Anthropic — Claude Code 101</b>
+              <span>Agentic coding workflows, subagents, harness configuration</span></div>
           </div>
-        </article>
-        <article class="role rt reveal">
-          <div class="when">May — Nov 2021<span class="loc">Singapore</span></div>
-          <div>
-            <h3>Product Manager (Internship)</h3>
-            <p class="org">Zyllem — logistics SaaS</p>
-            <ul>
-              <li>Market research, user stories, module design, and UX improvements that raised early
-                  user feedback from <span class="m">4.1 to 4.3 / 5</span></li>
-            </ul>
+        </div>
+
+        <p class="cat reveal">Capabilities</p>
+        <div class="caps">
+          <div class="cap-card reveal">
+            <h4>AI &amp; Agents</h4>
+            <div class="chips">
+              <span class="chip">Agent orchestration</span><span class="chip">MCP connectors</span>
+              <span class="chip">RAG &amp; vector databases</span><span class="chip">LLM evaluation</span>
+              <span class="chip">Prompt systems</span><span class="chip">Image-gen pipelines</span>
+            </div>
           </div>
-        </article>
+          <div class="cap-card reveal">
+            <h4>Engineering &amp; Operations</h4>
+            <div class="chips">
+              <span class="chip">Python</span><span class="chip">JavaScript</span>
+              <span class="chip">n8n workflows</span><span class="chip">Jira SM automation</span>
+              <span class="chip">Browser automation</span><span class="chip">Incident response</span>
+            </div>
+          </div>
+          <div class="cap-card reveal">
+            <h4>Trading &amp; Data</h4>
+            <div class="chips">
+              <span class="chip">Alpaca API</span><span class="chip">Backtesting</span>
+              <span class="chip">Risk management</span><span class="chip">Statistics</span>
+              <span class="chip">Big data (Hadoop/Hive)</span><span class="chip">Honest reporting</span>
+            </div>
+          </div>
+        </div>
+
+        <blockquote class="quote reveal">
+          <p>"Zac is a genuinely thoughtful engineer. At Mediacorp, he has been closely involved in AI
+             engineering and solutioning — building AI agents, integrating them into real workflows, and
+             testing them with the rigour the domain demands. He is technically fluent across the stack."</p>
+          <footer>— Wanting Hu · AI Engineer, Mediacorp · LinkedIn recommendation, 2026</footer>
+        </blockquote>
       </div>
-
-      <div class="duo">
-        <div class="mini incident reveal">
-          <h4>Hackathons</h4>
-          <div class="item"><span class="yr">2026</span><b>Café Codex Hackathon</b>
-            <span>GPT-5.5 + Image 2.0 build — "less vibing, more harnessing"</span></div>
-          <div class="item"><span class="yr">2026</span><b>TinyFish × OpenAI Hackathon</b>
-            <span>Buzo — an AI nightlife concierge surfacing events no other app can see, via parallel stealth-crawled live signals (team build)</span></div>
-          <div class="item"><span class="yr">2026</span><b>MeDo Hackathon — HackAtlas</b>
-            <span>AI teammate-matching copilot scoring real builders across 7 dimensions, PRD to live demo</span></div>
-        </div>
-        <div class="mini incident reveal">
-          <h4>Education &amp; Certifications</h4>
-          <div class="item"><span class="yr">2019–2022</span><b>BSc Information Technology — University of Wollongong</b>
-            <span>Python, web &amp; mobile development, big data (Hadoop/Hive), databases · High Distinction in Mathematics for IT</span></div>
-          <div class="item"><span class="yr">2014–2017</span><b>Diploma — Temasek Polytechnic</b></div>
-          <div class="item"><span class="yr">2026</span><b>Anthropic — Introduction to Model Context Protocol</b>
-            <span>MCP client/server architecture, tools, connector patterns</span></div>
-          <div class="item"><span class="yr">2026</span><b>Anthropic — Claude Code 101</b>
-            <span>Agentic coding workflows, subagents, harness configuration</span></div>
-        </div>
-      </div>
-
-      <p class="cat reveal">Capabilities</p>
-      <div class="caps">
-        <div class="cap-card reveal">
-          <h4>AI &amp; Agents</h4>
-          <div class="chips">
-            <span class="chip">Agent orchestration</span><span class="chip">MCP connectors</span>
-            <span class="chip">RAG &amp; vector databases</span><span class="chip">LLM evaluation</span>
-            <span class="chip">Prompt systems</span><span class="chip">Image-gen pipelines</span>
-          </div>
-        </div>
-        <div class="cap-card reveal">
-          <h4>Engineering &amp; Operations</h4>
-          <div class="chips">
-            <span class="chip">Python</span><span class="chip">JavaScript</span>
-            <span class="chip">n8n workflows</span><span class="chip">Jira SM automation</span>
-            <span class="chip">Browser automation</span><span class="chip">Incident response</span>
-          </div>
-        </div>
-        <div class="cap-card reveal">
-          <h4>Trading &amp; Data</h4>
-          <div class="chips">
-            <span class="chip">Alpaca API</span><span class="chip">Backtesting</span>
-            <span class="chip">Risk management</span><span class="chip">Statistics</span>
-            <span class="chip">Big data (Hadoop/Hive)</span><span class="chip">Honest reporting</span>
-          </div>
-        </div>
-      </div>
-
-      <blockquote class="quote reveal">
-        <p>"Zac is a genuinely thoughtful engineer. At Mediacorp, he has been closely involved in AI
-           engineering and solutioning — building AI agents, integrating them into real workflows, and
-           testing them with the rigour the domain demands. He is technically fluent across the stack."</p>
-        <footer>— Wanting Hu · AI Engineer, Mediacorp · LinkedIn recommendation, 2026</footer>
-      </blockquote>
     </section>
 
     <!-- ===== CONTACT ===== -->
-    <section class="slab slab-contact" id="contact">
-      <h2 class="reveal">Let's build the <span class="grad-text">next thing.</span></h2>
-      <p class="reveal">Looking for someone who can turn AI capability into shipped product?
-        The vanguard is already marching.</p>
-      <a class="email reveal" href="mailto:zhangcheng1997@gmail.com"><span class="grad-text">zhangcheng1997@gmail.com</span></a>
-      <div class="socials reveal">
-        <a href="https://www.linkedin.com/in/zhangcheng1997" target="_blank" rel="noopener">LinkedIn</a>
-        <a href="https://github.com/zhangcheng0605" target="_blank" rel="noopener">GitHub</a>
-        <a href="trading/">Live trading desk</a>
-        <a href="campus/">3D campus</a>
+    <section class="band band-contact" id="contact">
+      <div class="band-inner">
+        <h2 class="reveal">Let's build the next thing.</h2>
+        <p class="reveal">Looking for someone who can turn AI capability into shipped product?
+          The vanguard is already marching.</p>
+        <a class="email reveal" href="mailto:zhangcheng1997@gmail.com">zhangcheng1997@gmail.com</a>
+        <div class="socials reveal">
+          <a href="https://www.linkedin.com/in/zhangcheng1997" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://github.com/zhangcheng0605" target="_blank" rel="noopener">GitHub</a>
+          <a href="trading/">Live trading desk</a>
+          <a href="campus/">3D campus</a>
+        </div>
       </div>
     </section>
   </main>
@@ -611,12 +690,30 @@
 
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
-    const io = new IntersectionObserver((entries)=>{
-      entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
-    },{threshold:.12});
-    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+      });
+    }, { threshold: .1, rootMargin: '0px 0px -30px 0px' });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+
+    /* rainbow scroll-progress bar */
+    (function () {
+      var bar = document.getElementById('rainbowbar');
+      var ticking = false;
+      function update() {
+        ticking = false;
+        var max = document.documentElement.scrollHeight - window.innerHeight;
+        bar.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+      }
+      addEventListener('scroll', function () {
+        if (!ticking) { ticking = true; requestAnimationFrame(update); }
+      }, { passive: true });
+      update();
+    })();
   </script>
-  <script src="assets/cinema.js" defer></script>
+  <script src="assets/sparkle.js" defer></script>
   <script src="assets/fx.js" defer></script>
 </body>
 </html>
