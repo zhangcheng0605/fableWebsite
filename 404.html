@@ -4,64 +4,65 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>404 — Page not found</title>
-  <meta name="theme-color" content="#101410">
+  <meta name="theme-color" content="#fdf4ff">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✦</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@700;800&family=Quicksand:wght@500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* design tokens — shadcn/ui architecture · Ink & Lantern theme */
-      --background:#101410; --foreground:#f4eeda;
-      --card:rgba(244,238,218,.045); --card-foreground:#f4eeda;
-      --muted-bg:rgba(244,238,218,.07); --muted-foreground:#c9c0a8;
-      --border:rgba(233,180,85,.16); --input:rgba(233,180,85,.24);
-      --ring:#e9b455;
-      --primary:#e9b455; --primary-foreground:#221604;
-      --accent:#e05a3a; --accent-foreground:#fff4e4;
-      --destructive:#ff6262;
-      --radius:18px; --radius-sm:calc(var(--radius)*.6); --radius-lg:calc(var(--radius)*1.25);
+      /* design tokens — candy-neon, matching the landing page */
+      --background:#fdf4ff; --foreground:#38235c;
+      --pink:#ff3fae; --purple:#8b3dff; --cyan:#25c4ff;
+      --ring:#8b3dff;
+      --cta:linear-gradient(95deg,#ef1f96,#7a2df0 46%,#0f9fe0);
+      --radius:18px;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body::before { content:""; position:fixed; inset:0; z-index:-2;
-      background:url("https://zhangcheng0605.github.io/fableWebsite/assets/film/still-vanguard.jpg") center/cover no-repeat;
-      opacity:.3; }
-    body::after { content:""; position:fixed; inset:0; z-index:-1;
-      background:linear-gradient(180deg, rgba(16,20,16,.55), rgba(16,20,16,.85)); }
+    body::before { content:""; position:fixed; inset:0; z-index:-1;
+      background:
+        radial-gradient(62vw 52vh at 12% 6%, rgba(255,183,226,.55), transparent 65%),
+        radial-gradient(56vw 46vh at 88% 16%, rgba(178,140,255,.45), transparent 65%),
+        radial-gradient(72vw 60vh at 50% 108%, rgba(126,216,255,.5), transparent 70%),
+        linear-gradient(180deg,#fff4fd,#f4e9ff 45%,#eaf6ff); }
     body {
       min-height: 100svh;
       display: grid;
       place-items: center;
       background: var(--background);
       color: var(--foreground);
-      font-family: "Playfair Display", Georgia, serif;
+      font-family: Quicksand, Inter, system-ui, sans-serif;
+      font-weight: 500;
       text-align: center;
       padding: 24px;
     }
-    ::selection { background: rgba(233,180,85,.32); }
-    :focus-visible { outline: 2px solid var(--ring); outline-offset: 3px; border-radius: 4px; }
-    h1,h2,h3,h4 { text-wrap: balance; }
+    ::selection { background: rgba(255,63,174,.25); }
+    :focus-visible { outline: 3px solid var(--ring); outline-offset: 3px; border-radius: 6px; }
+    h1,h2,h3,h4 { text-wrap: balance; font-family: "Baloo 2", Quicksand, sans-serif; }
     h1 {
       font-size: clamp(5rem, 20vw, 10rem);
       line-height: 1;
-      background: linear-gradient(100deg, #f2d789, #e9b455 45%, #e05a3a);
+      background: var(--cta);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
+      filter: drop-shadow(0 6px 30px rgba(255,63,174,.3));
     }
-    p { color: var(--muted-foreground); margin: 16px 0 32px; font-size: 1.1rem; }
+    p { margin: 16px 0 32px; font-size: 1.1rem; }
     a {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       min-height: 44px;
       cursor: pointer;
-      color: var(--primary-foreground);
+      color: #fff;
       text-decoration: none;
-      font-weight: 600;
+      font-family: "Baloo 2", Quicksand, sans-serif;
+      font-weight: 800;
       padding: 13px 28px;
       border-radius: 999px;
-      background: linear-gradient(100deg, #f2d789, #e9b455 45%, #e05a3a);
+      background: var(--cta);
+      box-shadow: 0 12px 38px rgba(255,63,174,.3);
       transition: transform 0.2s ease;
     }
     a:hover { transform: translateY(-2px); }
@@ -72,14 +73,12 @@
       a:hover, a:active { transform: none; }
     }
   </style>
-  <link rel="stylesheet" href="https://zhangcheng0605.github.io/fableWebsite/assets/fx.css">
 </head>
 <body>
   <main>
     <h1>404</h1>
-    <p>This page drifted off into the void.</p>
+    <p>This page drifted off into the sparkles. &#10024;</p>
     <a href="https://zhangcheng0605.github.io/fableWebsite/">Take me home</a>
   </main>
-  <script src="https://zhangcheng0605.github.io/fableWebsite/assets/fx.js" defer></script>
 </body>
 </html>

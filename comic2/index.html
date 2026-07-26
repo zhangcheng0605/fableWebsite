@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#11140f">
+  <meta name="theme-color" content="#fdf4ff">
   <title>Witch of the Vending Machines — Ch.2 · Zhang Cheng</title>
   <meta name="description" content="Witch of the Vending Machines — an AI-generated anime comic. Chapter 2: Exact Change.">
   <meta property="og:title" content="Witch of the Vending Machines — Chapter 2: Exact Change">
@@ -18,20 +18,20 @@
   <style>
     :root{
       /* design tokens — shadcn/ui architecture, neon-noir brand */
-      --background:#11140f; --foreground:#f2f1f7;
-      --card:rgba(255,255,255,.03); --card-foreground:#f2f1f7;
-      --muted-bg:rgba(255,255,255,.05); --muted-foreground:#a9a6c3;
-      --border:rgba(255,255,255,.10); --input:rgba(255,255,255,.15);
-      --ring:#38e8ff;
-      --primary:#38e8ff; --primary-foreground:#08070c;
-      --accent:#ff3ddc; --accent-foreground:#08070c;
+      --background:#fdf4ff; --foreground:#38235c;
+      --card:#ffffff; --card-foreground:#38235c;
+      --muted-bg:#f3e9ff; --muted-foreground:#38235c;
+      --border:rgba(139,61,255,.22); --input:rgba(139,61,255,.3);
+      --ring:#8b3dff;
+      --primary:#ff3fae; --primary-foreground:#ffffff;
+      --accent:#ff3fae; --accent-foreground:#ffffff;
       --destructive:#ff6262;
       --radius:18px; --radius-sm:calc(var(--radius)*.6); --radius-lg:calc(var(--radius)*1.25);
       /* legacy vars, remapped to tokens */
-      --bg:var(--background); --ink:#0b0b16;
+      --bg:var(--background); --ink:#ffffff;
       --text:var(--foreground); --muted:var(--muted-foreground);
-      --cyan:#37e6ff; --magenta:#ff3ddc; --violet:#a26bff;
-      --neon-grad:linear-gradient(100deg,var(--cyan),var(--violet) 52%,var(--magenta));
+      --cyan:#0779a8; --magenta:#ef1f96; --violet:#7a2df0;
+      --neon-grad:linear-gradient(100deg,#0f9fe0,#7a2df0 52%,#ef1f96);
       --edge:var(--border);
     }
     *{margin:0;padding:0;box-sizing:border-box}
@@ -39,7 +39,7 @@
     body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.6;
          overflow-x:hidden;-webkit-font-smoothing:antialiased}
     a{color:inherit;text-decoration:none}
-    ::selection{background:rgba(55,230,255,.35)}
+    ::selection{background:rgba(255,63,174,.25)}
     :focus-visible{outline:2px solid var(--ring);outline-offset:3px;border-radius:4px}
     .btn:focus-visible,a.chapter:focus-visible,.sib:focus-visible{outline-offset:4px}
     h1,h2,h3,h4{text-wrap:balance}
@@ -49,9 +49,10 @@
 
     /* ambient: neon bloom + grain */
     .amb{position:fixed;inset:0;z-index:0;pointer-events:none;background:
-      radial-gradient(58vw 42vh at 82% -6%,rgba(55,230,255,.12),transparent 60%),
-      radial-gradient(52vw 40vh at 8% 108%,rgba(255,61,220,.10),transparent 60%)}
-    .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.45;mix-blend-mode:overlay;
+      radial-gradient(58vw 42vh at 82% -6%,rgba(126,216,255,.45),transparent 60%),
+      radial-gradient(52vw 40vh at 8% 108%,rgba(255,183,226,.5),transparent 60%),
+      linear-gradient(180deg,#fff4fd,#f4e9ff 45%,#eaf6ff)}
+    .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.14;mix-blend-mode:overlay;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
     /* fixed chrome */
@@ -65,7 +66,7 @@
     .meter .val{font-size:clamp(.95rem,2.4vw,1.25rem);font-weight:500;
       background:var(--neon-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
     .pbar{position:fixed;left:0;bottom:0;right:0;height:3px;z-index:40;transform-origin:0 50%;
-      transform:scaleX(0);background:var(--neon-grad);box-shadow:0 0 14px rgba(55,230,255,.5)}
+      transform:scaleX(0);background:var(--neon-grad);box-shadow:0 0 14px rgba(255,63,174,.5)}
 
     /* smooth-scroll container */
     #scroller{position:fixed;top:0;left:0;width:100%;z-index:2;will-change:transform}
@@ -74,20 +75,25 @@
     /* ============ cover ============ */
     .cover{position:relative;min-height:100svh;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
     .cover-art{position:absolute;inset:-6% 0;z-index:-1}
-    .cover-art img{width:100%;height:100%;object-fit:cover;object-position:center 20%;filter:grayscale(.7) brightness(.55) contrast(1.05)}
+    .cover-art img{width:100%;height:100%;object-fit:cover;object-position:center 20%;filter:grayscale(.15) brightness(.98) contrast(1.02)}
     .cover-art::after{content:"";position:absolute;inset:0;background:
-      linear-gradient(180deg,rgba(7,7,15,.45),rgba(7,7,15,.05) 34%,rgba(7,7,15,.95) 88%,var(--bg))}
+      linear-gradient(180deg,rgba(253,244,255,.14),rgba(253,244,255,.03) 34%,rgba(253,244,255,.97) 88%,var(--bg))}
     .cover-inner{position:relative;text-align:center;padding:0 24px 11svh;max-width:900px}
-    .kicker{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.4em;text-transform:uppercase;
+    /* soft white halo behind the cover text, so the candy masthead stays
+       legible over any artwork without fogging the whole cover */
+    .cover-inner::before{content:"";position:absolute;inset:-6% -12%;z-index:-1;pointer-events:none;
+      background:radial-gradient(60% 72% at 50% 60%,rgba(253,244,255,.94),rgba(253,244,255,.55) 58%,transparent 78%);
+      filter:blur(6px)}
+    .kicker{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.4em;text-transform:uppercase;text-shadow:0 1px 14px rgba(255,255,255,.95),0 0 4px rgba(255,255,255,.9);
             color:var(--cyan);margin-bottom:20px}
     h1.masthead{font-family:"Space Grotesk",sans-serif;font-weight:700;
       font-size:clamp(2.6rem,11vw,7rem);line-height:.92;letter-spacing:-.015em;
       background:var(--neon-grad);-webkit-background-clip:text;background-clip:text;color:transparent;
-      filter:drop-shadow(0 4px 34px rgba(55,230,255,.28))}
+      filter:drop-shadow(0 4px 34px rgba(139,61,255,.3))}
     h1.masthead span{display:block}
-    .cover-sub{margin-top:22px;color:var(--muted);font-size:clamp(.95rem,2.4vw,1.1rem);max-width:540px;margin-inline:auto}
+    .cover-sub{text-shadow:0 1px 14px rgba(255,255,255,.9);margin-top:22px;color:var(--muted);font-size:clamp(.95rem,2.4vw,1.1rem);max-width:540px;margin-inline:auto}
     .cover-sub b{color:var(--text);font-weight:600}
-    .hint{margin:34px auto 0;width:24px;height:40px;border:1.5px solid rgba(55,230,255,.5);border-radius:99px;
+    .hint{margin:34px auto 0;width:24px;height:40px;border:1.5px solid rgba(201,16,111,.5);border-radius:99px;
           display:flex;justify-content:center;padding-top:7px}
     .hint i{width:3px;height:8px;border-radius:99px;background:var(--cyan);animation:drop 1.9s ease-in-out infinite}
     @keyframes drop{0%,100%{transform:translateY(0);opacity:1}60%{transform:translateY(13px);opacity:.15}}
@@ -105,9 +111,9 @@
             flex-direction:column;gap:16svh}
     .page{position:relative}
     .frame{position:relative;border:1px solid var(--edge);border-radius:14px;overflow:hidden;background:var(--ink);
-      box-shadow:0 30px 90px rgba(0,0,0,.6),0 0 0 1px rgba(55,230,255,.05),0 0 60px rgba(255,61,220,.06);transform:translateZ(0)}
+      box-shadow:0 24px 70px rgba(109,40,217,.16),0 0 0 1px rgba(139,61,255,.06);transform:translateZ(0)}
     .frame::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:inherit;
-      box-shadow:inset 0 1px 0 rgba(120,220,255,.16)}
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
     .frame img{display:block;width:100%;height:auto;transform:scale(1.06);will-change:transform}
     .cap{display:flex;align-items:baseline;gap:14px;margin-top:16px;padding:0 4px}
     .tag{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.28em;white-space:nowrap;text-transform:uppercase;
@@ -137,7 +143,7 @@
     .endcard .fin{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.4em;color:var(--muted)}
     .endcard h2{font-family:"Space Grotesk",sans-serif;font-weight:700;letter-spacing:-.01em;
       font-size:clamp(2.2rem,7.5vw,4.6rem);line-height:1;background:var(--neon-grad);
-      -webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 30px rgba(255,61,220,.25))}
+      -webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 30px rgba(255,63,174,.28))}
     .endcard p{color:var(--muted);max-width:480px}
     .endcta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:10px}
     .btn{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.95rem;padding:13px 28px;
@@ -145,8 +151,8 @@
          min-height:44px;display:inline-flex;align-items:center;justify-content:center}
     .btn:hover{transform:translateY(-2px)}
     .btn:active{transform:translateY(0) scale(.98)}
-    .btn-neon{background:var(--neon-grad);color:#06060e;border:none;box-shadow:0 8px 34px rgba(55,230,255,.28)}
-    .btn-neon:hover{box-shadow:0 12px 44px rgba(255,61,220,.4)}
+    .btn-neon{background:var(--neon-grad);color:#fff;border:none;box-shadow:0 8px 34px rgba(255,63,174,.3)}
+    .btn-neon:hover{box-shadow:0 12px 44px rgba(255,63,174,.4)}
     .endcard{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s cubic-bezier(.22,1,.36,1)}
     .endcard.on{opacity:1;transform:none}
     .credits{font-size:.82rem;color:var(--muted);margin-top:26px}
@@ -208,7 +214,7 @@
         <a class="btn btn-neon" href="../comic3/">Read Chapter 3 →</a>
         <button class="btn" id="again">Read it again</button>
         <a class="btn" href="../comic/">← Read Chapter 1</a>
-        <a class="btn" href="../#comics">More comics</a>
+        <a class="btn" href="../#manga">More comics</a>
       </div>
       <p class="credits">Written and drawn with AI · © Zhang Cheng</p>
     </section>

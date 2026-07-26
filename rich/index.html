@@ -9,7 +9,7 @@
   <meta property="og:description" content="What if I'd been born stupid rich? Ten pages, one other timeline. Written and drawn with AI.">
   <meta property="og:type" content="article">
   <meta property="og:image" content="page01.jpg">
-  <meta name="theme-color" content="#070605">
+  <meta name="theme-color" content="#fdf4ff">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💸</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,20 +17,20 @@
   <style>
     :root{
       /* design tokens — shadcn/ui architecture, gold-noir brand */
-      --background:#070605; --foreground:#f4efe4;
-      --card:rgba(255,255,255,.03); --card-foreground:#f4efe4;
-      --muted-bg:rgba(255,255,255,.05); --muted-foreground:#b3ab94;
-      --border:rgba(212,175,55,.22); --input:rgba(212,175,55,.3);
-      --ring:#d4af37;
-      --primary:#d4af37; --primary-foreground:#141005;
-      --accent:#f6dd9a; --accent-foreground:#141005;
+      --background:#fdf4ff; --foreground:#38235c;
+      --card:#ffffff; --card-foreground:#38235c;
+      --muted-bg:#fdf6e3; --muted-foreground:#38235c;
+      --border:rgba(153,111,16,.3); --input:rgba(153,111,16,.4);
+      --ring:#996f10;
+      --primary:#ffb830; --primary-foreground:#2d1608;
+      --accent:#ff3fae; --accent-foreground:#ffffff;
       --destructive:#ff6262;
       --radius:18px; --radius-sm:calc(var(--radius)*.6); --radius-lg:calc(var(--radius)*1.25);
       /* legacy vars, remapped onto the token layer */
-      --bg:var(--background); --ink:#0d0c0a;
+      --bg:var(--background); --ink:#ffffff;
       --ivory:var(--foreground); --muted:var(--muted-foreground);
-      --gold-1:#f6dd9a; --gold-2:#d4af37; --gold-3:#8a6d1f;
-      --gold-grad:linear-gradient(100deg,var(--gold-1),var(--gold-2) 55%,#b8860b);
+      --gold-1:#ffd166; --gold-2:#996f10; --gold-3:#8a6d1f;
+      --gold-grad:linear-gradient(100deg,#ffd166,#f5a623 55%,#ff3fae);
       --edge:var(--border);
     }
     *{margin:0;padding:0;box-sizing:border-box}
@@ -38,7 +38,7 @@
     body{background:var(--bg);color:var(--ivory);font-family:Inter,system-ui,sans-serif;line-height:1.6;
          overflow-x:hidden;-webkit-font-smoothing:antialiased}
     a{color:inherit;text-decoration:none}
-    ::selection{background:rgba(212,175,55,.35)}
+    ::selection{background:rgba(255,184,48,.35)}
     h1,h2,h3,h4{text-wrap:balance}
     :focus-visible{outline:2px solid var(--ring);outline-offset:3px;border-radius:4px}
     .btn:focus-visible{outline-offset:4px}
@@ -48,9 +48,10 @@
 
     /* ambient: faint gold dust + vignette */
     .amb{position:fixed;inset:0;z-index:0;pointer-events:none;background:
-      radial-gradient(58vw 42vh at 80% -6%,rgba(212,175,55,.10),transparent 60%),
-      radial-gradient(50vw 38vh at 10% 108%,rgba(212,175,55,.07),transparent 60%)}
-    .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.5;mix-blend-mode:overlay;
+      radial-gradient(58vw 42vh at 80% -6%,rgba(255,209,102,.4),transparent 60%),
+      radial-gradient(50vw 38vh at 10% 108%,rgba(255,183,226,.4),transparent 60%),
+      linear-gradient(180deg,#fffaf2,#f9edff 45%,#eaf6ff)}
+    .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.14;mix-blend-mode:overlay;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
     /* fixed chrome */
@@ -74,20 +75,25 @@
     /* ============ cover ============ */
     .cover{position:relative;min-height:100svh;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
     .cover-art{position:absolute;inset:-6% 0;z-index:-1}
-    .cover-art img{width:100%;height:100%;object-fit:cover;object-position:center 22%;filter:grayscale(1) brightness(.62)}
+    .cover-art img{width:100%;height:100%;object-fit:cover;object-position:center 22%;filter:grayscale(1) brightness(1)}
     .cover-art::after{content:"";position:absolute;inset:0;background:
-      linear-gradient(180deg,rgba(7,6,5,.4),rgba(7,6,5,.05) 35%,rgba(7,6,5,.94) 88%,var(--bg))}
+      linear-gradient(180deg,rgba(253,244,255,.4),rgba(253,244,255,.05) 35%,rgba(253,244,255,.96) 88%,var(--bg))}
     .cover-inner{position:relative;text-align:center;padding:0 24px 11svh;max-width:900px}
-    .kicker{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.4em;text-transform:uppercase;
+    /* soft white halo behind the cover text, so the candy masthead stays
+       legible over any artwork without fogging the whole cover */
+    .cover-inner::before{content:"";position:absolute;inset:-6% -12%;z-index:-1;pointer-events:none;
+      background:radial-gradient(60% 72% at 50% 60%,rgba(253,244,255,.94),rgba(253,244,255,.55) 58%,transparent 78%);
+      filter:blur(6px)}
+    .kicker{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.4em;text-transform:uppercase;text-shadow:0 1px 14px rgba(255,255,255,.95),0 0 4px rgba(255,255,255,.9);
             color:var(--gold-2);margin-bottom:20px}
     h1.masthead{font-family:"Playfair Display",serif;font-weight:800;font-style:italic;
       font-size:clamp(3.4rem,13vw,8.5rem);line-height:.95;letter-spacing:-.01em;
       background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent;
-      filter:drop-shadow(0 6px 40px rgba(212,175,55,.25))}
+      filter:drop-shadow(0 6px 40px rgba(255,184,48,.4))}
     h1.masthead span{display:block}
-    .cover-sub{margin-top:22px;color:var(--muted);font-size:clamp(.95rem,2.4vw,1.1rem);max-width:520px;margin-inline:auto}
+    .cover-sub{text-shadow:0 1px 14px rgba(255,255,255,.9);margin-top:22px;color:var(--muted);font-size:clamp(.95rem,2.4vw,1.1rem);max-width:520px;margin-inline:auto}
     .cover-sub b{color:var(--ivory);font-weight:600}
-    .hint{margin:34px auto 0;width:24px;height:40px;border:1.5px solid rgba(212,175,55,.5);border-radius:99px;
+    .hint{margin:34px auto 0;width:24px;height:40px;border:1.5px solid rgba(153,111,16,.55);border-radius:99px;
           display:flex;justify-content:center;padding-top:7px}
     .hint i{width:3px;height:8px;border-radius:99px;background:var(--gold-2);animation:drop 1.9s ease-in-out infinite}
     @keyframes drop{0%,100%{transform:translateY(0);opacity:1}60%{transform:translateY(13px);opacity:.15}}
@@ -105,9 +111,9 @@
             flex-direction:column;gap:16svh}
     .page{position:relative}
     .frame{position:relative;border:1px solid var(--edge);border-radius:10px;overflow:hidden;background:var(--ink);
-      box-shadow:0 30px 90px rgba(0,0,0,.6),0 0 0 6px rgba(212,175,55,.04);transform:translateZ(0)}
+      box-shadow:0 24px 70px rgba(138,109,31,.18),0 0 0 6px rgba(255,184,48,.08);transform:translateZ(0)}
     .frame::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:inherit;
-      box-shadow:inset 0 1px 0 rgba(246,221,154,.14)}
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
     .frame img{display:block;width:100%;height:auto;transform:scale(1.06);will-change:transform}
     .cap{display:flex;align-items:baseline;gap:14px;margin-top:16px;padding:0 4px}
     .age{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.3em;white-space:nowrap;
@@ -145,8 +151,8 @@
          display:inline-flex;align-items:center;justify-content:center;min-height:44px}
     .btn:hover{transform:translateY(-2px)}
     .btn:active{transform:translateY(0) scale(.98)}
-    .btn-gold{background:var(--gold-grad);color:#141005;border:none;box-shadow:0 8px 34px rgba(212,175,55,.3)}
-    .btn-gold:hover{box-shadow:0 12px 44px rgba(212,175,55,.45)}
+    .btn-gold{background:var(--gold-grad);color:#2d1608;border:none;box-shadow:0 8px 34px rgba(255,184,48,.35)}
+    .btn-gold:hover{box-shadow:0 12px 44px rgba(255,184,48,.5)}
     .endcard{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s cubic-bezier(.22,1,.36,1)}
     .endcard.on{opacity:1;transform:none}
     .credits{font-size:.82rem;color:var(--muted);margin-top:26px}
@@ -207,7 +213,7 @@
       <p>No jet, no butler — just me, an AI, and a website. Honestly? Still feels rich.</p>
       <div class="endcta">
         <button class="btn btn-gold" id="again">Read it again</button>
-        <a class="btn" href="../#comics">More comics</a>
+        <a class="btn" href="../#manga">More comics</a>
       </div>
       <p class="credits">Written and drawn with AI · © Zhang Cheng</p>
     </section>
