@@ -79,6 +79,10 @@ async function boot() {
   stage._renderer.shadowMap.enabled = false;
   // The hero owns the scroll. Sway and pointer parallax replace the orbit.
   stage._controls.enabled = false;
+  // OrbitControls sets inline touch-action:none on its canvas at construction,
+  // and disabling the controls does not undo it — on touch screens that made
+  // the whole mark a dead zone for vertical swipes. One finger must scroll.
+  stage._renderer.domElement.style.touchAction = 'pan-y';
 
   const r = 0.5; // tube radius, in letter centerline units
   const d2r = (d) => (d * Math.PI) / 180;

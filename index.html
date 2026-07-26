@@ -105,11 +105,12 @@
       box-shadow:var(--shadow-pink);font-weight:800}
     .nav-cta:hover{filter:brightness(1.08)}
     @media(max-width:880px){
-      .nav{gap:16px;overflow-x:auto;scrollbar-width:none;padding:8px 16px}
+      .nav{gap:16px;overflow-x:auto;scrollbar-width:none;padding:6px 16px}
       .nav::-webkit-scrollbar{display:none}
-      .nav a{font-size:.85rem}
+      /* 44px-tall tap targets on touch */
+      .nav a{font-size:.85rem;padding:13px 2px}
       .nav .spacer{display:none}
-      .nav-cta{padding:7px 14px!important}
+      .nav-cta{padding:11px 14px!important}
     }
 
     /* fx.css ships lantern-gold hover glows for the dark pages —
@@ -192,7 +193,7 @@
       .hero-stats{display:grid;grid-template-columns:1fr 1fr;width:100%;max-width:400px;gap:10px;margin-top:34px}
       .hstat{padding:11px 14px}
       .hstat .v{font-size:1.05rem}
-      .hstat .k{font-size:.54rem}
+      .hstat .k{font-size:.68rem} /* .54rem computed to 8.6px — unreadable */
       .scroll-hint{display:none}
     }
 
