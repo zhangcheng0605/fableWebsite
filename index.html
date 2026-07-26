@@ -22,7 +22,9 @@
       --background:#101410; --background-2:#151a14;
       --foreground:#f4eeda;
       --card:rgba(244,238,218,.045); --card-foreground:#f4eeda;
-      --muted-bg:rgba(244,238,218,.07); --muted-foreground:#b5ac93;
+      /* body text is the same near-white as headings — over a moving film, a
+         dimmed grey stops being readable, so nothing here is greyed out */
+      --muted-bg:rgba(244,238,218,.07); --muted-foreground:#f4eeda;
       --border:rgba(233,180,85,.16); --input:rgba(233,180,85,.24);
       --ring:#e9b455;
       --primary:#e9b455; --primary-foreground:#221604;
@@ -33,7 +35,7 @@
       --bg:var(--background); --text:var(--foreground); --muted:var(--muted-foreground);
       --edge:var(--border); --panel:var(--card);
       --grad:linear-gradient(100deg,var(--gold-2),var(--gold) 45%,var(--crimson));
-      --slab:rgba(16,20,16,.9);
+      --slab:rgba(16,20,16,.95); /* nearly solid, so the film never fights the text */
     }
     *{margin:0;padding:0;box-sizing:border-box}
     html{scroll-behavior:smooth;scroll-padding-top:96px}
@@ -85,7 +87,7 @@
     h1.title{font-family:"Playfair Display",serif;font-weight:700;font-size:clamp(3rem,9.5vw,6.6rem);
       line-height:1.02;letter-spacing:.01em;text-shadow:0 6px 50px rgba(0,0,0,.9)}
     h1.title .grad-text{filter:drop-shadow(0 2px 24px rgba(233,180,85,.35))}
-    .hero-sub{max-width:660px;margin:24px auto 0;color:#e9e2cd;font-size:clamp(1rem,2.3vw,1.22rem);
+    .hero-sub{max-width:660px;margin:24px auto 0;color:var(--foreground);font-size:clamp(1rem,2.3vw,1.22rem);
       text-shadow:0 2px 16px rgba(0,0,0,.95)}
     .hero-sub b{color:#fff;font-weight:600}
     .cta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;justify-content:center}
@@ -107,7 +109,7 @@
       text-transform:uppercase;color:var(--muted-foreground);margin-top:3px}
     .scroll-hint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);
       font-family:"JetBrains Mono",monospace;font-size:.64rem;letter-spacing:.3em;text-transform:uppercase;
-      color:rgba(244,238,218,.7);animation:hintdrop 2.2s ease-in-out infinite}
+      color:var(--foreground);animation:hintdrop 2.2s ease-in-out infinite}
     @keyframes hintdrop{0%,100%{transform:translate(-50%,0);opacity:.8}55%{transform:translate(-50%,10px);opacity:.3}}
     @media(max-width:700px){
       .hero{padding:104px 20px 80px}
@@ -158,34 +160,56 @@
       font-size:.58rem;letter-spacing:.14em;font-weight:700;color:#221604;background:var(--grad);
       padding:3px 10px;border-radius:99px}
 
-    /* ===== 02 · the three projects ===== */
-    .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
-    @media(max-width:900px){.tiles{grid-template-columns:1fr}}
-    .tile{position:relative;display:flex;flex-direction:column;border-radius:var(--radius);
-      border:1px solid var(--border);background:var(--card);padding:28px;overflow:hidden;
-      transition:transform .25s,border-color .25s}
-    .tile:hover{transform:translateY(-4px);border-color:rgba(233,180,85,.42)}
-    .tile::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:var(--grad);
-      opacity:0;transition:opacity .25s}
-    .tile:hover::before{opacity:1}
-    /* flex:none, or the tag inherits `.tile p{flex:1}` and stretches with the
-       leftover column space — which pushed each tile's heading to a different
-       height. The live dot is inline (see .live), so the tag stays one line. */
-    .tile .tag{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.14em;
-      text-transform:uppercase;color:var(--gold);margin-bottom:12px;line-height:1.5;flex:none}
-    .tile h3{font-family:"Playfair Display",serif;font-size:1.5rem;margin-bottom:10px}
-    .tile p{color:var(--muted-foreground);font-size:.95rem;flex:1}
-    .tile .metric{font-family:"JetBrains Mono",monospace;font-size:.73rem;color:var(--jade);margin-top:16px;flex:0}
+    /* ===== 02 · the three projects =====
+       Each tile is one big link: thumbnail, copy, and a full-width button you
+       cannot miss. Nothing inside is separately clickable, so the whole card is
+       the target. */
+    .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+    @media(max-width:1000px){.tiles{grid-template-columns:1fr}}
+    a.tile{position:relative;display:flex;flex-direction:column;border-radius:var(--radius);
+      border:1px solid var(--border);background:var(--card);overflow:hidden;
+      transition:transform .25s,border-color .25s,box-shadow .25s}
+    a.tile:hover{transform:translateY(-6px);border-color:rgba(233,180,85,.55);
+      box-shadow:0 22px 60px rgba(0,0,0,.5)}
+    a.tile:focus-visible{outline:2px solid var(--ring);outline-offset:4px}
+    .tile-thumb{position:relative;aspect-ratio:16/9;overflow:hidden;background:var(--background-2);
+      border-bottom:1px solid var(--border)}
+    .tile-thumb img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+    a.tile:hover .tile-thumb img{transform:scale(1.06)}
+    .tile-thumb::after{content:"";position:absolute;inset:0;pointer-events:none;
+      background:linear-gradient(180deg,rgba(16,20,16,.12) 0,transparent 42%,rgba(16,20,16,.55) 100%)}
+    .tile-body{display:flex;flex-direction:column;flex:1;padding:24px 26px 26px}
+    .tile .tag{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.14em;
+      text-transform:uppercase;color:var(--gold);margin-bottom:10px;line-height:1.5;flex:none}
+    .tile h3{font-family:"Playfair Display",serif;font-size:1.55rem;margin-bottom:10px}
+    .tile p{color:var(--foreground);font-size:.95rem;flex:none}
+    .tile .desc{flex:1}
+    .tile .metric{font-family:"JetBrains Mono",monospace;font-size:.73rem;color:var(--jade);margin-top:16px}
     .tile .foot{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
-    .tile .link{margin-top:18px;font-weight:600;font-size:.9rem;color:var(--gold)}
-    .tile .link::after{content:" \2192";transition:margin .2s}
-    .tile:hover .link::after{margin-left:4px}
+    /* the button */
+    .tile-cta{margin-top:22px;display:flex;align-items:center;justify-content:center;gap:12px;
+      min-height:66px;padding:16px 22px;border-radius:16px;text-align:center;
+      background:var(--grad);color:var(--primary-foreground);
+      font-weight:800;font-size:clamp(1.02rem,1.5vw,1.16rem);
+      box-shadow:0 10px 34px rgba(233,180,85,.3);
+      transition:box-shadow .25s,filter .25s}
+    .tile-cta i{font-style:normal;font-size:1.25em;line-height:1;transition:transform .25s}
+    a.tile:hover .tile-cta{box-shadow:0 16px 48px rgba(233,180,85,.55);filter:brightness(1.07)}
+    a.tile:hover .tile-cta i{transform:translateX(5px)}
+    /* OneSheet: same treatment, laid out wide */
+    a.tile-wide{margin-top:22px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);align-items:stretch}
+    a.tile-wide .tile-thumb{aspect-ratio:auto;height:100%;min-height:250px;
+      border-bottom:none;border-right:1px solid var(--border)}
+    a.tile-wide .tile-thumb::after{background:linear-gradient(90deg,transparent 50%,rgba(16,20,16,.55) 100%)}
+    a.tile-wide .tile-body{padding:28px 30px 30px}
+    @media(max-width:820px){
+      a.tile-wide{grid-template-columns:1fr}
+      a.tile-wide .tile-thumb{aspect-ratio:16/9;height:auto;min-height:0;
+        border-right:none;border-bottom:1px solid var(--border)}
+    }
     .live{display:inline-flex;align-items:center;gap:7px;color:var(--jade)}
     .live i{width:7px;height:7px;border-radius:50%;background:var(--jade);animation:livedot 1.8s ease-out infinite}
-    .chip{font-size:.75rem;padding:5px 12px;border-radius:99px;border:1px solid var(--border);color:var(--muted-foreground)}
-    .aside{margin-top:26px;font-size:.9rem;color:var(--muted-foreground)}
-    .aside a{color:var(--gold);font-weight:500}
-    .aside a::after{content:" \2192"}
+    .chip{font-size:.75rem;padding:5px 12px;border-radius:99px;border:1px solid var(--border);color:var(--foreground)}
 
     /* ===== 03 · experience ===== */
     .xp{display:grid;gap:18px}
@@ -378,48 +402,79 @@
     <!-- ===== 02 · PROJECTS ===== -->
     <section class="slab" id="projects">
       <div class="sec-head reveal"><span class="sec-index">02</span><h2>Projects</h2></div>
-      <p class="sec-sub reveal">Three things you can open right now — a game, a live trading desk, and a
-        city block. <b>All three were built by AI agents under my direction</b>, and each one has its own
-        page with the honest details.</p>
+      <p class="sec-sub reveal">Four things you can open right now — a game, a live trading desk, a 3D city
+        block, and a spreadsheet engine. <b>All of them were built by AI agents under my direction.</b>
+        Click any card.</p>
 
       <div class="tiles">
-        <article class="tile reveal">
-          <p class="tag">Playable · browser game</p>
-          <h3>Games</h3>
-          <p><b>Prompt Injection</b> — hostile prompts descend toward your context window and you are the
-            alignment layer. One model wrote the full design document; a second built it as nine modules
-            in parallel, then other agents verified it.</p>
-          <p class="metric">5,555 lines · one file · 0 humans coding</p>
-          <div class="foot"><span class="chip">Canvas 2D</span><span class="chip">Multi-agent build</span><span class="chip">Procedural art &amp; audio</span></div>
-          <a class="link" href="prompt-injection/">Play it</a>
-        </article>
+        <a class="tile reveal" href="prompt-injection/" aria-label="Play the game — Prompt Injection">
+          <div class="tile-thumb">
+            <img src="assets/thumbs/game.jpg" width="1280" height="720" loading="lazy"
+                 alt="Prompt Injection in play: hostile prompt words descending through code rain toward the player's context window">
+          </div>
+          <div class="tile-body">
+            <p class="tag">Playable · browser game</p>
+            <h3>Games</h3>
+            <p class="desc"><b>Prompt Injection</b> — hostile prompts descend toward your context window and
+              you are the alignment layer. One model wrote the full design document; a second built it as
+              nine modules in parallel.</p>
+            <p class="metric">5,555 lines · one file · 0 humans coding</p>
+            <div class="foot"><span class="chip">Canvas 2D</span><span class="chip">Multi-agent build</span></div>
+            <span class="tile-cta">Play the game <i aria-hidden="true">&rarr;</i></span>
+          </div>
+        </a>
 
-        <article class="tile reveal">
-          <p class="tag"><span class="live"><i></i>Live</span> · paper money</p>
-          <h3>Stock Trading Project</h3>
-          <p>Three autonomous bots on two Alpaca paper accounts: a crypto bot trading around a permanent
-            $500k BTC/ETH core, an hourly stock bot, and a daily 2&sigma; dip scanner. Six independent risk
-            gates, and a watchdog agent auditing the other agents.</p>
-          <p class="metric">$1.1M paper capital · fires 5 past every hour · 0 humans in the loop</p>
-          <div class="foot"><span class="chip">Python</span><span class="chip">Alpaca API</span><span class="chip">Risk engine</span></div>
-          <a class="link" href="trading/">Open the desk</a>
-        </article>
+        <a class="tile reveal" href="trading/" aria-label="Open the desk — the live autonomous trading desk">
+          <div class="tile-thumb">
+            <img src="assets/thumbs/trading.jpg" width="1280" height="720" loading="lazy"
+                 alt="The trading desk's money page: both paper accounts with day P&amp;L, biggest winner and loser, cash reserve and drawdown">
+          </div>
+          <div class="tile-body">
+            <p class="tag"><span class="live"><i></i>Live</span> · paper money</p>
+            <h3>Stock Trading Project</h3>
+            <p class="desc">Three autonomous bots on two Alpaca paper accounts: a crypto bot trading around a
+              permanent $500k BTC/ETH core, an hourly stock bot, and a daily 2&sigma; dip scanner — behind six
+              independent risk gates.</p>
+            <p class="metric">$1.1M paper capital · fires 5 past every hour · 0 humans in the loop</p>
+            <div class="foot"><span class="chip">Python</span><span class="chip">Alpaca API</span><span class="chip">Risk engine</span></div>
+            <span class="tile-cta">Open the live desk <i aria-hidden="true">&rarr;</i></span>
+          </div>
+        </a>
 
-        <article class="tile reveal">
-          <p class="tag">Interactive · three.js</p>
-          <h3>3D Campus</h3>
-          <p>A media campus that assembles itself as you scroll — ground, podium, cores, drums, hull, roof,
-            trees. Every mesh is written in code and every texture is painted into a canvas at runtime:
-            no model files, no image files. Change the hour, then export the whole thing as GLB.</p>
-          <p class="metric">578 meshes · 51k triangles · 0 assets downloaded</p>
-          <div class="foot"><span class="chip">three.js</span><span class="chip">Procedural geometry</span><span class="chip">GLB / OBJ export</span></div>
-          <a class="link" href="campus/">Build the campus</a>
-        </article>
+        <a class="tile reveal" href="campus/" aria-label="Build the campus — the 3D media campus">
+          <div class="tile-thumb">
+            <img src="assets/thumbs/campus.jpg" width="1280" height="720" loading="lazy"
+                 alt="The finished 3D campus: a curved glass hull over a green-glass podium, theatre drums, lawns and trees">
+          </div>
+          <div class="tile-body">
+            <p class="tag">Interactive · three.js</p>
+            <h3>3D Campus</h3>
+            <p class="desc">A media campus that assembles itself as you scroll — ground, podium, cores, drums,
+              hull, roof, trees. Every mesh is written in code, every texture painted at runtime: no model
+              files, no image files.</p>
+            <p class="metric">578 meshes · 51k triangles · 0 assets downloaded</p>
+            <div class="foot"><span class="chip">three.js</span><span class="chip">GLB / OBJ export</span></div>
+            <span class="tile-cta">Build the campus <i aria-hidden="true">&rarr;</i></span>
+          </div>
+        </a>
       </div>
 
-      <p class="aside reveal">Also here: <b>OneSheet</b> — a real spreadsheet in a single offline HTML file,
-        with a Pratt-parsed formula engine and a virtualised grid over 3.5M cells.
-        <a href="onesheet/">Open the sheet</a></p>
+      <a class="tile tile-wide reveal" href="onesheet/" aria-label="Open the sheet — OneSheet">
+        <div class="tile-thumb">
+          <img src="assets/thumbs/onesheet.jpg" width="1280" height="720" loading="lazy"
+               alt="OneSheet open on a loan calculator: formulas, sparklines, a live chart and draggable inputs">
+        </div>
+        <div class="tile-body">
+          <p class="tag">Tool · one offline HTML file</p>
+          <h3>OneSheet</h3>
+          <p class="desc">A real spreadsheet in a single file — a Pratt-parsed formula engine, an incremental
+            dependency graph, a virtualised grid over 3.5M cells, and genuine .xlsx import. One agent wrote
+            the spec, another built every line of it.</p>
+          <p class="metric">~45 functions · 260 KB · 0 frameworks</p>
+          <div class="foot"><span class="chip">Formula engine</span><span class="chip">Dependency graph</span><span class="chip">Vanilla JS</span></div>
+          <span class="tile-cta">Open the sheet <i aria-hidden="true">&rarr;</i></span>
+        </div>
+      </a>
     </section>
 
     <!-- ===== 03 · EXPERIENCE ===== -->
