@@ -712,7 +712,8 @@ controls.enableZoom = false;
 // would otherwise swallow every vertical swipe over a full-screen stage.
 renderer.domElement.style.touchAction = 'pan-y';
 controls.touches.ONE = -1; // no single-finger gesture — falls through to STATE.NONE
-controls.addEventListener('start', () => { if (orbiting) setOrbit(false); });
+// taking the camera by hand ends both the orbit and any playback
+controls.addEventListener('start', () => { if (orbiting) setOrbit(false); stopPlay(); });
 
 /* #build is 600svh tall with a sticky stage inside it: its own scroll
    progress is the build timeline, so the notes below the section can scroll
@@ -728,7 +729,7 @@ function sync() {
   setProgress(p);
   if (hint) hint.style.opacity = p > 0.02 ? '0' : '1';
   if (titleCard) titleCard.style.opacity = String(Math.max(0, 1 - p / 0.06));
-  if (btnBuild) btnBuild.textContent = p > 0.9 ? 'Rewind the build' : 'Play the build';
+  labelBuildBtn(p);
   if (!orbiting) {
     camCurve.getPoint(p, camera.position);
     controls.target.set(-5, 12 + 10 * p, 0);
@@ -749,14 +750,115 @@ if (!REDUCE) {
   window.addEventListener('resize', requestSync);
 }
 
-btnBuild.addEventListener('click', () => {
+/* ================= playback =================
+   "Play the build" used to hand the whole five-viewport span to the browser's
+   own smooth scroll, which crosses it in about a second — the parts blur past
+   before you can see one land. This drives the scroll itself, at a fixed slow
+   rate, so a full build takes PLAY_SECONDS and every piece gets its own long
+   arc through the air. Any real input — wheel, swipe, arrow key, a drag on the
+   canvas — hands control straight back. */
+const PLAY_SECONDS = 75;  // start to finish, at a constant pace
+const PLAY_RAMP = 0.1;    // fraction of the run easing in and out of that pace
+
+/* Trapezoidal speed profile: accelerate over the first PLAY_RAMP, hold, then
+   decelerate over the last. Scaled so the run still covers exactly 0 → 1. */
+function ramp(t) {
+  const e = PLAY_RAMP;
+  if (e <= 0) return t;
+  const v = 1 / (1 - e);
+  if (t < e) return v * t * t / (2 * e);
+  if (t <= 1 - e) return v * (t - e / 2);
+  return 1 - v * (1 - t) * (1 - t) / (2 * e);
+}
+
+let play = null;
+function labelBuildBtn(p) {
+  if (!btnBuild) return;
+  btnBuild.textContent = play
+    ? 'Stop the playback'
+    : ((p === undefined ? scrollProgress() : p) > 0.9 ? 'Rewind the build' : 'Play the build');
+  btnBuild.classList.toggle('active', !!play);
+}
+
+function stopPlay() {
+  if (!play) return;
+  cancelAnimationFrame(play.raf);
+  // the CSS smooth-scroll default is restored: it belongs to anchor jumps
+  document.documentElement.style.scrollBehavior = '';
+  play = null;
+  labelBuildBtn();
+}
+
+function playFrame(now) {
+  if (!play) return;
+  // If the position isn't where we left it, the reader took over — let them.
+  if (play.mode === 'scroll' && Math.abs(window.scrollY - play.expect) > 14) {
+    stopPlay();
+    return;
+  }
+  const t = play.dur > 0 ? Math.min(1, (now - play.t0) / (play.dur * 1000)) : 1;
+  const v = play.from + (play.to - play.from) * ramp(t);
+  if (play.mode === 'scroll') {
+    // clamp per frame: a mobile address bar appearing changes the maximum
+    const maxY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    const y = Math.min(v, maxY);
+    play.expect = y;
+    // two-arg form: honours the inline scroll-behavior:auto set in startPlay,
+    // and unlike behavior:'instant' it can't throw on an older browser
+    window.scrollTo(0, y);
+    sync();
+  } else {
+    setProgress(v);
+    if (!orbiting) {
+      camCurve.getPoint(v, camera.position);
+      controls.target.set(-5, 12 + 10 * v, 0);
+    }
+    if (hint) hint.style.opacity = v > 0.02 ? '0' : '1';
+    if (titleCard) titleCard.style.opacity = String(Math.max(0, 1 - v / 0.06));
+  }
+  if (t >= 1) { stopPlay(); return; }
+  play.raf = requestAnimationFrame(playFrame);
+}
+
+function startPlay() {
   const r = track.getBoundingClientRect();
   const top = r.top + window.scrollY;
   const span = Math.max(0, r.height - window.innerHeight);
-  window.scrollTo({ top: scrollProgress() > 0.9 ? top : top + span, behavior: 'smooth' });
-});
+  const atEnd = scrollProgress() > 0.9;
+  if (span > 0) {
+    const maxY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    const from = window.scrollY;
+    const to = Math.min(maxY, atEnd ? top : top + span);
+    if (Math.abs(to - from) < 2) return;
+    // constant rate, so starting halfway takes half as long
+    play = {
+      mode: 'scroll', from, to, expect: from,
+      dur: PLAY_SECONDS * Math.abs(to - from) / span,
+      t0: performance.now(),
+    };
+    // our own per-frame scrollTo must not be smoothed on top of by CSS
+    document.documentElement.style.scrollBehavior = 'auto';
+  } else {
+    // reduced motion collapses the track, so animate the assembly in place
+    const from = progress, to = atEnd ? 0 : 1;
+    play = { mode: 'progress', from, to, dur: PLAY_SECONDS * Math.abs(to - from), t0: performance.now() };
+  }
+  setOrbit(false);
+  labelBuildBtn();
+  play.raf = requestAnimationFrame(playFrame);
+}
+
+btnBuild.addEventListener('click', () => { if (play) stopPlay(); else startPlay(); });
+
+// Any deliberate navigation stops the playback.
+const NAV_KEY = /^(Arrow|Page|Home|End| )/;
+['wheel', 'touchstart'].forEach((ev) =>
+  window.addEventListener(ev, () => { if (play) stopPlay(); }, { passive: true }));
+window.addEventListener('keydown', (e) => { if (play && NAV_KEY.test(e.key)) stopPlay(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) stopPlay(); });
 document.getElementById('btnReset').addEventListener('click', () => {
   setOrbit(false);
+  stopPlay();
   sync();
 });
 
@@ -766,7 +868,7 @@ new IntersectionObserver((entries) => {
   const visible = entries.some((e) => e.isIntersecting);
   stageVisible = visible;
   renderer.setAnimationLoop(visible ? stage._loop : null);
-  if (!visible && orbiting) setOrbit(false);
+  if (!visible) { if (orbiting) setOrbit(false); stopPlay(); }
 }, { rootMargin: '120px' }).observe(track);
 
 // Export buttons live in the page's own HUD (the stage runs hide-chrome).
