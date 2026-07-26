@@ -15,6 +15,18 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Quicksand:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/fx.css">
+  <!-- three.js is served from this repo (campus/vendor/three) — no CDN, works
+       offline. The hero mark and the 3D campus share the same pinned copy. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./campus/vendor/three/three.module.js",
+      "three/addons/controls/OrbitControls.js": "./campus/vendor/three/OrbitControls.js",
+      "three/addons/exporters/OBJExporter.js": "./campus/vendor/three/OBJExporter.js",
+      "three/addons/exporters/GLTFExporter.js": "./campus/vendor/three/GLTFExporter.js"
+    }
+  }
+  </script>
   <style>
     :root{
       /* candy-neon theme — sunshine, rainbows, and Angelic-Buster purple.
@@ -130,11 +142,24 @@
     .eyebrow{font-family:"JetBrains Mono",monospace;font-size:.76rem;letter-spacing:.22em;text-transform:uppercase;
       color:var(--violet);background:#fff;border:2px solid var(--border);border-radius:99px;
       padding:8px 18px;margin-bottom:26px;box-shadow:var(--shadow-purple)}
-    h1.title{font-weight:800;font-size:clamp(3.2rem,9.5vw,7rem);letter-spacing:.01em;color:var(--ink)}
-    /* the darker trio, not the full rainbow — the gold tail went too pale on
-       a light page and the last letters of the name washed out */
-    h1.title .grad-text{background:var(--cta);-webkit-background-clip:text;background-clip:text;color:transparent;
-      filter:drop-shadow(0 4px 22px rgba(255,63,174,.35))}
+    /* the ZAC Studios mark stands where the wordmark used to — three.js when
+       the browser can render it, the flat stamp lockup below when it can't.
+       Glow and shadow are candy-graded: the mark now floats over the aurora,
+       not over the dark film it was first lit for. */
+    h1.hero-logo{position:relative;display:flex;align-items:center;justify-content:center;
+      width:min(100%,780px);height:clamp(196px,33vh,360px);margin:0 auto}
+    .hero-logo::before{content:"";position:absolute;inset:-8% -6%;z-index:0;pointer-events:none;
+      background:radial-gradient(58% 58% at 50% 50%,rgba(255,63,174,.2),transparent 72%);filter:blur(18px)}
+    .hero-logo .logo-flat{position:relative;z-index:1;display:block;width:100%;height:100%;
+      filter:drop-shadow(0 12px 38px rgba(109,40,217,.32));transition:opacity .5s ease}
+    .hero-logo .logo-flat svg{width:100%;height:100%}
+    .hero-logo three-d-stage{position:absolute;inset:0;z-index:1;width:100%;height:100%;
+      opacity:0;transition:opacity .7s ease;touch-action:pan-y}
+    .hero-logo.is-3d three-d-stage{opacity:1}
+    .hero-logo.is-3d .logo-flat{opacity:0;pointer-events:none}
+    /* screen-reader-only: the mark carries the page's only h1 */
+    .vh{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+      clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
     .hero-sub{max-width:680px;margin:22px auto 0;font-size:clamp(1.02rem,2.3vw,1.25rem)}
     .cta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;justify-content:center}
     .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 30px;border-radius:99px;
@@ -159,6 +184,7 @@
     @keyframes hintdrop{0%,100%{transform:translate(-50%,0);opacity:.9}55%{transform:translate(-50%,10px);opacity:.4}}
     @media(max-width:700px){
       .hero{padding:110px 18px 76px;min-height:78svh}
+      h1.hero-logo{height:clamp(132px,22vh,196px)}
       .hero-stats{display:grid;grid-template-columns:1fr 1fr;width:100%;max-width:400px;gap:10px;margin-top:34px}
       .hstat{padding:11px 14px}
       .hstat .v{font-size:1.05rem}
@@ -356,7 +382,36 @@
       <span class="deco deco-lg" style="left:46%;top:9%;animation-delay:2.4s" aria-hidden="true">&#10024;</span>
 
       <p class="eyebrow">Senior Engineer, Enterprise AI · Mediacorp · Singapore</p>
-      <h1 class="title">Zhang <span class="grad-text">Cheng</span></h1>
+      <h1 class="hero-logo">
+        <span class="vh">ZAC Studios</span>
+        <!-- Flat lockup: what a browser without WebGL keeps. zac-logo.js swaps
+             in the three.js mark on top of it once the stage is live. -->
+        <span class="logo-flat" aria-hidden="true">
+          <!-- candy grade of the same lockup: pink / purple / cyan stamps,
+               deep-violet panels, violet STUDIOS — readable on the light page -->
+          <svg viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+            <g fill="none" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+              <g>
+                <rect x="8" y="0" width="88" height="108" rx="10" fill="#ff3fae" stroke="none"/>
+                <rect x="19" y="11" width="66" height="86" rx="4" fill="#241145" stroke="none"/>
+                <g stroke="#ff3fae" transform="translate(37 35)"><path d="M0 0 H30 L0 38 H30"/></g>
+              </g>
+              <g>
+                <rect x="116" y="0" width="88" height="108" rx="10" fill="#8b3dff" stroke="none"/>
+                <rect x="127" y="11" width="66" height="86" rx="4" fill="#241145" stroke="none"/>
+                <g stroke="#8b3dff" transform="translate(145 35)"><path d="M0 38 L15 0 L30 38"/><path d="M6.5 25 H23.5"/></g>
+              </g>
+              <g>
+                <rect x="224" y="0" width="88" height="108" rx="10" fill="#25c4ff" stroke="none"/>
+                <rect x="235" y="11" width="66" height="86" rx="4" fill="#241145" stroke="none"/>
+                <g stroke="#25c4ff" transform="translate(253 35)"><path d="M24 8.3 A14 14 0 1 0 24 29.7"/></g>
+              </g>
+            </g>
+            <text x="156" y="180" text-anchor="middle" fill="#6428d8" letter-spacing="9"
+                  font-family="'JetBrains Mono',ui-monospace,monospace" font-size="34" font-weight="500">STUDIOS</text>
+          </svg>
+        </span>
+      </h1>
       <p class="hero-sub">I don't just use AI — <b>I direct it.</b> Agents I command draw the manga,
         trade a live desk, and build the 3D campus below. Move your mouse — they left fairy dust everywhere.</p>
       <div class="cta">
@@ -715,5 +770,8 @@
   </script>
   <script src="assets/sparkle.js" defer></script>
   <script src="assets/fx.js" defer></script>
+  <!-- order matters: the stage element must be defined before the mark builds -->
+  <script src="campus/three-d-stage.js" defer></script>
+  <script type="module" src="assets/zac-logo.js"></script>
 </body>
 </html>
