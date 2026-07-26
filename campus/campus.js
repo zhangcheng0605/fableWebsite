@@ -757,7 +757,7 @@ if (!REDUCE) {
    rate, so a full build takes PLAY_SECONDS and every piece gets its own long
    arc through the air. Any real input — wheel, swipe, arrow key, a drag on the
    canvas — hands control straight back. */
-const PLAY_SECONDS = 75;  // start to finish, at a constant pace
+const PLAY_SECONDS = 38;  // start to finish, at a constant pace
 const PLAY_RAMP = 0.1;    // fraction of the run easing in and out of that pace
 
 /* Trapezoidal speed profile: accelerate over the first PLAY_RAMP, hold, then
