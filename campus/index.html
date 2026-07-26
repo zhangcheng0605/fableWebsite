@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3D Campus — a media campus that builds as you scroll · Zhang Cheng</title>
+  <meta name="description" content="A procedural three.js media campus: every mesh written by hand, every texture painted into a canvas at runtime, assembled phase by phase as you scroll — and exportable as GLB or OBJ.">
+  <meta property="og:title" content="3D Campus — a media campus that builds as you scroll">
+  <meta property="og:description" content="No model files, no image files: hand-written geometry and canvas-painted textures. Scroll assembles the campus phase by phase, three lighting rigs change the hour, and the whole model exports to GLB.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#101410">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#127959;</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- three.js is served from this repo (campus/vendor/three) — no CDN, works offline. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./vendor/three/three.module.js",
+      "three/addons/controls/OrbitControls.js": "./vendor/three/OrbitControls.js",
+      "three/addons/exporters/OBJExporter.js": "./vendor/three/OBJExporter.js",
+      "three/addons/exporters/GLTFExporter.js": "./vendor/three/GLTFExporter.js"
+    }
+  }
+  </script>
+
+  <style>
+    :root{
+      /* Ink & Lantern — same tokens as the homepage */
+      --background:#101410; --background-2:#151a14;
+      --foreground:#f4eeda;
+      --card:rgba(244,238,218,.045);
+      --muted-foreground:#b5ac93;
+      --border:rgba(233,180,85,.16);
+      --ring:#e9b455;
+      --primary:#e9b455; --primary-foreground:#221604;
+      --gold:#e9b455; --gold-2:#f2d789; --crimson:#e05a3a; --jade:#7fd6b2;
+      --radius:18px;
+      --grad:linear-gradient(100deg,var(--gold-2),var(--gold) 45%,var(--crimson));
+      --glass:rgba(16,20,16,.72);
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:96px}
+    body{background:var(--background);color:var(--foreground);
+         font-family:Inter,system-ui,-apple-system,sans-serif;
+         -webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.65}
+    a{color:inherit;text-decoration:none}
+    h1,h2,h3,h4{text-wrap:balance}
+    ::selection{background:rgba(233,180,85,.32)}
+    :focus-visible{outline:2px solid var(--ring);outline-offset:3px;border-radius:4px}
+    .mono{font-family:"JetBrains Mono",monospace}
+    .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .skip-link{position:fixed;top:-100px;left:16px;z-index:100;padding:10px 18px;border-radius:99px;
+      background:var(--primary);color:var(--primary-foreground);font-weight:600;transition:top .2s}
+    .skip-link:focus{top:16px}
+
+    .bg{position:fixed;inset:0;z-index:-2;pointer-events:none;background:
+        radial-gradient(60vw 45vh at 15% -5%,rgba(233,180,85,.06),transparent 60%),
+        radial-gradient(50vw 40vh at 90% 25%,rgba(224,90,58,.05),transparent 60%),
+        radial-gradient(70vw 55vh at 50% 110%,rgba(127,214,178,.05),transparent 65%)}
+
+    /* nav — the site's floating pill */
+    .nav-wrap{position:fixed;top:18px;left:0;right:0;z-index:50;display:flex;justify-content:center;padding:0 20px}
+    .nav{display:flex;align-items:center;gap:24px;padding:4px 20px;border-radius:99px;
+         background:rgba(18,20,15,.7);border:1px solid var(--border);
+         backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+    .nav a{font-size:.92rem;color:var(--muted-foreground);font-weight:500;transition:color .2s;padding:8px 2px;white-space:nowrap}
+    .nav a:hover,.nav a[aria-current]{color:var(--foreground)}
+    .logo{font-family:"Playfair Display",serif;font-weight:700;font-size:1.1rem;color:var(--foreground)!important}
+    .logo span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .nav-live{display:inline-flex;align-items:center;gap:7px}
+    .nav-live i{width:6px;height:6px;border-radius:50%;background:var(--jade);animation:livedot 1.8s ease-out infinite}
+    @keyframes livedot{0%{box-shadow:0 0 0 0 rgba(127,214,178,.6)}70%{box-shadow:0 0 0 9px rgba(127,214,178,0)}100%{box-shadow:0 0 0 0 rgba(127,214,178,0)}}
+    @media(max-width:700px){.nav{gap:14px;padding:2px 14px;max-width:calc(100vw - 32px);overflow-x:auto;scrollbar-width:none}
+      .nav::-webkit-scrollbar{display:none}.nav a{font-size:.82rem}}
+
+    /* ===== the build: a tall section with a sticky stage inside it ===== */
+    #build{position:relative;height:600svh}
+    /* campus.js sets this when the reader prefers reduced motion: one
+       viewport, finished campus, no scroll-driven assembly */
+    body.campus-static #build{height:100svh}
+    #build .sticky{position:sticky;top:0;height:100svh;overflow:hidden;background:var(--background)}
+    three-d-stage{display:block;width:100%;height:100%}
+    three-d-stage:not(:defined){visibility:hidden}
+    .stage-veil{position:absolute;inset:0;pointer-events:none;
+      background:linear-gradient(180deg,rgba(16,20,16,.42) 0,rgba(16,20,16,0) 26%,rgba(16,20,16,0) 62%,rgba(16,20,16,.5) 100%)}
+
+    /* HUD */
+    #hud{position:absolute;top:86px;left:20px;z-index:6;display:flex;flex-direction:column;gap:10px;
+      max-width:min(300px,calc(100vw - 40px))}
+    .hud-title{font-family:"JetBrains Mono",monospace;font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;
+      color:var(--gold-2);text-shadow:0 2px 14px rgba(0,0,0,.8)}
+    .hud-btns{display:flex;flex-wrap:wrap;gap:7px}
+    .hud-btns button{appearance:none;cursor:pointer;font-family:"JetBrains Mono",monospace;font-size:.72rem;
+      letter-spacing:.03em;color:var(--foreground);background:var(--glass);border:1px solid var(--border);
+      border-radius:99px;padding:9px 14px;line-height:1;transition:border-color .2s,color .2s,background .2s;
+      backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+    .hud-btns button:hover{border-color:var(--gold);color:var(--gold-2)}
+    .hud-btns button.active{background:var(--grad);color:var(--primary-foreground);border-color:transparent;font-weight:500}
+    .hud-btns button[disabled]{opacity:.45;cursor:default}
+
+    /* tweaks panel */
+    #tweaks{background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+      border:1px solid var(--border);border-radius:14px;padding:14px 16px 16px;
+      display:flex;flex-direction:column;gap:11px;max-height:min(60svh,460px);overflow-y:auto}
+    #tweaks[hidden]{display:none}
+    .tw-section{font-family:"JetBrains Mono",monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
+      color:var(--jade);margin-top:2px}
+    .tw-section:first-child{margin-top:0}
+    .tw-row{display:flex;flex-direction:column;gap:6px}
+    .tw-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
+      font-size:.8rem;color:var(--muted-foreground)}
+    .tw-val{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--gold-2)}
+    #tweaks input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:3px;border-radius:99px;
+      background:rgba(244,238,218,.18);accent-color:var(--primary)}
+    #tweaks input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;
+      background:var(--gold-2);border:none;cursor:pointer}
+    #tweaks input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-radius:50%;
+      background:var(--gold-2);cursor:pointer}
+    .tw-seg{border:none}
+    .tw-seg legend{font-size:.8rem;color:var(--muted-foreground);margin-bottom:6px;padding:0}
+    .tw-seg-opts{display:flex;gap:5px;position:relative}
+    /* visually hidden but focusable; pointer-events:none so the 1px box can
+       never swallow a click meant for the HUD behind it — the label activates it */
+    .tw-seg-opts input{position:absolute;opacity:0;width:1px;height:1px;margin:0;
+      clip-path:inset(50%);pointer-events:none}
+    .tw-seg-opts label{flex:1;text-align:center;font-family:"JetBrains Mono",monospace;font-size:.68rem;
+      padding:6px 4px;border:1px solid var(--border);border-radius:99px;color:var(--muted-foreground);
+      cursor:pointer;transition:color .2s,border-color .2s,background .2s}
+    .tw-seg-opts label:hover{color:var(--foreground)}
+    .tw-seg-opts input:checked+label{background:rgba(233,180,85,.16);border-color:var(--gold);color:var(--gold-2)}
+    .tw-seg-opts input:focus-visible+label{outline:2px solid var(--ring);outline-offset:2px}
+    .tw-reset{appearance:none;cursor:pointer;align-self:flex-start;background:none;border:none;padding:2px 0;
+      font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.06em;color:var(--muted-foreground);
+      text-decoration:underline;text-underline-offset:3px}
+    .tw-reset:hover{color:var(--gold-2)}
+
+    /* title card over the empty site */
+    #titleCard{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:center;
+      align-items:center;text-align:center;padding:0 26px;pointer-events:none;transition:opacity .25s linear}
+    #titleCard .eyebrow{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.24em;
+      text-transform:uppercase;color:var(--gold-2);margin-bottom:16px;text-shadow:0 2px 18px rgba(0,0,0,.85)}
+    #titleCard .eyebrow::before{content:"\25C6  ";color:var(--crimson)}
+    #titleCard h1{font-family:"Playfair Display",serif;font-weight:700;font-size:clamp(2.4rem,7vw,4.6rem);
+      line-height:1.05;text-shadow:0 6px 50px rgba(0,0,0,.9)}
+    #titleCard h1 em{font-style:italic;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+    #titleCard p.sub{max-width:520px;margin-top:18px;color:#e9e2cd;font-size:clamp(.95rem,2.2vw,1.1rem);
+      text-shadow:0 2px 16px rgba(0,0,0,.95)}
+
+    /* progress rail + hints */
+    #rail{position:absolute;left:20px;bottom:22px;z-index:6;width:min(320px,calc(100vw - 40px))}
+    .rail-track{height:2px;border-radius:99px;background:rgba(244,238,218,.2);overflow:hidden}
+    .rail-track span{display:block;height:100%;width:0;background:var(--grad);transition:width .12s linear}
+    #railLabel{margin-top:9px;font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.1em;
+      color:var(--foreground);text-shadow:0 2px 12px rgba(0,0,0,.9)}
+    #scrollHint{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:6;
+      font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;
+      color:rgba(244,238,218,.9);background:var(--glass);border:1px solid var(--border);border-radius:99px;
+      padding:8px 16px;white-space:nowrap;transition:opacity .35s;backdrop-filter:blur(10px);
+      -webkit-backdrop-filter:blur(10px)}
+    #dragHint{position:absolute;right:20px;bottom:26px;z-index:6;font-family:"JetBrains Mono",monospace;
+      font-size:.66rem;color:rgba(244,238,218,.6);text-shadow:0 2px 12px rgba(0,0,0,.9);text-align:right}
+    #stageMsg{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;justify-content:center;
+      align-items:center;gap:12px;text-align:center;padding:30px;background:rgba(16,20,16,.9)}
+    #stageMsg[hidden]{display:none}
+    #stageMsg .m{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.08em;color:var(--muted-foreground)}
+    #stageMsg .spin{width:26px;height:26px;border-radius:50%;border:2px solid rgba(233,180,85,.25);
+      border-top-color:var(--gold);animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    @media(max-width:760px){
+      #hud{top:78px;left:14px;max-width:calc(100vw - 28px)}
+      .hud-btns{gap:6px}
+      .hud-btns button{font-size:.68rem;padding:8px 12px}
+      #rail{left:14px;width:calc(100vw - 28px)}
+      #scrollHint{bottom:70px}
+      #dragHint{display:none}
+      #tweaks{max-width:280px}
+    }
+
+    /* ===== notes below the build ===== */
+    section.wrap{max-width:1100px;margin:0 auto;padding:100px 24px 10px;position:relative}
+    .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:14px}
+    .sec-index{font-family:"JetBrains Mono",monospace;color:var(--crimson);font-size:.85rem}
+    h2{font-family:"Playfair Display",serif;font-weight:700;font-size:clamp(1.9rem,4.6vw,2.9rem)}
+    .sec-sub{color:var(--muted-foreground);max-width:700px;margin-bottom:40px;font-size:1.02rem}
+    .sec-sub b{color:var(--foreground);font-weight:500}
+
+    .figures{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:40px}
+    .fig{border:1px solid var(--border);border-radius:14px;padding:16px 18px;background:rgba(16,20,16,.5)}
+    .fig .v{font-family:"Playfair Display",serif;font-weight:700;font-size:1.5rem;color:var(--gold-2);line-height:1.1}
+    .fig .k{font-family:"JetBrains Mono",monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
+      color:var(--muted-foreground);margin-top:6px}
+
+    .phases{display:grid;gap:0}
+    .phase{display:grid;grid-template-columns:64px 1fr;gap:22px;padding:22px 0;border-bottom:1px solid var(--border)}
+    .phase:last-child{border-bottom:none}
+    .phase .n{font-family:"JetBrains Mono",monospace;font-size:.8rem;color:var(--gold)}
+    .phase h3{font-family:"Playfair Display",serif;font-size:1.15rem;margin-bottom:5px}
+    .phase p{color:var(--muted-foreground);font-size:.95rem;max-width:660px}
+    @media(max-width:600px){.phase{grid-template-columns:44px 1fr;gap:14px}}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px}
+    .card{border-radius:var(--radius);border:1px solid var(--border);background:var(--card);padding:26px;
+      transition:transform .25s,border-color .25s}
+    .card:hover{transform:translateY(-4px);border-color:rgba(233,180,85,.42)}
+    .card .tag{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
+      color:var(--gold);margin-bottom:12px}
+    .card h3{font-family:"Playfair Display",serif;font-size:1.2rem;margin-bottom:9px}
+    .card p{color:var(--muted-foreground);font-size:.94rem}
+    .card code{font-family:"JetBrains Mono",monospace;font-size:.82rem;color:var(--jade);
+      background:rgba(127,214,178,.08);padding:2px 6px;border-radius:6px}
+    .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:34px}
+    .chip{font-size:.75rem;padding:5px 12px;border-radius:99px;border:1px solid var(--border);color:var(--muted-foreground)}
+    .note{margin-top:34px;border:1px solid var(--border);border-left:3px solid var(--gold);
+      border-radius:0 var(--radius) var(--radius) 0;background:var(--card);padding:20px 24px;
+      color:var(--muted-foreground);font-size:.94rem;max-width:760px}
+    .note b{color:var(--foreground);font-weight:500}
+    .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:36px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:99px;
+      font-weight:600;font-size:.9rem;min-height:44px;cursor:pointer;border:1px solid var(--border);
+      background:none;color:inherit;font-family:inherit;transition:transform .2s,border-color .2s,box-shadow .2s}
+    .btn:hover{transform:translateY(-2px)}
+    .btn-primary{background:var(--grad);color:var(--primary-foreground);border-color:transparent;
+      box-shadow:0 6px 30px rgba(233,180,85,.3)}
+    .btn-ghost:hover{border-color:var(--gold);color:var(--gold-2)}
+    .btn[disabled]{opacity:.45;cursor:default;transform:none}
+
+    footer{margin-top:90px;text-align:center;color:var(--muted-foreground);font-size:.85rem;
+      padding:36px 20px 46px;border-top:1px solid var(--border)}
+    footer a{color:var(--foreground)}
+
+    .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.2,.6,.2,1),transform .7s cubic-bezier(.2,.6,.2,1)}
+    .reveal.visible{opacity:1;transform:none}
+    @media (prefers-reduced-motion:reduce){
+      .reveal{opacity:1;transform:none;transition:none}
+      .nav-live i,#stageMsg .spin{animation:none}
+      html{scroll-behavior:auto}
+      .card:hover,.btn:hover{transform:none}
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#notes">Skip to the notes</a>
+  <div class="bg" aria-hidden="true"></div>
+
+  <header class="nav-wrap">
+    <nav class="nav" aria-label="Site">
+      <a class="logo" href="../">Z<span>C</span></a>
+      <a href="../#manga">Manga</a>
+      <a href="../prompt-injection/">Games</a>
+      <a href="../trading/" class="nav-live">Trading <i></i></a>
+      <a href="./" aria-current="page">3D Campus</a>
+      <a href="../#experience">Experience</a>
+      <a href="../#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ===== the scroll-built campus ===== -->
+    <section id="build" aria-label="The campus, assembled as you scroll">
+      <div class="sticky">
+        <three-d-stage name="media-campus" background="#101410" hide-chrome></three-d-stage>
+        <div class="stage-veil" aria-hidden="true"></div>
+
+        <div id="titleCard">
+          <p class="eyebrow">three.js &middot; procedural &middot; no model files</p>
+          <h1>A campus that <em>builds as you scroll</em></h1>
+          <p class="sub">Ground, podium, cores, drums, hull, roof, trees — every phase rises into place on the
+            way down, then the camera keeps flying.</p>
+        </div>
+
+        <div id="hud">
+          <p class="hud-title">Media Campus</p>
+          <div class="hud-btns">
+            <button id="btnOrbit" type="button">Drone orbit</button>
+            <button id="btnBuild" type="button">Play the build</button>
+            <button id="btnReset" type="button">Reset view</button>
+            <button id="btnTweaks" type="button" aria-expanded="false" aria-controls="tweaks">Look &amp; light</button>
+          </div>
+          <div id="tweaks" hidden></div>
+        </div>
+
+        <div id="rail">
+          <div class="rail-track"><span id="railFill"></span></div>
+          <p id="railLabel">Ground, roads and lawns</p>
+        </div>
+
+        <p id="scrollHint">Scroll to build the campus &darr;</p>
+        <p id="dragHint" aria-hidden="true">Drag to look around<br>Two fingers on touch</p>
+
+        <div id="stageMsg" role="status">
+          <div class="spin" aria-hidden="true"></div>
+          <p class="m">Pouring the foundations&hellip;</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== notes ===== -->
+    <section class="wrap" id="notes">
+      <div class="sec-head reveal"><span class="sec-index">01</span><h2>What you just scrolled through</h2></div>
+      <p class="sec-sub reveal">A stylised media campus — the long glass hull, the theatre drums, the roof
+        gardens. <b>Nothing here was downloaded.</b> There is no model file and no image file: every mesh is
+        written down in code, and every texture is painted into a <code>&lt;canvas&gt;</code> at runtime by a
+        seeded generator, so the same 16 window tints and the same blades of grass come back on every load.</p>
+
+      <div class="figures reveal">
+        <div class="fig"><div class="v" data-campus-stat="meshes">—</div><div class="k">meshes</div></div>
+        <div class="fig"><div class="v" data-campus-stat="triangles">—</div><div class="k">triangles</div></div>
+        <div class="fig"><div class="v" data-campus-stat="materials">—</div><div class="k">materials</div></div>
+        <div class="fig"><div class="v" data-campus-stat="trees">111</div><div class="k">trees planted</div></div>
+        <div class="fig"><div class="v">0</div><div class="k">asset files loaded</div></div>
+      </div>
+
+      <div class="phases">
+        <div class="phase reveal"><div class="n">00</div>
+          <div><h3>Ground</h3><p>A paved plate, four roads, the main lawn and its kerb, two smaller lawns and
+            three footpaths. Thirteen context blocks sit beyond the roads and fade into haze — they are always
+            there, so the site never looks like it is floating in a void.</p></div></div>
+        <div class="phase reveal"><div class="n">01</div>
+          <div><h3>Podium</h3><p>Three green-glass volumes, the entrance canopy on its two posts, the media
+            screen, and two planted terraces stepping back from the front.</p></div></div>
+        <div class="phase reveal"><div class="n">02</div>
+          <div><h3>Cores &amp; columns</h3><p>Two concrete cores and a row of four columns — the things the hull
+            above has to land on.</p></div></div>
+        <div class="phase reveal"><div class="n">03</div>
+          <div><h3>Drums</h3><p>The theatre drum and its smaller sibling: a glazed base, a bronze-metal body,
+            a green roof.</p></div></div>
+        <div class="phase reveal"><div class="n">04</div>
+          <div><h3>Hull</h3><p>Eighteen extrusions of one curved floor profile, stacked into two tiers —
+            white panel band, glass band, white panel band — with a dark soffit under each tier so the upper
+            one reads as an overhang rather than a taller box.</p></div></div>
+        <div class="phase reveal"><div class="n">05</div>
+          <div><h3>Roof</h3><p>Roof deck, roof garden, plant enclosure and two masts.</p></div></div>
+        <div class="phase reveal"><div class="n">06</div>
+          <div><h3>Landscape</h3><p>Trees with three-lobe crowns and randomised tilt, hedges, kerbed shrub beds
+            with the odd flowering shrub, and six street lamps that light up after dark.</p></div></div>
+      </div>
+    </section>
+
+    <section class="wrap" id="how">
+      <div class="sec-head reveal"><span class="sec-index">02</span><h2>How it works</h2></div>
+      <p class="sec-sub reveal">Four moving parts: a scroll timeline, a camera spline, three lighting rigs,
+        and an exporter.</p>
+
+      <div class="grid">
+        <div class="card reveal">
+          <p class="tag">The timeline</p>
+          <h3>Scroll is the build order</h3>
+          <p>Parts are sorted by phase, then by height, and each one gets its own 10% slice of the scroll: it
+            rises seven metres into position on a cubic ease-out. Scroll back up and the campus takes itself
+            apart in the same order.</p>
+        </div>
+        <div class="card reveal">
+          <p class="tag">The camera</p>
+          <h3>One spline, seven waypoints</h3>
+          <p>A Catmull-Rom curve carries the camera from the south approach, around the back, and home again,
+            while the look-at target climbs as the building grows. Drag at any time to take over — the
+            <b>drone orbit</b> button hands it to a wandering radius-and-height loop instead.</p>
+        </div>
+        <div class="card reveal">
+          <p class="tag">The light</p>
+          <h3>Morning, noon, dusk</h3>
+          <p>Each preset paints its own sky gradient with clouds, then bakes that sky plus a sun sphere into a
+            PMREM environment map — which is what the glass and bronze actually reflect. Haze drives the fog
+            distances; at dusk the window emissives, the media screen and the street lamps come up.</p>
+        </div>
+        <div class="card reveal">
+          <p class="tag">The output</p>
+          <h3>It leaves as a real model</h3>
+          <p>Every mesh and material is named, so the campus exports straight from the browser as
+            <code>GLB</code> or as <code>OBJ + MTL</code> — in metres, y-up, ready to open in Blender.</p>
+        </div>
+      </div>
+
+      <div class="chips reveal">
+        <span class="chip">three.js r184</span>
+        <span class="chip">Vendored, no CDN</span>
+        <span class="chip">Canvas-generated textures</span>
+        <span class="chip">Extruded hull profile</span>
+        <span class="chip">PMREM environment</span>
+        <span class="chip">ACES filmic tone mapping</span>
+        <span class="chip">Zero build step</span>
+      </div>
+
+      <p class="note reveal"><b>A likeness, not a survey.</b> The proportions are drawn from the kind of media
+        campus I walk into — a long curved hull over a green-glass podium, drums for the studios — but the
+        geometry is hand-written, not measured. Rendering pauses whenever the stage scrolls out of view, and
+        the whole thing falls back to a single still frame if you have reduced motion turned on.</p>
+
+      <div class="cta reveal">
+        <button class="btn btn-primary" type="button" data-campus-export="glb" disabled>Download GLB</button>
+        <button class="btn btn-ghost" type="button" data-campus-export="obj" disabled>Download OBJ + MTL</button>
+        <a class="btn btn-ghost" href="../#projects">Back to projects</a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>&#169; <span id="year">2026</span> Zhang Cheng &middot; Directed by a human, built by AI &middot;
+       <a href="../">back to the portfolio</a></p>
+  </footer>
+
+  <noscript>
+    <p style="max-width:70ch;margin:0 auto 60px;padding:0 24px;color:#b5ac93">
+      The campus is drawn with WebGL, so it needs JavaScript. The notes above describe what it builds.
+    </p>
+  </noscript>
+
+  <script src="three-d-stage.js"></script>
+  <script type="module" src="campus.js"></script>
+  <script src="controls.js" defer></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* stage status: spinner until the scene reports in, a plain message if
+       WebGL is unavailable or three.js fails to load */
+    (function () {
+      var msg = document.getElementById('stageMsg');
+      var stage = document.querySelector('three-d-stage');
+      window.addEventListener('campus-ready', function () { msg.hidden = true; }, { once: true });
+      if (stage && stage.ready) {
+        stage.ready.catch(function () {
+          msg.querySelector('.spin').remove();
+          msg.querySelector('.m').textContent =
+            'This view needs WebGL — try a different browser, or turn hardware acceleration back on.';
+        });
+      }
+    })();
+
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+      });
+    }, { threshold: .1, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+  </script>
+</body>
+</html>

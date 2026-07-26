@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zhang Cheng — AI Engineer & Builder</title>
-  <meta name="description" content="Zhang Cheng — Senior Engineer, Enterprise AI at Mediacorp (Singapore). I direct autonomous agents that ship real systems: a 24/7 trading desk, ~20 enterprise GenAI rollouts, agentic pipelines, and published generative media.">
-  <meta property="og:title" content="Zhang Cheng — AI Engineer & Builder">
-  <meta property="og:description" content="I direct AI agents that ship real systems: an autonomous trading desk, agentic deploy pipelines, and three published comic series. 0 humans on the hourly loop.">
+  <title>Zhang Cheng — AI Engineer &amp; Builder</title>
+  <meta name="description" content="Zhang Cheng — Senior Engineer, Enterprise AI at Mediacorp (Singapore). Three things live here: AI-drawn manga, three built projects (a browser game, an autonomous trading desk, a 3D campus), and six years of shipping enterprise systems.">
+  <meta property="og:title" content="Zhang Cheng — AI Engineer &amp; Builder">
+  <meta property="og:description" content="AI-drawn manga, a browser game, an autonomous paper-trading desk, and a 3D campus that builds as you scroll. Directed by a human, built by agents.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="assets/film/still-city.jpg">
   <meta name="theme-color" content="#101410">
@@ -28,12 +28,12 @@
       --primary:#e9b455; --primary-foreground:#221604;
       --accent:#e05a3a; --accent-foreground:#fff4e4;
       --jade:#7fd6b2; --crimson:#e05a3a; --gold:#e9b455; --gold-2:#f2d789;
-      --destructive:#ff6b55;
       --radius:18px; --radius-sm:calc(var(--radius)*.6); --radius-lg:calc(var(--radius)*1.25);
       /* legacy aliases */
       --bg:var(--background); --text:var(--foreground); --muted:var(--muted-foreground);
       --edge:var(--border); --panel:var(--card);
       --grad:linear-gradient(100deg,var(--gold-2),var(--gold) 45%,var(--crimson));
+      --slab:rgba(16,20,16,.9);
     }
     *{margin:0;padding:0;box-sizing:border-box}
     html{scroll-behavior:smooth;scroll-padding-top:96px}
@@ -43,6 +43,7 @@
     ::selection{background:rgba(233,180,85,.32)}
     a{color:inherit;text-decoration:none}
     h1,h2,h3,h4{text-wrap:balance}
+    img{display:block;max-width:100%}
     .mono{font-family:"JetBrains Mono",monospace}
     .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
     :focus-visible{outline:2px solid var(--ring);outline-offset:3px;border-radius:4px}
@@ -51,18 +52,19 @@
       background:var(--primary);color:var(--primary-foreground);font-weight:600;transition:top .2s}
     .skip-link:focus{top:16px}
 
-    /* ambient lantern glow */
-    .bg{position:fixed;inset:0;z-index:-2;pointer-events:none;background:
-        radial-gradient(60vw 45vh at 15% -5%,rgba(233,180,85,.06),transparent 60%),
-        radial-gradient(50vw 40vh at 90% 25%,rgba(224,90,58,.05),transparent 60%),
-        radial-gradient(70vw 55vh at 50% 110%,rgba(127,214,178,.05),transparent 65%)}
+    /* ===== the film plays behind everything, on a loop ===== */
+    .film{position:fixed;inset:0;z-index:-3;overflow:hidden;background:var(--background-2)}
+    .film canvas{display:block;width:100%;height:100%}
+    .film-scrim{position:fixed;inset:0;z-index:-2;pointer-events:none;background:
+      linear-gradient(180deg,rgba(16,20,16,.62) 0%,rgba(16,20,16,.34) 26%,
+                      rgba(16,20,16,.5) 62%,rgba(16,20,16,.78) 100%)}
     .grain{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.4;mix-blend-mode:overlay;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.04'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
-    /* nav */
+    /* ===== nav ===== */
     .nav-wrap{position:fixed;top:18px;left:0;right:0;z-index:50;display:flex;justify-content:center;padding:0 20px}
-    .nav{display:flex;align-items:center;gap:26px;padding:4px 20px;border-radius:99px;
-         background:rgba(18,20,15,.66);border:1px solid var(--border);
+    .nav{display:flex;align-items:center;gap:24px;padding:4px 20px;border-radius:99px;
+         background:rgba(18,20,15,.72);border:1px solid var(--border);
          backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
     .nav a{font-size:.92rem;color:var(--muted-foreground);font-weight:500;transition:color .2s;padding:8px 2px;white-space:nowrap}
     .nav a:hover{color:var(--foreground)}
@@ -71,176 +73,121 @@
     .nav-live{display:inline-flex;align-items:center;gap:7px}
     .nav-live i{width:6px;height:6px;border-radius:50%;background:var(--jade);animation:livedot 1.8s ease-out infinite}
     @keyframes livedot{0%{box-shadow:0 0 0 0 rgba(127,214,178,.6)}70%{box-shadow:0 0 0 9px rgba(127,214,178,0)}100%{box-shadow:0 0 0 0 rgba(127,214,178,0)}}
-    @media(max-width:640px){.nav{gap:14px;padding:2px 16px;max-width:calc(100vw - 32px);overflow-x:auto;scrollbar-width:none}
+    @media(max-width:820px){.nav{gap:14px;padding:2px 16px;max-width:calc(100vw - 32px);overflow-x:auto;scrollbar-width:none}
       .nav::-webkit-scrollbar{display:none}.nav a{font-size:.82rem}}
 
-    /* ===== cinema bands (scroll-scrubbed film) ===== */
-    .cinema-sec{position:relative}
-    .cinema-sec .sticky{position:sticky;top:0;height:100svh;overflow:hidden}
-    canvas.cinema{position:absolute;inset:0;width:100%;height:100%;display:block;background:var(--background-2)}
-    .shade{position:absolute;inset:0;pointer-events:none;background:
-      linear-gradient(180deg,rgba(16,20,16,.62) 0%,rgba(16,20,16,.12) 30%,rgba(16,20,16,.08) 55%,rgba(16,20,16,.88) 92%,var(--background) 100%)}
-    .band-content{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
-      align-items:center;text-align:center;padding:0 24px;z-index:2}
-
-    /* hero band */
-    .eyebrow{font-family:"JetBrains Mono",monospace;font-size:.78rem;letter-spacing:.24em;text-transform:uppercase;
-             color:var(--gold-2);margin-bottom:20px;text-shadow:0 2px 18px rgba(0,0,0,.8)}
+    /* ===== hero ===== */
+    .hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;align-items:center;
+      text-align:center;padding:130px 24px 96px;position:relative}
+    .eyebrow{font-family:"JetBrains Mono",monospace;font-size:.76rem;letter-spacing:.24em;text-transform:uppercase;
+      color:var(--gold-2);margin-bottom:20px;text-shadow:0 2px 18px rgba(0,0,0,.85)}
     .eyebrow::before{content:"\25C6  ";color:var(--crimson)}
-    h1.title{font-family:"Playfair Display",serif;font-weight:700;font-size:clamp(3.2rem,10vw,7rem);
-             line-height:1.02;letter-spacing:.01em;text-shadow:0 6px 50px rgba(0,0,0,.85)}
+    h1.title{font-family:"Playfair Display",serif;font-weight:700;font-size:clamp(3rem,9.5vw,6.6rem);
+      line-height:1.02;letter-spacing:.01em;text-shadow:0 6px 50px rgba(0,0,0,.9)}
     h1.title .grad-text{filter:drop-shadow(0 2px 24px rgba(233,180,85,.35))}
-    .hero-sub{max-width:660px;margin:26px auto 0;color:#e9e2cd;font-size:clamp(1.02rem,2.3vw,1.25rem);
-      text-shadow:0 2px 16px rgba(0,0,0,.9)}
+    .hero-sub{max-width:660px;margin:24px auto 0;color:#e9e2cd;font-size:clamp(1rem,2.3vw,1.22rem);
+      text-shadow:0 2px 16px rgba(0,0,0,.95)}
     .hero-sub b{color:#fff;font-weight:600}
-    .cta{display:flex;gap:14px;margin-top:38px;flex-wrap:wrap;justify-content:center}
-    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 28px;border-radius:99px;
-         font-weight:600;font-size:.95rem;min-height:44px;cursor:pointer;
-         transition:transform .2s,box-shadow .2s,border-color .2s;border:1px solid var(--border)}
+    .cta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;justify-content:center}
+    .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 26px;border-radius:99px;
+      font-weight:600;font-size:.93rem;min-height:44px;cursor:pointer;
+      transition:transform .2s,box-shadow .2s,border-color .2s,color .2s;border:1px solid var(--border)}
     .btn:hover{transform:translateY(-2px)}
     .btn:active{transform:translateY(0) scale(.98)}
     .btn-primary{background:var(--grad);color:var(--primary-foreground);border:none;
       box-shadow:0 6px 34px rgba(233,180,85,.35)}
     .btn-primary:hover{box-shadow:0 10px 44px rgba(233,180,85,.5)}
-    .btn-ghost{background:rgba(16,20,16,.5);backdrop-filter:blur(8px)}
-    .hero-stats{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:52px}
+    .btn-ghost{background:rgba(16,20,16,.55);backdrop-filter:blur(8px)}
+    .btn-ghost:hover{border-color:var(--gold);color:var(--gold-2)}
+    .hero-stats{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:46px}
     .hstat{border:1px solid var(--border);border-radius:14px;padding:12px 20px;
-      background:rgba(16,20,16,.58);backdrop-filter:blur(10px);text-align:left}
-    .hstat .v{font-family:"Playfair Display",serif;font-weight:700;font-size:1.25rem;color:var(--gold-2)}
-    .hstat .k{font-family:"JetBrains Mono",monospace;font-size:.62rem;letter-spacing:.14em;
+      background:rgba(16,20,16,.62);text-align:left}
+    .hstat .v{font-family:"Playfair Display",serif;font-weight:700;font-size:1.22rem;color:var(--gold-2);white-space:nowrap}
+    .hstat .k{font-family:"JetBrains Mono",monospace;font-size:.6rem;letter-spacing:.14em;
       text-transform:uppercase;color:var(--muted-foreground);margin-top:3px}
-    .scroll-hint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:2;
-      font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.3em;text-transform:uppercase;
+    .scroll-hint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);
+      font-family:"JetBrains Mono",monospace;font-size:.64rem;letter-spacing:.3em;text-transform:uppercase;
       color:rgba(244,238,218,.7);animation:hintdrop 2.2s ease-in-out infinite}
     @keyframes hintdrop{0%,100%{transform:translate(-50%,0);opacity:.8}55%{transform:translate(-50%,10px);opacity:.3}}
     @media(max-width:700px){
-      .band-content{padding:92px 20px 40px;overflow:hidden}
-      .eyebrow{margin-bottom:14px}
-      .hero-sub{font-size:.95rem;margin-top:18px}
-      .cta{margin-top:26px}
-      .hero-stats{display:grid;grid-template-columns:1fr 1fr;width:100%;max-width:370px;margin-top:28px;gap:8px}
-      .hstat{padding:9px 12px}
-      .hstat .v{font-size:1rem}
+      .hero{padding:104px 20px 80px}
+      .hero-sub{font-size:.97rem;margin-top:18px}
+      .hero-stats{display:grid;grid-template-columns:1fr 1fr;width:100%;max-width:380px;gap:8px;margin-top:32px}
+      .hstat{padding:10px 12px}
+      .hstat .v{font-size:1.02rem}
       .hstat .k{font-size:.55rem}
       .scroll-hint{display:none}
     }
 
-    /* interlude bands */
-    .band-quote{font-family:"Playfair Display",serif;font-weight:600;font-style:italic;
-      font-size:clamp(1.7rem,4.6vw,3.2rem);line-height:1.25;max-width:820px;
-      text-shadow:0 4px 40px rgba(0,0,0,.9)}
-    .band-quote em{font-style:inherit;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-    .band-sub{margin-top:18px;color:#ded6bd;font-size:1rem;text-shadow:0 2px 14px rgba(0,0,0,.9)}
-
-    /* ===== sections ===== */
-    section.wrap{max-width:1100px;margin:0 auto;padding:110px 24px 10px;position:relative}
+    /* ===== the three slabs ===== */
+    .slab{position:relative;max-width:1160px;margin:0 auto 28px;padding:clamp(26px,4.6vw,62px);
+      background:var(--slab);border:1px solid var(--border);border-radius:26px;overflow:hidden}
+    .slab::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:var(--grad);opacity:.5}
     .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:14px}
     .sec-index{font-family:"JetBrains Mono",monospace;color:var(--crimson);font-size:.85rem}
-    h2{font-family:"Playfair Display",serif;font-weight:700;font-size:clamp(2rem,5vw,3rem);letter-spacing:.005em}
-    .sec-sub{color:var(--muted-foreground);max-width:680px;margin-bottom:44px;font-size:1.02rem}
-    .sec-sub b{color:var(--foreground)}
-    .cat{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;
-      color:var(--jade);margin:42px 0 16px;display:flex;align-items:center;gap:14px}
-    .cat::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+    h2{font-family:"Playfair Display",serif;font-weight:700;font-size:clamp(1.9rem,4.6vw,2.9rem);letter-spacing:.005em}
+    .sec-sub{color:var(--muted-foreground);max-width:700px;margin-bottom:40px;font-size:1.02rem}
+    .sec-sub b{color:var(--foreground);font-weight:500}
+    @media(max-width:820px){.slab{margin:0 12px 16px;border-radius:20px}}
 
-    /* flagship desk */
-    .desk{position:relative;overflow:hidden;border-radius:22px;padding:36px;
-        border:1px solid rgba(127,214,178,.35);
-        background:linear-gradient(120deg,rgba(127,214,178,.07),rgba(233,180,85,.06) 55%,rgba(224,90,58,.07))}
-    .desk::after{content:"LIVE";position:absolute;top:20px;right:-42px;transform:rotate(45deg);
-        width:150px;text-align:center;padding:7px 0;font-family:"JetBrains Mono",monospace;
-        font-size:.68rem;letter-spacing:.22em;font-weight:700;color:#04150d;
-        background:linear-gradient(100deg,#b9f0d6,#7fd6b2 52%,#e9b455);
-        box-shadow:0 6px 20px rgba(127,214,178,.4);animation:livecorner 1.6s ease-in-out infinite}
-    @keyframes livecorner{0%,100%{opacity:1}50%{opacity:.5}}
-    .desk-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:36px;align-items:center}
-    .live{display:inline-flex;align-items:center;gap:9px;font-family:"JetBrains Mono",monospace;
-        font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--jade);
-        border:1px solid rgba(127,214,178,.4);border-radius:99px;padding:5px 14px;margin-bottom:16px}
+    /* ===== 01 · manga ===== */
+    .series{padding-bottom:34px;margin-bottom:34px;border-bottom:1px solid var(--border)}
+    .series:last-child{padding-bottom:0;margin-bottom:0;border-bottom:none}
+    .series-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
+      flex-wrap:wrap;margin-bottom:20px}
+    .badge{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.16em;
+      text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+    .series h3{font-family:"Playfair Display",serif;font-size:clamp(1.6rem,3.4vw,2.2rem);line-height:1.1}
+    .logline{color:var(--muted-foreground);margin-top:10px;max-width:620px;font-size:.97rem}
+    .thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+    a.chapter{position:relative;display:flex;flex-direction:column;border:1px solid var(--border);
+      border-radius:16px;overflow:hidden;background:rgba(16,20,16,.5);
+      transition:border-color .25s,transform .25s}
+    a.chapter:hover{border-color:rgba(233,180,85,.5);transform:translateY(-4px)}
+    .thumb{display:block;position:relative;overflow:hidden;background:var(--background-2)}
+    .thumb img{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+    a.chapter:hover .thumb img{transform:scale(1.05)}
+    .thumb.wide{aspect-ratio:16/9}
+    .thumb.tall{aspect-ratio:3/4}
+    .meta{display:flex;flex-direction:column;gap:3px;padding:14px 16px 16px}
+    .meta b{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.12em;
+      color:var(--gold);font-weight:500}
+    .meta .t{font-weight:600;font-size:.96rem}
+    .meta .n{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--muted-foreground)}
+    .meta .new{position:absolute;top:12px;right:12px;font-family:"JetBrains Mono",monospace;
+      font-size:.58rem;letter-spacing:.14em;font-weight:700;color:#221604;background:var(--grad);
+      padding:3px 10px;border-radius:99px}
+
+    /* ===== 02 · the three projects ===== */
+    .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+    @media(max-width:900px){.tiles{grid-template-columns:1fr}}
+    .tile{position:relative;display:flex;flex-direction:column;border-radius:var(--radius);
+      border:1px solid var(--border);background:var(--card);padding:28px;overflow:hidden;
+      transition:transform .25s,border-color .25s}
+    .tile:hover{transform:translateY(-4px);border-color:rgba(233,180,85,.42)}
+    .tile::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:var(--grad);
+      opacity:0;transition:opacity .25s}
+    .tile:hover::before{opacity:1}
+    /* flex:none, or the tag inherits `.tile p{flex:1}` and stretches with the
+       leftover column space — which pushed each tile's heading to a different
+       height. The live dot is inline (see .live), so the tag stays one line. */
+    .tile .tag{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.14em;
+      text-transform:uppercase;color:var(--gold);margin-bottom:12px;line-height:1.5;flex:none}
+    .tile h3{font-family:"Playfair Display",serif;font-size:1.5rem;margin-bottom:10px}
+    .tile p{color:var(--muted-foreground);font-size:.95rem;flex:1}
+    .tile .metric{font-family:"JetBrains Mono",monospace;font-size:.73rem;color:var(--jade);margin-top:16px;flex:0}
+    .tile .foot{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+    .tile .link{margin-top:18px;font-weight:600;font-size:.9rem;color:var(--gold)}
+    .tile .link::after{content:" \2192";transition:margin .2s}
+    .tile:hover .link::after{margin-left:4px}
+    .live{display:inline-flex;align-items:center;gap:7px;color:var(--jade)}
     .live i{width:7px;height:7px;border-radius:50%;background:var(--jade);animation:livedot 1.8s ease-out infinite}
-    .desk h3{font-family:"Playfair Display",serif;font-size:clamp(1.6rem,3.8vw,2.3rem);line-height:1.15;margin-bottom:14px}
-    .grad-up{background:linear-gradient(100deg,#b9f0d6,#7fd6b2 48%,#e9b455);
-        -webkit-background-clip:text;background-clip:text;color:transparent}
-    .desk .blurb{color:var(--muted-foreground);margin-bottom:26px;max-width:560px;font-size:.98rem}
-    .desk-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:24px}
-    .stat{border:1px solid var(--border);border-radius:14px;padding:14px 15px;background:rgba(16,20,16,.5);
-        min-width:0;overflow:hidden}
-    .stat .k{font-family:"JetBrains Mono",monospace;font-size:.63rem;letter-spacing:.13em;
-        text-transform:uppercase;color:var(--muted-foreground);margin-bottom:8px}
-    .stat .v{font-family:"Playfair Display",serif;font-weight:700;font-size:1.4rem;line-height:1.1;white-space:nowrap}
-    .stat .d{font-family:"JetBrains Mono",monospace;font-size:.68rem;margin-top:7px;color:var(--muted-foreground)}
-    .stat .d.up{color:var(--jade)}
     .chip{font-size:.75rem;padding:5px 12px;border-radius:99px;border:1px solid var(--border);color:var(--muted-foreground)}
-    .desk .foot{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
-    .btn-live{background:linear-gradient(100deg,#b9f0d6,#7fd6b2 48%,#e9b455);color:#04150d;border:none;
-        box-shadow:0 4px 30px rgba(127,214,178,.3)}
-    .btn-live:hover{box-shadow:0 8px 40px rgba(127,214,178,.45)}
-    .asof{font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--muted-foreground);margin-top:20px;line-height:1.7}
-    .asof b{color:var(--foreground);font-weight:500}
-    .desk-chart{border:1px solid var(--border);border-radius:16px;background:rgba(16,20,16,.55);padding:14px}
-    .desk-chart svg{display:block;width:100%;height:auto}
-    .desk-chart .cap{font-family:"JetBrains Mono",monospace;font-size:.66rem;color:var(--muted-foreground);margin-top:10px;text-align:center}
-    @media (max-width:1000px){.desk-grid{grid-template-columns:minmax(0,1fr);gap:28px}
-        .desk-chart{max-width:460px;margin:0 auto;width:100%}}
-    @media (max-width:520px){.desk-stats{grid-template-columns:minmax(0,1fr)}}
-    @media (max-width:660px){.desk{padding:26px 22px}}
+    .aside{margin-top:26px;font-size:.9rem;color:var(--muted-foreground)}
+    .aside a{color:var(--gold);font-weight:500}
+    .aside a::after{content:" \2192"}
 
-    /* project cards */
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
-    .card{position:relative;border-radius:var(--radius);border:1px solid var(--border);background:var(--card);
-          padding:28px;overflow:hidden;transition:transform .25s,border-color .25s;display:flex;flex-direction:column}
-    .card:hover{transform:translateY(-4px);border-color:rgba(233,180,85,.42)}
-    .card::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:var(--grad);opacity:0;transition:opacity .25s}
-    .card:hover::before{opacity:1}
-    .card .tag{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;
-               color:var(--gold);margin-bottom:14px}
-    .card h3{font-family:"Playfair Display",serif;font-size:1.35rem;margin-bottom:10px}
-    .card p{color:var(--muted-foreground);font-size:.95rem;flex:1}
-    .card .metric{font-family:"JetBrains Mono",monospace;font-size:.74rem;color:var(--jade);margin-top:16px}
-    .card .foot{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
-    .card .link{margin-top:18px;font-weight:600;font-size:.9rem;color:var(--gold)}
-    .card .link::after{content:" \2192";transition:margin .2s}
-    .card:hover .link::after{margin-left:4px}
-
-    /* stories showcase — each series gets a full feature row */
-    .series{display:grid;grid-template-columns:minmax(240px,340px) 1fr;gap:44px;align-items:center;
-      border:1px solid var(--border);border-radius:22px;background:var(--card);padding:36px;
-      position:relative;overflow:hidden;transition:border-color .25s;margin-bottom:28px}
-    .series:hover{border-color:rgba(233,180,85,.45)}
-    .series-cover{border-radius:14px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.55);
-      border:1px solid rgba(233,180,85,.2)}
-    .series-cover img{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;transition:transform .45s}
-    .series:hover .series-cover img{transform:scale(1.035)}
-    .series .badge{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.18em;
-      text-transform:uppercase;color:var(--gold);margin-bottom:10px}
-    .series h3{font-family:"Playfair Display",serif;font-size:clamp(1.8rem,3.8vw,2.5rem);line-height:1.1}
-    .series .logline{color:var(--muted-foreground);margin:14px 0 24px;max-width:580px;font-size:.98rem}
-    .ch-list{display:flex;flex-direction:column;gap:10px;margin-bottom:26px}
-    .chapter{display:flex;align-items:baseline;gap:14px;border:1px solid var(--border);border-radius:12px;
-      padding:13px 18px;transition:border-color .2s,background .2s;background:rgba(16,20,16,.35)}
-    .chapter:hover{border-color:rgba(233,180,85,.5);background:rgba(233,180,85,.06)}
-    .chapter b{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--gold);
-      letter-spacing:.1em;white-space:nowrap;font-weight:500}
-    .chapter .t{font-weight:600;font-size:.95rem;flex:1;min-width:0}
-    .chapter .n{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--muted-foreground);white-space:nowrap}
-    .chapter .new{font-family:"JetBrains Mono",monospace;font-size:.6rem;letter-spacing:.14em;font-weight:700;
-      color:#221604;background:var(--grad);padding:3px 10px;border-radius:99px}
-    .series.flip{grid-template-columns:1fr minmax(240px,340px)}
-    .series.flip .series-cover{order:2}
-    @media(max-width:860px){
-      .series,.series.flip{grid-template-columns:1fr;gap:26px;padding:26px}
-      .series-cover{max-width:320px;margin:0 auto}
-      .series.flip .series-cover{order:0}
-      .chapter{flex-wrap:wrap;row-gap:4px}
-    }
-
-    /* capabilities */
-    .caps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
-    .cap-card{border:1px solid var(--border);border-radius:var(--radius);background:var(--card);padding:26px}
-    .cap-card h3{font-family:"Playfair Display",serif;font-size:1.15rem;margin-bottom:14px}
-    .cap-card .chips{display:flex;gap:8px;flex-wrap:wrap}
-
-    /* experience */
+    /* ===== 03 · experience ===== */
     .xp{display:grid;gap:18px}
     .role{border:1px solid var(--border);border-radius:var(--radius);background:var(--card);
       padding:26px 28px;display:grid;grid-template-columns:200px 1fr;gap:26px;
@@ -254,7 +201,7 @@
     .role ul{margin:12px 0 0 17px;color:var(--muted-foreground);font-size:.93rem;display:grid;gap:7px}
     .role li::marker{color:var(--gold)}
     .role .m{color:var(--jade);font-family:"JetBrains Mono",monospace;font-size:.85em}
-    @media(max-width:760px){.role{grid-template-columns:1fr;gap:10px}}
+    @media(max-width:760px){.role{grid-template-columns:1fr;gap:10px;padding:22px}}
     .duo{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-top:18px}
     .mini{border:1px solid var(--border);border-radius:var(--radius);background:var(--card);padding:24px 26px;
       position:relative;overflow:hidden}
@@ -264,36 +211,32 @@
     .mini .item b{display:block;font-weight:600;font-size:.95rem}
     .mini .item span{color:var(--muted-foreground);font-size:.85rem}
     .mini .item .yr{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--gold);float:right;margin-left:12px}
-    .quote{margin-top:24px;border:1px solid var(--border);border-left:3px solid var(--gold);
+    .cat{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;
+      color:var(--jade);margin:38px 0 16px;display:flex;align-items:center;gap:14px}
+    .cat::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent)}
+    .caps{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:18px}
+    .cap-card{border:1px solid var(--border);border-radius:var(--radius);background:var(--card);padding:24px 26px}
+    .cap-card h4{font-family:"Playfair Display",serif;font-size:1.05rem;margin-bottom:13px}
+    .cap-card .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .quote{margin-top:30px;border:1px solid var(--border);border-left:3px solid var(--gold);
       border-radius:0 var(--radius) var(--radius) 0;background:var(--card);padding:24px 28px}
-    .quote p{font-family:"Playfair Display",serif;font-style:italic;font-size:1.08rem;line-height:1.6;
+    .quote p{font-family:"Playfair Display",serif;font-style:italic;font-size:1.06rem;line-height:1.6;
       color:var(--foreground)}
     .quote footer{margin-top:12px;font-family:"JetBrains Mono",monospace;font-size:.72rem;
-      color:var(--muted-foreground);letter-spacing:.06em}
+      color:var(--muted-foreground);letter-spacing:.06em;border:none;padding:0;text-align:left;background:none}
 
-    /* process */
-    .steps{display:grid;gap:0}
-    .step{display:grid;grid-template-columns:56px 1fr;gap:22px;padding:26px 0;border-bottom:1px solid var(--border)}
-    .step:last-child{border-bottom:none}
-    .step-num{font-family:"Playfair Display",serif;font-size:1.6rem;color:var(--gold)}
-    .step h3{font-family:"Playfair Display",serif;font-size:1.2rem;margin-bottom:6px}
-    .step p{color:var(--muted-foreground);font-size:.95rem;max-width:660px}
-    .step p code{font-family:"JetBrains Mono",monospace;font-size:.82rem;color:var(--jade);
-        background:rgba(127,214,178,.08);padding:2px 7px;border-radius:6px}
-
-    /* contact band */
-    .contact-inner{max-width:760px}
-    .contact-inner h2{font-size:clamp(2.2rem,6vw,3.6rem);text-shadow:0 4px 40px rgba(0,0,0,.9)}
-    .contact-inner p{margin-top:16px;color:#e6ddc4;text-shadow:0 2px 14px rgba(0,0,0,.9)}
+    /* ===== contact ===== */
+    .slab-contact{text-align:center;padding-top:clamp(40px,6vw,76px);padding-bottom:clamp(40px,6vw,76px)}
+    .slab-contact h2{font-size:clamp(2rem,5.4vw,3.2rem)}
+    .slab-contact p{margin-top:14px;color:var(--muted-foreground);max-width:620px;margin-left:auto;margin-right:auto}
     .email{display:inline-block;font-family:"Playfair Display",serif;font-weight:600;
-        font-size:clamp(1.25rem,3.6vw,2rem);margin:26px 0 8px;text-shadow:0 2px 30px rgba(0,0,0,.8)}
+      font-size:clamp(1.2rem,3.4vw,1.9rem);margin:24px 0 6px}
     .email:hover .grad-text{filter:brightness(1.25)}
-    .socials{display:flex;gap:20px;justify-content:center;color:#ded6bd;margin-top:14px}
+    .socials{display:flex;gap:20px;justify-content:center;color:var(--muted-foreground);margin-top:12px;flex-wrap:wrap}
     .socials a{padding:8px 6px}
-    .socials a:hover{color:#fff}
+    .socials a:hover{color:var(--foreground)}
 
-    footer{text-align:center;color:var(--muted-foreground);font-size:.85rem;padding:40px 20px 50px;
-      border-top:1px solid var(--border);background:var(--background)}
+    footer{text-align:center;color:var(--muted-foreground);font-size:.85rem;padding:44px 20px 54px}
     footer a{color:var(--foreground)}
 
     /* reveal */
@@ -301,331 +244,187 @@
     .reveal.visible{opacity:1;transform:none}
     @media (prefers-reduced-motion:reduce){
       .reveal{opacity:1;transform:none;transition:none}
-      .nav-live i,.live i,.desk::after,.scroll-hint{animation:none;opacity:1}
+      .nav-live i,.live i,.scroll-hint{animation:none;opacity:1}
       html{scroll-behavior:auto}
+      .tile:hover,a.chapter:hover,.btn:hover{transform:none}
+      a.chapter:hover .thumb img{transform:none}
     }
   </style>
 </head>
 <body>
-  <a class="skip-link" href="#desk">Skip to content</a>
-  <div class="bg" aria-hidden="true"></div>
+  <a class="skip-link" href="#manga">Skip to content</a>
+
+  <!-- The film loops behind the whole page: 140 frames drawn to a fixed
+       canvas, ping-ponging so there is no cut. Reduced motion gets one still. -->
+  <div class="film" aria-hidden="true">
+    <canvas class="cinema" data-src="assets/film/city-sm/f%04d.webp" data-frames="140"
+            data-loop="12" data-maxw="1080" data-poster="0.9"></canvas>
+  </div>
+  <div class="film-scrim" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
 
   <header class="nav-wrap">
-    <nav class="nav">
+    <nav class="nav" aria-label="Site">
       <a class="logo" href="#top">Z<span>C</span></a>
-      <a href="#projects">Projects</a>
+      <a href="#manga">Manga</a>
+      <a href="prompt-injection/">Games</a>
       <a href="trading/" class="nav-live">Trading <i></i></a>
-      <a href="prompt-injection/" class="nav-live">Play <i></i></a>
-      <a href="#stories">Stories</a>
+      <a href="campus/">3D Campus</a>
       <a href="#experience">Experience</a>
       <a href="#contact">Contact</a>
     </nav>
   </header>
 
   <main id="top">
-    <!-- ===== HERO — jade city, scroll-scrubbed ===== -->
-    <section class="cinema-sec" id="hero" style="height:260svh">
-      <div class="sticky">
-        <canvas class="cinema" data-src="assets/film/city/f%04d.webp?v=2" data-src-sm="assets/film/city-sm/f%04d.webp" data-frames="140" data-poster="0.9" aria-hidden="true"></canvas>
-        <div class="shade" aria-hidden="true"></div>
-        <div class="band-content" id="heroContent">
-          <p class="eyebrow reveal">Senior Engineer, Enterprise AI · Mediacorp · Singapore</p>
-          <h1 class="title reveal">Zhang <span class="grad-text">Cheng</span></h1>
-          <p class="hero-sub reveal">I don't just use AI — <b>I direct it.</b> Autonomous agents I command
-            trade a live desk, deploy this website, and publish original stories. Scroll: the film plays as you go.</p>
-          <div class="cta reveal">
-            <a class="btn btn-primary" href="#desk">See the live desk</a>
-            <a class="btn btn-ghost" href="#projects">Browse projects</a>
-          </div>
-          <div class="hero-stats reveal">
-            <div class="hstat"><div class="v">3 bots · 24/7</div><div class="k">autonomous trading desk</div></div>
-            <div class="hstat"><div class="v">$1.1M</div><div class="k">paper capital under agents</div></div>
-            <div class="hstat"><div class="v">~20</div><div class="k">GenAI rollouts at Mediacorp</div></div>
-            <div class="hstat"><div class="v">0</div><div class="k">humans on the hourly loop</div></div>
-          </div>
-        </div>
-        <div class="scroll-hint" aria-hidden="true">Scroll to play</div>
+    <!-- ===== HERO ===== -->
+    <section class="hero" aria-label="Introduction">
+      <p class="eyebrow">Senior Engineer, Enterprise AI · Mediacorp · Singapore</p>
+      <h1 class="title">Zhang <span class="grad-text">Cheng</span></h1>
+      <p class="hero-sub">I don't just use AI — <b>I direct it.</b> Agents I command draw the manga,
+        trade a live desk, and build the 3D campus below. Three things live on this page.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#manga">Read the manga</a>
+        <a class="btn btn-ghost" href="#projects">See the projects</a>
       </div>
+      <div class="hero-stats">
+        <div class="hstat"><div class="v">7 chapters</div><div class="k">manga published here</div></div>
+        <div class="hstat"><div class="v">3 bots · 24/7</div><div class="k">autonomous trading desk</div></div>
+        <div class="hstat"><div class="v">~20</div><div class="k">GenAI rollouts at Mediacorp</div></div>
+        <div class="hstat"><div class="v">0</div><div class="k">humans on the hourly loop</div></div>
+      </div>
+      <p class="scroll-hint" aria-hidden="true">Scroll</p>
     </section>
 
-    <!-- ===== FLAGSHIP — LIVE TRADING DESK ===== -->
-    <section class="wrap" id="desk">
-      <div class="sec-head reveal"><span class="sec-index">01</span><h2>Live Trading Desk</h2></div>
-      <p class="sec-sub reveal">The flagship: three AI trading bots, two Alpaca paper accounts, and
-         <b>nobody on the hourly loop</b>. Real strategies, fake dollars, honest numbers.</p>
+    <!-- ===== 01 · MANGA ===== -->
+    <section class="slab" id="manga">
+      <div class="sec-head reveal"><span class="sec-index">01</span><h2>Manga</h2></div>
+      <p class="sec-sub reveal">Three series, seven chapters, <b>241 pages and panels</b> — all AI-drawn and
+        agent-written, published here. Frozen character sheets and one locked style string keep every
+        page consistent. Pick a chapter.</p>
 
-      <div class="desk reveal">
-        <div class="desk-grid">
+      <article class="series reveal">
+        <div class="series-head">
           <div>
-            <span class="live"><i></i>Live · 24/7 · fires 5 past every hour</span>
-            <h3><span class="grad-up">Crypto Bot</span> — autonomous, segregated, always on</h3>
-            <p class="blurb">Its own $1M paper account, its own keys, its own schedule. Trend-filtered RSI mean
-               reversion on BTC/USD and ETH/USD, sizing every entry at 15% of equity, trading around a permanent
-               ~$500k core it is never allowed to touch. Six independent risk gates sit between every signal and
-               the broker.</p>
-            <div class="desk-stats">
-              <div class="stat">
-                <div class="k">Account equity</div>
-                <div class="v">$<span class="count" data-to="1007016">1,007,016</span></div>
-                <div class="d up">&#9650; +$7,016 · +0.70%</div>
-              </div>
-              <div class="stat">
-                <div class="k">Open positions</div>
-                <div class="v"><span class="count" data-to="23">23</span></div>
-                <div class="d">BTC · ETH · 26-coin alt sleeve</div>
-              </div>
-              <div class="stat">
-                <div class="k">Untouchable core</div>
-                <div class="v">$<span class="count" data-to="500000">500,000</span></div>
-                <div class="d">70/30 BTC/ETH · never sold</div>
-              </div>
-              <div class="stat">
-                <div class="k">Humans in the loop</div>
-                <div class="v">0</div>
-                <div class="d">a watchdog agent audits it</div>
-              </div>
-            </div>
-            <div class="foot">
-              <span class="chip">RSI &lt;30 buy</span><span class="chip">&gt;55 sell</span>
-              <span class="chip">15% equity/entry</span><span class="chip">Alpaca API</span>
-              <span class="chip">Agent routines</span>
-            </div>
-            <div class="cta" style="justify-content:flex-start;margin-top:0">
-              <a class="btn btn-live" href="trading/">Open the trading desk</a>
-              <a class="btn btn-ghost" href="https://github.com/zhangcheng0605/alpaca-paper-trading-shareout" target="_blank" rel="noopener">Source on GitHub</a>
-            </div>
-            <p class="asof">as of <b>2026-07-17 21:20 UTC</b> · live since <b>2026-07-14</b> ·
-               <b>100% paper money</b> — real strategies, fake dollars, honest numbers.</p>
+            <p class="badge">Ongoing · psychological office manga · 191 panels</p>
+            <h3>SEEN</h3>
+            <p class="logline">Ethan Cole is the guy everyone likes. One Monday he can hear every thought in
+              the building, and above every head floats that person's lifetime lie count. It should make him
+              unstoppable. It doesn't — because he can't use any of it without revealing how he knows.</p>
           </div>
-          <div class="desk-chart" aria-hidden="true">
-            <svg viewBox="0 0 320 216" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <linearGradient id="eqfill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="#7fd6b2" stop-opacity=".30"/>
-                  <stop offset="100%" stop-color="#7fd6b2" stop-opacity="0"/>
-                </linearGradient>
-              </defs>
-              <rect x="0" y="150" width="320" height="66" rx="8" fill="rgba(233,180,85,.10)"/>
-              <text x="10" y="196" fill="#b5ac93" font-size="9" font-family="monospace">$500k BTC/ETH core — never sold</text>
-              <line x1="0" y1="150" x2="320" y2="150" stroke="rgba(233,180,85,.3)" stroke-width="1"/>
-              <path d="M0,118 C42,112 76,116 108,104 S168,84 202,90 S262,62 320,44"
-                    fill="none" stroke="rgba(244,238,218,.18)" stroke-width="1.4" stroke-dasharray="5 4"/>
-              <text x="238" y="38" fill="#b5ac93" font-size="9" font-family="monospace">200d MA</text>
-              <path d="M0,112 C30,104 58,110 88,96 S140,66 168,78 S214,52 250,44 S292,30 320,24 L320,150 L0,150 Z"
-                    fill="url(#eqfill)"/>
-              <path d="M0,112 C30,104 58,110 88,96 S140,66 168,78 S214,52 250,44 S292,30 320,24"
-                    fill="none" stroke="#7fd6b2" stroke-width="2.2" stroke-linecap="round"/>
-              <circle cx="88" cy="96" r="4.5" fill="#7fd6b2"/>
-              <text x="52" y="86" fill="#7fd6b2" font-size="9" font-family="monospace">dip in uptrend</text>
-              <circle cx="320" cy="24" r="4" fill="#b9f0d6"/>
-              <text x="196" y="18" fill="#b9f0d6" font-size="9" font-family="monospace">+0.70% since launch</text>
-            </svg>
-            <p class="cap">crypto account equity · Jul 14 &#8594; Jul 17 · paper</p>
-          </div>
+          <a class="btn btn-ghost" href="seen/">Start reading</a>
         </div>
-      </div>
+        <div class="thumbs">
+          <a class="chapter" href="seen/">
+            <span class="thumb wide"><img src="seen/p01_01.jpg" alt="SEEN chapter 1, opening panel" loading="lazy" width="1024" height="576"></span>
+            <span class="meta"><b>CH.1</b><span class="t">Good Morning, Everyone</span><span class="n">41 panels</span></span>
+          </a>
+          <a class="chapter" href="seen2/">
+            <span class="thumb wide"><img src="seen2/c2_p01_01.jpg" alt="SEEN chapter 2, opening panel" loading="lazy" width="1300" height="732"></span>
+            <span class="meta"><b>CH.2</b><span class="t">After Hours</span><span class="n">69 panels</span></span>
+          </a>
+          <a class="chapter" href="seen3/">
+            <span class="thumb wide"><img src="seen3/c3_p01_01.jpg" alt="SEEN chapter 3, opening panel" loading="lazy" width="1254" height="1254"></span>
+            <span class="meta"><b>CH.3</b><span class="t">Deeper</span><span class="n">81 panels</span><span class="new">NEW</span></span>
+          </a>
+        </div>
+      </article>
+
+      <article class="series reveal">
+        <div class="series-head">
+          <div>
+            <p class="badge">Ongoing · neon-noir urban fantasy · 40 pages</p>
+            <h3>Witch of the Vending Machines</h3>
+            <p class="logline">Somewhere in Tokyo's back streets there is a vending machine that wasn't there
+              yesterday. It doesn't take money — it takes honesty. A wish at a time, and every fulfilled wish
+              leaves someone working the night shift.</p>
+          </div>
+          <a class="btn btn-ghost" href="comic/">Start reading</a>
+        </div>
+        <div class="thumbs">
+          <a class="chapter" href="comic/">
+            <span class="thumb tall"><img src="comic/page01.jpg" alt="Witch of the Vending Machines chapter 1, first page" loading="lazy" width="1024" height="1536"></span>
+            <span class="meta"><b>CH.1</b><span class="t">Where It Begins</span><span class="n">12 pages</span></span>
+          </a>
+          <a class="chapter" href="comic2/">
+            <span class="thumb tall"><img src="comic2/page01.jpg" alt="Witch of the Vending Machines chapter 2, first page" loading="lazy" width="1400" height="2100"></span>
+            <span class="meta"><b>CH.2</b><span class="t">Exact Change</span><span class="n">14 pages</span></span>
+          </a>
+          <a class="chapter" href="comic3/">
+            <span class="thumb tall"><img src="comic3/page01.jpg" alt="Witch of the Vending Machines chapter 3, first page" loading="lazy" width="1400" height="2100"></span>
+            <span class="meta"><b>CH.3</b><span class="t">No Refunds</span><span class="n">14 pages</span><span class="new">NEW</span></span>
+          </a>
+        </div>
+      </article>
+
+      <article class="series reveal">
+        <div class="series-head">
+          <div>
+            <p class="badge">One-shot · black &amp; white manga · 10 pages</p>
+            <h3>Born Rich</h3>
+            <p class="logline">What if I'd been born stupid rich? From a chauffeured school run to the
+              chairman's office — a manga about the other timeline. Same face, aging page by page.</p>
+          </div>
+          <a class="btn btn-ghost" href="rich/">Read the one-shot</a>
+        </div>
+        <div class="thumbs">
+          <a class="chapter" href="rich/">
+            <span class="thumb tall"><img src="rich/page01.jpg" alt="Born Rich, first page" loading="lazy" width="1024" height="1536"></span>
+            <span class="meta"><b>ONE-SHOT</b><span class="t">Born Rich</span><span class="n">10 pages</span></span>
+          </a>
+        </div>
+      </article>
     </section>
 
-    <!-- ===== PROJECTS — categorized for the hiring eye ===== -->
-    <section class="wrap" id="projects">
-      <div class="sec-head reveal"><span class="sec-index">02</span><h2>Selected Work</h2></div>
-      <p class="sec-sub reveal">Real, shipped systems — not demos. Grouped by what they prove:
-        <b>autonomy</b>, <b>engineering rigor</b>, and <b>creative range</b>.</p>
+    <!-- ===== 02 · PROJECTS ===== -->
+    <section class="slab" id="projects">
+      <div class="sec-head reveal"><span class="sec-index">02</span><h2>Projects</h2></div>
+      <p class="sec-sub reveal">Three things you can open right now — a game, a live trading desk, and a
+        city block. <b>All three were built by AI agents under my direction</b>, and each one has its own
+        page with the honest details.</p>
 
-      <p class="cat reveal">Autonomous Systems</p>
-      <div class="grid">
-        <article class="card reveal">
-          <p class="tag">24/7 · production paper account</p>
-          <h3>Crypto Trading Bot</h3>
-          <p>Fully segregated $1M account traded around a permanent BTC/ETH core. Trend-filtered RSI mean
-             reversion with tagged book isolation — it can only ever sell what it bought itself.</p>
-          <p class="metric">+0.70% since launch · 0 humans · fires every hour</p>
-          <div class="foot"><span class="chip">Python</span><span class="chip">Alpaca API</span><span class="chip">Agent routines</span></div>
+      <div class="tiles">
+        <article class="tile reveal">
+          <p class="tag">Playable · browser game</p>
+          <h3>Games</h3>
+          <p><b>Prompt Injection</b> — hostile prompts descend toward your context window and you are the
+            alignment layer. One model wrote the full design document; a second built it as nine modules
+            in parallel, then other agents verified it.</p>
+          <p class="metric">5,555 lines · one file · 0 humans coding</p>
+          <div class="foot"><span class="chip">Canvas 2D</span><span class="chip">Multi-agent build</span><span class="chip">Procedural art &amp; audio</span></div>
+          <a class="link" href="prompt-injection/">Play it</a>
+        </article>
+
+        <article class="tile reveal">
+          <p class="tag"><span class="live"><i></i>Live</span> · paper money</p>
+          <h3>Stock Trading Project</h3>
+          <p>Three autonomous bots on two Alpaca paper accounts: a crypto bot trading around a permanent
+            $500k BTC/ETH core, an hourly stock bot, and a daily 2&sigma; dip scanner. Six independent risk
+            gates, and a watchdog agent auditing the other agents.</p>
+          <p class="metric">$1.1M paper capital · fires 5 past every hour · 0 humans in the loop</p>
+          <div class="foot"><span class="chip">Python</span><span class="chip">Alpaca API</span><span class="chip">Risk engine</span></div>
           <a class="link" href="trading/">Open the desk</a>
         </article>
-        <article class="card reveal">
-          <p class="tag">Hourly + daily stock bots</p>
-          <h3>RSI Bot &amp; Dip Scanner</h3>
-          <p>An hourly oversold-reversal bot on TSLA/NVDA/PLTR, and a daily scanner hunting 2&sigma; dips across a
-             ~150-name universe — volatility-sized entries, stops, and time-stops, all selected by tournament backtest.</p>
-          <p class="metric">winner of an 11-strategy tournament</p>
-          <div class="foot"><span class="chip">Backtesting</span><span class="chip">Statistics</span><span class="chip">Risk sizing</span></div>
-          <a class="link" href="trading/#bots">Meet the bots</a>
-        </article>
-        <article class="card reveal">
-          <p class="tag">Autonomous brakes</p>
-          <h3>Risk Engine &amp; Watchdog</h3>
-          <p>Six independent gates — drawdown kill switch, cash floor, position caps, order caps — plus a watchdog
-             agent that audits the other agents every two hours and can re-fire a missed schedule on its own.</p>
-          <p class="metric">guards the guards · escalates to the human</p>
-          <div class="foot"><span class="chip">risk.py</span><span class="chip">Stateless checks</span><span class="chip">Alerting</span></div>
-          <a class="link" href="trading/#risk">See the gates</a>
+
+        <article class="tile reveal">
+          <p class="tag">Interactive · three.js</p>
+          <h3>3D Campus</h3>
+          <p>A media campus that assembles itself as you scroll — ground, podium, cores, drums, hull, roof,
+            trees. Every mesh is written in code and every texture is painted into a canvas at runtime:
+            no model files, no image files. Change the hour, then export the whole thing as GLB.</p>
+          <p class="metric">578 meshes · 51k triangles · 0 assets downloaded</p>
+          <div class="foot"><span class="chip">three.js</span><span class="chip">Procedural geometry</span><span class="chip">GLB / OBJ export</span></div>
+          <a class="link" href="campus/">Build the campus</a>
         </article>
       </div>
 
-      <p class="cat reveal">Agentic Engineering</p>
-      <div class="grid">
-        <article class="card reveal">
-          <p class="tag">Meta · this very site</p>
-          <h3>Agent-Built Website</h3>
-          <p>Designed, coded, verified, and deployed end-to-end by AI agents — including driving a real browser
-             to push to production. Design systems, image pipelines, QA, accessibility passes: agent-run,
-             human-directed.</p>
-          <p class="metric">idea &#8594; production in one session</p>
-          <div class="foot"><span class="chip">Browser automation</span><span class="chip">GitHub Pages</span><span class="chip">Design systems</span></div>
-          <a class="link" href="#process">How it works</a>
-        </article>
-        <article class="card reveal">
-          <p class="tag">Self-auditing research</p>
-          <h3>Strategy Tournament Pipeline</h3>
-          <p>Monthly backtest tournaments with an in-sample <i>and</i> out-of-sample promotion rule — plus a public
-             postmortem where I document the pipeline's own statistical defects rather than hide them.</p>
-          <p class="metric">a number you haven't tried to break isn't evidence</p>
-          <div class="foot"><span class="chip">Backtesting</span><span class="chip">Promotion rules</span><span class="chip">Honest stats</span></div>
-          <a class="link" href="trading/#postmortem">Read the postmortem</a>
-        </article>
-        <article class="card reveal">
-          <p class="tag">One HTML file &middot; zero human code</p>
-          <h3>OneSheet</h3>
-          <p>A real spreadsheet in a single offline file — a Pratt-parsed formula engine, an incremental
-             dependency graph, a virtualised grid over 3.5M cells, and genuine .xlsx import. One agent wrote
-             the spec, another built every line of it.</p>
-          <p class="metric">~45 functions &middot; 260 KB &middot; 0 frameworks</p>
-          <div class="foot"><span class="chip">Formula engine</span><span class="chip">Dependency graph</span><span class="chip">Vanilla JS</span></div>
-          <a class="link" href="onesheet/">Open the sheet</a>
-        </article>
-      </div>
-
-      <p class="cat reveal">Playable</p>
-      <div class="grid">
-        <article class="card reveal">
-          <p class="tag">Playable &middot; planned by one model, built by another</p>
-          <h3>Prompt Injection &mdash; A Game</h3>
-          <p>One model wrote the design document &mdash; enemy speeds, difficulty curves, every animation. A second
-             model built it as nine modules written <i>in parallel</i>, then verified by other agents.</p>
-          <p class="metric">5,555 lines &middot; one file &middot; 0 humans coding</p>
-          <div class="foot"><span class="chip">Canvas 2D</span><span class="chip">Multi-agent build</span><span class="chip">Procedural art &amp; audio</span></div>
-          <a class="link" href="prompt-injection/">Play it in your browser</a>
-        </article>
-      </div>
-
-      <p class="cat reveal">Generative Media</p>
-      <div class="grid">
-        <article class="card reveal">
-          <p class="tag">Production pipeline</p>
-          <h3>AI Comic Factory</h3>
-          <p>A full production line: an agent writes the story and panel scripts, an image model renders consistent
-             pages via frozen character sheets and one locked style string, and an agent composites, optimizes, and
-             publishes to this site.</p>
-          <p class="metric">3 series · 300+ panels · consistent characters</p>
-          <div class="foot"><span class="chip">Prompt systems</span><span class="chip">Image generation</span><span class="chip">Async pipelines</span></div>
-          <a class="link" href="#stories">Read the results</a>
-        </article>
-      </div>
+      <p class="aside reveal">Also here: <b>OneSheet</b> — a real spreadsheet in a single offline HTML file,
+        with a Pratt-parsed formula engine and a virtualised grid over 3.5M cells.
+        <a href="onesheet/">Open the sheet</a></p>
     </section>
 
-    <!-- ===== INTERLUDE — golden gate ===== -->
-    <section class="cinema-sec" style="height:220svh" aria-label="Cinematic interlude">
-      <div class="sticky">
-        <canvas class="cinema" data-src="assets/film/gate/f%04d.webp?v=2" data-src-sm="assets/film/gate-sm/f%04d.webp" data-frames="100" data-poster="0.5" data-lazy="1" aria-hidden="true"></canvas>
-        <div class="shade" aria-hidden="true"></div>
-        <div class="band-content">
-          <p class="band-quote reveal">Directed by a human.<br><em>Built by an army of agents.</em></p>
-          <p class="band-sub reveal">Every system on this site runs itself — and reports back.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== STORIES ===== -->
-    <section class="wrap" id="stories">
-      <div class="sec-head reveal"><span class="sec-index">03</span><h2>Original Stories</h2></div>
-      <p class="sec-sub reveal">100% AI-drawn, agent-written, published here. Locked character sheets and one
-        style string keep every panel consistent.</p>
-      <article class="series comic-feature reveal">
-        <div class="series-cover"><img src="seen3/c3_p16_02.jpg" alt="SEEN — corporate manga series cover" loading="lazy" width="971" height="1619"></div>
-        <div>
-          <p class="badge">Ongoing series · Psychological office manga · 191 panels</p>
-          <h3>SEEN</h3>
-          <p class="logline">Ethan Cole is the guy everyone likes. One Monday he can hear every thought in the
-             building, and above every head floats that person's lifetime lie count. It should make him
-             unstoppable. It doesn't — because he can't use any of it without revealing how he knows.</p>
-          <div class="ch-list">
-            <a class="chapter" href="seen/"><b>CH.1</b><span class="t">Good Morning, Everyone</span><span class="n">41 panels</span></a>
-            <a class="chapter" href="seen2/"><b>CH.2</b><span class="t">After Hours</span><span class="n">69 panels</span></a>
-            <a class="chapter" href="seen3/"><b>CH.3</b><span class="t">Deeper</span><span class="n">81 panels</span><span class="new">NEW</span></a>
-          </div>
-          <a class="btn btn-primary" href="seen/">Start reading</a>
-        </div>
-      </article>
-
-      <article class="series comic-feature flip reveal">
-        <div class="series-cover"><img src="comic3/page01.jpg" alt="Witch of the Vending Machines — neon-noir comic cover" loading="lazy" width="1400" height="2100"></div>
-        <div>
-          <p class="badge">Ongoing series · Neon-noir urban fantasy · 40 pages</p>
-          <h3>Witch of the Vending Machines</h3>
-          <p class="logline">Somewhere in Tokyo's back streets there is a vending machine that wasn't there
-             yesterday. It doesn't take money — it takes honesty. A wish at a time, and every fulfilled wish
-             leaves someone working the night shift.</p>
-          <div class="ch-list">
-            <a class="chapter" href="comic/"><b>CH.1</b><span class="t">Where It Begins</span><span class="n">12 pages</span></a>
-            <a class="chapter" href="comic2/"><b>CH.2</b><span class="t">Exact Change</span><span class="n">14 pages</span></a>
-            <a class="chapter" href="comic3/"><b>CH.3</b><span class="t">No Refunds</span><span class="n">14 pages</span><span class="new">NEW</span></a>
-          </div>
-          <a class="btn btn-primary" href="comic/">Start reading</a>
-        </div>
-      </article>
-
-      <article class="series comic-feature reveal">
-        <div class="series-cover"><img src="rich/page01.jpg" alt="Born Rich — black and white manga one-shot cover" loading="lazy" width="1024" height="1536"></div>
-        <div>
-          <p class="badge">One-shot · Black &amp; white manga · 10 pages</p>
-          <h3>Born Rich</h3>
-          <p class="logline">What if I'd been born stupid rich? From a chauffeured school run to the chairman's
-             office — a manga about the other timeline. Same face, aging page by page.</p>
-          <a class="btn btn-primary" href="rich/">Read the one-shot</a>
-        </div>
-      </article>
-    </section>
-
-    <!-- ===== CAPABILITIES ===== -->
-    <section class="wrap" id="capabilities">
-      <div class="sec-head reveal"><span class="sec-index">04</span><h2>Capabilities</h2></div>
-      <p class="sec-sub reveal">The stack behind the systems above — every item is exercised by something
-        live on this site.</p>
-      <div class="caps">
-        <div class="cap-card reveal">
-          <h3>AI &amp; Agents</h3>
-          <div class="chips">
-            <span class="chip">Agent orchestration</span><span class="chip">MCP connectors</span>
-            <span class="chip">RAG &amp; vector databases</span><span class="chip">LLM evaluation</span>
-            <span class="chip">Prompt systems</span><span class="chip">Image-gen pipelines</span>
-            <span class="chip">OpenAI · Claude · Codex</span>
-          </div>
-        </div>
-        <div class="cap-card reveal">
-          <h3>Engineering &amp; Operations</h3>
-          <div class="chips">
-            <span class="chip">Python</span><span class="chip">JavaScript</span>
-            <span class="chip">n8n workflows</span><span class="chip">Jira SM automation</span>
-            <span class="chip">Browser automation</span><span class="chip">Incident response</span>
-            <span class="chip">ERP integration</span>
-          </div>
-        </div>
-        <div class="cap-card reveal">
-          <h3>Trading &amp; Data</h3>
-          <div class="chips">
-            <span class="chip">Alpaca API</span><span class="chip">Backtesting</span>
-            <span class="chip">Risk management</span><span class="chip">Statistics</span>
-            <span class="chip">Big data (Hadoop/Hive)</span><span class="chip">Honest reporting</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== EXPERIENCE ===== -->
-    <section class="wrap" id="experience">
-      <div class="sec-head reveal"><span class="sec-index">05</span><h2>Experience</h2></div>
+    <!-- ===== 03 · EXPERIENCE ===== -->
+    <section class="slab" id="experience">
+      <div class="sec-head reveal"><span class="sec-index">03</span><h2>Experience</h2></div>
       <p class="sec-sub reveal">Six years of shipping enterprise systems and driving AI adoption —
         <b>Singapore-based</b>, fully fluent in English and native Mandarin.</p>
 
@@ -699,6 +498,34 @@
         </div>
       </div>
 
+      <p class="cat reveal">Capabilities</p>
+      <div class="caps">
+        <div class="cap-card reveal">
+          <h4>AI &amp; Agents</h4>
+          <div class="chips">
+            <span class="chip">Agent orchestration</span><span class="chip">MCP connectors</span>
+            <span class="chip">RAG &amp; vector databases</span><span class="chip">LLM evaluation</span>
+            <span class="chip">Prompt systems</span><span class="chip">Image-gen pipelines</span>
+          </div>
+        </div>
+        <div class="cap-card reveal">
+          <h4>Engineering &amp; Operations</h4>
+          <div class="chips">
+            <span class="chip">Python</span><span class="chip">JavaScript</span>
+            <span class="chip">n8n workflows</span><span class="chip">Jira SM automation</span>
+            <span class="chip">Browser automation</span><span class="chip">Incident response</span>
+          </div>
+        </div>
+        <div class="cap-card reveal">
+          <h4>Trading &amp; Data</h4>
+          <div class="chips">
+            <span class="chip">Alpaca API</span><span class="chip">Backtesting</span>
+            <span class="chip">Risk management</span><span class="chip">Statistics</span>
+            <span class="chip">Big data (Hadoop/Hive)</span><span class="chip">Honest reporting</span>
+          </div>
+        </div>
+      </div>
+
       <blockquote class="quote reveal">
         <p>"Zac is a genuinely thoughtful engineer. At Mediacorp, he has been closely involved in AI
            engineering and solutioning — building AI agents, integrating them into real workflows, and
@@ -707,62 +534,23 @@
       </blockquote>
     </section>
 
-    <!-- ===== PROCESS ===== -->
-    <section class="wrap" id="process">
-      <div class="sec-head reveal"><span class="sec-index">06</span><h2>How it's made</h2></div>
-      <p class="sec-sub reveal">The honest pipeline — shared openly, because directing AI well is the actual skill.</p>
-      <div class="steps">
-        <div class="step reveal">
-          <div class="step-num">I</div>
-          <div><h3>Direct, don't micromanage</h3>
-          <p>I give the agent intent and constraints — <code>"anime comic, my website, make it live"</code> — and approve
-             at checkpoints: storyline, art style, publish. High-level direction, verifiable outcomes.</p></div>
-        </div>
-        <div class="step reveal">
-          <div class="step-num">II</div>
-          <div><h3>Lock the creative system</h3>
-          <p>Consistency comes from engineering: frozen character sheets and one style string injected verbatim
-             into every image-generation call.</p></div>
-        </div>
-        <div class="step reveal">
-          <div class="step-num">III</div>
-          <div><h3>Build resilient pipelines</h3>
-          <p>Async background jobs for parallel renders, polling within sandbox timeouts, automatic retries,
-             web-optimized output (35MB &#8594; 5MB). When the environment fights back, the pipeline adapts.</p></div>
-        </div>
-        <div class="step reveal">
-          <div class="step-num">IV</div>
-          <div><h3>Ship autonomously, verify ruthlessly</h3>
-          <p>The agent drives a real browser to commit to GitHub, then verifies the live URL, the rendered DOM,
-             and the pixels before calling it done. No deploy is "done" until production says so.</p></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== CONTACT — vanguard band ===== -->
-    <section class="cinema-sec" id="contact" style="height:200svh" aria-label="Contact">
-      <div class="sticky">
-        <canvas class="cinema" data-src="assets/film/vanguard/f%04d.webp?v=2" data-src-sm="assets/film/vanguard-sm/f%04d.webp" data-frames="60" data-poster="0.6" data-lazy="1" aria-hidden="true"></canvas>
-        <div class="shade" aria-hidden="true"></div>
-        <div class="band-content">
-          <div class="contact-inner">
-            <h2 class="reveal">Let's build the <span class="grad-text">next thing.</span></h2>
-            <p class="reveal">Looking for someone who can turn AI capability into shipped product?
-              The vanguard is already marching.</p>
-            <a class="email reveal" href="mailto:zhangcheng1997@gmail.com"><span class="grad-text">zhangcheng1997@gmail.com</span></a>
-            <div class="socials reveal">
-              <a href="https://www.linkedin.com/in/zhangcheng1997" target="_blank" rel="noopener">LinkedIn</a>
-              <a href="https://github.com/zhangcheng0605" target="_blank" rel="noopener">GitHub</a>
-              <a href="trading/">Live trading desk</a>
-            </div>
-          </div>
-        </div>
+    <!-- ===== CONTACT ===== -->
+    <section class="slab slab-contact" id="contact">
+      <h2 class="reveal">Let's build the <span class="grad-text">next thing.</span></h2>
+      <p class="reveal">Looking for someone who can turn AI capability into shipped product?
+        The vanguard is already marching.</p>
+      <a class="email reveal" href="mailto:zhangcheng1997@gmail.com"><span class="grad-text">zhangcheng1997@gmail.com</span></a>
+      <div class="socials reveal">
+        <a href="https://www.linkedin.com/in/zhangcheng1997" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://github.com/zhangcheng0605" target="_blank" rel="noopener">GitHub</a>
+        <a href="trading/">Live trading desk</a>
+        <a href="campus/">3D campus</a>
       </div>
     </section>
   </main>
 
   <footer>
-    <p>&#169; <span id="year"></span> Zhang Cheng · Directed by a human, built by AI ·
+    <p>&#169; <span id="year">2026</span> Zhang Cheng · Directed by a human, built by AI ·
        AI agents &#215; AI image generation · GitHub Pages</p>
   </footer>
 
@@ -772,48 +560,6 @@
       entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target); } });
     },{threshold:.12});
     document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-
-    /* count-up on the live desk stats */
-    (function(){
-      const els = [...document.querySelectorAll('.count')];
-      if (!els.length) return;
-      const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const fmt = n => Math.round(n).toLocaleString('en-US');
-      if (reduce){ els.forEach(el => el.textContent = fmt(+el.dataset.to)); return; }
-      const cio = new IntersectionObserver(es => es.forEach(e => {
-        if (!e.isIntersecting || document.hidden) return;
-        cio.unobserve(e.target);
-        const el = e.target, to = +el.dataset.to, D = 1500;
-        let t0 = null;
-        requestAnimationFrame(function step(t){
-          if (t0 === null) t0 = t;
-          const k = Math.min(1, (t - t0) / D);
-          el.textContent = fmt(to * (1 - Math.pow(1 - k, 3)));
-          if (k < 1) requestAnimationFrame(step);
-          else el.textContent = fmt(to);
-        });
-      }), {threshold:.4});
-      els.forEach(el => cio.observe(el));
-    })();
-
-    /* hero content gently fades as its band plays out */
-    (function(){
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-      const sec = document.getElementById('hero');
-      const content = document.getElementById('heroContent');
-      let ticking = false;
-      addEventListener('scroll', () => {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(() => {
-          const r = sec.getBoundingClientRect();
-          const total = r.height - innerHeight;
-          const p = Math.max(0, Math.min(1, -r.top / total));
-          content.style.opacity = String(Math.max(0, 1 - Math.max(0, p - .55) * 3.2));
-          ticking = false;
-        });
-      }, { passive: true });
-    })();
   </script>
   <script src="assets/cinema.js" defer></script>
   <script src="assets/fx.js" defer></script>

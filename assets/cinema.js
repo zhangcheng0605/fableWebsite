@@ -1,9 +1,14 @@
-/* cinema.js — scroll-scrubbed film bands.
+/* cinema.js — film bands, scrubbed or looping.
    Each <canvas class="cinema" data-src="assets/film/city/f%04d.jpg" data-frames="140">
    sits inside a position:sticky wrapper inside a tall section. The section's
    scroll progress is the film's timeline: scrolling plays the shot forward,
    scrolling up rewinds it. Frames are JPEG stills drawn to canvas — frame-exact
    scrubbing in both directions, no <video> seek jank.
+
+   data-loop="12" switches a band from scrubbing to playing on its own, at that
+   many frames per second — used for the page background, which is a fixed
+   canvas rather than a sticky band. Playback ping-pongs (forward, then back)
+   so footage that wasn't cut as a loop still has no visible seam.
 
    Smoothness + sharpness strategy:
    - responsive source: data-src-sm (1080w) on small viewports, data-src (2304w) otherwise
@@ -42,6 +47,9 @@
       target: 0,
       drawn: -1,
       visible: false,
+      loopFps: parseFloat(canvas.dataset.loop) || 0,
+      pos: 0,
+      last: 0,
       poster: Math.floor(N * (parseFloat(canvas.dataset.poster) || 0)),
       url: function (i) {
         return src.replace(/%0(\d)d/, function (_, w) {
@@ -140,9 +148,28 @@
     return Math.max(0, Math.min(1, -r.top / total));
   }
 
+  /* Self-playing band: advance by wall-clock time and ping-pong at the ends.
+     dt is clamped so returning to a backgrounded tab resumes where it left
+     off instead of jumping a thousand frames. */
+  function advance(band, now) {
+    var dt = band.last ? Math.min((now - band.last) / 1000, 0.1) : 0;
+    band.last = now;
+    band.pos += dt * band.loopFps;
+    var cycle = Math.max(1, (band.N - 1) * 2);
+    var f = band.pos % cycle;
+    band.shown = f <= band.N - 1 ? f : cycle - f;
+    band.target = band.shown;
+  }
+
   function tick() {
+    var now = performance.now();
     bands.forEach(function (band) {
       if (!band.visible) return;
+      if (band.loopFps) {
+        advance(band, now);
+        draw(band, nearest(band, Math.round(band.shown)));
+        return;
+      }
       band.target = progress(band) * (band.N - 1);
       band.shown += (band.target - band.shown) * 0.16;
       if (Math.abs(band.target - band.shown) < 0.01) band.shown = band.target;
