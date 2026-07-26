@@ -4,20 +4,18 @@ A fast, dependency-free personal website. Plain HTML/CSS/JS — no build step, n
 
 ## Structure
 
-The landing page is three blocks over a looping film: **manga**, **projects**, **experience**.
-Each project keeps its own page and its own detail.
+The landing page is three full-width blocks on a bright candy-neon theme: **manga**,
+**projects**, **experience**. Each project keeps its own page and its own detail.
 
-- `index.html` — the landing page: hero, `#manga` (every series and chapter, with thumbnails),
-  `#projects` (the three tiles), `#experience`, `#contact`. Styles and scripts inlined.
-- `assets/cinema.js` — the film engine. A `<canvas class="cinema">` with `data-src`/`data-frames`
-  either **scrubs** with scroll (frame-exact in both directions, no `<video>` seek jank) or, with
-  `data-loop="12"`, **plays itself** at that many fps. The landing page uses the loop mode for its
-  fixed background and ping-pongs the shot so unlooped footage has no seam. Frames load
-  progressively (every 8th first), pre-decode off the main thread, and reduced motion gets a
-  single still.
-- `assets/film/` — the frame sequences (`city`, `gate`, `vanguard`, each with a `-sm` 1080-wide
-  variant). The background loop uses `city-sm`: it is on screen the whole time, so weight beats
-  sharpness there.
+- `index.html` — the landing page: hero, rainbow marquee, `#manga` (every series and chapter,
+  with thumbnails), `#projects` (four big cards), `#experience`, `#contact`. Full-bleed bands
+  over an animated aurora background; one dark-violet ink colour for all text. Styles and
+  scripts inlined.
+- `assets/sparkle.js` — the fairy-dust layer: an emoji particle canvas that trails the pointer
+  (or finger), sprinkles on every scroll tick, and drops an occasional ambient sparkle. The
+  rAF loop only runs while particles exist; reduced motion disables the whole file.
+- `assets/cinema.js` + `assets/film/` — the scroll-scrub/loop film engine and frame sequences
+  from the previous dark design. No page uses them right now; kept for easy revert.
 - `assets/fx.js` / `assets/fx.css` — pointer-reactive tilt, glow and magnetic buttons; self-disable
   under reduced motion and on coarse pointers.
 - `campus/` — the 3D campus: a media campus assembled by scroll, written in code rather than

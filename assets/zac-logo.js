@@ -6,8 +6,9 @@
    torus arcs. Three things are tuned for this page rather than the standalone
    embed:
 
-     1. the palette and the lighting are graded to Ink & Lantern (gold, ember,
-        jade over ink) so the mark belongs to the page it sits on
+     1. the palette and the lighting are graded to the page it sits on — now
+        the candy-neon page, so the stamps run pink, purple and cyan over
+        deep-violet panels instead of the old Ink & Lantern gold-over-ink
      2. orbit controls are off and the mark sways on its own axis instead —
         a hero must never eat a scroll, and a wordmark that turns all the way
         around spends half its time backwards
@@ -41,16 +42,18 @@ async function boot() {
 
   const { THREE } = await stage.ready;
 
-  // ===== palette · Ink & Lantern =====
+  // ===== palette · candy-neon (matches the landing page tokens) =====
   const PALETTE = [
-    ['gold-light', 0xf2d789],
-    ['ember', 0xe05a3a],
-    ['jade', 0x7fd6b2],
-    ['lantern-gold', 0xe9b455],
-    ['paper', 0xf4eeda],
+    ['pink', 0xff3fae],
+    ['purple', 0x8b3dff],
+    ['cyan', 0x25c4ff],
+    ['gold', 0xffb020],
+    ['violet', 0x6428d8],
   ];
-  const paperMat = new THREE.MeshStandardMaterial({ color: 0x151a14, roughness: 0.28, metalness: 0.3 });
-  paperMat.name = 'panel-ink';
+  // stamp inner panels stay dark — deep violet, so the neon letters glow on
+  // them the way they did on ink, even though the page behind is light
+  const paperMat = new THREE.MeshStandardMaterial({ color: 0x241145, roughness: 0.28, metalness: 0.3 });
+  paperMat.name = 'panel-violet';
 
   const neonMat = (color, name) => {
     const m = new THREE.MeshStandardMaterial({
@@ -60,18 +63,18 @@ async function boot() {
     return m;
   };
 
-  // Lantern grade: warm paper sky over an ink ground, a gold key, a jade fill
-  // from behind so the silhouettes never close up against the film.
+  // Candy grade: white-pink sky over a lavender ground, a blush key, a cyan
+  // fill from behind so the silhouettes never close up against the aurora.
   {
     const sc = stage._scene;
     const hemi = sc.children.find((o) => o.isHemisphereLight);
-    if (hemi) { hemi.color.setHex(0xfff0d8); hemi.groundColor.setHex(0x101410); hemi.intensity *= 0.9; }
+    if (hemi) { hemi.color.setHex(0xffffff); hemi.groundColor.setHex(0xe8d9ff); hemi.intensity *= 0.95; }
     const dirs = sc.children.filter((o) => o.isDirectionalLight);
-    if (dirs[0]) { dirs[0].color.setHex(0xffd9a0); dirs[0].intensity *= 1.05; }
-    if (dirs[1]) { dirs[1].color.setHex(0x7fd6b2); dirs[1].intensity *= 1.25; }
+    if (dirs[0]) { dirs[0].color.setHex(0xfff0fa); dirs[0].intensity *= 1.05; }
+    if (dirs[1]) { dirs[1].color.setHex(0x9fe4ff); dirs[1].intensity *= 1.25; }
   }
-  // The mark floats over a moving film — a cast shadow would land on nothing
-  // but a dark blob, and the shadow map is the most expensive thing here.
+  // The mark floats over the aurora — a cast shadow would land on nothing,
+  // and the shadow map is the most expensive thing here.
   stage._ground.visible = false;
   stage._renderer.shadowMap.enabled = false;
   // The hero owns the scroll. Sway and pointer parallax replace the orbit.
@@ -325,7 +328,7 @@ async function boot() {
   function spawnPetal(pos) {
     const g = new THREE.Group();
     g.name = 'fx-petal';
-    const cMat = basicMat(0xf2d789);
+    const cMat = basicMat(0xffd166);
     const pMat = basicMat(PALETTE[Math.floor(Math.random() * 5)][1]);
     for (let i = 0; i < 5; i++) {
       const p = new THREE.Mesh(petalGeo, pMat);
@@ -350,10 +353,10 @@ async function boot() {
   function spawnSpark(pos) {
     const g = new THREE.Group();
     g.name = 'fx-spark';
-    const bodyMat = basicMat(0xfff4e4);
-    const wingMat = basicMat(0xf4eeda, 0.8);
+    const bodyMat = basicMat(0xffffff);
+    const wingMat = basicMat(0xfff0fa, 0.8);
     wingMat.side = THREE.DoubleSide;
-    const glowMat = basicMat(Math.random() < 0.5 ? 0xe9b455 : 0xe05a3a, 0.3);
+    const glowMat = basicMat(Math.random() < 0.5 ? 0x8b3dff : 0xff3fae, 0.3);
     g.add(new THREE.Mesh(coreGeo, bodyMat));
     g.add(new THREE.Mesh(glowGeo, glowMat));
     const w1 = new THREE.Mesh(wingGeo, wingMat);
@@ -372,13 +375,13 @@ async function boot() {
     });
   }
 
-  // ambient embers and lantern motes orbiting the mark
+  // ambient glow motes and neon stars orbiting the mark
   const stars = [];
   for (let i = 0; i < 16; i++) {
     const ember = i % 2 === 0;
     const m = new THREE.Mesh(
       ember ? glowGeo : starGeo,
-      basicMat(ember ? (i % 4 ? 0xe9b455 : 0xe05a3a) : PALETTE[i % 5][1], ember ? 0.55 : 0.85),
+      basicMat(ember ? (i % 4 ? 0xffb7e2 : 0x9fe4ff) : PALETTE[i % 5][1], ember ? 0.55 : 0.85),
     );
     m.name = 'fx-mote-' + i;
     if (ember) m.scale.setScalar(0.55);
