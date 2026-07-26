@@ -8,7 +8,7 @@
   <meta property="og:title" content="AI Trading Desk — Zhang Cheng">
   <meta property="og:description" content="Three AI bots, two paper accounts, zero humans on the hourly loop. Real strategies, fake dollars, honest numbers.">
   <meta property="og:type" content="website">
-  <meta name="theme-color" content="#101410">
+  <meta name="theme-color" content="#fdf4ff">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,29 +16,29 @@
   <style>
     :root{
       /* design tokens — shadcn/ui architecture, neon-noir brand */
-      --background:#101410; --foreground:#f4eeda;
-      --card:rgba(244,238,218,.045); --card-foreground:#f4eeda;
-      --muted-bg:rgba(244,238,218,.07); --muted-foreground:#b5ac93;
-      --border:rgba(233,180,85,.16); --input:rgba(233,180,85,.24);
-      --ring:#e9b455;
-      --primary:#e9b455; --primary-foreground:#221604;
-      --accent:#e05a3a; --accent-foreground:#fff4e4;
-      --destructive:#ff6262;
+      --background:#fdf4ff; --foreground:#38235c;
+      --card:#ffffff; --card-foreground:#38235c;
+      --muted-bg:#f3e9ff; --muted-foreground:#38235c;
+      --border:rgba(139,61,255,.20); --input:rgba(139,61,255,.3);
+      --ring:#8b3dff;
+      --primary:#ff3fae; --primary-foreground:#ffffff;
+      --accent:#8b3dff; --accent-foreground:#ffffff;
+      --destructive:#dc2646;
       --radius:18px; --radius-sm:calc(var(--radius)*.6); --radius-lg:calc(var(--radius)*1.25);
       /* legacy vars, remapped onto the token layer */
-      --bg:var(--background); --bg2:#161b14; --panel:var(--card);
+      --bg:var(--background); --bg2:#f3e9ff; --panel:var(--card);
       --edge:var(--border); --text:var(--foreground); --muted:var(--muted-foreground);
-      --cyan:#7fd6b2; --magenta:#e05a3a; --violet:#e9b455;
-      --up:#2fd18a; --down:#ff6262;
+      --cyan:#0779a8; --magenta:#c9106f; --violet:#6428d8;
+      --up:#0d9668; --down:#dc2646;
       /* chart series (CVD-validated on this surface) */
-      --s-bot:#12a0cc; --s-spy:#8471f5; --s-qqq:#d94fa6; --s-frozen:#b08a2e;
-      --grad:linear-gradient(100deg,#f2d789,#e9b455 45%,#e05a3a);
+      --s-bot:#0b7fb0; --s-spy:#6a55e0; --s-qqq:#c23a92; --s-frozen:#96731f;
+      --grad:linear-gradient(95deg,#ef1f96,#7a2df0 46%,#0f9fe0);
     }
     *{margin:0;padding:0;box-sizing:border-box}
     html{scroll-behavior:smooth;scroll-padding-top:96px}
     body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,sans-serif;
          -webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.6}
-    ::selection{background:rgba(233,180,85,.32)}
+    ::selection{background:rgba(255,63,174,.25)}
     a{color:inherit;text-decoration:none}
     :focus-visible{outline:2px solid var(--ring);outline-offset:3px;border-radius:4px}
     .btn:focus-visible,a.chapter:focus-visible,.sib:focus-visible{outline-offset:4px}
@@ -49,20 +49,22 @@
     .mono{font-family:"JetBrains Mono",monospace}
     .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
     .bg{position:fixed;inset:0;z-index:-2;background:
-        radial-gradient(55vw 45vh at 18% -5%,rgba(233,180,85,.08),transparent 62%),
-        radial-gradient(50vw 42vh at 88% 30%,rgba(224,90,58,.06),transparent 60%),
-        radial-gradient(60vw 50vh at 50% 110%,rgba(127,214,178,.07),transparent 65%)}
+        radial-gradient(55vw 45vh at 18% -5%,rgba(255,183,226,.5),transparent 62%),
+        radial-gradient(50vw 42vh at 88% 30%,rgba(178,140,255,.35),transparent 60%),
+        radial-gradient(60vw 50vh at 50% 110%,rgba(126,216,255,.45),transparent 65%),
+        linear-gradient(180deg,#fff4fd,#f4e9ff 45%,#eaf6ff)}
     .gridlines{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
-        background-image:linear-gradient(rgba(255,255,255,.024) 1px,transparent 1px),
-                         linear-gradient(90deg,rgba(255,255,255,.024) 1px,transparent 1px);
+        background-image:linear-gradient(rgba(109,40,217,.05) 1px,transparent 1px),
+                         linear-gradient(90deg,rgba(109,40,217,.05) 1px,transparent 1px);
         background-size:56px 56px;
         mask-image:radial-gradient(70vw 70vh at 50% 20%,#000 0%,transparent 80%)}
 
     /* nav */
     .nav-wrap{position:fixed;top:18px;left:0;right:0;z-index:50;display:flex;justify-content:center;padding:0 20px}
     .nav{display:flex;align-items:center;gap:26px;padding:4px 22px;border-radius:99px;
-         background:rgba(18,20,15,.66);border:1px solid var(--edge);
-         backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+         background:rgba(255,255,255,.88);border:2px solid var(--edge);
+         backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+         box-shadow:0 10px 34px rgba(139,61,255,.14)}
     .nav a{font-size:.92rem;color:var(--muted);font-weight:500;transition:color .2s;white-space:nowrap;padding:8px 2px}
     .nav a:hover{color:var(--text)}
     .logo{font-family:"Playfair Display",serif;font-weight:700;font-size:1.05rem;color:var(--text)!important}
@@ -73,10 +75,10 @@
     .hero{min-height:92svh;display:flex;flex-direction:column;justify-content:center;align-items:center;
           text-align:center;padding:130px 24px 30px;position:relative;overflow:hidden}
     .hero::before{content:"";position:absolute;inset:0;z-index:-2;
-        background:url("../assets/film/still-gate.jpg") center 30%/cover no-repeat;opacity:.34;
+        background:url("../assets/film/still-gate.jpg") center 30%/cover no-repeat;opacity:.16;
         filter:saturate(1.05)}
     .hero::after{content:"";position:absolute;inset:0;z-index:-2;background:
-        linear-gradient(180deg,rgba(16,20,16,.72),rgba(16,20,16,.3) 45%,var(--bg) 96%)}
+        linear-gradient(180deg,rgba(253,244,255,.8),rgba(253,244,255,.45) 45%,var(--bg) 96%)}
     #candles{position:absolute;inset:auto 0 0 0;width:100%;height:46vh;z-index:-1;opacity:.5;
              mask-image:linear-gradient(to top,#000 30%,transparent 95%)}
     .eyebrow{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;
@@ -88,22 +90,22 @@
     .hero-sub{max-width:640px;margin:28px auto 0;color:var(--muted);font-size:clamp(1rem,2.2vw,1.18rem)}
     .hero-sub b{color:var(--text);font-weight:600}
     .paper-badge{display:inline-flex;align-items:center;gap:8px;margin-top:26px;padding:8px 18px;border-radius:99px;
-        border:1px dashed rgba(255,184,77,.55);color:#ffcf87;font-family:"JetBrains Mono",monospace;
-        font-size:.78rem;letter-spacing:.06em;background:rgba(255,184,77,.06)}
-    .paper-badge .lucide{width:18px;height:18px;color:#ffcf87;vertical-align:-3px;flex:none}
+        border:1px dashed rgba(153,111,16,.6);color:#8a5b00;font-family:"JetBrains Mono",monospace;
+        font-size:.78rem;letter-spacing:.06em;background:rgba(255,184,48,.12)}
+    .paper-badge .lucide{width:18px;height:18px;color:#8a5b00;vertical-align:-3px;flex:none}
     .cta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;justify-content:center}
     .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:99px;
          font-weight:600;font-size:.95rem;transition:transform .2s,box-shadow .2s;border:1px solid var(--edge);
          cursor:pointer;min-height:44px}
     .btn:hover{transform:translateY(-2px)}
     .btn:active{transform:translateY(0) scale(.98)}
-    .btn-primary{background:var(--grad);color:#08070c;border:none;box-shadow:0 6px 34px rgba(233,180,85,.35)}
-    .btn-primary:hover{box-shadow:0 10px 44px rgba(233,180,85,.5)}
+    .btn-primary{background:var(--grad);color:#fff;border:none;box-shadow:0 6px 34px rgba(255,63,174,.3)}
+    .btn-primary:hover{box-shadow:0 10px 44px rgba(255,63,174,.42)}
     .btn-ghost{background:var(--panel)}
 
     /* ticker tape */
     .tape-wrap{border-top:1px solid var(--edge);border-bottom:1px solid var(--edge);
-        background:rgba(16,19,14,.72);backdrop-filter:blur(8px);overflow:hidden;padding:10px 0;
+        background:rgba(255,255,255,.82);backdrop-filter:blur(8px);overflow:hidden;padding:10px 0;
         margin-top:auto;width:100%}
     .tape{display:flex;gap:44px;width:max-content;animation:scroll 38s linear infinite}
     .tape-wrap:hover .tape{animation-play-state:paused}
@@ -133,33 +135,33 @@
     .tile .d{font-family:"JetBrains Mono",monospace;font-size:.8rem;margin-top:6px}
     .tile .d.up{color:var(--up)} .tile .d.down{color:var(--down)} .tile .d.flat{color:var(--muted)}
     .asof{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--muted);margin-top:16px}
-    .asof b{color:#ffcf87;font-weight:500}
+    .asof b{color:#8a5b00;font-weight:500}
 
     /* bots */
     .bots{display:grid;gap:20px}
     .bot{border:1px solid var(--edge);border-radius:22px;background:var(--panel);padding:30px;
          display:grid;grid-template-columns:1fr 300px;gap:28px;align-items:center;
          transition:border-color .25s,transform .25s;position:relative;overflow:hidden}
-    .bot:hover{border-color:rgba(233,180,85,.42);transform:translateY(-3px)}
+    .bot:hover{border-color:rgba(255,63,174,.5);transform:translateY(-3px)}
     @media(max-width:800px){.bot{grid-template-columns:1fr}}
     .bot .tag{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px}
     .bot h3{font-family:"Playfair Display",serif;font-size:1.45rem;margin-bottom:4px}
     .bot h3 code{font-family:"JetBrains Mono",monospace;font-size:.85rem;color:var(--magenta);font-weight:500;margin-left:8px}
     .bot p{color:var(--muted);font-size:.95rem;margin-top:10px}
     .bot p code, .rt p code, .risk-card p code{font-family:"JetBrains Mono",monospace;font-size:.82rem;color:var(--cyan);
-        background:rgba(127,214,178,.09);padding:2px 7px;border-radius:6px}
+        background:rgba(7,121,168,.09);padding:2px 7px;border-radius:6px}
     .params{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
     .chip{font-family:"JetBrains Mono",monospace;font-size:.72rem;padding:5px 12px;border-radius:99px;border:1px solid var(--edge);color:var(--muted)}
     .chip b{color:var(--text);font-weight:500}
-    .bot svg{width:100%;height:auto;border-radius:12px;border:1px solid var(--edge);background:rgba(16,19,14,.6)}
+    .bot svg{width:100%;height:auto;border-radius:12px;border:1px solid var(--edge);background:#ffffff}
 
     /* routines */
     .routines{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px}
     .rt{border:1px solid var(--edge);border-radius:var(--radius);background:var(--panel);padding:24px;
         transition:border-color .25s}
-    .rt:hover{border-color:rgba(233,180,85,.38)}
+    .rt:hover{border-color:rgba(255,63,174,.45)}
     .rt .cron{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--violet);
-        border:1px solid rgba(233,180,85,.35);border-radius:8px;padding:4px 10px;margin-bottom:12px}
+        border:1px solid rgba(139,61,255,.35);border-radius:8px;padding:4px 10px;margin-bottom:12px}
     .rt h3{font-family:"Playfair Display",serif;font-size:1.08rem;margin-bottom:6px}
     .rt h3 .lucide{width:20px;height:20px;vertical-align:-4px;margin-right:8px;color:var(--cyan)}
     .rt p{color:var(--muted);font-size:.88rem}
@@ -175,10 +177,10 @@
     .acct .pnl.up{color:var(--up)} .acct .pnl.down{color:var(--down)}
     .acct ul{list-style:none;margin-top:16px;display:grid;gap:8px}
     .acct li{display:flex;justify-content:space-between;font-size:.86rem;color:var(--muted);
-             border-bottom:1px dashed rgba(255,255,255,.07);padding-bottom:8px}
+             border-bottom:1px dashed rgba(56,35,92,.14);padding-bottom:8px}
     .acct li span:last-child{font-family:"JetBrains Mono",monospace;color:var(--text)}
     .acct li span:last-child.up{color:var(--up)} .acct li span:last-child.down{color:var(--down)}
-    .netline{border:1px solid rgba(47,209,138,.35);background:rgba(47,209,138,.05);border-radius:var(--radius);
+    .netline{border:1px solid rgba(13,150,104,.4);background:rgba(13,150,104,.06);border-radius:var(--radius);
         padding:20px 26px;display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:46px}
     .netline .lbl{color:var(--muted);font-size:.9rem}
     .netline .amt{font-family:"Playfair Display",serif;font-weight:700;font-size:1.7rem;color:var(--up);font-variant-numeric:tabular-nums}
@@ -190,7 +192,7 @@
     .chart-card .sub{color:var(--muted);font-size:.85rem;margin-bottom:20px}
     .bench{display:flex;gap:26px;align-items:flex-end;height:230px;padding:0 6px;position:relative}
     .bench .col{flex:1;display:flex;flex-direction:column;align-items:center;height:100%;position:relative}
-    .bench .zero{position:absolute;left:0;right:0;top:26px;border-top:1px solid rgba(255,255,255,.25);z-index:1}
+    .bench .zero{position:absolute;left:0;right:0;top:26px;border-top:1px solid rgba(56,35,92,.3);z-index:1}
     .bench .zero em{position:absolute;right:0;top:-18px;font-style:normal;font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--muted)}
     .bar-slot{position:absolute;top:26px;bottom:56px;left:0;right:0;display:flex;justify-content:center}
     .bar{width:min(58px,60%);border-radius:0 0 4px 4px;transform-origin:top;transform:scaleY(0);
@@ -207,7 +209,7 @@
         opacity:0;transition:opacity .15s;max-width:260px;line-height:1.7}
     .tooltip b{color:var(--cyan)}
     table.data{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:8px}
-    table.data th,table.data td{text-align:left;padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.07)}
+    table.data th,table.data td{text-align:left;padding:9px 12px;border-bottom:1px solid rgba(56,35,92,.12)}
     table.data th{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500}
     table.data td:not(:first-child){font-family:"JetBrains Mono",monospace;font-variant-numeric:tabular-nums}
     td.up{color:var(--up)} td.down{color:var(--down)}
@@ -229,20 +231,20 @@
     .risk-card p{color:var(--muted);font-size:.86rem}
     .risk-card .state{display:inline-block;margin-top:14px;font-family:"JetBrains Mono",monospace;font-size:.7rem;
         padding:4px 11px;border-radius:99px}
-    .state.armed{color:var(--up);border:1px solid rgba(47,209,138,.4)}
+    .state.armed{color:var(--up);border:1px solid rgba(13,150,104,.45)}
     .state.info{color:var(--muted);border:1px solid var(--edge)}
 
     /* terminal */
-    .term{border:1px solid var(--edge);border-radius:14px;overflow:hidden;background:rgba(16,19,14,.78);
-          box-shadow:0 20px 60px rgba(0,0,0,.5);margin-top:26px}
+    .term{border:1px solid var(--edge);border-radius:14px;overflow:hidden;background:#141a13;
+          box-shadow:0 20px 60px rgba(56,35,92,.25);margin-top:26px}
     .term-bar{display:flex;gap:7px;padding:11px 14px;border-bottom:1px solid var(--edge);align-items:center}
     .term-bar i{width:11px;height:11px;border-radius:50%;background:#3a3a46}
     .term-bar i:first-child{background:#ff5f57}.term-bar i:nth-child(2){background:#febc2e}.term-bar i:nth-child(3){background:#28c840}
-    .term-bar span{margin-left:10px;font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--muted)}
-    .term-body{padding:18px 20px;font-family:"JetBrains Mono",monospace;font-size:.78rem;line-height:2;color:var(--muted);min-height:190px}
-    .term-body .t{color:var(--text)}
-    .term-body .buy{color:var(--up)} .term-body .blocked{color:#ffcf87} .term-body .sell{color:var(--down)}
-    .cursor{display:inline-block;width:8px;height:14px;background:var(--cyan);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+    .term-bar span{margin-left:10px;font-family:"JetBrains Mono",monospace;font-size:.7rem;color:#9aa88f}
+    .term-body{padding:18px 20px;font-family:"JetBrains Mono",monospace;font-size:.78rem;line-height:2;color:#b5c2ab;min-height:190px}
+    .term-body .t{color:#f4eeda}
+    .term-body .buy{color:#2fd18a} .term-body .blocked{color:#ffcf87} .term-body .sell{color:#ff6262}
+    .cursor{display:inline-block;width:8px;height:14px;background:#7fd6b2;vertical-align:-2px;animation:blink 1s steps(1) infinite}
     @keyframes blink{50%{opacity:0}}
 
     /* pipeline */
@@ -252,7 +254,7 @@
     .step-num{font-family:"JetBrains Mono",monospace;font-size:1.4rem;color:var(--violet)}
     .step h3{font-family:"Playfair Display",serif;font-size:1.1rem;margin-bottom:5px}
     .step p{color:var(--muted);font-size:.92rem;max-width:680px}
-    .step p code{font-family:"JetBrains Mono",monospace;font-size:.8rem;color:var(--cyan);background:rgba(127,214,178,.09);padding:2px 7px;border-radius:6px}
+    .step p code{font-family:"JetBrains Mono",monospace;font-size:.8rem;color:var(--cyan);background:rgba(7,121,168,.09);padding:2px 7px;border-radius:6px}
 
     .endcta{text-align:center;padding-bottom:40px}
     footer{text-align:center;color:var(--muted);font-size:.85rem;padding:40px 20px 50px;border-top:1px solid var(--edge);margin-top:90px}
@@ -270,16 +272,16 @@
     .finding p{color:var(--muted);font-size:.88rem;line-height:1.65;margin:0 0 10px}
     .finding p:last-child{margin-bottom:0}
     .finding code{font-family:"JetBrains Mono",monospace;font-size:.82em;color:var(--cyan);
-        background:rgba(127,214,178,.08);padding:1px 5px;border-radius:5px}
+        background:rgba(7,121,168,.09);padding:1px 5px;border-radius:5px}
     .finding em{color:var(--text);font-style:normal}
     .sev{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.08em;
         padding:4px 11px;border-radius:99px}
-    .sev-high{color:var(--down);border:1px solid rgba(255,98,98,.45);background:rgba(255,98,98,.07)}
-    .sev-med{color:#e2b33f;border:1px solid rgba(226,179,63,.4);background:rgba(226,179,63,.06)}
+    .sev-high{color:var(--down);border:1px solid rgba(220,38,70,.45);background:rgba(220,38,70,.07)}
+    .sev-med{color:#8a5b00;border:1px solid rgba(153,111,16,.45);background:rgba(255,184,48,.1)}
     .sev-low{color:var(--muted);border:1px solid var(--edge)}
     .finding .worst{color:var(--text);border-left:2px solid var(--down);padding-left:14px}
     .finding .evidence{font-family:"JetBrains Mono",monospace;font-size:.76rem;color:var(--muted);
-        background:rgba(0,0,0,.35);border:1px solid var(--edge);border-radius:10px;
+        background:#f7f2ff;border:1px solid var(--edge);border-radius:10px;
         padding:12px 14px;margin:14px 0;overflow-x:auto;white-space:pre}
     .finding .evidence span{display:block;color:var(--violet);font-size:.68rem;margin-bottom:6px}
     .finding .fix{color:var(--text);font-size:.85rem}
@@ -290,7 +292,7 @@
     .incident h4{font-family:"Playfair Display",serif;font-size:.98rem;margin:10px 0 8px;line-height:1.4}
     .incident p{color:var(--muted);font-size:.85rem;line-height:1.6;margin:0}
     .inc-tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.64rem;letter-spacing:.08em;
-        color:var(--up);border:1px solid rgba(47,209,138,.4);padding:3px 10px;border-radius:99px}
+        color:var(--up);border:1px solid rgba(13,150,104,.45);padding:3px 10px;border-radius:99px}
     .verdict{margin-top:52px;border:1px solid var(--edge);border-radius:var(--radius);
         background:linear-gradient(180deg,rgba(139,123,255,.07),transparent);padding:30px 32px}
     .verdict h3{font-family:"Playfair Display",serif;font-size:1.15rem;margin:0 0 14px}
@@ -389,17 +391,17 @@
             </div>
           </div>
           <svg viewBox="0 0 300 150" aria-hidden="true">
-            <rect x="0" y="30" width="300" height="45" fill="rgba(255,98,98,.07)"/>
-            <line x1="0" y1="75" x2="300" y2="75" stroke="rgba(255,98,98,.5)" stroke-dasharray="4 4"/>
-            <line x1="0" y1="45" x2="300" y2="45" stroke="rgba(47,209,138,.5)" stroke-dasharray="4 4"/>
-            <text x="6" y="88" fill="#9a97ad" font-size="9" font-family="monospace">RSI 25 — buy zone</text>
-            <text x="6" y="41" fill="#9a97ad" font-size="9" font-family="monospace">RSI 50 — take profit</text>
+            <rect x="0" y="30" width="300" height="45" fill="rgba(220,38,70,.08)"/>
+            <line x1="0" y1="75" x2="300" y2="75" stroke="rgba(220,38,70,.55)" stroke-dasharray="4 4"/>
+            <line x1="0" y1="45" x2="300" y2="45" stroke="rgba(13,150,104,.55)" stroke-dasharray="4 4"/>
+            <text x="6" y="88" fill="#6b5798" font-size="9" font-family="monospace">RSI 25 — buy zone</text>
+            <text x="6" y="41" fill="#6b5798" font-size="9" font-family="monospace">RSI 50 — take profit</text>
             <path d="M0,52 C25,40 40,28 60,38 S95,95 115,102 S150,80 170,58 S205,30 225,40 S265,58 300,44"
-                  fill="none" stroke="#12a0cc" stroke-width="2"/>
-            <circle cx="115" cy="102" r="5" fill="#2fd18a"/>
-            <text x="124" y="106" fill="#2fd18a" font-size="9" font-family="monospace">BUY</text>
-            <circle cx="225" cy="40" r="5" fill="#ff6262"/>
-            <text x="200" y="28" fill="#ff6262" font-size="9" font-family="monospace">SELL</text>
+                  fill="none" stroke="#0b7fb0" stroke-width="2"/>
+            <circle cx="115" cy="102" r="5" fill="#0d9668"/>
+            <text x="124" y="106" fill="#0d9668" font-size="9" font-family="monospace">BUY</text>
+            <circle cx="225" cy="40" r="5" fill="#dc2646"/>
+            <text x="200" y="28" fill="#dc2646" font-size="9" font-family="monospace">SELL</text>
           </svg>
         </article>
 
@@ -420,15 +422,15 @@
             </div>
           </div>
           <svg viewBox="0 0 300 150" aria-hidden="true">
-            <path d="M0,90 C40,84 70,78 110,74 S190,64 240,58 S280,54 300,52" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.5" stroke-dasharray="5 4"/>
-            <text x="228" y="46" fill="#9a97ad" font-size="9" font-family="monospace">20d mean</text>
-            <path d="M0,118 C40,112 80,108 120,104 S200,96 300,84" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="1"/>
+            <path d="M0,90 C40,84 70,78 110,74 S190,64 240,58 S280,54 300,52" fill="none" stroke="rgba(56,35,92,.35)" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <text x="228" y="46" fill="#6b5798" font-size="9" font-family="monospace">20d mean</text>
+            <path d="M0,118 C40,112 80,108 120,104 S200,96 300,84" fill="none" stroke="rgba(56,35,92,.18)" stroke-width="1"/>
             <path d="M0,80 C20,74 40,66 60,70 S95,86 115,120 S150,96 180,72 S240,50 300,45"
-                  fill="none" stroke="#8471f5" stroke-width="2"/>
-            <circle cx="115" cy="120" r="5" fill="#2fd18a"/>
-            <text x="94" y="138" fill="#2fd18a" font-size="9" font-family="monospace">z=−2.3 BUY</text>
-            <circle cx="196" cy="65" r="5" fill="#ff6262"/>
-            <text x="204" y="80" fill="#ff6262" font-size="9" font-family="monospace">mean → SELL</text>
+                  fill="none" stroke="#6a55e0" stroke-width="2"/>
+            <circle cx="115" cy="120" r="5" fill="#0d9668"/>
+            <text x="94" y="138" fill="#0d9668" font-size="9" font-family="monospace">z=−2.3 BUY</text>
+            <circle cx="196" cy="65" r="5" fill="#dc2646"/>
+            <text x="204" y="80" fill="#dc2646" font-size="9" font-family="monospace">mean → SELL</text>
           </svg>
         </article>
 
@@ -449,13 +451,13 @@
             </div>
           </div>
           <svg viewBox="0 0 300 150" aria-hidden="true">
-            <rect x="0" y="98" width="300" height="52" fill="rgba(18,160,204,.10)"/>
-            <text x="8" y="140" fill="#9a97ad" font-size="9" font-family="monospace">$500k BTC/ETH core — never sold</text>
-            <path d="M0,96 C30,88 60,92 90,78 S150,58 180,66 S240,40 300,30" fill="none" stroke="#d94fa6" stroke-width="2"/>
-            <path d="M0,102 C40,100 80,96 120,92 S220,78 300,68" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.5" stroke-dasharray="5 4"/>
-            <text x="236" y="82" fill="#9a97ad" font-size="9" font-family="monospace">200d MA</text>
-            <circle cx="90" cy="78" r="5" fill="#2fd18a"/>
-            <text x="60" y="66" fill="#2fd18a" font-size="9" font-family="monospace">dip in uptrend</text>
+            <rect x="0" y="98" width="300" height="52" fill="rgba(11,127,176,.1)"/>
+            <text x="8" y="140" fill="#6b5798" font-size="9" font-family="monospace">$500k BTC/ETH core — never sold</text>
+            <path d="M0,96 C30,88 60,92 90,78 S150,58 180,66 S240,40 300,30" fill="none" stroke="#c23a92" stroke-width="2"/>
+            <path d="M0,102 C40,100 80,96 120,92 S220,78 300,68" fill="none" stroke="rgba(56,35,92,.3)" stroke-width="1.5" stroke-dasharray="5 4"/>
+            <text x="236" y="82" fill="#6b5798" font-size="9" font-family="monospace">200d MA</text>
+            <circle cx="90" cy="78" r="5" fill="#0d9668"/>
+            <text x="60" y="66" fill="#0d9668" font-size="9" font-family="monospace">dip in uptrend</text>
           </svg>
         </article>
       </div>
@@ -887,7 +889,7 @@
       const y=v=>H-((v-mn)/(mx-mn||1))*(H*.86)-H*.07;
       vis.forEach((k,i)=>{
         const x=i*(cw+gap)-px*devicePixelRatio, up=k.c>=k.o,
-              col=up?'rgba(47,209,138,.75)':'rgba(255,98,98,.7)';
+              col=up?'rgba(13,150,104,.7)':'rgba(220,38,70,.6)';
         cx.strokeStyle=col;cx.fillStyle=col;cx.lineWidth=1.4*devicePixelRatio;
         cx.beginPath();cx.moveTo(x+cw/2,y(k.h));cx.lineTo(x+cw/2,y(k.l));cx.stroke();
         const top=y(Math.max(k.o,k.c)),hgt=Math.max(Math.abs(y(k.o)-y(k.c)),2);

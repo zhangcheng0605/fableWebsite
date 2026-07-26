@@ -9,11 +9,11 @@
   <meta property="og:description" content="No model files, no image files: hand-written geometry and canvas-painted textures. Scroll flies the campus together phase by phase — hull, sky terrace, roof, plaza, people — three lighting rigs change the hour, and the whole model exports to GLB.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="../assets/thumbs/campus.jpg">
-  <meta name="theme-color" content="#101410">
+  <meta name="theme-color" content="#fdf4ff">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#127959;</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Quicksand:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
   <!-- three.js is served from this repo (campus/vendor/three) — no CDN, works offline. -->
   <script type="importmap">
@@ -29,51 +29,55 @@
 
   <style>
     :root{
-      /* Ink & Lantern — same tokens as the homepage */
-      --background:#101410; --background-2:#151a14;
-      --foreground:#f4eeda;
-      --card:rgba(244,238,218,.045);
-      --muted-foreground:#f4eeda; /* body text is the same near-white as headings */
-      --border:rgba(233,180,85,.16);
-      --ring:#e9b455;
-      --primary:#e9b455; --primary-foreground:#221604;
-      --gold:#e9b455; --gold-2:#f2d789; --crimson:#e05a3a; --jade:#7fd6b2;
+      /* candy-neon — same tokens as the homepage */
+      --background:#fdf4ff; --background-2:#ffffff;
+      --foreground:#38235c;
+      --card:#ffffff;
+      --muted-foreground:#38235c; /* one ink for all text */
+      --border:rgba(139,61,255,.20);
+      --ring:#8b3dff;
+      --primary:#8b3dff; --primary-foreground:#ffffff;
+      --pink:#ff3fae; --pink-ink:#c9106f; --purple:#8b3dff; --violet:#6428d8;
+      --cyan:#25c4ff; --green:#12b981;
       --radius:18px;
-      --grad:linear-gradient(100deg,var(--gold-2),var(--gold) 45%,var(--crimson));
-      --glass:rgba(16,20,16,.72);
+      --grad:linear-gradient(95deg,#ef1f96,#7a2df0 46%,#0f9fe0);
+      --glass:rgba(255,255,255,.86);
     }
     *{margin:0;padding:0;box-sizing:border-box}
     html{scroll-behavior:smooth;scroll-padding-top:96px}
     body{background:var(--background);color:var(--foreground);
-         font-family:Inter,system-ui,-apple-system,sans-serif;
+         font-family:Quicksand,Inter,system-ui,-apple-system,sans-serif;font-weight:500;
          -webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.65}
     a{color:inherit;text-decoration:none}
-    h1,h2,h3,h4{text-wrap:balance}
-    ::selection{background:rgba(233,180,85,.32)}
-    :focus-visible{outline:2px solid var(--ring);outline-offset:3px;border-radius:4px}
+    h1,h2,h3,h4{text-wrap:balance;font-family:"Baloo 2",Quicksand,sans-serif}
+    b,strong{font-weight:700}
+    ::selection{background:rgba(255,63,174,.25)}
+    :focus-visible{outline:3px solid var(--ring);outline-offset:3px;border-radius:6px}
     .mono{font-family:"JetBrains Mono",monospace}
     .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
     .skip-link{position:fixed;top:-100px;left:16px;z-index:100;padding:10px 18px;border-radius:99px;
-      background:var(--primary);color:var(--primary-foreground);font-weight:600;transition:top .2s}
+      background:var(--pink);color:#fff;font-weight:700;transition:top .2s}
     .skip-link:focus{top:16px}
 
     .bg{position:fixed;inset:0;z-index:-2;pointer-events:none;background:
-        radial-gradient(60vw 45vh at 15% -5%,rgba(233,180,85,.06),transparent 60%),
-        radial-gradient(50vw 40vh at 90% 25%,rgba(224,90,58,.05),transparent 60%),
-        radial-gradient(70vw 55vh at 50% 110%,rgba(127,214,178,.05),transparent 65%)}
+        radial-gradient(62vw 52vh at 12% 6%,rgba(255,183,226,.5),transparent 65%),
+        radial-gradient(56vw 46vh at 88% 16%,rgba(178,140,255,.4),transparent 65%),
+        radial-gradient(72vw 60vh at 50% 108%,rgba(126,216,255,.45),transparent 70%),
+        linear-gradient(180deg,#fff4fd,#f4e9ff 45%,#eaf6ff)}
 
-    /* nav — the site's floating pill */
+    /* nav — the site's floating pill, light glass */
     .nav-wrap{position:fixed;top:18px;left:0;right:0;z-index:50;display:flex;justify-content:center;padding:0 20px}
     .nav{display:flex;align-items:center;gap:24px;padding:4px 20px;border-radius:99px;
-         background:rgba(18,20,15,.7);border:1px solid var(--border);
-         backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
-    .nav a{font-size:.92rem;color:var(--muted-foreground);font-weight:500;transition:color .2s;padding:8px 2px;white-space:nowrap}
-    .nav a:hover,.nav a[aria-current]{color:var(--foreground)}
-    .logo{font-family:"Playfair Display",serif;font-weight:700;font-size:1.1rem;color:var(--foreground)!important}
+         background:rgba(255,255,255,.88);border:2px solid var(--border);
+         backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+         box-shadow:0 10px 34px rgba(139,61,255,.14)}
+    .nav a{font-size:.92rem;color:var(--foreground);font-weight:600;transition:color .2s;padding:8px 2px;white-space:nowrap}
+    .nav a:hover,.nav a[aria-current]{color:var(--pink)}
+    .logo{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.1rem;color:var(--foreground)!important}
     .logo span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
     .nav-live{display:inline-flex;align-items:center;gap:7px}
-    .nav-live i{width:6px;height:6px;border-radius:50%;background:var(--jade);animation:livedot 1.8s ease-out infinite}
-    @keyframes livedot{0%{box-shadow:0 0 0 0 rgba(127,214,178,.6)}70%{box-shadow:0 0 0 9px rgba(127,214,178,0)}100%{box-shadow:0 0 0 0 rgba(127,214,178,0)}}
+    .nav-live i{width:6px;height:6px;border-radius:50%;background:var(--green);animation:livedot 1.8s ease-out infinite}
+    @keyframes livedot{0%{box-shadow:0 0 0 0 rgba(18,185,129,.55)}70%{box-shadow:0 0 0 9px rgba(18,185,129,0)}100%{box-shadow:0 0 0 0 rgba(18,185,129,0)}}
     @media(max-width:700px){.nav{gap:14px;padding:2px 14px;max-width:calc(100vw - 32px);overflow-x:auto;scrollbar-width:none}
       .nav::-webkit-scrollbar{display:none}.nav a{font-size:.82rem}}
 
@@ -82,44 +86,44 @@
     /* campus.js sets this when the reader prefers reduced motion: one
        viewport, finished campus, no scroll-driven assembly */
     body.campus-static #build{height:100svh}
-    #build .sticky{position:sticky;top:0;height:100svh;overflow:hidden;background:var(--background)}
+    #build .sticky{position:sticky;top:0;height:100svh;overflow:hidden;background:#eaf1f8}
     three-d-stage{display:block;width:100%;height:100%}
     three-d-stage:not(:defined){visibility:hidden}
     .stage-veil{position:absolute;inset:0;pointer-events:none;
-      background:linear-gradient(180deg,rgba(16,20,16,.42) 0,rgba(16,20,16,0) 26%,rgba(16,20,16,0) 62%,rgba(16,20,16,.5) 100%)}
+      background:linear-gradient(180deg,rgba(253,244,255,.4) 0,rgba(253,244,255,0) 26%,rgba(253,244,255,0) 62%,rgba(253,244,255,.45) 100%)}
 
     /* HUD */
     #hud{position:absolute;top:86px;left:20px;z-index:6;display:flex;flex-direction:column;gap:10px;
       max-width:min(300px,calc(100vw - 40px))}
     .hud-title{font-family:"JetBrains Mono",monospace;font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;
-      color:var(--gold-2);text-shadow:0 2px 14px rgba(0,0,0,.8)}
+      color:var(--violet);text-shadow:0 1px 10px rgba(255,255,255,.8)}
     .hud-btns{display:flex;flex-wrap:wrap;gap:7px}
     .hud-btns button{appearance:none;cursor:pointer;font-family:"JetBrains Mono",monospace;font-size:.72rem;
-      letter-spacing:.03em;color:var(--foreground);background:var(--glass);border:1px solid var(--border);
+      letter-spacing:.03em;color:var(--foreground);background:var(--glass);border:2px solid var(--border);
       border-radius:99px;padding:9px 14px;line-height:1;transition:border-color .2s,color .2s,background .2s;
       backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-    .hud-btns button:hover{border-color:var(--gold);color:var(--gold-2)}
-    .hud-btns button.active{background:var(--grad);color:var(--primary-foreground);border-color:transparent;font-weight:500}
+    .hud-btns button:hover{border-color:var(--pink);color:var(--pink-ink)}
+    .hud-btns button.active{background:var(--grad);color:#fff;border-color:transparent;font-weight:700}
     .hud-btns button[disabled]{opacity:.45;cursor:default}
 
     /* tweaks panel */
     #tweaks{background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-      border:1px solid var(--border);border-radius:14px;padding:14px 16px 16px;
+      border:2px solid var(--border);border-radius:14px;padding:14px 16px 16px;
       display:flex;flex-direction:column;gap:11px;max-height:min(60svh,460px);overflow-y:auto}
     #tweaks[hidden]{display:none}
     .tw-section{font-family:"JetBrains Mono",monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
-      color:var(--jade);margin-top:2px}
+      color:var(--pink-ink);margin-top:2px}
     .tw-section:first-child{margin-top:0}
     .tw-row{display:flex;flex-direction:column;gap:6px}
     .tw-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
       font-size:.8rem;color:var(--muted-foreground)}
-    .tw-val{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--gold-2)}
+    .tw-val{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--violet)}
     #tweaks input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:3px;border-radius:99px;
-      background:rgba(244,238,218,.18);accent-color:var(--primary)}
+      background:rgba(139,61,255,.25);accent-color:var(--pink)}
     #tweaks input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;
-      background:var(--gold-2);border:none;cursor:pointer}
+      background:var(--pink);border:none;cursor:pointer}
     #tweaks input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-radius:50%;
-      background:var(--gold-2);cursor:pointer}
+      background:var(--pink);cursor:pointer}
     .tw-seg{border:none}
     .tw-seg legend{font-size:.8rem;color:var(--muted-foreground);margin-bottom:6px;padding:0}
     .tw-seg-opts{display:flex;gap:5px;position:relative}
@@ -130,45 +134,45 @@
     .tw-seg-opts label{flex:1;text-align:center;font-family:"JetBrains Mono",monospace;font-size:.68rem;
       padding:6px 4px;border:1px solid var(--border);border-radius:99px;color:var(--muted-foreground);
       cursor:pointer;transition:color .2s,border-color .2s,background .2s}
-    .tw-seg-opts label:hover{color:var(--foreground)}
-    .tw-seg-opts input:checked+label{background:rgba(233,180,85,.16);border-color:var(--gold);color:var(--gold-2)}
+    .tw-seg-opts label:hover{color:var(--pink-ink)}
+    .tw-seg-opts input:checked+label{background:rgba(255,63,174,.12);border-color:var(--pink);color:var(--pink-ink)}
     .tw-seg-opts input:focus-visible+label{outline:2px solid var(--ring);outline-offset:2px}
     .tw-reset{appearance:none;cursor:pointer;align-self:flex-start;background:none;border:none;padding:2px 0;
       font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.06em;color:var(--muted-foreground);
       text-decoration:underline;text-underline-offset:3px}
-    .tw-reset:hover{color:var(--gold-2)}
+    .tw-reset:hover{color:var(--pink-ink)}
 
     /* title card over the empty site */
     #titleCard{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:center;
       align-items:center;text-align:center;padding:0 26px;pointer-events:none;transition:opacity .25s linear}
     #titleCard .eyebrow{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.24em;
-      text-transform:uppercase;color:var(--gold-2);margin-bottom:16px;text-shadow:0 2px 18px rgba(0,0,0,.85)}
-    #titleCard .eyebrow::before{content:"\25C6  ";color:var(--crimson)}
-    #titleCard h1{font-family:"Playfair Display",serif;font-weight:700;font-size:clamp(2.4rem,7vw,4.6rem);
-      line-height:1.05;text-shadow:0 6px 50px rgba(0,0,0,.9)}
+      text-transform:uppercase;color:var(--violet);margin-bottom:16px;text-shadow:0 1px 14px rgba(255,255,255,.9)}
+    #titleCard .eyebrow::before{content:"\25C6  ";color:var(--pink)}
+    #titleCard h1{font-weight:800;font-size:clamp(2.4rem,7vw,4.6rem);
+      line-height:1.05;text-shadow:0 2px 30px rgba(255,255,255,.85)}
     #titleCard h1 em{font-style:italic;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
     #titleCard p.sub{max-width:520px;margin-top:18px;color:var(--foreground);font-size:clamp(.95rem,2.2vw,1.1rem);
-      text-shadow:0 2px 16px rgba(0,0,0,.95)}
+      text-shadow:0 1px 16px rgba(255,255,255,.9)}
 
     /* progress rail + hints */
     #rail{position:absolute;left:20px;bottom:22px;z-index:6;width:min(320px,calc(100vw - 40px))}
-    .rail-track{height:2px;border-radius:99px;background:rgba(244,238,218,.2);overflow:hidden}
+    .rail-track{height:3px;border-radius:99px;background:rgba(139,61,255,.22);overflow:hidden}
     .rail-track span{display:block;height:100%;width:0;background:var(--grad);transition:width .12s linear}
     #railLabel{margin-top:9px;font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.1em;
-      color:var(--foreground);text-shadow:0 2px 12px rgba(0,0,0,.9)}
+      color:var(--foreground);text-shadow:0 1px 10px rgba(255,255,255,.9)}
     #scrollHint{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);z-index:6;
       font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;
-      color:rgba(244,238,218,.9);background:var(--glass);border:1px solid var(--border);border-radius:99px;
+      color:var(--violet);background:var(--glass);border:2px solid var(--border);border-radius:99px;
       padding:8px 16px;white-space:nowrap;transition:opacity .35s;backdrop-filter:blur(10px);
       -webkit-backdrop-filter:blur(10px)}
     #dragHint{position:absolute;right:20px;bottom:26px;z-index:6;font-family:"JetBrains Mono",monospace;
-      font-size:.66rem;color:var(--foreground);text-shadow:0 2px 12px rgba(0,0,0,.9);text-align:right}
+      font-size:.66rem;color:var(--foreground);text-shadow:0 1px 10px rgba(255,255,255,.9);text-align:right}
     #stageMsg{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;justify-content:center;
-      align-items:center;gap:12px;text-align:center;padding:30px;background:rgba(16,20,16,.9)}
+      align-items:center;gap:12px;text-align:center;padding:30px;background:rgba(253,244,255,.92)}
     #stageMsg[hidden]{display:none}
     #stageMsg .m{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.08em;color:var(--muted-foreground)}
-    #stageMsg .spin{width:26px;height:26px;border-radius:50%;border:2px solid rgba(233,180,85,.25);
-      border-top-color:var(--gold);animation:spin 1s linear infinite}
+    #stageMsg .spin{width:26px;height:26px;border-radius:50%;border:2px solid rgba(139,61,255,.25);
+      border-top-color:var(--pink);animation:spin 1s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
 
     @media(max-width:760px){
@@ -184,54 +188,61 @@
     /* ===== notes below the build ===== */
     section.wrap{max-width:1100px;margin:0 auto;padding:100px 24px 10px;position:relative}
     .sec-head{display:flex;align-items:baseline;gap:16px;margin-bottom:14px}
-    .sec-index{font-family:"JetBrains Mono",monospace;color:var(--crimson);font-size:.85rem}
-    h2{font-family:"Playfair Display",serif;font-weight:700;font-size:clamp(1.9rem,4.6vw,2.9rem)}
+    .sec-index{font-family:"JetBrains Mono",monospace;color:var(--pink-ink);font-size:.85rem}
+    h2{font-weight:800;font-size:clamp(1.9rem,4.6vw,2.9rem);
+      background:linear-gradient(95deg,#e51f8f,#7a2df0 55%,#0f9fe0);
+      -webkit-background-clip:text;background-clip:text;color:transparent}
     .sec-sub{color:var(--muted-foreground);max-width:700px;margin-bottom:40px;font-size:1.02rem}
-    .sec-sub b{color:var(--foreground);font-weight:500}
+    .sec-sub b{color:var(--foreground)}
 
     .figures{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:40px}
-    .fig{border:1px solid var(--border);border-radius:14px;padding:16px 18px;background:rgba(16,20,16,.5)}
-    .fig .v{font-family:"Playfair Display",serif;font-weight:700;font-size:1.5rem;color:var(--gold-2);line-height:1.1}
+    .fig{border:2px solid var(--border);border-radius:14px;padding:16px 18px;background:var(--card);
+      box-shadow:0 8px 26px rgba(139,61,255,.1)}
+    .fig .v{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.5rem;line-height:1.1;
+      background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
     .fig .k{font-family:"JetBrains Mono",monospace;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
       color:var(--muted-foreground);margin-top:6px}
 
     .phases{display:grid;gap:0}
     .phase{display:grid;grid-template-columns:64px 1fr;gap:22px;padding:22px 0;border-bottom:1px solid var(--border)}
     .phase:last-child{border-bottom:none}
-    .phase .n{font-family:"JetBrains Mono",monospace;font-size:.8rem;color:var(--gold)}
-    .phase h3{font-family:"Playfair Display",serif;font-size:1.15rem;margin-bottom:5px}
+    .phase .n{font-family:"JetBrains Mono",monospace;font-size:.8rem;color:var(--pink-ink)}
+    .phase h3{font-size:1.15rem;margin-bottom:5px}
     .phase p{color:var(--muted-foreground);font-size:.95rem;max-width:660px}
     @media(max-width:600px){.phase{grid-template-columns:44px 1fr;gap:14px}}
 
     .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px}
-    .card{border-radius:var(--radius);border:1px solid var(--border);background:var(--card);padding:26px;
-      transition:transform .25s,border-color .25s}
-    .card:hover{transform:translateY(-4px);border-color:rgba(233,180,85,.42)}
+    .card{border-radius:var(--radius);border:2px solid var(--border);background:var(--card);padding:26px;
+      transition:transform .25s,border-color .25s,box-shadow .25s}
+    .card:hover{transform:translateY(-4px);border-color:var(--pink);box-shadow:0 12px 38px rgba(255,63,174,.18)}
     .card .tag{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
-      color:var(--gold);margin-bottom:12px}
-    .card h3{font-family:"Playfair Display",serif;font-size:1.2rem;margin-bottom:9px}
+      color:var(--pink-ink);margin-bottom:12px}
+    .card h3{font-size:1.2rem;margin-bottom:9px}
     .card p{color:var(--muted-foreground);font-size:.94rem}
-    .card code{font-family:"JetBrains Mono",monospace;font-size:.82rem;color:var(--jade);
-      background:rgba(127,214,178,.08);padding:2px 6px;border-radius:6px}
+    .card code{font-family:"JetBrains Mono",monospace;font-size:.82rem;color:var(--violet);
+      background:#f3e9ff;padding:2px 6px;border-radius:6px}
     .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:34px}
-    .chip{font-size:.75rem;padding:5px 12px;border-radius:99px;border:1px solid var(--border);color:var(--muted-foreground)}
-    .note{margin-top:34px;border:1px solid var(--border);border-left:3px solid var(--gold);
+    .chip{font-size:.75rem;font-weight:600;padding:5px 12px;border-radius:99px;background:#f3e9ff;
+      border:1px solid var(--border);color:var(--violet)}
+    .note{margin-top:34px;border:2px solid var(--border);border-left:6px solid var(--pink);
       border-radius:0 var(--radius) var(--radius) 0;background:var(--card);padding:20px 24px;
       color:var(--muted-foreground);font-size:.94rem;max-width:760px}
-    .note b{color:var(--foreground);font-weight:500}
+    .note b{color:var(--foreground)}
     .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:36px}
     .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;border-radius:99px;
-      font-weight:600;font-size:.9rem;min-height:44px;cursor:pointer;border:1px solid var(--border);
-      background:none;color:inherit;font-family:inherit;transition:transform .2s,border-color .2s,box-shadow .2s}
-    .btn:hover{transform:translateY(-2px)}
-    .btn-primary{background:var(--grad);color:var(--primary-foreground);border-color:transparent;
-      box-shadow:0 6px 30px rgba(233,180,85,.3)}
-    .btn-ghost:hover{border-color:var(--gold);color:var(--gold-2)}
+      font-family:"Baloo 2",Quicksand,sans-serif;font-weight:700;font-size:.95rem;min-height:44px;cursor:pointer;
+      border:2px solid var(--border);
+      background:#fff;color:var(--violet);transition:transform .2s,border-color .2s,box-shadow .2s,color .2s}
+    .btn:hover{transform:translateY(-2px);border-color:var(--pink);color:var(--pink)}
+    .btn-primary{background:var(--grad);color:#fff;border-color:transparent;
+      box-shadow:0 10px 30px rgba(255,63,174,.28)}
+    .btn-primary:hover{color:#fff}
+    .btn-ghost:hover{border-color:var(--pink);color:var(--pink)}
     .btn[disabled]{opacity:.45;cursor:default;transform:none}
 
     footer{margin-top:90px;text-align:center;color:var(--muted-foreground);font-size:.85rem;
       padding:36px 20px 46px;border-top:1px solid var(--border)}
-    footer a{color:var(--foreground)}
+    footer a{color:var(--violet);font-weight:700}
 
     .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.2,.6,.2,1),transform .7s cubic-bezier(.2,.6,.2,1)}
     .reveal.visible{opacity:1;transform:none}
@@ -263,7 +274,7 @@
     <!-- ===== the scroll-built campus ===== -->
     <section id="build" aria-label="The campus, assembled as you scroll">
       <div class="sticky">
-        <three-d-stage name="media-campus" background="#101410" hide-chrome></three-d-stage>
+        <three-d-stage name="media-campus" background="#eaf1f8" hide-chrome></three-d-stage>
         <div class="stage-veil" aria-hidden="true"></div>
 
         <div id="titleCard">

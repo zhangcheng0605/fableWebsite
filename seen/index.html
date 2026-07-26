@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0d0a06">
+  <meta name="theme-color" content="#fdf4ff">
   <title>SEEN — Chapter 1: Good Morning, Everyone · Zhang Cheng</title>
   <meta name="description" content="SEEN — an AI-drawn office manga. Chapter 1: Good Morning, Everyone. He can hear every thought in the building, and above every head floats a number.">
   <meta property="og:title" content="SEEN — Chapter 1: Good Morning, Everyone">
@@ -18,20 +18,20 @@
   <style>
     :root{
       /* design tokens — shadcn/ui architecture, neon-noir brand (SEEN gold reader keeps its own bg/ink/edge) */
-      --background:#0d0a06; --foreground:#f6efe2;
-      --card:rgba(255,255,255,.03); --card-foreground:#f6efe2;
-      --muted-bg:rgba(255,255,255,.05); --muted-foreground:#cabfa6;
-      --border:rgba(255,200,120,.18); --input:rgba(255,255,255,.15);
-      --ring:#ffc861;
-      --primary:#ffc861; --primary-foreground:#1a1004;
-      --accent:#ff9d3d; --accent-foreground:#1a1004;
+      --background:#fdf4ff; --foreground:#38235c;
+      --card:#ffffff; --card-foreground:#38235c;
+      --muted-bg:#f3e9ff; --muted-foreground:#38235c;
+      --border:rgba(139,61,255,.22); --input:rgba(139,61,255,.3);
+      --ring:#8b3dff;
+      --primary:#ff3fae; --primary-foreground:#ffffff;
+      --accent:#8b3dff; --accent-foreground:#ffffff;
       --destructive:#ff6262;
       --radius:18px; --radius-sm:calc(var(--radius)*.6); --radius-lg:calc(var(--radius)*1.25);
       /* legacy vars, remapped onto the token layer */
-      --bg:var(--background); --ink:#15100a;
+      --bg:var(--background); --ink:#ffffff;
       --text:var(--foreground); --muted:var(--muted-foreground);
-      --gold:#ffc861; --amber:#ff9d3d; --cream:#fff3d6;
-      --grad:linear-gradient(100deg,var(--cream),var(--gold) 46%,var(--amber));
+      --gold:#c9106f; --amber:#8b3dff; --cream:#38235c;
+      --grad:linear-gradient(95deg,#ef1f96,#7a2df0 46%,#0f9fe0);
       --edge:var(--border);
     }
     *{margin:0;padding:0;box-sizing:border-box}
@@ -39,7 +39,7 @@
     body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.6;
          overflow-x:hidden;-webkit-font-smoothing:antialiased}
     a{color:inherit;text-decoration:none}
-    ::selection{background:rgba(255,200,97,.32)}
+    ::selection{background:rgba(255,63,174,.25)}
     :focus-visible{outline:2px solid var(--ring);outline-offset:3px;border-radius:4px}
     .btn:focus-visible,a.chapter:focus-visible,.sib:focus-visible{outline-offset:4px}
     h1,h2,h3,h4{text-wrap:balance}
@@ -48,9 +48,10 @@
     .skip-link:focus{top:16px}
 
     .amb{position:fixed;inset:0;z-index:0;pointer-events:none;background:
-      radial-gradient(60vw 44vh at 80% -8%,rgba(255,200,97,.13),transparent 62%),
-      radial-gradient(54vw 42vh at 6% 106%,rgba(255,157,61,.09),transparent 62%)}
-    .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.4;mix-blend-mode:overlay;
+      radial-gradient(60vw 44vh at 80% -8%,rgba(255,183,226,.5),transparent 62%),
+      radial-gradient(54vw 42vh at 6% 106%,rgba(126,216,255,.4),transparent 62%),
+      linear-gradient(180deg,#fff4fd,#f4e9ff 45%,#eaf6ff)}
+    .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.14;mix-blend-mode:overlay;
       background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 
     .chrome{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;
@@ -64,13 +65,13 @@
     .meter .val{font-size:clamp(.95rem,2.4vw,1.25rem);font-weight:500;
       background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
     .pbar{position:fixed;left:0;bottom:0;right:0;height:3px;z-index:40;transform-origin:0 50%;
-      transform:scaleX(0);background:var(--grad);box-shadow:0 0 14px rgba(255,200,97,.5)}
+      transform:scaleX(0);background:var(--grad);box-shadow:0 0 14px rgba(255,63,174,.5)}
 
     /* limited-time flag, flashing */
     .ltd{position:fixed;left:50%;transform:translateX(-50%);top:16px;z-index:41;
       font-family:"JetBrains Mono",monospace;font-size:.6rem;font-weight:700;letter-spacing:.24em;
-      text-transform:uppercase;color:#1a1004;background:var(--grad);border-radius:99px;padding:6px 14px;
-      white-space:nowrap;animation:ltdflash 1.15s steps(1,end) infinite;box-shadow:0 6px 22px rgba(255,157,61,.42)}
+      text-transform:uppercase;color:#fff;background:var(--grad);border-radius:99px;padding:6px 14px;
+      white-space:nowrap;animation:ltdflash 1.15s steps(1,end) infinite;box-shadow:0 6px 22px rgba(255,63,174,.4)}
     @keyframes ltdflash{0%,49%{opacity:1;filter:none}50%,100%{opacity:.32;filter:saturate(.45)}}
 
     #scroller{position:fixed;top:0;left:0;width:100%;z-index:2;will-change:transform}
@@ -79,22 +80,27 @@
     /* ============ cover ============ */
     .cover{position:relative;min-height:100svh;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
     .cover-art{position:absolute;inset:-6% 0;z-index:-1}
-    .cover-art img{width:100%;height:100%;object-fit:cover;object-position:center 26%;filter:saturate(.75) brightness(.6) contrast(1.04)}
+    .cover-art img{width:100%;height:100%;object-fit:cover;object-position:center 26%;filter:saturate(.9) brightness(.98) contrast(1.02)}
     .cover-art::after{content:"";position:absolute;inset:0;background:
-      linear-gradient(180deg,rgba(13,10,6,.5),rgba(13,10,6,.06) 34%,rgba(13,10,6,.95) 88%,var(--bg))}
+      linear-gradient(180deg,rgba(253,244,255,.42),rgba(253,244,255,.05) 34%,rgba(253,244,255,.97) 88%,var(--bg))}
     .cover-inner{position:relative;text-align:center;padding:0 24px 11svh;max-width:900px}
-    .kicker{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.4em;text-transform:uppercase;
+    /* soft white halo behind the cover text, so the candy masthead stays
+       legible over any artwork without fogging the whole cover */
+    .cover-inner::before{content:"";position:absolute;inset:-6% -12%;z-index:-1;pointer-events:none;
+      background:radial-gradient(60% 72% at 50% 60%,rgba(253,244,255,.94),rgba(253,244,255,.55) 58%,transparent 78%);
+      filter:blur(6px)}
+    .kicker{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.4em;text-transform:uppercase;text-shadow:0 1px 14px rgba(255,255,255,.95),0 0 4px rgba(255,255,255,.9);
             color:var(--gold);margin-bottom:20px}
     h1.masthead{font-family:"Space Grotesk",sans-serif;font-weight:700;
       font-size:clamp(3.4rem,17vw,10rem);line-height:.9;letter-spacing:.02em;
       background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
-      filter:drop-shadow(0 4px 38px rgba(255,200,97,.34))}
+      filter:drop-shadow(0 4px 38px rgba(255,63,174,.32))}
     h1.masthead span{display:block}
     .subtitle{font-family:"Space Grotesk",sans-serif;font-weight:600;margin-top:14px;
       font-size:clamp(1rem,3.4vw,1.5rem);color:var(--cream)}
-    .cover-sub{margin-top:18px;color:var(--muted);font-size:clamp(.95rem,2.4vw,1.1rem);max-width:560px;margin-inline:auto}
+    .cover-sub{text-shadow:0 1px 14px rgba(255,255,255,.9);margin-top:18px;color:var(--muted);font-size:clamp(.95rem,2.4vw,1.1rem);max-width:560px;margin-inline:auto}
     .cover-sub b{color:var(--text);font-weight:600}
-    .hint{margin:34px auto 0;width:24px;height:40px;border:1.5px solid rgba(255,200,97,.5);border-radius:99px;
+    .hint{margin:34px auto 0;width:24px;height:40px;border:1.5px solid rgba(201,16,111,.5);border-radius:99px;
           display:flex;justify-content:center;padding-top:7px}
     .hint i{width:3px;height:8px;border-radius:99px;background:var(--gold);animation:drop 1.9s ease-in-out infinite}
     @keyframes drop{0%,100%{transform:translateY(0);opacity:1}60%{transform:translateY(13px);opacity:.15}}
@@ -110,14 +116,14 @@
             flex-direction:column;gap:13svh}
     .page{position:relative}
     .frame{position:relative;border:1px solid var(--edge);border-radius:14px;overflow:hidden;background:var(--ink);
-      box-shadow:0 30px 90px rgba(0,0,0,.62),0 0 0 1px rgba(255,200,97,.05),0 0 60px rgba(255,157,61,.07);transform:translateZ(0)}
+      box-shadow:0 24px 70px rgba(109,40,217,.16),0 0 0 1px rgba(139,61,255,.06);transform:translateZ(0)}
     .frame::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:inherit;
-      box-shadow:inset 0 1px 0 rgba(255,230,180,.18)}
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
     .frame img{display:block;width:100%;height:auto;transform:scale(1.05);will-change:transform}
 
     /* the words: under the panel, high contrast, always legible */
     .cap{display:block;margin-top:16px;padding:15px 18px 17px;border-radius:12px;border:1px solid var(--edge);
-      background:rgba(24,17,9,.78)}
+      background:#ffffff;box-shadow:0 10px 30px rgba(139,61,255,.1)}
     .cap-top{display:flex;align-items:center;gap:12px;margin-bottom:9px}
     .tag{font-family:"JetBrains Mono",monospace;font-size:.63rem;letter-spacing:.26em;white-space:nowrap;
       text-transform:uppercase;color:var(--gold);border:1px solid var(--edge);border-radius:99px;padding:4px 11px}
@@ -126,7 +132,7 @@
     .line{display:block;font-family:"Space Grotesk",sans-serif;font-weight:500;
       font-size:clamp(1.02rem,2.9vw,1.24rem);line-height:1.45;color:var(--cream)}
     .line em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:700}
-    .line q{quotes:"\201C" "\201D";color:#fff9ec}
+    .line q{quotes:"\201C" "\201D";color:var(--amber)}
 
     .page{opacity:0;transform:translateY(60px) scale(.97);filter:blur(6px);
       transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1),filter .9s ease}
@@ -146,7 +152,7 @@
     .endcard .fin{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.4em;color:var(--muted)}
     .endcard h2{font-family:"Space Grotesk",sans-serif;font-weight:700;letter-spacing:-.01em;
       font-size:clamp(2.2rem,7.5vw,4.6rem);line-height:1;background:var(--grad);
-      -webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 30px rgba(255,157,61,.28))}
+      -webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 30px rgba(255,63,174,.28))}
     .endcard p{color:var(--muted);max-width:500px}
     .endcta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:10px}
     .btn{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.95rem;padding:13px 28px;
@@ -154,8 +160,8 @@
          border-radius:99px;border:1px solid var(--edge);color:var(--text);transition:transform .2s,box-shadow .2s;cursor:pointer;background:none}
     .btn:hover{transform:translateY(-2px)}
     .btn:active{transform:translateY(0) scale(.98)}
-    .btn-gold{background:var(--grad);color:#1a1004;border:none;box-shadow:0 8px 34px rgba(255,200,97,.3)}
-    .btn-gold:hover{box-shadow:0 12px 44px rgba(255,157,61,.42)}
+    .btn-gold{background:var(--grad);color:#fff;border:none;box-shadow:0 8px 34px rgba(255,63,174,.3)}
+    .btn-gold:hover{box-shadow:0 12px 44px rgba(255,63,174,.4)}
     .endcard{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s cubic-bezier(.22,1,.36,1)}
     .endcard.on{opacity:1;transform:none}
     .credits{font-size:.82rem;color:var(--muted);margin-top:26px}
@@ -212,7 +218,7 @@
       <div class="endcta">
         <a class="btn btn-gold" href="../seen2/">Chapter 2 — After Hours &rarr;</a>
         <button class="btn" id="again">Read it again</button>
-        <a class="btn" href="../#comics">More comics</a>
+        <a class="btn" href="../#manga">More comics</a>
       </div>
       <p class="credits">SEEN · 41 panels · Written and drawn with AI · © Zhang Cheng</p>
     </section>

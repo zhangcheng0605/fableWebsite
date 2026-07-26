@@ -8,23 +8,23 @@
   <meta property="og:title" content="Prompt Injection — a typing game planned and built by AI">
   <meta property="og:description" content="One model wrote the design document. A second model implemented it across nine modules in parallel. No human wrote code or assets. Play it in your browser.">
   <meta property="og:type" content="website">
-  <meta name="theme-color" content="#101410">
+  <meta name="theme-color" content="#fdf4ff">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#9000;</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    /* Site tokens — Ink & Lantern, matching the homepage */
+    /* Site tokens — candy-neon, matching the homepage */
     :root{
-      --background:#101410; --background-2:#151a14;
-      --foreground:#f4eeda;
-      --card:rgba(244,238,218,.045);
-      --muted-foreground:#b5ac93;
-      --border:rgba(233,180,85,.16);
-      --primary:#e9b455; --gold-2:#f2d789;
-      --accent:#e05a3a; --jade:#7fd6b2;
+      --background:#fdf4ff; --background-2:#ffffff;
+      --foreground:#38235c;
+      --card:#ffffff;
+      --muted-foreground:#38235c;
+      --border:rgba(139,61,255,.20);
+      --primary:#8b3dff; --pink:#ff3fae; --pink-ink:#c9106f; --violet:#6428d8;
+      --accent:#25c4ff; --jade:#12b981;
       --radius:18px;
-      --grad:linear-gradient(100deg,var(--gold-2),var(--primary) 45%,var(--accent));
+      --grad:linear-gradient(95deg,#ef1f96,#7a2df0 46%,#0f9fe0);
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0}
@@ -37,8 +37,8 @@
     }
     a{color:inherit}
     .skip-link{
-      position:absolute;left:-9999px;top:0;padding:.6rem 1rem;background:var(--primary);
-      color:#221604;border-radius:0 0 8px 0;z-index:100;font-weight:600
+      position:absolute;left:-9999px;top:0;padding:.6rem 1rem;background:var(--pink);
+      color:#fff;border-radius:0 0 8px 0;z-index:100;font-weight:600
     }
     .skip-link:focus{left:0}
     :focus-visible{outline:2px solid var(--primary);outline-offset:3px}
@@ -46,8 +46,8 @@
     .bar{
       display:flex;align-items:center;gap:1rem;flex-wrap:wrap;
       padding:.85rem clamp(1rem,4vw,2.5rem);
-      border-bottom:1px solid var(--border);
-      background:var(--background-2);
+      border-bottom:2px solid var(--border);
+      background:rgba(255,255,255,.9);
     }
     .back{
       font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.04em;
@@ -55,7 +55,7 @@
       padding:.35rem .7rem;border:1px solid var(--border);border-radius:999px;
       transition:color .2s,border-color .2s
     }
-    .back:hover{color:var(--primary);border-color:var(--primary)}
+    .back:hover{color:var(--pink);border-color:var(--pink)}
     .bar h1{
       margin:0;font-family:"Playfair Display",serif;font-weight:600;
       font-size:clamp(1.05rem,2.4vw,1.4rem);letter-spacing:.01em
@@ -64,7 +64,7 @@
       font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--muted-foreground);
       letter-spacing:.03em
     }
-    .bar .by b{color:var(--primary);font-weight:500}
+    .bar .by b{color:var(--violet);font-weight:600}
     .spacer{flex:1}
     .hint{
       font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--muted-foreground)
@@ -96,12 +96,12 @@
       margin:.4rem 0
     }
     .step{
-      background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+      background:var(--card);border:2px solid var(--border);border-radius:var(--radius);
       padding:1rem 1.1rem
     }
     .step .k{
       font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.08em;
-      text-transform:uppercase;color:var(--primary);margin:0 0 .35rem
+      text-transform:uppercase;color:var(--pink-ink);margin:0 0 .35rem
     }
     .step p{margin:0;font-size:.9rem}
     .chips{display:flex;flex-wrap:wrap;gap:.4rem;margin:.2rem 0}
@@ -113,7 +113,7 @@
     .keys{display:flex;flex-wrap:wrap;gap:1rem;font-size:.9rem;color:var(--muted-foreground)}
     kbd{
       font-family:"JetBrains Mono",monospace;font-size:.78rem;
-      background:rgba(244,238,218,.07);border:1px solid var(--border);
+      background:#f3e9ff;border:1px solid var(--border);
       border-radius:6px;padding:.12rem .42rem;color:var(--foreground)
     }
     .cta{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:.5rem}
@@ -122,8 +122,8 @@
       padding:.6rem 1.1rem;border-radius:999px;border:1px solid var(--border);
       transition:border-color .2s,color .2s
     }
-    .btn-primary{background:var(--grad);color:#221604;border-color:transparent;font-weight:600}
-    .btn-ghost:hover{border-color:var(--primary);color:var(--primary)}
+    .btn-primary{background:var(--grad);color:#fff;border-color:transparent;font-weight:700;box-shadow:0 10px 30px rgba(255,63,174,.28)}
+    .btn-ghost:hover{border-color:var(--pink);color:var(--pink)}
     .note{font-size:.82rem;color:var(--muted-foreground);border-left:2px solid var(--border);padding-left:.9rem}
 
     @media (max-width:640px){
