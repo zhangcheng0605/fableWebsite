@@ -172,6 +172,41 @@
     /* screen-reader-only: the mark carries the page's only h1 */
     .vh{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
       clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+    /* ===== 水墨字阵 · the ink character array ===== */
+    /* 72-glyph cut of Noto Serif SC — only what this piece draws (15 KB) */
+    @font-face{font-family:"ZacInk";font-style:normal;font-weight:900;font-display:swap;
+      src:url(assets/fonts/zacink.woff2) format("woff2")}
+    /* the 3D mark leaves headroom inside its own box — close the gap so the
+       Chinese name reads as the second line of one lockup, not a separate band */
+    .ink-array{width:min(100%,900px);margin:-18px auto 0;display:flex;flex-direction:column;
+      align-items:center;gap:10px}
+    .ink-canvas{display:block;width:100%;height:clamp(168px,25vh,290px);
+      touch-action:pan-y;cursor:crosshair;
+      /* the ink gathers out of nothing — fade the whole band in once it is live */
+      opacity:0;transition:opacity .8s ease}
+    .ink-array.is-live .ink-canvas,.ink-array.is-still .ink-canvas{opacity:1}
+    .ink-moves{display:flex;flex-wrap:wrap;justify-content:center;gap:7px}
+    .ink-move{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border-radius:99px;
+      font-family:"ZacInk","Noto Serif SC",serif;font-size:.82rem;line-height:1;cursor:pointer;
+      color:var(--violet);background:rgba(255,255,255,.62);border:1px solid var(--border);
+      transition:color .25s,background .25s,border-color .25s,transform .25s}
+    .ink-move .num{color:var(--pink-ink);font-size:.9rem}
+    .ink-move:hover{background:#fff;border-color:var(--border-pink);transform:translateY(-2px)}
+    .ink-move.is-on{color:#fff;background:var(--cta);border-color:transparent;
+      box-shadow:var(--shadow-pink)}
+    .ink-move.is-on .num{color:#fff}
+    /* without JS the chips would be dead controls — they appear only once the
+       array is driving, live or still */
+    .ink-array:not(.is-live):not(.is-still) .ink-moves{display:none}
+    @media(max-width:700px){
+      .ink-canvas{height:clamp(132px,20vh,190px)}
+      .ink-move{padding:5px 10px;font-size:.74rem}
+    }
+    @media (prefers-reduced-motion:reduce){
+      .ink-canvas{transition:none}
+      .ink-move:hover{transform:none}
+    }
+
     .hero-sub{max-width:680px;margin:22px auto 0;font-size:clamp(1.02rem,2.3vw,1.25rem)}
     .cta{display:flex;gap:14px;margin-top:34px;flex-wrap:wrap;justify-content:center}
     .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 30px;border-radius:99px;
@@ -428,6 +463,14 @@
           </svg>
         </span>
       </h1>
+      <!-- 水墨字阵 — the ink array spells the studio's Chinese name, one
+           character per formation. assets/ink-array.js drives it. -->
+      <div class="ink-array">
+        <canvas class="ink-canvas" role="img"
+                aria-label="Ink character array forming the Chinese name of ZAC Studios"></canvas>
+        <div class="ink-moves" role="group" aria-label="Ink array formations"></div>
+      </div>
+
       <p class="hero-sub">I don't just use AI — <b>I direct it.</b> Agents I command draw the manga,
         trade a live desk, and build the 3D campus below. Move your mouse — they left fairy dust everywhere.</p>
       <div class="cta">
@@ -801,5 +844,6 @@
   <!-- order matters: the stage element must be defined before the mark builds -->
   <script src="campus/three-d-stage.js" defer></script>
   <script type="module" src="assets/zac-logo.js"></script>
+  <script type="module" src="assets/ink-array.js"></script>
 </body>
 </html>
