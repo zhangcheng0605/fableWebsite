@@ -119,6 +119,9 @@ M.panel_white.map = panelMap.clone(); M.panel_white.map.repeat.set(1 / 96, 1 / 2
 mat('glass_band', { map: glassMap, emissiveMap: glassEmit, emissive: 0xffffff, emissiveIntensity: 0, color: 0xffffff, roughness: 0.08, metalness: 0.65, envMapIntensity: 1.5 });
 M.glass_band.map = glassMap.clone(); M.glass_band.map.repeat.set(1 / 24, 1 / 1.4);
 M.glass_band.emissiveMap = glassEmit.clone(); M.glass_band.emissiveMap.repeat.set(1 / 24, 1 / 1.4);
+const gb2 = M.glass_band.clone(); gb2.name = 'glass_band_up'; M.glass_band2 = gb2;
+gb2.map = glassMap.clone(); gb2.map.repeat.set(1 / 24, 1 / 2.3);
+gb2.emissiveMap = glassEmit.clone(); gb2.emissiveMap.repeat.set(1 / 24, 1 / 2.3);
 mat('glass_green', { map: podiumMap, emissiveMap: podiumEmit, emissive: 0xffffff, emissiveIntensity: 0, color: 0xffffff, roughness: 0.10, metalness: 0.5, envMapIntensity: 1.4 });
 M.glass_green.map.repeat.set(3, 1.4); M.glass_green.emissiveMap.repeat.copy(M.glass_green.map.repeat);
 mat('metal_bronze', { map: drumMap, color: 0xffffff, roughness: 0.22, metalness: 0.75, envMapIntensity: 1.2 });
@@ -136,6 +139,7 @@ mat('asphalt', { map: asphaltMap, color: 0xffffff, roughness: 0.95 });
 mat('pavement', { map: paveMap, color: 0xffffff, roughness: 0.9 });
 mat('screen_dark', { color: 0x0d0f13, roughness: 0.25, metalness: 0.3, emissive: 0x2a6fdb, emissiveIntensity: 0 });
 mat('lamp_glow', { color: 0xfff3dd, emissive: 0xffc27a, emissiveIntensity: 0 });
+mat('steel', { color: 0xc9ccd0, roughness: 0.15, metalness: 0.8, envMapIntensity: 1.3 });
 M.soffit_dark = new THREE.MeshStandardMaterial({ color: 0x33343a, roughness: 0.6, metalness: 0.2 }); M.soffit_dark.name = 'soffit_dark';
 
 const model = new THREE.Group();
@@ -179,6 +183,9 @@ add(model, box(60, 0.3, 40), M.lawn, 'lawn_east', 120, 0.2, 60, 0);
 add(model, box(3, 0.42, 70), M.pavement, 'path_1', -50, 0.2, 72, 0);
 add(model, box(3, 0.42, 70), M.pavement, 'path_2', 20, 0.2, 72, 0, 0.18);
 add(model, box(140, 0.42, 3), M.pavement, 'path_3', -20, 0.2, 55, 0);
+// round white garden pavilion (like the photo's lawn drum)
+add(model, cyl(5.6, 3.4, 40), M.panel_white, 'lawn_pavilion', -30, 1.7, 64, 6.5);
+add(model, cyl(5.0, 0.8, 40), M.leaf_dark, 'lawn_pavilion_planting', -30, 3.6, 64, 6.5);
 
 // ---------- phase 1: podium ----------
 add(model, box(100, 25, 48), M.glass_green, 'podium_main', -42, 12.5, 0, 1);
@@ -210,7 +217,7 @@ add(drum2, cyl(13, 4), M.glass_green, 'drum2_glass', 0, 2, 0, 3);
 add(drum2, cyl(13.3, 11), M.metal_bronze, 'drum2_body', 0, 9.5, 0, 3);
 add(drum2, cyl(12.4, 1), M.roof_grey, 'drum2_roof', 0, 15.5, 0, 3);
 
-// ---------- phase 4: hull (two-tier: lower inset, upper overhangs) ----------
+// ---------- phase 4: hull (lower tier, open terrace with colonnade, taller upper tier) ----------
 const KL = 0.97;
 let y = 25;
 add(model, hullLayer(KL, 1.2), M.soffit_dark, 'hull_soffit', 0, y, 0, 4); y += 1.2;
@@ -218,11 +225,23 @@ for (let f = 0; f < 3; f++) {
   add(model, hullLayer(KL, 2.65), M.panel_white, 'hull_band', 0, y, 0, 4.1 + f * 0.1); y += 2.65;
   add(model, hullLayer(KL * 0.985, 1.4), M.glass_band, 'hull_glass', 0, y, 0, 4.1 + f * 0.1); y += 1.4;
 }
+// open terrace level: deck, recessed glass wall, planter band, white colonnade
+add(model, hullLayer(KL, 0.5), M.concrete, 'terrace_deck', 0, y, 0, 4.4); y += 0.5;
+add(model, hullLayer(KL * 0.86, 3.6), M.glass_green, 'terrace_glass', 0, y, 0, 4.42);
+add(model, hullLayer(KL * 0.905, 0.9), M.roof_green, 'terrace_garden', 0, y, 0, 4.42);
+const qp = (t, sign) => [((1 - t) * (1 - t) * 88 + 2 * (1 - t) * t * 30 + t * t * -55) * KL * 0.965, sign * (2 * (1 - t) * t * 26 + t * t * 24) * KL * 0.965];
+for (let i = 0; i < 9; i++) {
+  const t = 0.10 + i * 0.10;
+  const [px, pz] = qp(t, 1), [qx, qz] = qp(t, -1);
+  add(model, cyl(0.55, 3.6, 12), M.panel_white, 'piloti', px, y + 1.8, pz, 4.44);
+  add(model, cyl(0.55, 3.6, 12), M.panel_white, 'piloti', qx, y + 1.8, qz, 4.44);
+}
+y += 3.6;
 add(model, hullLayer(1, 0.9), M.soffit_dark, 'hull_belt_soffit', 0, y, 0, 4.45); y += 0.9;
 add(model, hullLayer(1.003, 1.5), M.panel_white, 'hull_belt', 0, y, 0, 4.45); y += 1.5;
-for (let f = 0; f < 4; f++) {
-  add(model, hullLayer(1, 2.65), M.panel_white, 'hull_band_up', 0, y, 0, 4.5 + f * 0.1); y += 2.65;
-  add(model, hullLayer(0.985, 1.4), M.glass_band, 'hull_glass_up', 0, y, 0, 4.5 + f * 0.1); y += 1.4;
+for (let f = 0; f < 7; f++) {
+  add(model, hullLayer(1, 1.7), M.panel_white, 'hull_band_up', 0, y, 0, 4.5 + f * 0.07); y += 1.7;
+  add(model, hullLayer(0.985, 2.3), M.glass_band2, 'hull_glass_up', 0, y, 0, 4.5 + f * 0.07); y += 2.3;
 }
 add(model, hullLayer(1, 2.0), M.panel_white, 'hull_parapet', 0, y, 0, 5); y += 2.0;
 
@@ -232,6 +251,15 @@ add(model, box(34, 1.1, 12), M.roof_green, 'roof_garden', -18, y + 0.8, 2, 5);
 add(model, box(10, 1.6, 8), M.roof_grey, 'roof_plant', 8, y + 1, -6, 5);
 add(model, cyl(0.14, 9, 8), M.concrete, 'roof_mast', -40, y + 4.5, 0, 5);
 add(model, cyl(0.1, 6, 8), M.concrete, 'roof_mast_b', -52, y + 3, 6, 5);
+add(model, box(9, 2, 7), M.roof_grey, 'roof_ac_a', 24, y + 1.2, 4, 5);
+add(model, box(6, 1.6, 5), M.roof_grey, 'roof_ac_b', 38, y + 1, -3, 5);
+for (let i = 0; i < 2; i++) {
+  const rd = new THREE.Group(); rd.name = 'roof_dish_' + i; rd.userData.phase = 5;
+  rd.position.set(-10 + i * 18, y + 0.4, -8 + i * 10); model.add(rd);
+  add(rd, cyl(0.25, 2.2, 8), M.steel, 'rdish_stem', 0, 1.1, 0, 5);
+  const b = add(rd, new THREE.SphereGeometry(2.2, 20, 8, 0, Math.PI * 2, 0, Math.PI * 0.42), M.panel_white, 'rdish_bowl', 0, 2.4, 0, 5);
+  b.rotation.x = -Math.PI * 0.35; b.rotation.y = 1 + i;
+}
 
 // ---------- phase 6: trees + streetlamps ----------
 const trees = [];
@@ -300,6 +328,100 @@ ctxBldg(-116, 172, 52, 20, 36, M.ctx_grey);
 ctxBldg(-20, 180, 46, 30, 40, M.ctx_glass);
 ctxBldg(88, 174, 56, 16, 34, M.ctx_grey);
 
+// ---------- plaza life (the empty east forecourt) ----------
+mat('water', { color: 0x2e6b84, roughness: 0.05, metalness: 0.1, envMapIntensity: 1.6 });
+mat('bench_white', { color: 0xe6e4de, roughness: 0.5, metalness: 0.1 });
+const PEOPLE_COLORS = [0xa34d40, 0x3f5d7a, 0x7a7364, 0x54683f, 0x8d8d95, 0xb08954];
+const peopleMats = PEOPLE_COLORS.map((c, i) => mat('person_' + i, { color: c, roughness: 0.8 }));
+const CAR_COLORS = [0xb9bcc0, 0x4a5560, 0x7e2f2a, 0x2e4d6b, 0xd8d5cc];
+const carMats = CAR_COLORS.map((c, i) => mat('car_' + i, { color: c, roughness: 0.25, metalness: 0.6, envMapIntensity: 1.2 }));
+mat('flag_a', { color: 0xb03a30, roughness: 0.8 });
+mat('flag_b', { color: 0x2e4d6b, roughness: 0.8 });
+mat('flag_c', { color: 0xd8d5cc, roughness: 0.8 });
+// reflecting pond
+add(model, box(38, 0.5, 20), M.concrete, 'pond_curb', 105, 0.25, 78, 6.5);
+add(model, box(35, 0.5, 17), M.water, 'pond_water', 105, 0.34, 78, 6.5);
+// sculpture: polished ring on plinth
+add(model, box(4.4, 1.4, 4.4), M.concrete, 'sculpture_plinth', 74, 0.7, 60, 6.5);
+const ring = add(model, new THREE.TorusGeometry(3, 0.5, 16, 48), M.steel, 'sculpture_ring', 74, 4.9, 60, 6.5);
+ring.rotation.y = 0.5;
+// flag row
+for (let i = 0; i < 3; i++) {
+  const fx = 88 + i * 9;
+  add(model, cyl(0.08, 10, 8), M.steel, 'flag_pole', fx, 5, 46, 6.5);
+  add(model, box(2.4, 1.5, 0.06), [M.flag_a, M.flag_b, M.flag_c][i], 'flag', fx + 1.3, 9, 46, 6.5);
+}
+// benches
+[[92, 66], [118, 66], [92, 90], [118, 90], [64, 74], [140, 82]].forEach(([bx, bz], i) => {
+  add(model, box(2.8, 0.5, 0.8), M.bench_white, 'bench', bx, 0.45, bz, 6.5, i % 2 ? 0 : Math.PI / 2);
+});
+// coffee kiosk
+add(model, box(6, 3, 4), M.glass_green, 'kiosk_glass', 130, 1.5, 98, 6.5);
+add(model, box(7.5, 0.4, 5.5), M.panel_white, 'kiosk_roof', 130, 3.3, 98, 6.5);
+// bus shelter on the south road
+add(model, box(8, 0.3, 3), M.panel_white, 'shelter_roof', 40, 3.1, 111, 6.5);
+add(model, cyl(0.12, 3, 8), M.steel, 'shelter_post_a', 37, 1.5, 112, 6.5);
+add(model, cyl(0.12, 3, 8), M.steel, 'shelter_post_b', 43, 1.5, 112, 6.5);
+add(model, box(7.6, 2.2, 0.15), M.glass_green, 'shelter_back', 40, 1.4, 110, 6.5);
+// amphitheater steps facing the lawn
+for (let i = 0; i < 3; i++) {
+  const amp = add(model, new THREE.CylinderGeometry(10 + i * 3, 10 + i * 3, 0.45 + i * 0.4, 48, 1, false, Math.PI * 0.9, Math.PI * 0.85), M.concrete, 'amphi_step', 42, (0.45 + i * 0.4) / 2, 88, 6.5);
+  amp.rotation.y = 0.2;
+}
+// people
+function person(x, z) {
+  const g = new THREE.Group(); g.name = 'person_' + (uid++); g.userData.phase = 7;
+  g.position.set(x, 0, z); g.rotation.y = rnd() * 6.28; model.add(g);
+  const m = peopleMats[(rnd() * peopleMats.length) | 0];
+  add(g, new THREE.CapsuleGeometry(0.3, 0.85, 4, 10), m, 'body', 0, 0.95, 0, 7);
+  add(g, new THREE.SphereGeometry(0.21, 10, 8), m, 'head', 0, 1.72, 0, 7);
+}
+for (let i = 0; i < 14; i++) person(58 + rnd() * 85, 45 + rnd() * 60);
+for (let i = 0; i < 8; i++) person(-90 + rnd() * 120, 50 + rnd() * 45);
+for (let i = 0; i < 4; i++) person(0 + rnd() * 30, 32 + rnd() * 6);
+// cars
+function car(x, z, ry) {
+  const g = new THREE.Group(); g.name = 'car_' + (uid++); g.userData.phase = 7;
+  g.position.set(x, 0, z); g.rotation.y = ry; model.add(g);
+  const m = carMats[(rnd() * carMats.length) | 0];
+  add(g, box(4.4, 1.0, 1.9), m, 'car_body', 0, 0.72, 0, 7);
+  add(g, box(2.3, 0.8, 1.7), M.glass_band, 'car_cabin', -0.3, 1.55, 0, 7);
+}
+car(-90, 117.5, 0); car(-20, 117.5, 0); car(70, 117.5, 0); car(30, 122.5, Math.PI); car(-130, 122.5, Math.PI);
+car(165.5, 40, Math.PI / 2); car(161.5, -30, -Math.PI / 2); car(120, 96, 0.4);
+// extra planting around the plaza
+for (let i = 0; i < 12; i++) tree(58 + rnd() * 90, 44 + rnd() * 64, 0.6 + rnd() * 0.7);
+shrubBed(105, 92, 8); shrubBed(78, 48, 6);
+
+// ---------- north side (behind the building) ----------
+add(model, box(204, 0.34, 64), M.concrete, 'n_lawn_curb', -20, 0.14, -72, 0);
+add(model, box(200, 0.3, 60), M.lawn, 'n_lawn', -20, 0.2, -72, 0);
+add(model, box(3, 0.42, 60), M.pavement, 'n_path_1', -70, 0.2, -72, 0);
+add(model, box(3, 0.42, 60), M.pavement, 'n_path_2', 10, 0.2, -72, 0, -0.15);
+add(model, box(150, 0.42, 3), M.pavement, 'n_path_3', -20, 0.2, -66, 0);
+hedge(-60, -34, 70); hedge(30, -34, 50); hedge(-20, -102, 130);
+shrubBed(-80, -50, 7); shrubBed(-10, -56, 6); shrubBed(40, -88, 7); shrubBed(-120, -80, 6);
+for (let i = 0; i < 30; i++) tree(-115 + rnd() * 200, -46 + rnd() * -55 * rnd() - 4, 0.7 + rnd() * 1.0);
+for (let i = 0; i < 14; i++) tree(-130 + i * 20, -108 + (rnd() - 0.5) * 3, 0.75 + rnd() * 0.4);
+// satellite dish pad — it's a media campus
+add(model, box(42, 0.3, 30), M.pavement, 'dish_pad', 100, 0.25, -62, 6.5);
+for (let i = 0; i < 3; i++) {
+  const d = new THREE.Group(); d.name = 'sat_dish_' + i; d.userData.phase = 6.5;
+  d.position.set(88 + i * 12, 0.4, -62); model.add(d);
+  add(d, cyl(0.35, 3.4, 10), M.steel, 'dish_stem', 0, 1.7, 0, 6.5);
+  const bowl = add(d, new THREE.SphereGeometry(3.2, 24, 10, 0, Math.PI * 2, 0, Math.PI * 0.42), M.panel_white, 'dish_bowl', 0, 3.6, 0, 6.5);
+  bowl.rotation.x = -Math.PI * 0.38; bowl.rotation.y = 0.4;
+  add(d, cyl(0.06, 2.2, 6), M.steel, 'dish_feed', 0, 4.6, 1.1, 6.5).rotation.x = 0.5;
+}
+add(model, box(42, 1.4, 0.15), M.steel, 'dish_fence_s', 100, 0.9, -47, 6.5);
+add(model, box(42, 1.4, 0.15), M.steel, 'dish_fence_n', 100, 0.9, -77, 6.5);
+add(model, box(0.15, 1.4, 30), M.steel, 'dish_fence_e', 121, 0.9, -62, 6.5);
+add(model, box(0.15, 1.4, 30), M.steel, 'dish_fence_w', 79, 0.9, -62, 6.5);
+// staff car park
+add(model, box(36, 0.26, 26), M.asphalt, 'carpark_pad', -138, 0.16, -48, 0);
+for (let i = 0; i < 8; i++) car(-150 + (i % 4) * 8, -42 - ((i / 4) | 0) * 12, Math.PI / 2 + (rnd() - 0.5) * 0.06);
+for (let i = 0; i < 6; i++) person(-60 + rnd() * 110, -40 - rnd() * 45);
+
 stage.setObject(model);
 camera.position.set(-135, 34, 248); // first waypoint of the scroll path below
 controls.target.set(-5, 12, 0);
@@ -330,6 +452,73 @@ const earth = new THREE.Mesh(new THREE.CircleGeometry(760, 48), new THREE.MeshSt
 earth.rotation.x = -Math.PI / 2; earth.position.y = -0.55; earth.name = 'earth';
 earth.receiveShadow = true;
 scene.add(earth);
+// distant hills ringing the horizon
+[[0, 560, 300, 0x6f7f68], [70, 640, 420, 0x74838d], [150, 600, 340, 0x7c8a74], [215, 660, 460, 0x6d7d85], [300, 590, 360, 0x75846e]].forEach(([az, dist, r, col], i) => {
+  const h = new THREE.Mesh(new THREE.SphereGeometry(r, 24, 12), new THREE.MeshStandardMaterial({ color: col, roughness: 1 }));
+  const a = az * Math.PI / 180;
+  h.position.set(Math.cos(a) * dist, -r * 0.86, Math.sin(a) * dist);
+  h.scale.y = 1.0; h.name = 'hill_' + i;
+  scene.add(h);
+});
+// puffy 3D clouds drifting across the sky
+const cloudMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1, transparent: true, opacity: 0.92 });
+cloudMat.name = 'cloud';
+const cloudGroup = new THREE.Group(); cloudGroup.name = 'clouds'; scene.add(cloudGroup);
+for (let i = 0; i < 14; i++) {
+  const cl = new THREE.Group();
+  const a = rnd() * Math.PI * 2, dist = 240 + rnd() * 400;
+  cl.position.set(Math.cos(a) * dist, 170 + rnd() * 170, Math.sin(a) * dist);
+  cl.userData.x0 = cl.position.x;
+  cl.userData.speed = 3 + rnd() * 5;
+  const n = 4 + (rnd() * 3 | 0);
+  for (let k = 0; k < n; k++) {
+    const r = 14 + rnd() * 22;
+    const m = new THREE.Mesh(new THREE.SphereGeometry(r, 14, 10), cloudMat);
+    m.position.set((rnd() - 0.5) * r * 3.2, (rnd() - 0.5) * r * 0.7, (rnd() - 0.5) * r * 1.4);
+    m.scale.y = 0.38;
+    cl.add(m);
+  }
+  cloudGroup.add(cl);
+}
+/* Clouds drift on their own clock. `stageVisible` is flipped by the observer
+   further down, so this loop idles while the stage is scrolled away rather
+   than moving geometry nobody is rendering. */
+let stageVisible = true;
+(function driftClouds() {
+  requestAnimationFrame(driftClouds);
+  if (!stageVisible) return;
+  const t = performance.now() / 1000;
+  cloudGroup.children.forEach((cl) => {
+    cl.position.x = ((cl.userData.x0 + t * cl.userData.speed + 700) % 1400) - 700;
+  });
+})();
+// sun / moon sprites + stars
+function glowSprite(inner, outer, hardEdge) {
+  const c = document.createElement('canvas'); c.width = c.height = 256;
+  const x = c.getContext('2d');
+  const g = x.createRadialGradient(128, 128, 8, 128, 128, 128);
+  if (hardEdge) { g.addColorStop(0, inner); g.addColorStop(0.30, inner); g.addColorStop(0.34, outer); g.addColorStop(1, 'rgba(0,0,0,0)'); }
+  else { g.addColorStop(0, inner); g.addColorStop(0.25, outer); g.addColorStop(1, 'rgba(0,0,0,0)'); }
+  x.fillStyle = g; x.fillRect(0, 0, 256, 256);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, transparent: true, depthWrite: false, fog: false }));
+  return s;
+}
+const sun = glowSprite('rgba(255,252,240,1)', 'rgba(255,236,180,0.55)');
+sun.scale.set(160, 160, 1); sun.name = 'sun'; scene.add(sun);
+const moon = glowSprite('rgba(240,240,228,1)', 'rgba(210,220,235,0.35)', true);
+moon.scale.set(120, 120, 1); moon.name = 'moon'; scene.add(moon);
+const starGeo = new THREE.BufferGeometry();
+{
+  const pos = [];
+  for (let i = 0; i < 320; i++) {
+    const a = rnd() * Math.PI * 2, alt = 0.15 + rnd() * 1.3, R = 730;
+    pos.push(Math.cos(a) * Math.cos(alt) * R, Math.sin(alt) * R, Math.sin(a) * Math.cos(alt) * R);
+  }
+  starGeo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+}
+const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xdfe6f0, size: 2.2, sizeAttenuation: false, transparent: true, opacity: 0.9, fog: false }));
+stars.name = 'stars'; scene.add(stars);
 scene.fog = new THREE.Fog(0xdfe9f0, 400, 1400);
 
 // ---------- lighting rig ----------
@@ -350,8 +539,8 @@ function envFor(cfg) {
   return pmrem.fromScene(s, 0.05).texture;
 }
 const TOD = {
-  Noon: { skyTop: '#3e81bd', skyMid: '#8db9dd', skyHor: '#dce9f2', clouds: 34, sunColor: 0xfff3e0, sunInt: 2.0, sunPos: [120, 190, 90], hemiInt: 0.5, fillInt: 0.3, fog: 0xd6e3ec, lights: 0, screen: 0 },
-  Morning: { skyTop: '#7aa8cd', skyMid: '#d8d9c9', skyHor: '#f6e3c4', clouds: 18, sunColor: 0xffd9a0, sunInt: 2.2, sunPos: [220, 70, 140], hemiInt: 0.6, fillInt: 0.35, fog: 0xeee5d4, lights: 0.4, screen: 0.5 },
+  Noon: { skyTop: '#3e81bd', skyMid: '#8db9dd', skyHor: '#dce9f2', clouds: 34, sunColor: 0xfff3e0, sunInt: 2.0, sunPos: [110, 170, -140], hemiInt: 0.5, fillInt: 0.3, fog: 0xd6e3ec, lights: 0, screen: 0 },
+  Morning: { skyTop: '#7aa8cd', skyMid: '#d8d9c9', skyHor: '#f6e3c4', clouds: 18, sunColor: 0xffd9a0, sunInt: 2.2, sunPos: [230, 65, -130], hemiInt: 0.6, fillInt: 0.35, fog: 0xeee5d4, lights: 0.4, screen: 0.5 },
   Dusk: { skyTop: '#101f42', skyMid: '#28407a', skyHor: '#c8763c', clouds: 8, sunColor: 0xff8c4a, sunInt: 0.7, sunPos: [-240, 35, 60], hemiInt: 0.22, fillInt: 0.12, fog: 0x25355c, lights: 1.6, screen: 1.4 },
 };
 const cache = { env: {}, sky: {} };
@@ -373,6 +562,15 @@ function applyState(s) {
   scene.fog.color.set(cfg.fog);
   scene.fog.near = 420 - state.haze * 300;
   scene.fog.far = 2200 - state.haze * 1200;
+  const sunDir = new THREE.Vector3(cfg.sunPos[0], cfg.sunPos[1], cfg.sunPos[2]).normalize();
+  sun.position.copy(sunDir).multiplyScalar(700);
+  sun.visible = state.timeOfDay !== 'Dusk';
+  sun.material.color.set(state.timeOfDay === 'Morning' ? 0xffd9a0 : 0xffffff);
+  sun.scale.setScalar(state.timeOfDay === 'Morning' ? 260 : 210);
+  cloudMat.color.set(state.timeOfDay === 'Dusk' ? 0x3c4a66 : state.timeOfDay === 'Morning' ? 0xfff2e2 : 0xffffff);
+  moon.visible = state.timeOfDay === 'Dusk';
+  moon.position.set(-0.45, 0.5, -0.75).normalize().multiplyScalar(700);
+  stars.visible = state.timeOfDay === 'Dusk';
   const li = state.lights === 'Auto' ? cfg.lights : state.lights === 'On' ? 1.6 : 0;
   M.glass_band.emissiveIntensity = li;
   M.glass_green.emissiveIntensity = li;
@@ -416,21 +614,30 @@ controls.addEventListener('start', () => { if (orbiting) setOrbit(false); });
 const parts = [];
 model.children.forEach((c) => { if ((c.userData.phase || 0) > 0) parts.push(c); });
 parts.sort((a, b) => (a.userData.phase - b.userData.phase) || (a.position.y - b.position.y));
-parts.forEach((p) => { p.userData.fy = p.position.y; });
-
+parts.forEach((p) => {
+  p.userData.fp = [p.position.x, p.position.y, p.position.z];
+  p.userData.br = [p.rotation.x, p.rotation.y, p.rotation.z];
+  const big = p.userData.phase < 6;
+  const a = rnd() * Math.PI * 2, dist = big ? 200 + rnd() * 240 : 80 + rnd() * 130;
+  p.userData.sd = [Math.cos(a) * dist, 60 + rnd() * 170, Math.sin(a) * dist];
+  p.userData.sr = [(rnd() - 0.5) * (big ? 1.3 : 0.7), (rnd() - 0.5) * (big ? 4.5 : 2.2), (rnd() - 0.5) * (big ? 1.3 : 0.7)];
+});
 /* Each phase owns a slice of the scroll, and its own parts spread across that
-   slice. Handing every part an equal slice instead would give the landscape
-   three quarters of the timeline — there are ~130 trees, hedges and beds
-   against ~45 building parts — and the building itself would top out in the
-   first screen. The hull is the show, so the hull gets the longest slice. */
+   slice. Handing every part an equal slice instead would give the landscape and
+   the street life most of the timeline — they outnumber the building parts
+   several times over — and the building itself would top out in the first
+   screen. The hull is the show, so the hull gets the longest slices. */
 const CHAPTERS = [
-  { until: 2, share: 0.13, label: 'Podium and terraces' },
-  { until: 3, share: 0.07, label: 'Cores and columns' },
-  { until: 4, share: 0.08, label: 'Theatre drums' },
-  { until: 4.5, share: 0.18, label: 'Hull — lower tiers' },
-  { until: 5, share: 0.20, label: 'Hull — upper tiers' },
-  { until: 6, share: 0.09, label: 'Roof gardens and masts' },
-  { until: Infinity, share: 0.25, label: 'Trees, hedges and lamps' },
+  { until: 2, share: 0.11, label: 'Podium and terraces' },
+  { until: 3, share: 0.06, label: 'Cores and columns' },
+  { until: 4, share: 0.07, label: 'Theatre drums' },
+  { until: 4.4, share: 0.13, label: 'Hull — lower tiers' },
+  { until: 4.45, share: 0.09, label: 'Sky terrace and colonnade' },
+  { until: 5, share: 0.17, label: 'Hull — upper tiers' },
+  { until: 6, share: 0.08, label: 'Roof, masts and dishes' },
+  { until: 6.5, share: 0.12, label: 'Trees, hedges and lamps' },
+  { until: 7, share: 0.09, label: 'Plaza, pond and satellite dishes' },
+  { until: Infinity, share: 0.08, label: 'People and traffic' },
 ];
 {
   let at = 0;
@@ -442,17 +649,31 @@ const CHAPTERS = [
     at += ch.share;
   }
 }
-const RISE = 0.12; // share of the scroll one part takes to rise into place
+const RISE = 0.12; // share of the scroll one part takes to fly into place
 const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+const easeBack = (t) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
 let progress = 1;
 function setProgress(p) {
   progress = Math.max(0, Math.min(1, p));
   const span = 1 - RISE;
   parts.forEach((part) => {
     const lt = Math.max(0, Math.min(1, (progress - part.userData.t0 * span) / RISE));
-    const grown = lt > 0 && part.userData.g !== false;
-    part.visible = grown;
-    part.position.y = part.userData.fy - 7 * (1 - easeOut(lt));
+    if (lt <= 0 || part.userData.g === false) {
+      part.visible = false;
+      return;
+    }
+    part.visible = true;
+    const fp = part.userData.fp, br = part.userData.br;
+    if (lt >= 1) {
+      part.position.set(fp[0], fp[1], fp[2]);
+      part.rotation.set(br[0], br[1], br[2]);
+      part.scale.setScalar(1);
+      return;
+    }
+    const e = easeOut(lt), r = 1 - e, sd = part.userData.sd, sr = part.userData.sr;
+    part.position.set(fp[0] + sd[0] * r, fp[1] + sd[1] * r, fp[2] + sd[2] * r);
+    part.rotation.set(br[0] + sr[0] * r, br[1] + sr[1] * r, br[2] + sr[2] * r);
+    part.scale.setScalar(Math.max(0.001, 0.25 + 0.75 * easeBack(lt)));
   });
   if (railFill) railFill.style.width = (progress * 100).toFixed(1) + '%';
   if (railLabel) {
@@ -543,6 +764,7 @@ document.getElementById('btnReset').addEventListener('click', () => {
    long read, and a 60fps WebGL loop behind them is pure battery burn. */
 new IntersectionObserver((entries) => {
   const visible = entries.some((e) => e.isIntersecting);
+  stageVisible = visible;
   renderer.setAnimationLoop(visible ? stage._loop : null);
   if (!visible && orbiting) setOrbit(false);
 }, { rootMargin: '120px' }).observe(track);
@@ -555,10 +777,11 @@ document.querySelectorAll('[data-campus-export]').forEach((btn) => {
 
 /* Counted from the finished scene rather than typed into the copy, so the
    numbers in the notes below can never drift from the model. */
-let meshCount = 0, triCount = 0, treeCount = 0;
+let meshCount = 0, triCount = 0, treeCount = 0, peopleCount = 0;
 const materialSet = new Set();
 model.traverse((o) => {
   if (o.isGroup && /^tree_/.test(o.name)) treeCount++;
+  if (o.isGroup && /^person_/.test(o.name)) peopleCount++;
   if (!o.isMesh) return;
   meshCount++;
   (Array.isArray(o.material) ? o.material : [o.material]).forEach((m) => m && materialSet.add(m));
@@ -570,6 +793,7 @@ const stats = {
   materials: materialSet.size,
   triangles: Math.round(triCount),
   trees: treeCount,
+  people: peopleCount,
 };
 document.querySelectorAll('[data-campus-stat]').forEach((el) => {
   const v = stats[el.dataset.campusStat];

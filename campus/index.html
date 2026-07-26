@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>3D Campus — a media campus that builds as you scroll · Zhang Cheng</title>
-  <meta name="description" content="A procedural three.js media campus: every mesh written by hand, every texture painted into a canvas at runtime, assembled phase by phase as you scroll — and exportable as GLB or OBJ.">
+  <meta name="description" content="A procedural three.js media campus: 1,027 meshes written by hand, every texture painted into a canvas at runtime, flown into place phase by phase as you scroll — and exportable as GLB or OBJ.">
   <meta property="og:title" content="3D Campus — a media campus that builds as you scroll">
-  <meta property="og:description" content="No model files, no image files: hand-written geometry and canvas-painted textures. Scroll assembles the campus phase by phase, three lighting rigs change the hour, and the whole model exports to GLB.">
+  <meta property="og:description" content="No model files, no image files: hand-written geometry and canvas-painted textures. Scroll flies the campus together phase by phase — hull, sky terrace, roof, plaza, people — three lighting rigs change the hour, and the whole model exports to GLB.">
   <meta property="og:type" content="website">
+  <meta property="og:image" content="../assets/thumbs/campus.jpg">
   <meta name="theme-color" content="#101410">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#127959;</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -268,8 +269,8 @@
         <div id="titleCard">
           <p class="eyebrow">three.js &middot; procedural &middot; no model files</p>
           <h1>A campus that <em>builds as you scroll</em></h1>
-          <p class="sub">Ground, podium, cores, drums, hull, roof, trees — every phase rises into place on the
-            way down, then the camera keeps flying.</p>
+          <p class="sub">Ground, podium, drums, hull, sky terrace, roof, trees, plaza, people — every phase
+            flies into place on the way down, while the camera circles the site.</p>
         </div>
 
         <div id="hud">
@@ -301,24 +302,26 @@
     <!-- ===== notes ===== -->
     <section class="wrap" id="notes">
       <div class="sec-head reveal"><span class="sec-index">01</span><h2>What you just scrolled through</h2></div>
-      <p class="sec-sub reveal">A stylised media campus — the long glass hull, the theatre drums, the roof
-        gardens. <b>Nothing here was downloaded.</b> There is no model file and no image file: every mesh is
-        written down in code, and every texture is painted into a <code>&lt;canvas&gt;</code> at runtime by a
-        seeded generator, so the same 16 window tints and the same blades of grass come back on every load.</p>
+      <p class="sec-sub reveal">A stylised media campus — the long glass hull, the sky terrace on its
+        colonnade, the theatre drums, the satellite dish compound out back.
+        <b>Nothing here was downloaded.</b> There is no model file and no image file: every mesh is written
+        down in code, and every texture is painted into a <code>&lt;canvas&gt;</code> at runtime by a seeded
+        generator, so the same 16 window tints and the same blades of grass come back on every load.</p>
 
       <div class="figures reveal">
-        <div class="fig"><div class="v" data-campus-stat="meshes">—</div><div class="k">meshes</div></div>
-        <div class="fig"><div class="v" data-campus-stat="triangles">—</div><div class="k">triangles</div></div>
-        <div class="fig"><div class="v" data-campus-stat="materials">—</div><div class="k">materials</div></div>
-        <div class="fig"><div class="v" data-campus-stat="trees">111</div><div class="k">trees planted</div></div>
+        <div class="fig"><div class="v" data-campus-stat="meshes">1,027</div><div class="k">meshes</div></div>
+        <div class="fig"><div class="v" data-campus-stat="triangles">93k</div><div class="k">triangles</div></div>
+        <div class="fig"><div class="v" data-campus-stat="materials">38</div><div class="k">materials</div></div>
+        <div class="fig"><div class="v" data-campus-stat="trees">167</div><div class="k">trees planted</div></div>
+        <div class="fig"><div class="v" data-campus-stat="people">32</div><div class="k">people about</div></div>
         <div class="fig"><div class="v">0</div><div class="k">asset files loaded</div></div>
       </div>
 
       <div class="phases">
         <div class="phase reveal"><div class="n">00</div>
-          <div><h3>Ground</h3><p>A paved plate, four roads, the main lawn and its kerb, two smaller lawns and
-            three footpaths. Thirteen context blocks sit beyond the roads and fade into haze — they are always
-            there, so the site never looks like it is floating in a void.</p></div></div>
+          <div><h3>Ground</h3><p>A paved plate, four roads, lawns front and back with their kerbs, footpaths,
+            and the staff car park. Thirteen context blocks sit beyond the roads and fade into haze — they are
+            always there, so the site never looks like it is floating in a void.</p></div></div>
         <div class="phase reveal"><div class="n">01</div>
           <div><h3>Podium</h3><p>Three green-glass volumes, the entrance canopy on its two posts, the media
             screen, and two planted terraces stepping back from the front.</p></div></div>
@@ -329,14 +332,29 @@
           <div><h3>Drums</h3><p>The theatre drum and its smaller sibling: a glazed base, a bronze-metal body,
             a green roof.</p></div></div>
         <div class="phase reveal"><div class="n">04</div>
-          <div><h3>Hull</h3><p>Eighteen extrusions of one curved floor profile, stacked into two tiers —
-            white panel band, glass band, white panel band — with a dark soffit under each tier so the upper
-            one reads as an overhang rather than a taller box.</p></div></div>
+          <div><h3>Hull, lower tier</h3><p>Extrusions of one curved floor profile — white panel band, glass
+            band, repeat — on a plate inset from the tier above, under a dark soffit.</p></div></div>
         <div class="phase reveal"><div class="n">05</div>
-          <div><h3>Roof</h3><p>Roof deck, roof garden, plant enclosure and two masts.</p></div></div>
+          <div><h3>Sky terrace</h3><p>The floor that is left open: a deck, a glass wall recessed well back
+            from the edge, a planted band, and eighteen white columns following the curve — so the mass above
+            reads as an overhang rather than a taller box.</p></div></div>
         <div class="phase reveal"><div class="n">06</div>
+          <div><h3>Hull, upper tier</h3><p>The belt, then seven taller storeys where the glass is wider than
+            the panel between it, and the parapet that closes the top.</p></div></div>
+        <div class="phase reveal"><div class="n">07</div>
+          <div><h3>Roof</h3><p>Deck, roof garden, plant enclosure, two masts, air-handling boxes and a pair of
+            uplink dishes.</p></div></div>
+        <div class="phase reveal"><div class="n">08</div>
           <div><h3>Landscape</h3><p>Trees with three-lobe crowns and randomised tilt, hedges, kerbed shrub beds
-            with the odd flowering shrub, and six street lamps that light up after dark.</p></div></div>
+            with the odd flowering shrub, and street lamps that light up after dark.</p></div></div>
+        <div class="phase reveal"><div class="n">09</div>
+          <div><h3>Plaza &amp; compound</h3><p>The forecourt fills in: a garden pavilion, a reflecting pond, a
+            polished ring on its plinth, three flags, benches, a coffee kiosk, a bus shelter, amphitheatre
+            steps facing the lawn — and behind the building, a fenced pad with three satellite dishes,
+            because it is a media campus.</p></div></div>
+        <div class="phase reveal"><div class="n">10</div>
+          <div><h3>People &amp; traffic</h3><p>Last, the thing that makes the rest read as buildings: people
+            on the plaza and the paths, cars on the roads and in the car park.</p></div></div>
       </div>
     </section>
 
@@ -349,9 +367,10 @@
         <div class="card reveal">
           <p class="tag">The timeline</p>
           <h3>Scroll is the build order</h3>
-          <p>Parts are sorted by phase, then by height, and each one gets its own 10% slice of the scroll: it
-            rises seven metres into position on a cubic ease-out. Scroll back up and the campus takes itself
-            apart in the same order.</p>
+          <p>Parts are sorted by phase, then by height, and each phase owns a slice of the scroll. Every part
+            flies in from its own random point in the sky — position, rotation and scale all easing home, the
+            scale with a slight overshoot. Scroll back up and the campus takes itself apart in the same
+            order.</p>
         </div>
         <div class="card reveal">
           <p class="tag">The camera</p>
@@ -363,9 +382,17 @@
         <div class="card reveal">
           <p class="tag">The light</p>
           <h3>Morning, noon, dusk</h3>
-          <p>Each preset paints its own sky gradient with clouds, then bakes that sky plus a sun sphere into a
-            PMREM environment map — which is what the glass and bronze actually reflect. Haze drives the fog
-            distances; at dusk the window emissives, the media screen and the street lamps come up.</p>
+          <p>Each preset paints its own sky gradient, then bakes that sky plus a sun sphere into a PMREM
+            environment map — which is what the glass and bronze actually reflect. A sun sprite tracks the key
+            light; at dusk it is swapped for a moon and 320 stars, the clouds turn slate, and the window
+            emissives, the media screen and the street lamps come up.</p>
+        </div>
+        <div class="card reveal">
+          <p class="tag">The sky</p>
+          <h3>Weather, cheaply</h3>
+          <p>Fourteen clouds, each a handful of squashed spheres, drift across the sky on their own clock and
+            wrap around — and five flattened spheres sit past the fog line as hills, so the horizon is a
+            landscape rather than a hard edge.</p>
         </div>
         <div class="card reveal">
           <p class="tag">The output</p>
