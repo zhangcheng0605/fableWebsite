@@ -34,6 +34,9 @@
       --bg:#fdf4ff;
       --ink:#38235c;
       --pink:#ff3fae; --pink-soft:#ffb7e2;
+      /* pink as TEXT: the bright pink is 3.2:1 on white — fine for borders,
+         buttons and hovers, unreadable for small labels. 5.5:1 on white. */
+      --pink-ink:#c9106f;
       --purple:#8b3dff; --violet:#6428d8;
       --cyan:#25c4ff; --gold:#ffb830; --green:#12b981;
       --card:#ffffff;
@@ -127,7 +130,7 @@
     .band-xp{background:rgba(255,255,255,.6)}
 
     .sec-head{display:flex;align-items:center;gap:16px;margin-bottom:14px}
-    .sec-index{font-family:"JetBrains Mono",monospace;font-size:.8rem;color:var(--pink);
+    .sec-index{font-family:"JetBrains Mono",monospace;font-size:.8rem;color:var(--pink-ink);
       background:#fff;border:2px solid var(--border-pink);border-radius:99px;padding:3px 14px}
     h2{font-weight:800;font-size:clamp(2.1rem,4.6vw,3.4rem);letter-spacing:.005em;
       background:linear-gradient(95deg,#e51f8f,#7a2df0 55%,#0f9fe0);
@@ -140,13 +143,17 @@
       animation:bob 7s ease-in-out infinite}
     @keyframes bob{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-24px) rotate(6deg)}}
     @media(max-width:760px){.deco-lg{display:none}}
+    /* the band-corner decos live in the gutter beside the 1560px column —
+       below ~1700px there is no gutter and they'd sit on the content */
+    @media(max-width:1699px){.band .deco-lg{display:none}}
 
     /* ===== hero ===== */
     .hero{position:relative;min-height:88svh;display:flex;flex-direction:column;justify-content:center;
       align-items:center;text-align:center;padding:130px 24px 90px;overflow:hidden}
+    /* z-index 2: hero text always paints above the floating decos (z 1) */
     .eyebrow{font-family:"JetBrains Mono",monospace;font-size:.76rem;letter-spacing:.22em;text-transform:uppercase;
       color:var(--violet);background:#fff;border:2px solid var(--border);border-radius:99px;
-      padding:8px 18px;margin-bottom:26px;box-shadow:var(--shadow-purple)}
+      padding:8px 18px;margin-bottom:26px;box-shadow:var(--shadow-purple);position:relative;z-index:2}
     /* the ZAC Studios mark stands where the wordmark used to — three.js when
        the browser can render it, the flat stamp lockup below when it can't.
        Glow and shadow are candy-graded: the mark now floats over the aurora,
@@ -216,10 +223,14 @@
     .series-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
       flex-wrap:wrap;margin-bottom:22px}
     .badge{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.14em;
-      text-transform:uppercase;color:var(--pink);margin-bottom:8px}
+      text-transform:uppercase;color:var(--pink-ink);margin-bottom:8px}
     .series h3{font-weight:800;font-size:clamp(1.7rem,3.4vw,2.4rem)}
     .logline{margin-top:10px;max-width:640px;font-size:.98rem}
     .thumbs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+    /* a series with a single chapter (Born Rich) must not stretch its one
+       card across the whole 1500px column — auto-fit collapses the empty
+       tracks and the 3:4 cover would blow up past the viewport height */
+    .thumbs a.chapter:only-child{max-width:480px}
     a.chapter{position:relative;display:flex;flex-direction:column;background:var(--card);
       border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;
       transition:border-color .25s,transform .25s,box-shadow .25s}
@@ -231,7 +242,7 @@
     .thumb.tall{aspect-ratio:3/4}
     .meta{display:flex;flex-direction:column;gap:3px;padding:15px 18px 17px}
     .meta b{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.12em;
-      color:var(--pink);font-weight:500}
+      color:var(--pink-ink);font-weight:500}
     .meta .t{font-family:"Baloo 2",sans-serif;font-weight:700;font-size:1.05rem}
     .meta .n{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--violet)}
     .meta .new{position:absolute;top:14px;right:14px;font-family:"Baloo 2",sans-serif;
@@ -251,7 +262,7 @@
     a.tile:hover .tile-thumb img{transform:scale(1.06)}
     .tile-body{display:flex;flex-direction:column;flex:1;padding:24px 26px 26px}
     .tile .tag{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.14em;
-      text-transform:uppercase;color:var(--pink);margin-bottom:10px;line-height:1.5;flex:none}
+      text-transform:uppercase;color:var(--pink-ink);margin-bottom:10px;line-height:1.5;flex:none}
     .tile h3{font-weight:800;font-size:1.6rem;margin-bottom:10px}
     .tile p{font-size:.96rem;flex:none}
     .tile .desc{flex:1}
@@ -292,7 +303,7 @@
       padding:28px 30px;display:grid;grid-template-columns:210px 1fr;gap:26px;
       transition:border-color .25s,box-shadow .25s}
     .role:hover{border-color:var(--pink);box-shadow:var(--shadow-purple)}
-    .role .when{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--pink);
+    .role .when{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--pink-ink);
       letter-spacing:.06em;line-height:1.8}
     .role .when .loc{display:block;color:var(--violet)}
     .role h3{font-weight:800;font-size:1.35rem}
@@ -308,9 +319,9 @@
     .mini .item:last-child{border-bottom:none;padding-bottom:0}
     .mini .item b{display:block;font-weight:700;font-size:.96rem}
     .mini .item span{font-size:.86rem}
-    .mini .item .yr{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--pink);float:right;margin-left:12px}
+    .mini .item .yr{font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--pink-ink);float:right;margin-left:12px}
     .cat{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;
-      color:var(--pink);margin:44px 0 18px;display:flex;align-items:center;gap:14px}
+      color:var(--pink-ink);margin:44px 0 18px;display:flex;align-items:center;gap:14px}
     .cat::after{content:"";flex:1;height:2px;border-radius:2px;
       background:linear-gradient(90deg,rgba(255,63,174,.4),transparent)}
     .caps{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
@@ -384,7 +395,7 @@
       <span class="deco" style="right:7%;top:22%;animation-delay:1.2s" aria-hidden="true">&#11088;</span>
       <span class="deco deco-lg" style="left:12%;bottom:24%;animation-delay:.6s" aria-hidden="true">&#129498;</span>
       <span class="deco deco-lg" style="right:12%;bottom:28%;animation-delay:1.8s" aria-hidden="true">&#128150;</span>
-      <span class="deco deco-lg" style="left:46%;top:9%;animation-delay:2.4s" aria-hidden="true">&#10024;</span>
+      <span class="deco deco-lg" style="left:62%;top:4%;animation-delay:2.4s" aria-hidden="true">&#10024;</span>
 
       <p class="eyebrow">Senior Engineer, Enterprise AI · Mediacorp · Singapore</p>
       <h1 class="hero-logo">
@@ -751,14 +762,17 @@
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
+    var pending = [];
     var io = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
       });
     }, { threshold: .1, rootMargin: '0px 0px -30px 0px' });
-    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); });
+    document.querySelectorAll('.reveal').forEach(function (el) { io.observe(el); pending.push(el); });
 
-    /* rainbow scroll-progress bar */
+    /* rainbow scroll-progress bar — the same rAF tick also sweeps up reveals
+       an anchor jump skipped past (a fast smooth-scroll can sail elements
+       through the viewport without the observer firing on them) */
     (function () {
       var bar = document.getElementById('rainbowbar');
       var ticking = false;
@@ -766,6 +780,15 @@
         ticking = false;
         var max = document.documentElement.scrollHeight - window.innerHeight;
         bar.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+        for (var i = pending.length - 1; i >= 0; i--) {
+          var el = pending[i];
+          if (el.classList.contains('visible')) { pending.splice(i, 1); continue; }
+          if (el.getBoundingClientRect().top < window.innerHeight - 30) {
+            el.classList.add('visible');
+            io.unobserve(el);
+            pending.splice(i, 1);
+          }
+        }
       }
       addEventListener('scroll', function () {
         if (!ticking) { ticking = true; requestAnimationFrame(update); }
