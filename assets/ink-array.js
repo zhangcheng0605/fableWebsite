@@ -36,13 +36,15 @@ function boot() {
   const COARSE = matchMedia('(pointer: coarse)').matches;
 
   const NUM = ['壹', '贰', '叁', '肆', '伍', '陆'];
+  // The whole name lands first, then it unfolds one character at a time —
+  // 起式 opens, 收式 closes, the way a form is counted.
   const STAGES = [
-    { glyphs: '扎', name: '起式 · 扎', en: 'Zha' },
-    { glyphs: '克', name: '二式 · 克', en: 'Ke' },
-    { glyphs: '工', name: '三式 · 工', en: 'Gong' },
-    { glyphs: '作', name: '四式 · 作', en: 'Zuo' },
-    { glyphs: '室', name: '五式 · 室', en: 'Shi' },
-    { glyphs: '扎克工作室', name: '合式 · 归一', en: 'ZAC Studios' },
+    { glyphs: '扎克工作室', name: '起式 · 归一', en: 'ZAC Studios' },
+    { glyphs: '扎', name: '二式 · 扎', en: 'Zha' },
+    { glyphs: '克', name: '三式 · 克', en: 'Ke' },
+    { glyphs: '工', name: '四式 · 工', en: 'Gong' },
+    { glyphs: '作', name: '五式 · 作', en: 'Zuo' },
+    { glyphs: '室', name: '收式 · 室', en: 'Shi' },
   ];
   // craft / art / spirit words — the ink the larger characters are drawn with
   const POOL = '扎克工作室墨艺创匠心影光形意象美灵感造梦视觉设计韵神气风雅境妙巧思品质道法笔纸砚彩绘塑构'.split('');
@@ -330,8 +332,14 @@ function boot() {
 
   let raf = 0;
   let started = false;
+  // The observers below are wired up before the font resolves, so both of these
+  // gate the loop: without `ready` the intersection callback can start drawing
+  // against an empty sprite atlas, and without `visible` the boot path can start
+  // it for a band that is already scrolled past.
+  let ready = false;
+  let visible = true;
   function start() {
-    if (started || STILL) return;
+    if (started || STILL || !ready || !visible) return;
     started = true;
     raf = requestAnimationFrame(frame);
   }
@@ -344,6 +352,9 @@ function boot() {
   new ResizeObserver(() => {
     clearTimeout(resizeT);
     resizeT = setTimeout(() => {
+      // fires on first observation too, which can beat the font — boot does its
+      // own measure(), so there is nothing to do until the atlas exists
+      if (!sprites.size) return;
       const before = N;
       measure();
       if (N !== before) initParticles();
@@ -353,7 +364,8 @@ function boot() {
   }).observe(canvas);
 
   new IntersectionObserver((es) => {
-    if (es[0].isIntersecting) { nextAt = performance.now() + DWELL; start(); }
+    visible = es[0].isIntersecting;
+    if (visible) { nextAt = performance.now() + DWELL; start(); }
     else { stop(); ptr.on = false; }
   }, { threshold: 0 }).observe(root);
 
@@ -366,7 +378,8 @@ function boot() {
     buildSprites();
     initParticles();
     if (STILL) {
-      goTo(STAGES.length - 1, { instant: true });
+      // no motion, so hold the formation that says the most: the full name
+      goTo(0, { instant: true });
       drawStill();
       root.classList.add('is-still');
       return;
@@ -374,6 +387,7 @@ function boot() {
     goTo(0, { scatter: true });
     nextAt = performance.now() + DWELL * 1.5;
     root.classList.add('is-live');
+    ready = true;
     start();
   });
 }
