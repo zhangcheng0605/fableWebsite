@@ -15,6 +15,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Quicksand:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/fx.css">
+  <link rel="stylesheet" href="assets/bunny.css">
+  <!-- The ink array's font is only discovered when its module runs, at the tail
+       of the script graph behind three.js. Preloading it here starts the fetch
+       with the document instead — worth ~23s on a slow first visit. -->
+  <link rel="preload" as="font" type="font/woff2" href="assets/fonts/zacink.woff2" crossorigin>
   <!-- three.js is served from this repo (campus/vendor/three) — no CDN, works
        offline. The hero mark and the 3D campus share the same pinned copy. -->
   <script type="importmap">
@@ -173,7 +178,7 @@
     .vh{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
       clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
     /* ===== 水墨字阵 · the ink character array ===== */
-    /* 72-glyph cut of Noto Serif SC — only what this piece draws (15 KB) */
+    /* 61-glyph cut of Noto Serif SC — only what this piece draws (12.5 KB) */
     @font-face{font-family:"ZacInk";font-style:normal;font-weight:900;font-display:swap;
       src:url(assets/fonts/zacink.woff2) format("woff2")}
     /* the 3D mark leaves headroom inside its own box — close the gap so the
@@ -839,6 +844,7 @@
       update();
     })();
   </script>
+  <script src="assets/bunny.js" defer></script>
   <script src="assets/sparkle.js" defer></script>
   <script src="assets/fx.js" defer></script>
   <!-- order matters: the stage element must be defined before the mark builds -->

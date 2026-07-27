@@ -1,0 +1,125 @@
+/* bunny.css — the bunny cursor.
+   assets/bunny.js mounts the bunny and adds .bunny-on to <html>; every visual
+   state lives here in @keyframes. JS only ever writes one transform and toggles
+   a couple of classes, so nothing below costs main-thread work per frame.
+
+   The native cursor is only hidden once JS has actually mounted — if the script
+   throws or never runs, the page keeps its ordinary cursor. */
+
+/* Hiding the cursor is gated on the class, and needs !important because plenty
+   of elements on this site set their own cursor inline or in page CSS. */
+html.bunny-on,
+html.bunny-on *,
+html.bunny-on *::before,
+html.bunny-on *::after{cursor:none !important}
+
+/* Text entry keeps its I-beam. You cannot aim a caret with a bunny, and losing
+   the I-beam in a form field is a real usability regression rather than a cute
+   one. bunny.js hides the bunny over these too. */
+html.bunny-on input:not([type=button]):not([type=submit]):not([type=reset]):not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=file]),
+html.bunny-on textarea,
+html.bunny-on [contenteditable]:not([contenteditable=false]){cursor:auto !important}
+
+.bn{
+  position:fixed;left:0;top:0;
+  z-index:2147483647;          /* above the fairy-dust canvas and every panel */
+  pointer-events:none;          /* never blocks links, buttons or selection */
+  opacity:0;
+  transition:opacity .16s linear;
+  will-change:transform;
+  contain:layout style;
+}
+.bn.ready{opacity:1}
+.bn.hide{opacity:0}
+
+/* hotspot: the pointer sits on the left ear tip, the bunny hangs down-right */
+.bn-stage{position:relative;transform:translate(-12px,-3px)}
+
+.bunny-svg{
+  display:block;width:46px;height:51.5px;overflow:visible;
+  transform-origin:50% 92%;
+  animation:bnBob 3.4s ease-in-out infinite;
+}
+.bn-fx{position:absolute;left:-19px;top:4px;width:84px;height:84px;overflow:visible}
+
+.bn-ears{transform-box:fill-box;transform-origin:50% 96%;animation:bnTwitch 6s ease-in-out infinite}
+.bn-face-d{opacity:0}
+.bn-star,.bn-puff{opacity:0;transform-box:fill-box;transform-origin:50% 50%}
+
+/* ---- idle ---- */
+@keyframes bnBob{
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  50%    {transform:translateY(-1.6px) rotate(-1.2deg)}
+}
+@keyframes bnTwitch{
+  0%,72%,100%{transform:rotate(0deg)}
+  78%{transform:rotate(-5deg)}
+  84%{transform:rotate(3.5deg)}
+  90%{transform:rotate(-1.5deg)}
+}
+
+/* ---- perk: over a link or button, in place of the hand cursor we just lost ---- */
+.bn.perk .bunny-svg{transform:scale(1.1);animation-play-state:paused}
+.bn.perk .bn-ears{animation:none;transform:rotate(0deg) scaleY(1.08)}
+.bn.perk .bunny-svg,.bn.perk .bn-ears{transition:transform .18s cubic-bezier(.34,1.56,.64,1)}
+
+/* ---- whack: fires on left AND right mousedown ---- */
+.bn.whack .bunny-svg{animation:bnSquash 460ms ease-out both}
+@keyframes bnSquash{
+  0%  {transform:translateY(0)    rotate(0deg)    scale(1,1)}
+  9%  {transform:translateY(9px)  rotate(-16deg)  scale(1.42,.56)}
+  20% {transform:translateY(8px)  rotate(-12deg)  scale(1.32,.64)}
+  40% {transform:translateY(-8px) rotate(9deg)    scale(.79,1.26)}
+  58% {transform:translateY(3px)  rotate(-5.5deg) scale(1.15,.89)}
+  74% {transform:translateY(-2px) rotate(3deg)    scale(.95,1.06)}
+  88% {transform:translateY(1px)  rotate(-1.5deg) scale(1.03,.98)}
+  100%{transform:translateY(0)    rotate(0deg)    scale(1,1)}
+}
+.bn.whack .bn-ears{animation:bnEarWhip 460ms ease-out both}
+@keyframes bnEarWhip{
+  0%  {transform:rotate(0deg)   skewX(0deg)}
+  10% {transform:rotate(13deg)  skewX(16deg)}
+  30% {transform:rotate(-11deg) skewX(-12deg)}
+  52% {transform:rotate(7deg)   skewX(7deg)}
+  72% {transform:rotate(-4deg)  skewX(-3deg)}
+  100%{transform:rotate(0deg)   skewX(0deg)}
+}
+/* dazed face swap — crossed eyes read as "hit" instantly, swirls do not */
+.bn.whack .bn-face-n{animation:bnFaceOut 460ms linear both}
+.bn.whack .bn-face-d{animation:bnFaceIn  460ms linear both}
+@keyframes bnFaceOut{0%,5%{opacity:1} 6%,70%{opacity:0} 78%,100%{opacity:1}}
+@keyframes bnFaceIn {0%,5%{opacity:0} 6%,70%{opacity:1} 78%,100%{opacity:0}}
+
+.bn.whack .bn-puff{animation:bnPuff 300ms ease-out both}
+@keyframes bnPuff{
+  0%  {opacity:0; transform:scale(.3)}
+  16% {opacity:.7;transform:scale(.72)}
+  100%{opacity:0; transform:scale(1.3)}
+}
+.bn.whack .bn-star{animation:bnStar 420ms cubic-bezier(.2,.85,.3,1) both}
+.bn-s1{--dx:-15px;--dy:-8px}
+.bn-s2{--dx: 15px;--dy:-9px}
+.bn-s3{--dx:  1px;--dy:-16px;animation-delay:40ms !important}
+@keyframes bnStar{
+  0%  {opacity:0;transform:translate(0,0) scale(.2) rotate(-20deg)}
+  22% {opacity:1;transform:translate(calc(var(--dx)*.5),calc(var(--dy)*.5)) scale(1.15) rotate(6deg)}
+  62% {opacity:1;transform:translate(var(--dx),var(--dy)) scale(.95) rotate(14deg)}
+  100%{opacity:0;transform:translate(calc(var(--dx)*1.35),calc(var(--dy)*1.35)) scale(.5) rotate(22deg)}
+}
+
+/* ---- reduced motion: the bunny still shows, it just stops moving on its own.
+        The whack becomes one quick flatten so a click still reads as a hit. ---- */
+@media (prefers-reduced-motion:reduce){
+  .bunny-svg,.bn-ears{animation:none !important}
+  .bn{transition:none}
+  .bn.perk .bunny-svg,.bn.perk .bn-ears{transition:none}
+  .bn.whack .bunny-svg{animation:bnFlat 150ms ease-out both !important}
+  .bn.whack .bn-ears{animation:none !important}
+  .bn.whack .bn-star,
+  .bn.whack .bn-puff{animation:none !important;opacity:0 !important}
+  .bn.whack .bn-face-n{animation:bnRmOut 150ms steps(1,end) both !important}
+  .bn.whack .bn-face-d{animation:bnRmIn  150ms steps(1,end) both !important}
+}
+@keyframes bnFlat{0%{transform:none}45%{transform:translateY(5px) scale(1.2,.78)}100%{transform:none}}
+@keyframes bnRmOut{from{opacity:0}to{opacity:1}}
+@keyframes bnRmIn {from{opacity:1}to{opacity:0}}

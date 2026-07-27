@@ -259,7 +259,20 @@ function boot() {
 
   // ---- render ----
   const easeInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  // One throw in here used to end the animation for the life of the page —
+  // rAF simply stops rescheduling and nothing ever revives it. Absorb it: log
+  // the first few, and only give up if it is failing every frame.
   function frame(now) {
+    try {
+      drawFrame(now);
+    } catch (err) {
+      if (++frameErrs <= 3) console.error('[ink-array] frame error:', err);
+      if (frameErrs > 90) { stop(); return; }
+    }
+    raf = requestAnimationFrame(frame);
+  }
+
+  function drawFrame(now) {
     ctx.clearRect(0, 0, W, H);
     const t = now / 1000;
     let moving = false;
@@ -301,7 +314,6 @@ function boot() {
       nextAt = now + DWELL;
       goTo(stageIdx + 1);
     }
-    raf = requestAnimationFrame(frame);
   }
 
   function drawStill() {
@@ -338,6 +350,12 @@ function boot() {
   // it for a band that is already scrolled past.
   let ready = false;
   let visible = true;
+  let booted = false;
+  let introPlayed = false;
+  let frameErrs = 0;
+  // whether the atlas was cut with the real face, so the late-arrival upgrade
+  // below only ever runs once
+  let usedFace = false;
   function start() {
     if (started || STILL || !ready || !visible) return;
     started = true;
@@ -346,6 +364,13 @@ function boot() {
   function stop() {
     started = false;
     cancelAnimationFrame(raf);
+    // Whatever half-finished frame was on the canvas stays there once rAF
+    // stops. Parking mid-fly-in — which is exactly what happens when the band
+    // boots below the fold — would leave the particles off-canvas and the band
+    // opaque but empty. Settle it instead: parked should read as "formed".
+    if (booted && sprites.size) {
+      try { drawStill(); } catch (err) { /* nothing better to do here */ }
+    }
   }
 
   let resizeT = 0;
@@ -359,35 +384,91 @@ function boot() {
       measure();
       if (N !== before) initParticles();
       goTo(stageIdx < 0 ? 0 : stageIdx, { instant: true });
-      if (STILL) drawStill();
+      // goTo only moves the particles; the canvas is repainted by the loop. If
+      // the loop is not running — reduced motion, or the band is parked because
+      // it booted below the fold — nothing would repaint it and the resize
+      // would leave it blank.
+      if (STILL || !started) drawStill();
     }, 140);
   }).observe(canvas);
 
   new IntersectionObserver((es) => {
-    visible = es[0].isIntersecting;
-    if (visible) { nextAt = performance.now() + DWELL; start(); }
-    else { stop(); ptr.on = false; }
+    // read the newest entry, not the oldest — a batch can hold several
+    visible = es[es.length - 1].isIntersecting;
+    if (visible) {
+      // The fly-in is timestamped when it is queued, so if the band booted
+      // below the fold that intro has already expired by the time anyone looks
+      // at it. Replay it the first time it is actually on screen.
+      if (booted && !introPlayed && !STILL) { introPlayed = true; goTo(0, { scatter: true }); }
+      nextAt = performance.now() + DWELL;
+      start();
+    } else { stop(); ptr.on = false; }
   }, { threshold: 0 }).observe(root);
 
-  // ---- boot: the mask and the sprites both need the face in hand first ----
-  Promise.all([
+  // ---- boot ----
+  // The mask and the sprite atlas both want the real face, so we wait for it —
+  // but only for so long. Waiting unbounded is what made this band vanish: the
+  // canvas is opacity:0 until a class lands at the end of this callback, so a
+  // woff2 request that STALLS rather than fails (hung socket, captive portal,
+  // a proxy that swallows it) meant the promise never settled, the callback
+  // never ran, and the hero showed a silent empty gap with nothing in the
+  // console. font-display:swap could not help — nothing here is rendered text.
+  //
+  // So: deadline the wait, draw with whatever face is in hand, and re-cut the
+  // atlas if the real one turns up later. Font loading can delay how good this
+  // looks; it can no longer decide whether anything appears at all.
+  const FONT_DEADLINE = 2000;
+  const withFont = Promise.all([
     document.fonts.load('900 100px "ZacInk"', '扎克工作室'),
     document.fonts.load('900 16px "ZacInk"', '墨艺'),
-  ]).catch(() => {}).then(() => {
-    measure();
-    buildSprites();
-    initParticles();
-    if (STILL) {
-      // no motion, so hold the formation that says the most: the full name
-      goTo(0, { instant: true });
-      drawStill();
-      root.classList.add('is-still');
-      return;
+  ]).catch(() => {});
+
+  Promise.race([
+    withFont,
+    new Promise((r) => setTimeout(r, FONT_DEADLINE)),
+  ]).then(paint, paint);
+
+  function paint() {
+    if (booted) return;
+    booted = true;
+    // Reveal FIRST. Everything below allocates — ~920 sprite canvases and a
+    // 900x600 mask read — while the WebGL logo is allocating too, and a throw
+    // in any of it used to strand the band invisible forever. Whatever happens
+    // after this line, the band is at least visible and the chips are usable.
+    root.classList.add(STILL ? 'is-still' : 'is-live');
+    try {
+      measure();
+      buildSprites();
+      initParticles();
+      if (STILL) {
+        // no motion, so hold the formation that says the most: the full name
+        goTo(0, { instant: true });
+        drawStill();
+        return;
+      }
+      usedFace = document.fonts.check('900 16px "ZacInk"', '墨');
+      goTo(0, { scatter: true });
+      nextAt = performance.now() + DWELL * 1.5;
+      ready = true;
+      start();
+      // Below the fold at load, start() correctly declines and nothing would be
+      // drawn — an opaque, empty band. Paint the settled formation so there is
+      // always something there; the fly-in replays when it scrolls into view.
+      if (!started) drawStill();
+      else introPlayed = true;
+    } catch (err) {
+      console.error('[ink-array] boot failed, band left blank:', err);
     }
-    goTo(0, { scatter: true });
-    nextAt = performance.now() + DWELL * 1.5;
-    root.classList.add('is-live');
-    ready = true;
-    start();
-  });
+  }
+
+  // If the face arrives after the deadline we drew without it — re-cut the
+  // atlas and re-sample the mask so it upgrades in place.
+  document.fonts.ready.then(() => {
+    if (!booted || !sprites.size) return;
+    if (usedFace || !document.fonts.check('900 16px "ZacInk"', '墨')) return;
+    usedFace = true;
+    buildSprites();
+    goTo(stageIdx < 0 ? 0 : stageIdx, { instant: true });
+    if (STILL) drawStill();
+  }).catch(() => {});
 }
