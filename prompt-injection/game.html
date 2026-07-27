@@ -8,7 +8,7 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: #000;
+    background: #fdf4ff;
   }
   body {
     display: block;
@@ -45,23 +45,25 @@ PI.FONT = '"JetBrains Mono", "Fira Code", ui-monospace, monospace';
 // PALETTE (DESIGN.md §13)
 // ---------------------------------------------------------------------------
 PI.C = {
-  bg:      '#0a0e14',
-  green:   '#3ddc84',
-  white:   '#e6e6e6',
-  violet:  '#9d7bff',
-  red:     '#ff4757',
-  orange:  '#ffa502',
-  cyan:    '#4ecdc4',
-  gold:    '#ffd700',
-  dim:     '#39424f',   // consumed-letter / inactive text
-  dimmer:  '#1d242e',   // capsule fills, grid lines
-  rain:    '#1e6b4a',   // code-rain base hue (drifts cyan with combo, §11.5)
-  rainFar: '#123b2c',
-  ghost:   '#ffffff',   // integrity ghost-bar (fighting-game style lag bar)
-  corrupt: '#ff2d3f',   // injected/corrupted context text
-  flow:    '#4ecdc4',   // FLOW STATE tint (cyan)
-  warn:    '#ff4757',
-  ink:     '#0a0e14'
+  bg:      '#fdf4ff',   // the site's candy background
+  green:   '#0e9f6e',   // darkened from #3ddc84 — the bright mint is ~1.8:1 on this bg
+  white:   '#38235c',   // PRIMARY TOKEN TEXT. Inverted: on a light page the
+                        // most-readable ink is the site's dark violet, not white.
+  violet:  '#7a2df0',
+  red:     '#e0245e',
+  orange:  '#d97706',
+  cyan:    '#0f9fe0',   // #25c4ff is ~2:1 on white; this is the site's darker cyan
+  gold:    '#c98a00',
+  dim:     '#ab95cf',   // consumed letters / inactive text
+  dimmer:  '#ece0fb',   // capsule fills, grid lines
+  rain:    '#fbdff2',   // the falling rain reads as petals now, not Matrix
+  rainFar: '#f7ecfd',
+  ghost:   '#c9a8ef',   // integrity lag bar — was white, invisible on light
+  corrupt: '#ff2d6f',   // injected / corrupted context text
+  flow:    '#0f9fe0',   // FLOW STATE tint
+  warn:    '#e0245e',
+  ink:     '#fffafd'    // PANEL BACKDROP, drawn UNDER text with alpha. Inverts
+                        // together with `white` above — light panel, dark type.
 };
 // token -> white-ish, halluc -> violet, jail -> red, swarm -> cyan,
 // overflow -> orange, command -> gold. Boss words read as jailbreak red.
@@ -230,14 +232,14 @@ PI.TUNING = {
     tierRingLife: 0.45, tierRingR1: 90,
     breakShards: 3, breakShardLife: 1.0, breakShardGravity: 900,
     breakDesaturate: 0.22,               // desaturation blink on break
-    tierColors: ['#e6e6e6', '#3ddc84', '#4ecdc4', '#9d7bff', '#ffd700',
-                 '#ffa502', '#ff4757', '#ffffff']
+    tierColors: ['#38235c', '#0e9f6e', '#0f9fe0', '#7a2df0', '#c98a00',
+                 '#d97706', '#e0245e', '#ff2d6f']
   },
 
   flow: {
     threshold: 25,                       // combo >= 25 (§9)
     multiplier: 2,                       // additional global x2
-    tint: '#4ecdc4', tintAlpha: 0.075,
+    tint: '#0f9fe0', tintAlpha: 0.075,
     speedLines: 22, speedLineLife: 0.35,
     chroma: 1.6,                         // chromatic aberration px (flow + boss death)
     enterTime: 0.35, exitTime: 0.5,
@@ -250,7 +252,7 @@ PI.TUNING = {
     maxOnScreen: 1,
     uniqueFirstLetter: true,
     weights: { freeze: 40, purge: 25, stopseq: 35 },
-    freeze:  { duration: 4, tint: '#4ecdc4', tintAlpha: 0.12, crystals: 26 },
+    freeze:  { duration: 4, tint: '#0f9fe0', tintAlpha: 0.12, crystals: 26 },
     purge:   { stagger: 0.06, skipBoss: true, traumaEach: 0.09 },
     stopseq: { targetLowest: true, beamLife: 0.22 }
   },
@@ -314,7 +316,9 @@ PI.TUNING = {
     contextGlitch: 0.15,                 // 150ms glitch-slice (§11.5)
     contextGlitchBands: 7, contextGlitchAmp: 14,
     heartbeatPeriod: 1.05, heartbeatAmp: 0.3,   // integrity < 30%
-    vignette: 0.5, scanlineAlpha: 0.075, scanlineSize: 2,
+    // Both were tuned as BLACK over a near-black page, where 0.5 is barely a
+    // shadow. The same numbers as violet over a light page are an opaque wash.
+    vignette: 0.09, scanlineAlpha: 0.035, scanlineSize: 2,
     crtChroma: 0.0,                      // baseline; flow/boss raise it
     slowmoRamp: 0.35,                    // easing back to timeScale 1
     focusHintBlink: 1.1,
@@ -805,7 +809,7 @@ PI.Core = (function () {
   const errors = [];
   // full-screen flash pool (§11.5 boss death / §11 kill flashes) — never allocates in-loop
   const flashes = [];
-  for (let i = 0; i < 6; i++) flashes.push({ active: false, a: 0, t: 0, dur: 0, color: '#ffffff' });
+  for (let i = 0; i < 6; i++) flashes.push({ active: false, a: 0, t: 0, dur: 0, color: '#ff8ed0' });
 
   // ---------------------------------------------------------------- diagnostics
   function pushError(msg) {
@@ -884,7 +888,7 @@ PI.Core = (function () {
     s.position = 'fixed'; s.left = '0'; s.top = '0';
     s.width = '100%'; s.height = '100%';
     s.display = 'block'; s.outline = 'none';
-    s.background = '#000';
+    s.background = '#fdf4ff';
     s.touchAction = 'none';
     s.imageRendering = 'auto';
     try {
@@ -1216,7 +1220,7 @@ PI.Core = (function () {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = 'source-over';
-    ctx.fillStyle = '#000';
+    ctx.fillStyle = '#fdf4ff';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     // logical 1280x720 viewport, clipped so nothing bleeds into the bars
     ctx.setTransform(s, 0, 0, s, offX * dpr, offY * dpr);
@@ -1383,8 +1387,8 @@ PI.FX = (function () {
   const TAU = Math.PI * 2;
   const POP_TIME = 0.12;          // §11 scale-pop 1.0 -> 1.4 -> 1.0 over 120ms
   const DISP_DECAY = num(T.displaceDecay, 1.4);
-  const WHITE = (PI.C && PI.C.white) || '#e6e6e6';
-  const INK   = (PI.C && PI.C.ink)   || '#0a0e14';
+  const WHITE = (PI.C && PI.C.white) || '#38235c';
+  const INK   = (PI.C && PI.C.ink)   || '#fffafd';
 
   // kind tags. Ordered so that "additive geometry" is a single <= compare.
   const K_SPARK = 0, K_TRAIL = 1, K_GLYPH = 2, K_CONVERGE = 3, K_AFTER = 4;
@@ -2592,7 +2596,7 @@ PI.Entities = (function () {
     phase = 'bossdeath';
     const d = TB.death || {};
     // §11.5 death: white flash -> background-bending shockwave -> letter rain.
-    if (Core.flash) Core.flash(num(d.flashAlpha, 1), 0.14, '#ffffff');
+    if (Core.flash) Core.flash(num(d.flashAlpha, 1), 0.14, '#ff8ed0');
     if (Core.addTrauma) Core.addTrauma(num(TJ.trauma.bossDeath, 1));
     if (Core.setTimeScale) Core.setTimeScale(num(d.slowmo, 0.28), num(TB.celebrateSlowmo, 1.5));
     if (Core.punch) Core.punch(num(TJ.punch, 0.08) * 1.5, 0.5);
@@ -3588,7 +3592,7 @@ PI.Render = (function () {
       if (c) {
         const g = c.getContext('2d');
         g.clearRect(0, 0, 4, step);
-        g.fillStyle = 'rgba(0,0,0,' + num(J.scanlineAlpha, 0.075) + ')';
+        g.fillStyle = 'rgba(139,61,255,' + num(J.scanlineAlpha, 0.03) + ')';
         g.fillRect(0, 0, 4, Math.max(1, step / 2));
       }
       scanLayer = c || false;
@@ -3598,8 +3602,8 @@ PI.Render = (function () {
       if (c) {
         const g = c.getContext('2d');
         const grad = g.createRadialGradient(W * 0.5, H * 0.5, H * 0.28, W * 0.5, H * 0.5, H * 0.82);
-        grad.addColorStop(0, 'rgba(0,0,0,0)');
-        grad.addColorStop(1, 'rgba(0,0,0,' + num(J.vignette, 0.5) + ')');
+        grad.addColorStop(0, 'rgba(139,61,255,0)');
+        grad.addColorStop(1, 'rgba(139,61,255,' + num(J.vignette, 0.07) + ')');
         g.fillStyle = grad;
         g.fillRect(0, 0, W, H);
       }
@@ -3611,8 +3615,8 @@ PI.Render = (function () {
       if (c) {
         const g = c.getContext('2d');
         const grad = g.createRadialGradient(W * 0.5, H * 0.55, H * 0.2, W * 0.5, H * 0.55, H * 0.85);
-        grad.addColorStop(0, 'rgba(255,45,63,0)');
-        grad.addColorStop(1, 'rgba(255,45,63,0.55)');
+        grad.addColorStop(0, 'rgba(255,45,111,0)');
+        grad.addColorStop(1, 'rgba(255,45,111,0.5)');
         g.fillStyle = grad;
         g.fillRect(0, 0, W, H);
       }
