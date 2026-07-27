@@ -30,7 +30,26 @@ function hasWebGL() {
   }
 }
 
-if (host && hasWebGL()) boot().catch(() => { /* flat lockup stays */ });
+// Boot AFTER the page has painted and settled, never during it.
+//
+// three-d-stage.js pulls three.js in with a dynamic import, which does not
+// happen until a <three-d-stage> is connected — so nothing below is fetched
+// until this fires. That is the whole point: three.js is ~700 KB the browser
+// has to unpack and compile, and doing that while the page is still painting
+// is what made entering the site feel stuck.
+//
+// The flat SVG lockup is already in the markup, so the hero is complete and
+// correct the entire time this waits; the 3D mark fades in over it a beat
+// later. The idle callback keeps it off the critical path, and the timeout
+// means a permanently busy tab still gets its logo.
+if (host && hasWebGL()) {
+  const go = () => boot().catch(() => { /* flat lockup stays */ });
+  const soon = () => (window.requestIdleCallback
+    ? requestIdleCallback(go, { timeout: 1800 })
+    : setTimeout(go, 250));
+  if (document.readyState === 'complete') soon();
+  else addEventListener('load', soon, { once: true });
+}
 
 async function boot() {
   const stage = document.createElement('three-d-stage');

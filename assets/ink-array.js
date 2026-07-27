@@ -200,6 +200,10 @@ function boot() {
       if (instant) { p.x = p.tx; p.y = p.ty; }
     }
     transitioning = !instant;
+    // assets/sparkle.js watches this and stops seeding new fairy dust while a
+    // formation is in flight — the two are the page's heaviest per-frame work
+    // and they do not need to overlap.
+    window.__inkBusy = transitioning;
     updateUI();
   }
 
@@ -308,7 +312,7 @@ function boot() {
       ctx.drawImage(sp.c, p.x + p.ox + bx - h, p.y + p.oy + by - h, h * 2, h * 2);
     }
     ctx.globalAlpha = 1;
-    if (transitioning && !moving) transitioning = false;
+    if (transitioning && !moving) { transitioning = false; window.__inkBusy = false; }
     // it keeps playing on its own
     if (!transitioning && now > nextAt) {
       nextAt = now + DWELL;
@@ -338,8 +342,14 @@ function boot() {
     // Density follows the band, not a full viewport. The count has to satisfy
     // the hungriest formation — five characters cover ~2.5x the ink area of one
     // — so single characters simply come out richer.
-    const want = Math.round((W * H) / (COARSE ? 260 : 140));
-    N = Math.max(420, Math.min(COARSE ? 780 : 1700, want));
+    // Trimmed, but only as far as the ink can afford. This is the hero's
+    // second-biggest per-frame cost after the 3D mark, so it is worth taking
+    // something off — but past roughly a fifth the strokes of 工 and 作 start
+    // opening up and the wordmark goes visibly thin, which is not a trade worth
+    // making. Touch devices, which have the least headroom and the smallest
+    // band, are cut harder.
+    const want = Math.round((W * H) / (COARSE ? 320 : 160));
+    N = Math.max(380, Math.min(COARSE ? 640 : 1400, want));
   }
 
   let raf = 0;
@@ -364,6 +374,10 @@ function boot() {
   function stop() {
     started = false;
     cancelAnimationFrame(raf);
+    // Parking mid-transition would otherwise leave this latched and suppress
+    // the fairy dust for the rest of the visit.
+    transitioning = false;
+    window.__inkBusy = false;
     // Whatever half-finished frame was on the canvas stays there once rAF
     // stops. Parking mid-fly-in — which is exactly what happens when the band
     // boots below the fold — would leave the particles off-canvas and the band

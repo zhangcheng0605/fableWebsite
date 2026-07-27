@@ -33,6 +33,13 @@
   var P = [], MAX = 130, running = false, last = 0;
 
   function spawn(x, y, n, burst) {
+    /* The ink array below the hero mark flies several hundred glyphs along
+       curved paths whenever it changes formation — for about 1.5s out of every
+       6. That is the busiest the page ever gets, so stop adding to it: no NEW
+       sparkles while it is mid-flight. A deliberate click still bursts, and
+       sparkles already in the air keep drifting and fading, so nothing pops
+       out of existence — the trail just thins for a moment. */
+    if (window.__inkBusy && !burst) return;
     for (var i = 0; i < n && P.length < MAX; i++) {
       var g = GLYPHS[(Math.random() * GLYPHS.length) | 0];
       var big = g === '🧚' || g === '🦋' || g === '💖';
