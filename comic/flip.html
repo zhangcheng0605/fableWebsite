@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html><head>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<script>window.__resources={"https://unpkg.com/react@18.3.1/umd/react.production.min.js":"vendor/react.production.min.js","https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js":"vendor/react-dom.production.min.js"};</script>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="flip-app.js"></script>
+
+
+
+
+
+
+
+
+
+
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<style>
+html,body{margin:0;padding:0;background:#f7ecff;overflow:hidden;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
+a{color:#c9106f;text-decoration:none}a:hover{color:#ff3fae}
+button{font:inherit}
+img{-webkit-user-drag:none}
+@keyframes cornerBreathe{0%,100%{opacity:.5;transform:translate(0,0)}50%{opacity:1;transform:translate(-6px,-6px)}}
+@keyframes hintFade{0%,70%{opacity:.85}100%{opacity:0}}
+</style>
+</helmet>
+<div style="position:fixed;inset:0;background:radial-gradient(130% 110% at 50% 30%, #ffffff 0%, #f7ecff 42%, #ecdcfb 100%);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond', Georgia, serif;user-select:none;touch-action:none">
+  <div style="position:absolute;inset:0;background:radial-gradient(60% 40% at 50% 100%, rgba(255,63,174,0.12), rgba(255,255,255,0) 70%);pointer-events:none"></div>
+  <div style="position:absolute;top:26px;left:0;right:0;text-align:center;font-size:11px;letter-spacing:0.5em;text-transform:uppercase;color:#8b6fae;font-weight:600;pointer-events:none">Nightfall Comics &nbsp;·&nbsp; No. 1 &nbsp;·&nbsp; Apr 1994</div>
+
+  <div style="{{ stageStyle }}" sc-camel-on-pointer-down="{{ onDown }}" sc-camel-on-pointer-move="{{ onMove }}" sc-camel-on-pointer-up="{{ onUp }}" sc-camel-on-pointer-cancel="{{ onUp }}" sc-camel-on-pointer-leave="{{ onLeave }}">
+    <div style="{{ shadowStyle }}"></div>
+    <div style="{{ bookStyle }}">
+      <div style="{{ leftStackStyle }}"></div>
+      <div style="{{ rightStackStyle }}"></div>
+      <sc-for list="{{ sheets }}" as="sheet" hint-placeholder-count="4">
+        <div style="{{ sheet.style }}" ref="{{ sheet.setRef }}">
+
+          <div style="{{ sheet.faceFront }}">
+            <sc-if value="{{ sheet.frontIsImage }}" hint-placeholder-val="{{ true }}">
+              <img src="{{ sheet.frontSrc }}" alt="{{ sheet.frontAlt }}" draggable="false" style="width:100%;height:100%;object-fit:cover;display:block">
+            </sc-if>
+            <sc-if value="{{ sheet.frontIsText }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;inset:0;background:linear-gradient(160deg,#f7f2e6 0%,#efe7d6 55%,#e7ddc9 100%);padding:58px 52px 46px 46px;box-sizing:border-box;display:flex;flex-direction:column;color:#2c2620">
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;letter-spacing:0.34em;text-transform:uppercase;color:#a08f76">
+                  <div>Chapter One · Exact Change</div>
+                  <div>{{ sheet.tx.folio }}</div>
+                </div>
+                <div style="height:1px;background:linear-gradient(to right,rgba(160,143,118,0.7),rgba(160,143,118,0));margin:14px 0 30px"></div>
+                <div style="font-family:'Bodoni Moda',Didot,serif;font-size:34px;line-height:1.15;letter-spacing:0.01em;color:#1f1a16;margin-bottom:6px">{{ sheet.tx.title }}</div>
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px">
+                  <div style="width:26px;height:1px;background:#b5537a"></div>
+                  <div style="width:4px;height:4px;background:#b5537a;transform:rotate(45deg)"></div>
+                </div>
+                <div style="font-size:19.5px;line-height:1.72;text-wrap:pretty;color:#332c25">
+                  <span style="float:left;font-family:'Bodoni Moda',Didot,serif;font-size:60px;line-height:0.82;padding:6px 10px 0 0;color:#8f3358">{{ sheet.tx.drop }}</span>{{ sheet.tx.first }}
+                </div>
+                <sc-if value="{{ sheet.tx.hasSecond }}" hint-placeholder-val="{{ true }}">
+                  <div style="font-size:19.5px;line-height:1.72;text-wrap:pretty;color:#332c25;margin-top:16px">{{ sheet.tx.second }}</div>
+                </sc-if>
+                <div style="flex:1;min-height:18px"></div>
+                <div style="border-top:1px solid rgba(160,143,118,0.45);padding-top:18px;font-style:italic;font-size:21px;line-height:1.5;color:#6d3350;text-wrap:pretty">{{ sheet.tx.pull }}</div>
+              </div>
+            </sc-if>
+            <div style="position:absolute;inset:0;background:linear-gradient(to right, rgba(20,12,8,0.30), rgba(20,12,8,0.07) 7%, rgba(255,255,255,0) 16%, rgba(255,255,255,0) 92%, rgba(20,12,8,0.10) 100%);pointer-events:none"></div>
+            <div style="{{ sheet.shadeFront }}"></div>
+          </div>
+
+          <div style="{{ sheet.faceBack }}">
+            <sc-if value="{{ sheet.hasBackImg }}" hint-placeholder-val="{{ true }}">
+              <img src="{{ sheet.backSrc }}" alt="{{ sheet.backAlt }}" draggable="false" style="width:100%;height:100%;object-fit:cover;display:block">
+            </sc-if>
+            <sc-if value="{{ sheet.isEndpaper }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:linear-gradient(200deg,#f7f2e6,#e9dfcb);text-align:center;padding:48px;box-sizing:border-box">
+                <div style="font-size:11px;letter-spacing:0.5em;text-transform:uppercase;color:#a08f76">Nightfall Comics</div>
+                <div style="font-family:'Bodoni Moda',Didot,serif;font-style:italic;font-size:56px;color:#1f1a16;line-height:1">Fin.</div>
+                <div style="display:flex;align-items:center;gap:10px"><div style="width:34px;height:1px;background:#b5537a"></div><div style="width:4px;height:4px;background:#b5537a;transform:rotate(45deg)"></div><div style="width:34px;height:1px;background:#b5537a"></div></div>
+                <div style="font-size:19px;font-style:italic;color:#5d5245;max-width:280px;line-height:1.6;text-wrap:pretty">The machine took its payment and gave no receipt.</div>
+                <div style="font-size:11px;letter-spacing:0.4em;text-transform:uppercase;color:#a08f76;margin-top:6px">To be continued</div>
+              </div>
+            </sc-if>
+            <div style="position:absolute;inset:0;background:linear-gradient(to left, rgba(20,12,8,0.30), rgba(20,12,8,0.07) 7%, rgba(255,255,255,0) 16%);pointer-events:none"></div>
+            <div style="{{ sheet.shadeBack }}"></div>
+          </div>
+
+        </div>
+      </sc-for>
+      <div style="{{ flipShadowStyle }}" ref="{{ setShadowRef }}"></div>
+      <div style="{{ cornerStyle }}"></div>
+    </div>
+  </div>
+
+  <sc-if value="{{ showHint }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;bottom:96px;left:0;right:0;text-align:center;font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:#8d7a97;pointer-events:none;animation:hintFade 7s ease-out forwards">Drag the bottom-right corner</div>
+  </sc-if>
+
+  <sc-if value="{{ showHud }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;bottom:30px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:24px">
+      <button sc-camel-on-click="{{ prev }}" aria-label="Previous page" style="width:44px;height:44px;border-radius:50%;border:2px solid rgba(139,61,255,0.30);background:rgba(255,255,255,0.85);color:#6428d8;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .25s,border-color .25s" style-hover="background:rgba(139,61,255,0.12);border-color:rgba(220,140,180,0.7)">‹</button>
+      <div style="min-width:200px;text-align:center;font-size:12px;letter-spacing:0.34em;text-transform:uppercase;color:#9c8aa6">{{ hudLabel }}</div>
+      <button sc-camel-on-click="{{ next }}" aria-label="Next page" style="width:44px;height:44px;border-radius:50%;border:2px solid rgba(139,61,255,0.30);background:rgba(255,255,255,0.85);color:#6428d8;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .25s,border-color .25s" style-hover="background:rgba(139,61,255,0.12);border-color:rgba(220,140,180,0.7)">›</button>
+    </div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860},&quot;flipSpeed&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.9,&quot;min&quot;:0.4,&quot;max&quot;:2,&quot;step&quot;:0.1,&quot;unit&quot;:&quot;s&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;cornerCurl&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:13,&quot;min&quot;:0,&quot;max&quot;:26,&quot;step&quot;:1,&quot;unit&quot;:&quot;°&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Motion&quot;},&quot;bookZoom&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:1,&quot;min&quot;:0.7,&quot;max&quot;:1.4,&quot;step&quot;:0.05,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;soundOn&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Sound&quot;},&quot;flipVolume&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:0.95,&quot;min&quot;:0,&quot;max&quot;:1.4,&quot;step&quot;:0.05,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Sound&quot;},&quot;showHud&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Layout&quot;}}">
+class Component extends DCLogic {
+  state = { flipped: 0, target: 0, scale: 0.8, single: false, everFlipped: false };
+  PW = 460; PH = 690;
+  _nodes = {}; _live = null; _grabT = 0.9; _tiltSign = 1;
+
+  // comic/ already holds all 12 pages at 1024x1536. The export shipped 9 of
+  // them downscaled to 1000x1500 — so read the originals instead: better art,
+  // three more pages, and no duplicated JPEGs in the repo.
+  pages = Array.from({ length: 12 }, (_, i) => 'page' + String(i + 1).padStart(2, '0') + '.jpg');
+
+  story = [
+    { folio: 'II', title: 'Two Fourteen', drop: 'T',
+      first: 'he office had gone dark an hour before Yui did. She kept the lights off out of habit — the building billed for them after midnight, and she had learned to be a small expense.',
+      second: 'Rain came sideways down the avenue. Her phone said 02:14. Her body said Tuesday, or possibly Wednesday, or possibly nothing at all.',
+      pull: 'She had stopped counting the hours. The hours had not stopped counting her.' },
+    { folio: 'III', title: "The Alley That Wasn't", drop: 'T',
+      first: 'here are streets in this city that exist only when no one is looking for them. Yui found one between a shuttered jazz bar and a stack of blue crates that had not been there on Monday.',
+      second: 'At the far end something glowed — not a sign, not a window. A machine, humming its one clean note into the rain. COURAGE ¥120. SLEEP +1HR ¥150. A SECOND CHANCE ¥???',
+      pull: "Some choices don't come with instructions." },
+    { folio: 'IV', title: 'Exact Change', drop: 'I',
+      first: 'n her coat pocket, beneath a receipt for cold coffee, she found a coin she did not remember earning. Heavier than a hundred yen. Warm, the way a stone stays warm after the sun has gone.',
+      second: 'A spiral was pressed into its face, winding inward forever — the way a question does at two in the morning.',
+      pull: '…Sure. Why not.' },
+    { folio: 'V', title: 'Choice Is Yours', drop: 'T',
+      first: 'he panel woke as her hand approached. REGRET. WHAT IF. IF ONLY. GO BACK. Each one lit softly, as though it had been waiting years for her in particular.',
+      second: 'The last button was the only one that hurt to look at. She pressed it anyway — not bravely. The way you jump because the standing has become worse.',
+      pull: 'Yui had never believed in miracles. But this city makes fools of certainty.' },
+    { folio: 'VI', title: 'The Price', drop: 'T',
+      first: 'he glass filled with light, and the light had a face: hair like spilled neon, eyes like two small streetlamps at the end of a very long road.',
+      second: 'The witch of the vending machines does not take yen. She takes the sentence you have never said aloud, in the order you have never said it.',
+      pull: 'Wishes here cost honesty.' },
+    { folio: 'VII', title: 'Three Years Ago', drop: 'T',
+      first: 'here had been an envelope. Ōta Art School — thick paper, her name spelled correctly. Beside it, a contract from Tōzai Corporation — thin paper, her name spelled correctly.',
+      second: 'She tore the one that frightened her, signed the one that did not, called it the sensible thing, and was believed.',
+      pull: 'Sensible is the word we use for the fear we intend to keep.' },
+    { folio: 'VIII', title: 'Redo', drop: 'T',
+      first: 'he can dropped with a sound like a full stop. REDO — a brand that has never existed, in a flavour no one has ever described.',
+      second: 'One sip, and the rain rose instead of fell. Clocks ran backward. Neon bled in reverse, and the whole shining city remembered its undone state.',
+      pull: 'And for a moment — I could too.' },
+    { folio: 'IX', title: 'The Honest Part', drop: 'S',
+      first: 'he is nineteen again at the kitchen table, holding the letter that decided everything. Her older self stands in the doorway, wet from a rain that has not fallen yet, and does not reach for the pen.',
+      second: 'The witch is listening. There is one true sentence left, and it costs exactly what it weighs.',
+      pull: 'No one made me. I was afraid.' }
+  ];
+
+  componentDidMount() {
+    this.measure = () => {
+      const w = window.innerWidth, h = window.innerHeight;
+      const single = w < 900;
+      const scale = single
+        ? Math.min((w - 36) / this.PW, (h - 150) / this.PH)
+        : Math.min((w - 120) / (this.PW * 2), (h - 170) / this.PH, 1.25);
+      this.setState({ single, scale });
+    };
+    this.measure();
+    window.addEventListener('resize', this.measure);
+    this.onKey = (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); this.go(1); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); this.go(-1); }
+    };
+    window.addEventListener('keydown', this.onKey);
+    this._canHover = window.matchMedia && window.matchMedia('(hover:hover)').matches;
+    this.pages.forEach(src => { const im = new Image(); im.src = src; });
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.measure);
+    window.removeEventListener('keydown', this.onKey);
+    cancelAnimationFrame(this._raf); cancelAnimationFrame(this._hraf);
+  }
+
+  // A cover leaf (art front, art back) and one leaf per prose passage (prose
+  // front, art back) between them consume story.length + 2 pages. The export
+  // stopped there, at page 9 — which cut Receipts / Begin / Elsewhere, the end
+  // of the chapter. Whatever the prose does not reach now continues as art-only
+  // leaves, two pages each, the way a plate section runs at the back of a book.
+  artLeaves() { return Math.max(0, Math.ceil((this.pages.length - this.story.length - 2) / 2)); }
+  n() { return 1 + this.story.length + this.artLeaves(); }
+  speed() { return this.props.flipSpeed ?? 0.9; }
+
+  /* ---------- sound ---------- */
+  ctx() {
+    if (!this._ac) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      this._ac = new AC();
+    }
+    if (this._ac.state === 'suspended') this._ac.resume();
+    return this._ac;
+  }
+  noise(ctx, dur) {
+    const len = Math.floor(ctx.sampleRate * dur);
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    let last = 0;
+    for (let i = 0; i < len; i++) {
+      const t = i / len;
+      const hiss = (Math.random() * 2 - 1);
+      last = 0.72 * last + 0.28 * hiss;
+      const burst = Math.random() < 0.010 ? (Math.random() * 2 - 1) * 1.9 : 0;
+      const swell = Math.sin(Math.PI * Math.pow(t, 0.65));
+      d[i] = (last * 1.5 + hiss * 0.5 + burst) * swell;
+    }
+    return buf;
+  }
+  playFlip(strength) {
+    if (this.props.soundOn === false) return;
+    const ctx = this.ctx(); if (!ctx) return;
+    const vol = Math.max(0, Math.min(1.4, (this.props.flipVolume ?? 0.95))) * (strength ?? 1);
+    const t = ctx.currentTime, dur = 0.44;
+    const src = ctx.createBufferSource();
+    src.buffer = this.noise(ctx, dur);
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.7;
+    bp.frequency.setValueAtTime(800 + Math.random() * 300, t);
+    bp.frequency.exponentialRampToValueAtTime(4400 + Math.random() * 600, t + 0.16);
+    bp.frequency.exponentialRampToValueAtTime(1300, t + dur);
+    const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 420;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.95 * vol, t + 0.035);
+    g.gain.exponentialRampToValueAtTime(0.42 * vol, t + 0.19);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(bp); bp.connect(hp); hp.connect(g); g.connect(ctx.destination);
+    src.start(t); src.stop(t + dur);
+    const o = ctx.createOscillator(), og = ctx.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(150, t + dur * 0.72);
+    o.frequency.exponentialRampToValueAtTime(58, t + dur * 0.98);
+    og.gain.setValueAtTime(0.0001, t + dur * 0.72);
+    og.gain.exponentialRampToValueAtTime(0.45 * vol, t + dur * 0.78);
+    og.gain.exponentialRampToValueAtTime(0.0001, t + dur + 0.12);
+    o.connect(og); og.connect(ctx.destination);
+    o.start(t + dur * 0.7); o.stop(t + dur + 0.14);
+  }
+  playGrab() {
+    if (this.props.soundOn === false) return;
+    const ctx = this.ctx(); if (!ctx) return;
+    const vol = (this.props.flipVolume ?? 0.95) * 0.22;
+    const t = ctx.currentTime;
+    const src = ctx.createBufferSource();
+    src.buffer = this.noise(ctx, 0.11);
+    const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 1.1; bp.frequency.value = 2400;
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.11);
+    src.connect(bp); bp.connect(g); g.connect(ctx.destination);
+    src.start(t); src.stop(t + 0.12);
+  }
+
+  /* ---------- frame math + direct DOM writes ---------- */
+  frameT(p) {
+    const curl = (this.props.cornerCurl ?? 13) * this._grabT * this._tiltSign;
+    const lift = Math.sin(Math.PI * p);
+    const tilt = -curl * lift;
+    return {
+      lift,
+      transform: 'rotate(' + tilt.toFixed(3) + 'deg) rotateY(' + (-180 * p).toFixed(3) + 'deg) translateZ(' + (lift * 30).toFixed(2) + 'px)',
+      shadowT: 'rotate(' + (tilt * 0.8).toFixed(3) + 'deg) rotateY(' + (-166 * p).toFixed(3) + 'deg)'
+    };
+  }
+  applyFrame(i, p) {
+    const nd = this._nodes[i]; if (!nd) return;
+    const f = this.frameT(p), n = this.n();
+    nd.style.transform = f.transform;
+    nd.style.zIndex = (p > 0.002 && p < 0.998) ? n + 4 : (p >= 0.5 ? i + 1 : n - i);
+    const front = nd.children[0], back = nd.children[1];
+    if (front && back) {
+      const sb = p > 0.5;
+      front.style.visibility = sb ? 'hidden' : 'visible';
+      back.style.visibility = sb ? 'visible' : 'hidden';
+      if (front.lastElementChild) front.lastElementChild.style.opacity = (0.7 * f.lift).toFixed(3);
+      if (back.lastElementChild) back.lastElementChild.style.opacity = (0.75 * f.lift).toFixed(3);
+    }
+    if (this._shadow) {
+      this._shadow.style.opacity = (0.5 * f.lift).toFixed(3);
+      this._shadow.style.transform = f.shadowT;
+    }
+  }
+
+  easeInOutQuart(u) { return u < 0.5 ? 8 * u * u * u * u : 1 - Math.pow(-2 * u + 2, 4) / 2; }
+  easeOutCubic(u) { return 1 - Math.pow(1 - u, 3); }
+
+  runFlip(idx, from, to, dur, ease, done) {
+    cancelAnimationFrame(this._raf); clearTimeout(this._rto);
+    const t0 = performance.now();
+    let ended = false;
+    const finish = () => {
+      if (ended) return; ended = true;
+      clearTimeout(this._rto); cancelAnimationFrame(this._raf);
+      this._live = null; this.applyFrame(idx, to); done();
+    };
+    const step = (now) => {
+      if (ended) return;
+      const u = Math.min(1, (now - t0) / dur);
+      const p = from + (to - from) * ease(u);
+      this._live = { idx, p };
+      this.applyFrame(idx, p);
+      if (u < 1) this._raf = requestAnimationFrame(step);
+      else finish();
+    };
+    this._raf = requestAnimationFrame(step);
+    this._rto = setTimeout(finish, dur + 150);
+  }
+
+  cancelHover() {
+    cancelAnimationFrame(this._hraf); this._hraf = null;
+    if (this._hoverP && this._hoverIdx !== undefined && !this._busy && !this._drag) this.applyFrame(this._hoverIdx, 0);
+    this._hoverP = 0; this._hoverTgt = 0;
+  }
+
+  go(dir) {
+    if (this._busy || this._drag) return;
+    const n = this.n();
+    const t = this.state.target + dir;
+    if (t < 0 || t > n) return;
+    const idx = dir > 0 ? this.state.target : t;
+    this.cancelHover();
+    this._busy = true; this._tiltSign = dir; this._grabT = 0.9;
+    this.playFlip(1);
+    this.setState({ target: t, everFlipped: true });
+    this.runFlip(idx, dir > 0 ? 0 : 1, dir > 0 ? 1 : 0,
+      Math.max(320, this.speed() * 950), (u) => this.easeInOutQuart(u),
+      () => { this._busy = false; this.setState({ flipped: t }); });
+  }
+
+  /* ---------- pointer ---------- */
+  onDown = (e) => {
+    if (this._busy) return;
+    const host = e.currentTarget;
+    const r = host.getBoundingClientRect();
+    const single = this.state.single;
+    const spine = single ? r.left : r.left + r.width / 2;
+    const rel = (e.clientX - spine) / Math.max(1, r.right - spine);
+    const back = single ? rel < 0.2 : e.clientX < spine;
+    const dir = back ? -1 : 1;
+    const t = this.state.target + dir;
+    if (t < 0 || t > this.n()) return;
+    this.cancelHover();
+    this.ctx();
+    const gy = Math.max(0, Math.min(1, (e.clientY - r.top) / r.height));
+    this._grabT = 0.5 + 0.7 * gy;
+    this._tiltSign = dir;
+    this._drag = {
+      idx: dir > 0 ? this.state.target : t,
+      dir, x0: e.clientX, y0: e.clientY, moved: 0,
+      w: Math.max(80, this.PW * this.state.scale * (this.props.bookZoom ?? 1)),
+      samples: [{ x: e.clientX, t: performance.now() }]
+    };
+    host.style.cursor = 'grabbing';
+    this.playGrab();
+    this.forceUpdate();
+    try { host.setPointerCapture(e.pointerId); } catch (err) {}
+  };
+  onMove = (e) => {
+    const d = this._drag;
+    if (!d) {
+      if (!this._canHover || this._busy) return;
+      const r = e.currentTarget.getBoundingClientRect();
+      const relX = (e.clientX - r.left) / r.width, relY = (e.clientY - r.top) / r.height;
+      const inZone = relX > 0.84 && relY > 0.70 && this.state.target < this.n();
+      const tgt = inZone ? 0.045 : 0;
+      if (tgt !== this._hoverTgt) {
+        this._hoverTgt = tgt; this._hoverIdx = this.state.target;
+        if (!this._hraf) {
+          const loop = () => {
+            const cur = this._hoverP || 0, want = this._hoverTgt || 0;
+            const nx = cur + (want - cur) * 0.16;
+            this._hoverP = Math.abs(nx - want) < 0.0008 ? want : nx;
+            if (!this._busy && !this._drag) { this._grabT = 1; this.applyFrame(this._hoverIdx, this._hoverP); }
+            this._hraf = (this._hoverP === want) ? null : requestAnimationFrame(loop);
+          };
+          this._hraf = requestAnimationFrame(loop);
+        }
+      }
+      return;
+    }
+    const now = performance.now();
+    d.samples.push({ x: e.clientX, t: now });
+    if (d.samples.length > 7) d.samples.shift();
+    const dx = e.clientX - d.x0;
+    d.moved = Math.max(d.moved, Math.abs(dx) + Math.abs(e.clientY - d.y0));
+    const p = d.dir > 0
+      ? Math.max(0, Math.min(1, -dx / d.w))
+      : Math.max(0, Math.min(1, 1 - dx / d.w));
+    d.p = p;
+    this._live = { idx: d.idx, p };
+    this.applyFrame(d.idx, p);
+  };
+  onLeave = () => { if (!this._drag) { this._hoverTgt = 0; if (this._hoverP && !this._hraf) this.cancelHover(); } };
+  onUp = (e) => {
+    const d = this._drag; if (!d) return;
+    this._drag = null;
+    e.currentTarget.style.cursor = 'grab';
+    if (d.moved < 8) { this.forceUpdate(); this.go(d.dir); return; }
+    const p = d.p ?? (d.dir > 0 ? 0 : 1);
+    const s = d.samples, last = s[s.length - 1];
+    let first = s[0];
+    for (let i = s.length - 2; i >= 0; i--) { first = s[i]; if (last.t - s[i].t > 60) break; }
+    const v = (last.t - first.t) > 4 ? (last.x - first.x) / (last.t - first.t) : 0;
+    const dpdt = -v / d.w;
+    const pProj = p + dpdt * 150;
+    const commit = d.dir > 0 ? pProj > 0.3 : pProj < 0.7;
+    const to = commit ? (d.dir > 0 ? 1 : 0) : (d.dir > 0 ? 0 : 1);
+    const t = commit ? this.state.target + d.dir : this.state.target;
+    const span = Math.abs(to - p);
+    const rate = Math.max(Math.abs(dpdt), 1 / (this.speed() * 1000));
+    const dur = Math.max(150, Math.min(this.speed() * 1050, span / rate));
+    this._busy = true;
+    if (commit) this.playFlip(Math.min(1.3, 0.8 + rate * 260));
+    else this.playGrab();
+    this.setState({ target: t, everFlipped: true });
+    this.runFlip(d.idx, p, to, dur, (u) => this.easeOutCubic(u),
+      () => { this._busy = false; this.setState({ flipped: t }); });
+  };
+
+  renderVals() {
+    const n = this.n(), S = this.state;
+    const zoom = this.props.bookZoom ?? 1;
+    const scale = S.scale * zoom;
+    const live = this._live;
+    const shiftDur = Math.max(0.25, this.speed() * 0.85);
+    const ease = 'cubic-bezier(0.4,0.05,0.2,1)';
+    const shift = S.single ? -this.PW / 2
+      : (S.target === 0 ? -this.PW / 2 : (S.target === n ? this.PW / 2 : 0));
+
+    const face = {
+      position: 'absolute', inset: 0, overflow: 'hidden', background: '#f3ede0',
+      backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
+      boxShadow: '0 0 0 1px rgba(0,0,0,0.35)'
+    };
+
+    const sheets = [];
+    for (let i = 0; i < n; i++) {
+      const base = i < S.flipped ? 1 : 0;
+      const active = live && live.idx === i;
+      const p = active ? live.p : base;
+      const f = this.frameT(p);
+      const showBack = p > 0.5;
+      const NP = this.story.length;               // prose passages
+      const isProse = i > 0 && i <= NP;
+      const artJ = i - NP - 1;                      // 0-based among the art leaves
+      const frontIdx = i === 0 ? 0 : (isProse ? -1 : NP + 2 + 2 * artJ);
+      const backIdx  = (i === 0 || isProse) ? i + 1 : frontIdx + 1;
+      const back = this.pages[backIdx] || null;
+      const tx = isProse ? this.story[i - 1] : null;
+      const idx = i;
+      sheets.push({
+        setRef: (node) => { this._nodes[idx] = node; },
+        faceFront: Object.assign({}, face, { borderRadius: '3px 7px 7px 3px', visibility: showBack ? 'hidden' : 'visible' }),
+        faceBack: Object.assign({}, face, { borderRadius: '7px 3px 3px 7px', transform: 'rotateY(180deg)', visibility: showBack ? 'visible' : 'hidden' }),
+        frontIsImage: frontIdx >= 0, frontIsText: !!tx,
+        frontSrc: frontIdx >= 0 ? (this.pages[frontIdx] || '') : '',
+        frontAlt: i === 0 ? 'Cover' : 'Page ' + (frontIdx + 1),
+        tx: tx ? { folio: tx.folio, title: tx.title, drop: tx.drop, first: tx.first, second: tx.second, hasSecond: !!tx.second, pull: tx.pull }
+               : { folio: '', title: '', drop: '', first: '', second: '', hasSecond: false, pull: '' },
+        hasBackImg: !!back, isEndpaper: !back,
+        backSrc: back || '', backAlt: 'Page ' + (i + 2),
+        shadeFront: { position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'linear-gradient(to left, rgba(0,0,0,0.5), rgba(0,0,0,0.1) 42%, rgba(0,0,0,0) 75%)',
+          opacity: active ? 0.7 * f.lift : 0 },
+        shadeBack: { position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'linear-gradient(to right, rgba(255,255,255,0.4), rgba(255,255,255,0.05) 45%, rgba(0,0,0,0.26) 100%)',
+          opacity: active ? 0.75 * f.lift : 0 },
+        style: {
+          position: 'absolute', left: '50%', top: 0,
+          width: this.PW + 'px', height: this.PH + 'px',
+          transformOrigin: 'left center',
+          transform: f.transform,
+          transformStyle: 'preserve-3d',
+          willChange: 'transform',
+          zIndex: active ? n + 4 : (base ? i + 1 : n - i)
+        }
+      });
+    }
+
+    const stack = (w, side) => ({
+      position: 'absolute', top: '3px', bottom: '3px', width: w + 'px',
+      [side === 'r' ? 'left' : 'right']: 'calc(50% + ' + this.PW + 'px)',
+      background: 'repeating-linear-gradient(to ' + (side === 'r' ? 'right' : 'left') + ', #ece4d2 0px, #ece4d2 1.2px, #b3a68c 1.2px, #b3a68c 2.4px)',
+      borderRadius: side === 'r' ? '0 3px 3px 0' : '3px 0 0 3px',
+      boxShadow: side === 'r' ? '3px 4px 10px rgba(0,0,0,0.4)' : '-3px 4px 10px rgba(0,0,0,0.4)',
+      transition: 'width .5s ' + ease, zIndex: 0
+    });
+
+    return {
+      sheets,
+      setShadowRef: (node) => { this._shadow = node; },
+      showHud: this.props.showHud ?? true,
+      showHint: !S.everFlipped,
+      hudLabel: S.target === 0 ? 'Cover'
+        : (S.target === n ? 'Fin.' : 'Page ' + (S.target + 1) + ' of ' + this.pages.length),
+      prev: () => this.go(-1),
+      next: () => this.go(1),
+      onDown: this.onDown, onMove: this.onMove, onUp: this.onUp, onLeave: this.onLeave,
+      stageStyle: {
+        position: 'relative', flex: 'none', touchAction: 'none', cursor: 'grab',
+        width: this.PW * 2 + 'px', height: this.PH + 'px',
+        transform: 'scale(' + scale + ')'
+      },
+      bookStyle: {
+        position: 'absolute', inset: 0, perspective: '2600px', perspectiveOrigin: '50% 42%',
+        transform: 'translateX(' + shift + 'px)',
+        transition: 'transform ' + shiftDur + 's ' + ease
+      },
+      leftStackStyle: stack(2.4 * S.target, 'l'),
+      rightStackStyle: stack(2.4 * (n - S.target), 'r'),
+      flipShadowStyle: {
+        position: 'absolute', left: '50%', top: 0,
+        width: this.PW + 'px', height: this.PH + 'px',
+        transformOrigin: 'left center', pointerEvents: 'none',
+        zIndex: n + 3, opacity: 0, willChange: 'transform,opacity',
+        background: 'linear-gradient(to right, rgba(10,5,2,0.5), rgba(10,5,2,0.16) 55%, rgba(10,5,2,0) 85%)',
+        borderRadius: '6px'
+      },
+      shadowStyle: {
+        position: 'absolute', left: '3%', right: '3%', bottom: '-40px', height: '70px',
+        background: 'radial-gradient(50% 50% at 50% 50%, rgba(0,0,0,0.6), rgba(0,0,0,0) 72%)',
+        filter: 'blur(8px)', pointerEvents: 'none',
+        transform: 'translateX(' + shift + 'px) scaleX(' + (S.single || S.target === 0 || S.target === n ? 0.58 : 1) + ')',
+        transition: 'transform ' + shiftDur + 's ' + ease
+      },
+      cornerStyle: {
+        position: 'absolute', right: '0px', bottom: '0px', width: '104px', height: '104px',
+        pointerEvents: 'none', zIndex: n + 6,
+        opacity: this._busy || this._drag || S.target >= n ? 0 : 1,
+        transition: 'opacity .3s ease',
+        background: 'linear-gradient(315deg, rgba(255,255,255,0.85) 0%, rgba(240,232,216,0.6) 28%, rgba(0,0,0,0.22) 30%, rgba(0,0,0,0) 46%)',
+        clipPath: 'polygon(100% 0, 100% 100%, 0 100%)',
+        borderBottomRightRadius: '7px',
+        animation: 'cornerBreathe 3.4s ease-in-out infinite'
+      }
+    };
+  }
+}
+</script>
+
+
+</body></html>
