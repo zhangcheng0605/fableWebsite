@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<!-- SEEN · panel reader · limited-time drop -->
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#fdf4ff">
+  <title>SEEN — Chapter 2: After Hours (scrolling edition) · Zhang Cheng</title>
+  <meta name="description" content="SEEN — an AI-drawn office manga. Chapter 2: After Hours, as one long scroll. The counter was never counting what they say. It is counting what they are planning.">
+  <link rel="canonical" href="./">
+  <meta property="og:title" content="SEEN — Chapter 2: After Hours">
+  <meta property="og:description" content="The nicest person in the building has 60,109 lies. The honest one has 9. And Marcus’s counter climbs while he is completely silent.">
+  <meta property="og:type" content="article">
+  <meta property="og:image" content="c2_p12_03.jpg">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👁</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      /* design tokens — shadcn/ui architecture, neon-noir brand (SEEN gold reader keeps its own bg/ink/edge) */
+      --background:#fdf4ff; --foreground:#38235c;
+      --card:#ffffff; --card-foreground:#38235c;
+      --muted-bg:#f3e9ff; --muted-foreground:#38235c;
+      --border:rgba(139,61,255,.22); --input:rgba(139,61,255,.3);
+      --ring:#8b3dff;
+      --primary:#ff3fae; --primary-foreground:#ffffff;
+      --accent:#8b3dff; --accent-foreground:#ffffff;
+      --destructive:#ff6262;
+      --radius:18px; --radius-sm:calc(var(--radius)*.6); --radius-lg:calc(var(--radius)*1.25);
+      /* legacy vars, remapped onto the token layer */
+      --bg:var(--background); --ink:#ffffff;
+      --text:var(--foreground); --muted:var(--muted-foreground);
+      --gold:#c9106f; --amber:#8b3dff; --cream:#38235c;
+      --grad:linear-gradient(95deg,#ef1f96,#7a2df0 46%,#0f9fe0);
+      --edge:var(--border);
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:auto}
+    body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.6;
+         overflow-x:hidden;-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    ::selection{background:rgba(255,63,174,.25)}
+    :focus-visible{outline:2px solid var(--ring);outline-offset:3px;border-radius:4px}
+    .btn:focus-visible,a.chapter:focus-visible,.sib:focus-visible{outline-offset:4px}
+    h1,h2,h3,h4{text-wrap:balance}
+    .skip-link{position:fixed;top:-100px;left:16px;z-index:100;padding:10px 18px;border-radius:99px;
+      background:var(--primary);color:var(--primary-foreground);font-weight:600;transition:top .2s}
+    .skip-link:focus{top:16px}
+
+    .amb{position:fixed;inset:0;z-index:0;pointer-events:none;background:
+      radial-gradient(60vw 44vh at 80% -8%,rgba(255,183,226,.5),transparent 62%),
+      radial-gradient(54vw 42vh at 6% 106%,rgba(126,216,255,.4),transparent 62%),
+      linear-gradient(180deg,#fff4fd,#f4e9ff 45%,#eaf6ff)}
+    .grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.14;mix-blend-mode:overlay;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+    .chrome{position:fixed;top:0;left:0;right:0;z-index:40;display:flex;justify-content:space-between;
+            align-items:center;padding:20px 26px;pointer-events:none}
+    .chrome>*{pointer-events:auto}
+    .back{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.92rem;color:var(--muted);transition:color .25s;
+          padding:10px 14px;margin:-10px -14px}
+    .back:hover{color:var(--gold)}
+    .lhs{display:flex;align-items:center;gap:2px;flex-wrap:wrap}
+    .back.book{font-weight:500;color:var(--gold);opacity:.9}
+    .back.book:hover{opacity:1;text-decoration:underline;text-underline-offset:3px}
+    @media (max-width:560px){.back.book{display:none}}
+    .meter{text-align:right;font-family:"JetBrains Mono",monospace}
+    .meter .lbl{font-size:.62rem;letter-spacing:.34em;color:var(--muted)}
+    .meter .val{font-size:clamp(.95rem,2.4vw,1.25rem);font-weight:500;
+      background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .pbar{position:fixed;left:0;bottom:0;right:0;height:3px;z-index:40;transform-origin:0 50%;
+      transform:scaleX(0);background:var(--grad);box-shadow:0 0 14px rgba(255,63,174,.5)}
+
+    /* limited-time flag, flashing */
+    .ltd{position:fixed;left:50%;transform:translateX(-50%);top:16px;z-index:41;
+      font-family:"JetBrains Mono",monospace;font-size:.6rem;font-weight:700;letter-spacing:.24em;
+      text-transform:uppercase;color:#fff;background:var(--grad);border-radius:99px;padding:6px 14px;
+      white-space:nowrap;animation:ltdflash 1.15s steps(1,end) infinite;box-shadow:0 6px 22px rgba(255,63,174,.4)}
+    @keyframes ltdflash{0%,49%{opacity:1;filter:none}50%,100%{opacity:.32;filter:saturate(.45)}}
+
+    #scroller{position:fixed;top:0;left:0;width:100%;z-index:2;will-change:transform}
+    body.no-smooth #scroller{position:static;will-change:auto}
+
+    /* ============ cover ============ */
+    .cover{position:relative;min-height:100svh;display:flex;align-items:flex-end;justify-content:center;overflow:hidden}
+    .cover-art{position:absolute;inset:-6% 0;z-index:-1}
+    .cover-art img{width:100%;height:100%;object-fit:cover;object-position:center 26%;filter:saturate(.9) brightness(.98) contrast(1.02)}
+    .cover-art::after{content:"";position:absolute;inset:0;background:
+      linear-gradient(180deg,rgba(253,244,255,.42),rgba(253,244,255,.05) 34%,rgba(253,244,255,.97) 88%,var(--bg))}
+    .cover-inner{position:relative;text-align:center;padding:0 24px 11svh;max-width:900px}
+    /* soft white halo behind the cover text, so the candy masthead stays
+       legible over any artwork without fogging the whole cover */
+    .cover-inner::before{content:"";position:absolute;inset:-6% -12%;z-index:-1;pointer-events:none;
+      background:radial-gradient(60% 72% at 50% 60%,rgba(253,244,255,.94),rgba(253,244,255,.55) 58%,transparent 78%);
+      filter:blur(6px)}
+    .kicker{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.4em;text-transform:uppercase;text-shadow:0 1px 14px rgba(255,255,255,.95),0 0 4px rgba(255,255,255,.9);
+            color:var(--gold);margin-bottom:20px}
+    h1.masthead{font-family:"Space Grotesk",sans-serif;font-weight:700;
+      font-size:clamp(3.4rem,17vw,10rem);line-height:.9;letter-spacing:.02em;
+      background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+      filter:drop-shadow(0 4px 38px rgba(255,63,174,.32))}
+    h1.masthead span{display:block}
+    .subtitle{font-family:"Space Grotesk",sans-serif;font-weight:600;margin-top:14px;
+      font-size:clamp(1rem,3.4vw,1.5rem);color:var(--cream)}
+    .cover-sub{text-shadow:0 1px 14px rgba(255,255,255,.9);margin-top:18px;color:var(--muted);font-size:clamp(.95rem,2.4vw,1.1rem);max-width:560px;margin-inline:auto}
+    .cover-sub b{color:var(--text);font-weight:600}
+    .hint{margin:34px auto 0;width:24px;height:40px;border:1.5px solid rgba(201,16,111,.5);border-radius:99px;
+          display:flex;justify-content:center;padding-top:7px}
+    .hint i{width:3px;height:8px;border-radius:99px;background:var(--gold);animation:drop 1.9s ease-in-out infinite}
+    @keyframes drop{0%,100%{transform:translateY(0);opacity:1}60%{transform:translateY(13px);opacity:.15}}
+
+    .mask{overflow:hidden;display:block}
+    .mask>span{display:block;transform:translateY(110%);transition:transform 1.1s cubic-bezier(.22,1,.36,1)}
+    body.loaded .mask>span{transform:none}
+    .fade-in{opacity:0;transition:opacity 1s ease .55s}
+    body.loaded .fade-in{opacity:1}
+
+    /* ============ reader ============ */
+    .reader{position:relative;max-width:760px;margin:0 auto;padding:12svh 20px 6svh;display:flex;
+            flex-direction:column;gap:13svh}
+    .page{position:relative}
+    .frame{position:relative;border:1px solid var(--edge);border-radius:14px;overflow:hidden;background:var(--ink);
+      box-shadow:0 24px 70px rgba(109,40,217,.16),0 0 0 1px rgba(139,61,255,.06);transform:translateZ(0)}
+    .frame::before{content:"";position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:inherit;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.6)}
+    .frame img{display:block;width:100%;height:auto;transform:scale(1.05);will-change:transform}
+
+    /* the words: under the panel, high contrast, always legible */
+    .cap{display:block;margin-top:16px;padding:15px 18px 17px;border-radius:12px;border:1px solid var(--edge);
+      background:#ffffff;box-shadow:0 10px 30px rgba(139,61,255,.1)}
+    .cap-top{display:flex;align-items:center;gap:12px;margin-bottom:9px}
+    .tag{font-family:"JetBrains Mono",monospace;font-size:.63rem;letter-spacing:.26em;white-space:nowrap;
+      text-transform:uppercase;color:var(--gold);border:1px solid var(--edge);border-radius:99px;padding:4px 11px}
+    .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--edge),transparent)}
+    .pageno{font-family:"JetBrains Mono",monospace;font-size:.63rem;color:var(--muted);letter-spacing:.2em;white-space:nowrap}
+    .line{display:block;font-family:"Space Grotesk",sans-serif;font-weight:500;
+      font-size:clamp(1.02rem,2.9vw,1.24rem);line-height:1.45;color:var(--cream)}
+    .line em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:700}
+    .line q{quotes:"\201C" "\201D";color:var(--amber)}
+
+    .page{opacity:0;transform:translateY(60px) scale(.97);filter:blur(6px);
+      transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1),filter .9s ease}
+    .page.on{opacity:1;transform:none;filter:none}
+    .page .cap{opacity:0;transform:translateY(14px);transition:opacity .7s ease .25s,transform .7s cubic-bezier(.22,1,.36,1) .25s}
+    .page.on .cap{opacity:1;transform:none}
+
+    .breather{min-height:46svh;display:grid;place-items:center;text-align:center;padding:0 24px}
+    .breather p{font-family:"Space Grotesk",sans-serif;font-style:italic;font-weight:500;
+      font-size:clamp(1.4rem,4.4vw,2.5rem);line-height:1.25;max-width:660px;color:var(--text)}
+    .breather p em{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-style:inherit}
+    .breather{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s cubic-bezier(.22,1,.36,1)}
+    .breather.on{opacity:1;transform:none}
+
+    .endcard{min-height:92svh;display:flex;flex-direction:column;align-items:center;justify-content:center;
+             text-align:center;padding:0 24px 8svh;gap:18px}
+    .endcard .fin{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.4em;color:var(--muted)}
+    .endcard h2{font-family:"Space Grotesk",sans-serif;font-weight:700;letter-spacing:-.01em;
+      font-size:clamp(2.2rem,7.5vw,4.6rem);line-height:1;background:var(--grad);
+      -webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 4px 30px rgba(255,63,174,.28))}
+    .endcard p{color:var(--muted);max-width:500px}
+    .endcta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+    .btn{font-family:"Space Grotesk",sans-serif;font-weight:600;font-size:.95rem;padding:13px 28px;
+         display:inline-flex;align-items:center;justify-content:center;min-height:44px;
+         border-radius:99px;border:1px solid var(--edge);color:var(--text);transition:transform .2s,box-shadow .2s;cursor:pointer;background:none}
+    .btn:hover{transform:translateY(-2px)}
+    .btn:active{transform:translateY(0) scale(.98)}
+    .btn-gold{background:var(--grad);color:#fff;border:none;box-shadow:0 8px 34px rgba(255,63,174,.3)}
+    .btn-gold:hover{box-shadow:0 12px 44px rgba(255,63,174,.4)}
+    .endcard{opacity:0;transform:translateY(30px);transition:opacity 1s ease,transform 1s cubic-bezier(.22,1,.36,1)}
+    .endcard.on{opacity:1;transform:none}
+    .credits{font-size:.82rem;color:var(--muted);margin-top:26px}
+    .credits a{color:var(--gold)}
+
+    @media (max-width:600px){
+      .reader{gap:9svh;padding-top:10svh}
+      .ltd{font-size:.52rem;letter-spacing:.16em;padding:5px 10px;top:56px}
+    }
+    @media (prefers-reduced-motion:reduce){
+      .mask>span,.fade-in{transition:none;transform:none;opacity:1}
+      .page,.breather,.endcard{opacity:1;transform:none;filter:none;transition:none}
+      .page .cap{opacity:1;transform:none;transition:none}
+      .frame img{transform:none}
+      .hint i,.ltd{animation:none}
+    }
+  </style>
+  <link rel="stylesheet" href="../assets/fx.css">
+  <link rel="stylesheet" href="../assets/bunny.css">
+</head>
+<body>
+  <a class="skip-link" href="#reader">Skip to comic</a>
+  <div class="amb" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
+
+  <div class="chrome">
+    <div class="lhs">
+      <a class="back" href="../">← ZAC Studios</a>
+      <a class="back book" href="./">Turn the pages instead →</a>
+    </div>
+    <div class="meter" aria-hidden="true">
+      <div class="lbl">MARCUS</div>
+      <div class="val" id="meter">0</div>
+    </div>
+  </div>
+  <div class="ltd">★ Limited Time Manga ★</div>
+  <div class="pbar" id="pbar" aria-hidden="true"></div>
+
+  <div id="scroller">
+    <section class="cover">
+      <div class="cover-art" id="coverArt"><img src="c2_p12_03.jpg" alt="" aria-hidden="true"></div>
+      <div class="cover-inner">
+        <p class="kicker fade-in">Scrolling edition · Chapter 2 — After Hours</p>
+        <h1 class="masthead"><span class="mask"><span>SEEN</span></span></h1>
+        <p class="subtitle fade-in">Chapter 2 — After Hours</p>
+        <p class="cover-sub fade-in">The kindest person in the building has told <b>60,109</b> lies. The honest one has told <b>9</b>,
+           and it has cost her everything. And tonight, in a parking garage, Marcus Reid&rsquo;s counter climbs
+           while he says <b>nothing at all.</b></p>
+        <div class="hint fade-in" aria-hidden="true"><i></i></div>
+      </div>
+    </section>
+
+    <main class="reader" id="reader"></main>
+
+    <section class="endcard" id="endcard">
+      <p class="fin">END OF CHAPTER 2</p>
+      <h2>Don&rsquo;t do that again.</h2>
+      <p>The 0 knows he can see it. Marcus is running something. And there is a row in Ethan&rsquo;s own spreadsheet, dated twelve years ago, that he closed the laptop rather than finish reading.<br><br>Chapter 3: the power has layers, and every one of them takes a piece of him.</p>
+      <div class="endcta">
+        <a class="btn btn-gold" href="../seen3/">Chapter 3 — Deeper &rarr;</a>
+        <a class="btn" href="./">Read it as a book</a>
+        <button class="btn" id="again">Read it again</button>
+        <a class="btn" href="../seen/">&larr; Chapter 1</a>
+        <a class="btn" href="../#manga">More comics</a>
+      </div>
+      <p class="credits">SEEN &middot; Chapter 2 &middot; 69 panels &middot; Written and drawn with AI &middot; &copy; Zhang Cheng</p>
+    </section>
+  </div>
+
+  <script src="chapter2.js"></script>
+  <script>
+    // the chapter itself — panels, lines and art sizes — lives in chapter2.js,
+    // shared with the page-turning edition next door
+    var PANELS = window.SEEN2.PANELS, BREATHERS = window.SEEN2.BREATHERS, DIMS = window.SEEN2.DIMS;
+
+    const reader = document.getElementById("reader");
+    PANELS.forEach(function (p, i) {
+      var file = p[0], tag = p[1], line = p[2];
+      var n = String(i + 1).padStart(2, "0");
+      var alt = line.replace(/<[^>]+>/g, "").replace(/"/g, "");
+      var d = DIMS[file], size = d ? ' width="' + d[0] + '" height="' + d[1] + '"' : "";
+      reader.insertAdjacentHTML("beforeend",
+        '<figure class="page">' +
+          '<div class="frame"><img src="' + file + '.jpg" alt="Panel ' + (i + 1) + ' — ' + alt + '"' + size + ' loading="lazy"></div>' +
+          '<figcaption class="cap">' +
+            '<span class="cap-top"><span class="tag">' + tag + '</span><span class="rule"></span>' +
+            '<span class="pageno">' + n + ' / ' + PANELS.length + '</span></span>' +
+            '<span class="line">' + line + '</span>' +
+          '</figcaption>' +
+        '</figure>');
+      if (BREATHERS[i + 1]) {
+        reader.insertAdjacentHTML("beforeend", '<div class="breather"><p>' + BREATHERS[i + 1] + '</p></div>');
+      }
+    });
+
+    var reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    requestAnimationFrame(function () { document.body.classList.add("loaded"); });
+
+    var io = new IntersectionObserver(function (es) {
+      for (var k = 0; k < es.length; k++) {
+        if (es[k].isIntersecting) { es[k].target.classList.add("on"); io.unobserve(es[k].target); }
+      }
+    }, { threshold: 0.14, rootMargin: "0px 0px -5% 0px" });
+    document.querySelectorAll(".page, .breather, .endcard").forEach(function (el) { io.observe(el); });
+
+    var scroller = document.getElementById("scroller");
+    var pbar = document.getElementById("pbar");
+    var meterEl = document.getElementById("meter");
+    var coverArt = document.getElementById("coverArt");
+    var frames = [].slice.call(document.querySelectorAll(".frame img"));
+    var lerp = function (a, b, t) { return a + (b - a) * t; };
+    var clamp = function (v, lo, hi) { return Math.min(Math.max(v, lo), hi); };
+
+    var FINAL = 1203;
+    var fmt = function (p) { return p > 0.992 ? "149,071" : Math.round(FINAL * p).toLocaleString("en-US"); };
+
+    if (reduceMotion) {
+      document.body.classList.add("no-smooth");
+      meterEl.textContent = "149,071";
+      pbar.style.transform = "scaleX(1)";
+    } else {
+      var cur = window.scrollY;
+      var setH = function () { document.body.style.height = scroller.scrollHeight + "px"; };
+      setH();
+      addEventListener("resize", setH);
+      addEventListener("load", setH);
+      frames.forEach(function (im) { im.addEventListener("load", setH); });
+      setInterval(setH, 1000);
+
+      var tick = function () {
+        var max = Math.max(scroller.scrollHeight - innerHeight, 1);
+        cur = lerp(cur, window.scrollY, 0.085);
+        if (Math.abs(cur - window.scrollY) < 0.05) cur = window.scrollY;
+        scroller.style.transform = "translate3d(0," + (-cur) + "px,0)";
+
+        var p = clamp(cur / max, 0, 1);
+        pbar.style.transform = "scaleX(" + p + ")";
+        meterEl.textContent = fmt(p);
+
+        if (cur < innerHeight * 1.2) {
+          coverArt.style.transform = "translateY(" + (cur * 0.35) + "px)";
+          coverArt.style.opacity = String(1 - clamp(cur / (innerHeight * 0.9), 0, 1) * 0.9);
+        }
+        for (var j = 0; j < frames.length; j++) {
+          var im = frames[j];
+          var r = im.parentElement.getBoundingClientRect();
+          if (r.bottom < -80 || r.top > innerHeight + 80) continue;
+          var rel = (r.top + r.height / 2 - innerHeight / 2) / innerHeight;
+          im.style.transform = "scale(1.05) translateY(" + (-rel * 2.6).toFixed(3) + "%)";
+        }
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    }
+
+    document.getElementById("again").addEventListener("click", function () {
+      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+    });
+  </script>
+  <script src="../assets/fx.js" defer></script>
+  <script src="../assets/bunny.js" defer></script>
+</body>
+</html>
