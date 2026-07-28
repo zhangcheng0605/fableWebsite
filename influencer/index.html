@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Virtual Influencer — Zhang Cheng</title>
+  <meta name="description" content="A real person, scaled by AI. A likeness model trained on my own face, a Claude-driven content brain, and an identity gate that scores every frame before it ships. Singapore hawker food, thirty posts a month.">
+  <meta property="og:title" content="Virtual Influencer — Zhang Cheng">
+  <meta property="og:description" content="My own face, trained into a model. Every generated frame gets scored against real photographs before it can be published. Built by AI agents under my direction.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#fdf4ff">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍜</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      /* House candy-neon tokens, shared with the landing page and the desk. */
+      --bg:#fdf4ff; --ink:#38235c;
+      --pink:#ff3fae; --pink-ink:#c9106f;
+      --purple:#8b3dff; --violet:#6428d8;
+      --cyan:#25c4ff; --gold:#ffb830; --green:#12b981;
+      --card:#ffffff; --sunk:#f3e9ff;
+      --border:rgba(139,61,255,.20); --border-pink:rgba(255,63,174,.30);
+      --grad:linear-gradient(95deg,#ef1f96,#7a2df0 46%,#0f9fe0);
+      --radius:18px;
+      /* The signboard: a hawker stall sign rendered in house colours —
+         deep violet panel, laminated gold type. */
+      --board:#4a1b9c; --board-ink:#ffe9b8; --board-gold:var(--gold);
+      --shadow:0 14px 44px rgba(139,61,255,.22);
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:92px}
+    body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,sans-serif;
+         -webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.65}
+    a{color:inherit}
+    ::selection{background:rgba(255,63,174,.25)}
+    :focus-visible{outline:2px solid var(--purple);outline-offset:3px;border-radius:4px}
+    h1,h2,h3{text-wrap:balance}
+    .mono{font-family:"JetBrains Mono",monospace}
+    .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+    .skip-link{position:fixed;top:-100px;left:16px;z-index:100;padding:10px 18px;border-radius:99px;
+      background:var(--pink);color:#fff;font-weight:600;transition:top .2s;text-decoration:none}
+    .skip-link:focus{top:16px}
+
+    .bg{position:fixed;inset:0;z-index:-2;background:
+        radial-gradient(55vw 45vh at 18% -5%,rgba(255,183,226,.5),transparent 62%),
+        radial-gradient(50vw 42vh at 88% 30%,rgba(178,140,255,.35),transparent 60%),
+        radial-gradient(60vw 50vh at 50% 110%,rgba(126,216,255,.45),transparent 65%),
+        linear-gradient(180deg,#fff4fd,#f4e9ff 45%,#eaf6ff)}
+    .gridlines{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+        background-image:linear-gradient(rgba(109,40,217,.05) 1px,transparent 1px),
+                         linear-gradient(90deg,rgba(109,40,217,.05) 1px,transparent 1px);
+        background-size:56px 56px;
+        mask-image:radial-gradient(70vw 70vh at 50% 20%,#000 0%,transparent 80%)}
+
+    /* ---------- nav ---------- */
+    .nav-wrap{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);
+      background:rgba(253,244,255,.82);border-bottom:1px solid var(--border)}
+    .nav{max-width:1120px;margin:0 auto;padding:14px 22px;display:flex;gap:22px;align-items:center;
+      font-size:.86rem;font-weight:600;flex-wrap:wrap}
+    .nav a{text-decoration:none;color:var(--ink);opacity:.72}
+    .nav a:hover,.nav a:focus-visible{opacity:1;color:var(--pink-ink)}
+    .nav .logo{font-family:Anton,sans-serif;font-size:1.15rem;letter-spacing:.06em;opacity:1;margin-right:auto}
+    .nav .logo span{color:var(--pink)}
+
+    main{max-width:1120px;margin:0 auto;padding:0 22px}
+    section{padding-block:clamp(48px,7vw,86px);border-bottom:1px solid var(--border)}
+    section:last-of-type{border-bottom:0}
+
+    .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:10px}
+    .sec-index{font-family:"JetBrains Mono",monospace;font-size:.78rem;font-weight:700;color:var(--pink-ink)}
+    h2{font-family:Anton,sans-serif;font-size:clamp(1.7rem,4vw,2.7rem);letter-spacing:.005em;
+       line-height:1.05;text-transform:uppercase;font-weight:400}
+    .sec-sub{max-width:62ch;margin-bottom:30px;font-size:1.04rem;opacity:.88}
+    h3{font-size:1.02rem;font-weight:700;margin-bottom:6px}
+    p+p{margin-top:1rem}
+
+    /* ---------- signboard hero ---------- */
+    .board{background:var(--board);color:var(--board-ink);border-radius:var(--radius);
+      padding:clamp(24px,4.5vw,52px);margin-top:clamp(28px,4vw,44px);box-shadow:var(--shadow);
+      display:grid;gap:22px;position:relative;overflow:hidden;
+      outline:3px solid rgba(255,184,48,.32);outline-offset:-12px}
+    .board-top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;
+      font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+      color:rgba(255,233,184,.7);border-bottom:1px solid rgba(255,233,184,.24);padding-bottom:14px}
+    .status{display:inline-flex;align-items:center;gap:8px;color:var(--board-gold)}
+    .status i{width:8px;height:8px;border-radius:50%;background:var(--board-gold);
+      box-shadow:0 0 0 4px rgba(255,184,48,.22)}
+    h1{font-family:Anton,sans-serif;font-weight:400;text-transform:uppercase;
+       font-size:clamp(2.1rem,6.6vw,4.2rem);line-height:.98;letter-spacing:.01em;color:var(--board-gold)}
+    h1 .zh{display:block;font-size:.26em;letter-spacing:.4em;color:rgba(255,233,184,.72);
+      margin-bottom:14px;text-transform:none}
+    .board p{max-width:52ch;color:rgba(255,233,184,.94);font-size:1.05rem}
+    .board p b{color:#fff}
+
+    .honest{display:inline-flex;align-items:flex-start;gap:10px;font-family:"JetBrains Mono",monospace;
+      font-size:.74rem;line-height:1.5;letter-spacing:.02em;background:rgba(255,184,48,.14);
+      border:1px solid rgba(255,184,48,.4);color:var(--board-gold);padding:10px 14px;border-radius:10px;
+      max-width:56ch}
+
+    .cta{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{display:inline-block;text-decoration:none;font-weight:700;font-size:.88rem;
+      padding:12px 22px;border-radius:99px;transition:transform .15s ease}
+    .btn:hover,.btn:focus-visible{transform:translateY(-2px)}
+    .btn-primary{background:var(--board-gold);color:#3d1a05}
+    .btn-ghost{border:2px solid rgba(255,233,184,.5);color:var(--board-ink)}
+
+    /* ---------- media placeholder slots ---------- */
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:16px}
+    figure{margin:0}
+    .slot{aspect-ratio:9/16;background:var(--sunk);border:2px dashed var(--border);
+      border-radius:14px;display:grid;place-content:center;text-align:center;gap:6px;padding:16px;
+      transition:border-color .18s ease,background .18s ease}
+    .slot.still{aspect-ratio:4/5}
+    .slot.wide{aspect-ratio:16/9}
+    .slot:hover{border-color:var(--pink);background:#fff}
+    .slot .plate{font-family:Anton,sans-serif;font-size:1.8rem;color:var(--purple);line-height:1}
+    .slot .kind{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.14em;
+      text-transform:uppercase;color:var(--pink-ink)}
+    figcaption{font-family:"JetBrains Mono",monospace;font-size:.72rem;opacity:.7;
+      padding-top:8px;line-height:1.45}
+
+    /* ---------- pipeline ---------- */
+    ol.pipeline{list-style:none;display:grid;gap:26px;max-width:74ch}
+    ol.pipeline li{display:grid;grid-template-columns:56px 1fr;gap:18px;align-items:start}
+    ol.pipeline .num{font-family:"JetBrains Mono",monospace;font-size:.8rem;font-weight:700;
+      color:var(--pink-ink);border-top:3px solid var(--pink);padding-top:8px;font-variant-numeric:tabular-nums}
+    ol.pipeline p{font-size:.98rem;opacity:.88}
+
+    /* ---------- cards / stats ---------- */
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+      padding:24px;display:grid;gap:8px;align-content:start}
+    .card .price{font-family:"JetBrains Mono",monospace;font-size:.84rem;color:var(--pink-ink);
+      font-variant-numeric:tabular-nums}
+    .card ul{margin:6px 0 0;padding-left:18px;font-size:.93rem;opacity:.85}
+    .card li{margin-bottom:5px}
+    .chip{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.68rem;
+      padding:4px 10px;border-radius:99px;background:var(--sunk);border:1px solid var(--border);
+      color:var(--violet);margin:2px 4px 2px 0}
+
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:16px}
+    .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
+    .stat b{display:block;font-family:Anton,sans-serif;font-weight:400;font-size:2.1rem;line-height:1;
+      color:var(--violet);font-variant-numeric:tabular-nums}
+    .stat span{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.1em;
+      text-transform:uppercase;opacity:.7;display:block;margin-top:8px}
+
+    /* ---------- gate callout ---------- */
+    .gate{background:var(--card);border:1px solid var(--border-pink);border-left:5px solid var(--pink);
+      border-radius:var(--radius);padding:clamp(22px,3.4vw,34px);display:grid;gap:14px;max-width:74ch}
+    .gate code{font-family:"JetBrains Mono",monospace;font-size:.82rem;background:var(--sunk);
+      padding:2px 7px;border-radius:6px;color:var(--violet)}
+
+    /* ---------- disclosure ---------- */
+    .disclosure{background:var(--card);border:1px solid var(--border);border-left:5px solid var(--gold);
+      border-radius:var(--radius);padding:clamp(22px,3.4vw,34px);max-width:74ch}
+    .disclosure h2{margin-bottom:16px}
+
+    footer{max-width:1120px;margin:0 auto;padding:34px 22px 60px;
+      font-family:"JetBrains Mono",monospace;font-size:.72rem;opacity:.7;line-height:1.7}
+
+    .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+    .reveal.visible{opacity:1;transform:none}
+    @media (prefers-reduced-motion:reduce){
+      *,*::before,*::after{animation:none!important;transition:none!important}
+      .reveal{opacity:1;transform:none}
+      html{scroll-behavior:auto}
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#persona">Skip to content</a>
+  <div class="bg" aria-hidden="true"></div>
+  <div class="gridlines" aria-hidden="true"></div>
+
+  <header class="nav-wrap">
+    <nav class="nav">
+      <a class="logo" href="../" aria-label="ZAC Studios — home">ZA<span>C</span></a>
+      <a href="../#projects">Projects</a>
+      <a href="#persona">Persona</a>
+      <a href="#work">The work</a>
+      <a href="#build">How it's built</a>
+      <a href="#gate">Identity gate</a>
+      <a href="#brands">For brands</a>
+      <a href="#disclosure">AI disclosure</a>
+    </nav>
+  </header>
+
+  <main>
+    <header class="board reveal">
+      <div class="board-top">
+        <span>小贩中心 · Singapore</span>
+        <span class="status"><i></i>In production</span>
+      </div>
+      <h1><span class="zh">一摊一摊吃</span>Every hawker centre in Singapore. One stall at a time.</h1>
+      <p>I'm a real person. Most of the photographs won't be. <b>That isn't a gimmick</b> — it's how one
+         person eats at a stall on Tuesday and still ships thirty posts that month, with the same face
+         in every single frame.</p>
+      <p class="honest mono">STATUS — The pipeline is built and tested. The likeness model isn't trained
+         yet and nothing has been published. Every placeholder below is labelled as one.</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#build">How it's built</a>
+        <a class="btn btn-ghost" href="#disclosure">Read the AI disclosure</a>
+      </div>
+    </header>
+
+    <!-- ============ PERSONA ============ -->
+    <section id="persona">
+      <div class="sec-head reveal"><span class="sec-index">01</span><h2>The persona</h2></div>
+      <p class="sec-sub reveal">Not an invented character. A likeness model trained on photographs of me,
+         summoned by a trigger token, wearing my own voice. The niche is Singapore hawker food — the
+         densest brand market on this island and the one I actually eat in.</p>
+      <div class="grid reveal">
+        <!-- PLACEHOLDER · replace each .slot with <img src="hero.jpg" alt="…"> at 4:5 -->
+        <figure><div class="slot still"><span class="plate">01</span><span class="kind">Portrait · 4:5</span></div><figcaption>Hero reference — the canonical face</figcaption></figure>
+        <figure><div class="slot still"><span class="plate">02</span><span class="kind">Portrait · 4:5</span></div><figcaption>Reference set — angle range</figcaption></figure>
+        <figure><div class="slot still"><span class="plate">03</span><span class="kind">Portrait · 4:5</span></div><figcaption>Reference set — lighting range</figcaption></figure>
+        <figure><div class="slot still"><span class="plate">04</span><span class="kind">Portrait · 4:5</span></div><figcaption>Reference set — expression range</figcaption></figure>
+      </div>
+    </section>
+
+    <!-- ============ WORK ============ -->
+    <section id="work">
+      <div class="sec-head reveal"><span class="sec-index">02</span><h2>The work</h2></div>
+      <p class="sec-sub reveal">Reels, key stills, and short product spots. Shot at real stalls on real
+         visits, then produced at a volume nobody holding a camera can match.</p>
+      <div class="grid reveal">
+        <!-- PLACEHOLDER · reels are 9:16 — swap in <video muted loop playsinline poster="…"> -->
+        <figure><div class="slot"><span class="plate">01</span><span class="kind">Reel · 9:16</span></div><figcaption>Maxwell — chicken rice queue at 11:40</figcaption></figure>
+        <figure><div class="slot"><span class="plate">02</span><span class="kind">Reel · 9:16</span></div><figcaption>Old Airport Road — char kway teow, after dark</figcaption></figure>
+        <figure><div class="slot"><span class="plate">03</span><span class="kind">Reel · 9:16</span></div><figcaption>Tiong Bahru — the 8am regulars</figcaption></figure>
+        <figure><div class="slot"><span class="plate">04</span><span class="kind">Reel · 9:16</span></div><figcaption>Tekka — biryani set</figcaption></figure>
+      </div>
+      <div class="grid reveal" style="margin-top:16px">
+        <!-- PLACEHOLDER · stills 4:5, spot 16:9 -->
+        <figure><div class="slot still"><span class="plate">05</span><span class="kind">Stills · 4:5</span></div><figcaption>Geylang Serai — afternoon light test</figcaption></figure>
+        <figure><div class="slot still"><span class="plate">06</span><span class="kind">Stills · 4:5</span></div><figcaption>Home kitchen — evening tungsten</figcaption></figure>
+        <figure><div class="slot still"><span class="plate">07</span><span class="kind">Spot · 16:9</span></div><figcaption>Brand spot — 12s cutdown</figcaption></figure>
+        <figure><div class="slot still"><span class="plate">08</span><span class="kind">Stills · 4:5</span></div><figcaption>East Coast Park — golden hour</figcaption></figure>
+      </div>
+    </section>
+
+    <!-- ============ BUILD ============ -->
+    <section id="build">
+      <div class="sec-head reveal"><span class="sec-index">03</span><h2>How it's built</h2></div>
+      <p class="sec-sub reveal">Five stages, and the order matters — every one of them depends on the
+         face holding still.</p>
+      <ol class="pipeline reveal">
+        <li>
+          <span class="num">01</span>
+          <div>
+            <h3>Capture</h3>
+            <p>Thirty to forty photographs of me, all shot inside the same fortnight — same haircut, same
+               weight — across a deliberate spread of angles, lighting and distance. Clothing and background
+               change constantly, otherwise the model learns the shirt as part of my face.</p>
+          </div>
+        </li>
+        <li>
+          <span class="num">02</span>
+          <div>
+            <h3>Train</h3>
+            <p>A Flux LoRA trained on that set, plus a voice clone from a few minutes of clean speech.
+               Trained twice at different step counts and compared — overtraining welds the dataset's own
+               poses into every output and the face stops being able to do anything new.</p>
+          </div>
+        </li>
+        <li>
+          <span class="num">03</span>
+          <div>
+            <h3>Write</h3>
+            <p>Claude plans the week against the content pillars, writes the shot briefs, builds the image
+               prompts, and drafts captions in English and Mandarin — natively, not machine-translated
+               from the English.</p>
+          </div>
+        </li>
+        <li>
+          <span class="num">04</span>
+          <div>
+            <h3>Generate and verify</h3>
+            <p>Every frame is scored against real photographs of me before it goes anywhere. Anything that
+               drifts is discarded and regenerated automatically. Rejects are kept, not deleted — a drifting
+               face is telling you something about the prompt.</p>
+          </div>
+        </li>
+        <li>
+          <span class="num">05</span>
+          <div>
+            <h3>Publish</h3>
+            <p>Scheduled to Instagram, TikTok and YouTube through their official APIs, with each platform's
+               AI-content label set programmatically rather than remembered. Metrics come back nightly and
+               steer the next week's plan.</p>
+          </div>
+        </li>
+      </ol>
+      <p class="reveal" style="margin-top:26px">
+        <span class="chip">Flux LoRA</span><span class="chip">Claude API</span><span class="chip">InsightFace</span><span class="chip">ElevenLabs</span><span class="chip">Python</span><span class="chip">Postgres</span>
+      </p>
+    </section>
+
+    <!-- ============ GATE ============ -->
+    <section id="gate">
+      <div class="sec-head reveal"><span class="sec-index">04</span><h2>The identity gate</h2></div>
+      <p class="sec-sub reveal">The one piece everything else rests on. Generative models drift: ask for the
+         same person twice and you get cousins. An account dies the moment an audience notices.</p>
+      <div class="gate reveal">
+        <p>Every generated image is embedded and scored against real photographs of me. Below threshold, it
+           never reaches a queue, let alone a feed.</p>
+        <p><b>The threshold isn't guessed.</b> Two genuine photographs of the same person in different light
+           might only score <code>0.55</code> — demand <code>0.75</code> and you reject everything real;
+           settle for <code>0.30</code> and you let strangers through. So the gate calibrates against the
+           reference set itself: how alike are two real photographs of this person, and does the generated
+           one clear that bar?</p>
+        <p>It also refuses to calibrate on a reference set that splits in two. A dataset holding photographs
+           from two different haircuts passes every naive check — each half matches itself perfectly — while
+           quietly producing a gate that means <i>"resembles either version of him"</i> and locks neither.
+           That one surfaced as a failing test before it ever reached a photograph.</p>
+      </div>
+      <div class="stats reveal" style="margin-top:22px">
+        <div class="stat"><b>Every</b><span>frame scored before publish</span></div>
+        <div class="stat"><b>13</b><span>tests on the gate</span></div>
+        <div class="stat"><b>2</b><span>languages, written natively</span></div>
+        <div class="stat"><b>0</b><span>humans in the daily loop</span></div>
+      </div>
+    </section>
+
+    <!-- ============ BRANDS ============ -->
+    <section id="brands">
+      <div class="sec-head reveal"><span class="sec-index">05</span><h2>For brands</h2></div>
+      <p class="sec-sub reveal">What you're buying is the thing human creators find hardest to sell —
+         volume and consistency — without giving up a real person behind it.</p>
+      <div class="cards reveal">
+        <div class="card">
+          <h3>Single campaign</h3>
+          <p class="price">[RATE]</p>
+          <ul>
+            <li>One stall visit or product feature</li>
+            <li>1 reel + 4 key stills</li>
+            <li>Two revision rounds</li>
+            <li>Five working days</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Monthly retainer</h3>
+          <p class="price">[RATE] / month</p>
+          <ul>
+            <li>4 reels + 16 stills a month</li>
+            <li>48-hour priority turnaround</li>
+            <li>Platform cutdowns included</li>
+            <li>Paid-ad usage rights</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Product spot</h3>
+          <p class="price">[RATE]</p>
+          <ul>
+            <li>12–30 second scripted spot</li>
+            <li>Vertical and 16:9 cutdowns</li>
+            <li>Voiceover, English or Mandarin</li>
+            <li>Six-month usage licence</li>
+          </ul>
+        </div>
+      </div>
+      <p class="sec-sub reveal" style="margin-top:24px;margin-bottom:0">Every licence states its scope and
+         duration in writing before anything is produced. Content is delivered rendered — the likeness model
+         itself is never transferred, licensed or shared. Not worked with: tobacco and vaping, gambling,
+         weapons, political campaigns.</p>
+    </section>
+
+    <!-- ============ DISCLOSURE ============ -->
+    <section id="disclosure">
+      <div class="disclosure reveal">
+        <div class="sec-head"><span class="sec-index">06</span><h2>AI disclosure</h2></div>
+        <p><b>The person is real. Most of the imagery is not.</b> The photographs and videos published under
+           this project are generated by an AI likeness model trained exclusively on photographs of me, with
+           my consent.</p>
+        <p>No other real person is depicted, impersonated, or used as training data. The model is not based
+           on any celebrity, public figure or third party, and it is never handed to a client.</p>
+        <p>All published content carries the AI-generated content label required by each platform — Instagram,
+           TikTok and YouTube. Locations, meals and opinions reflect visits that actually happened: nothing is
+           produced for a stall or a product I haven't experienced first-hand. A review of a meal I never ate
+           is a lie about somebody's business, and no amount of automation makes that acceptable.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>© <span id="year"></span> Zhang Cheng · A real person, scaled by AI · built by AI agents under my
+       direction · placeholders marked throughout until the model is trained</p>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+    const io = new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){
+      e.target.classList.add('visible');io.unobserve(e.target);}})},
+      {threshold:.08,rootMargin:'0px 0px 120px 0px'});
+    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+  </script>
+</body>
+</html>
