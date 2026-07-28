@@ -33,9 +33,15 @@
   #playBtn { position:fixed; top:18px; right:18px; z-index:6; font:600 12px/1 "SF Mono",Consolas,monospace; letter-spacing:.2em;
     color:#28323a; background:rgba(255,255,255,.85); border:1.5px solid #b08d3e; border-radius:3px; padding:11px 16px; cursor:pointer; }
   #playBtn:hover { background:#fff; border-color:#8a6a24; }
+  #playBtn { z-index:12; }                        /* above the nav pill, never covered by it */
+  @media (max-width:900px){                       /* pill is centred and wide here — drop below it */
+    #playBtn { top:auto; bottom:calc(3.5vh + 26px); right:14px; }
+  }
   a { color:#4a6f8e; } a:hover { color:#2b4a63; }
   /* nav — the site's floating pill, tuned to this scene's steel palette */
-  .nav-wrap{position:fixed;top:16px;left:0;right:0;z-index:9;display:flex;justify-content:center;padding:0 20px}
+  .nav-wrap{position:fixed;top:16px;left:0;right:0;z-index:9;display:flex;justify-content:center;
+    padding:0 20px;pointer-events:none}          /* the bar spans the page; only the pill takes clicks */
+  .nav{pointer-events:auto}
   .nav{display:flex;align-items:center;gap:22px;padding:4px 18px;border-radius:99px;
        background:rgba(255,255,255,.82);border:1px solid rgba(61,74,85,.22);
        backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
