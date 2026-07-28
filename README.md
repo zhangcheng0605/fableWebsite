@@ -4,13 +4,13 @@ A fast, dependency-free personal website. Plain HTML/CSS/JS — no build step, n
 
 ## Structure
 
-The landing page is three full-width blocks on a bright candy-neon theme: **manga**,
-**projects**, **experience**. Each project keeps its own page and its own detail.
+The landing page is four full-width blocks on a bright candy-neon theme: **manga**,
+**projects**, **3D projects**, **experience**. Each project keeps its own page and its own detail.
 
 - `index.html` — the landing page: hero, rainbow marquee, `#manga` (every series and chapter,
-  with thumbnails), `#projects` (four big cards), `#experience`, `#contact`. Full-bleed bands
-  over an animated aurora background; one dark-violet ink colour for all text. Styles and
-  scripts inlined.
+  with thumbnails), `#projects` (the cards), `#three-d` (the 3D category, two cards),
+  `#experience`, `#contact`. Full-bleed bands over an animated aurora background; one
+  dark-violet ink colour for all text. Styles and scripts inlined.
 - `assets/sparkle.js` — the fairy-dust layer: an emoji particle canvas that trails the pointer
   (or finger), sprinkles on every scroll tick, and drops an occasional ambient sparkle. The
   rAF loop only runs while particles exist; reduced motion disables the whole file.
@@ -21,7 +21,13 @@ The landing page is three full-width blocks on a bright candy-neon theme: **mang
 - `campus/` — the 3D campus: a media campus assembled by scroll, written in code rather than
   loaded from a model file. `campus.js` is the scene, `three-d-stage.js` the WebGL shell,
   `controls.js` the look-and-light panel, `vendor/three/` a pinned copy of three.js r184 (see the
-  README there) so the page needs no CDN.
+  README there) so the page needs no CDN. This folder holds the shared 3D plumbing: the other
+  3D project and the homepage's hero mark import `three-d-stage.js` and `vendor/three/` from here.
+- `tiananmen/` — the second 3D project: 天安门, the Gate of Heavenly Peace, raised phase by phase
+  as you scroll, then the whole square behind it. Same rules as the campus — no model files, no
+  image files, every texture painted into a `<canvas>` at runtime — and the same export to
+  GLB / OBJ. `tiananmen.js` is the scene; it borrows `campus/three-d-stage.js` and
+  `campus/vendor/three/`. Both pages are grouped as **3D Projects** (`#three-d`) on the homepage.
 - `trading/` — the autonomous trading desk: bots, routines, P&L, risk engine, postmortem.
 - `influencer/` — the virtual influencer: a likeness model trained on my own face, the pipeline
   behind it, and the identity gate that scores every frame before it ships. Media are placeholder

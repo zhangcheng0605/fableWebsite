@@ -4,9 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ZAC Studios — Zhang Cheng, AI Engineer &amp; Builder</title>
-  <meta name="description" content="ZAC Studios — Zhang Cheng, Senior Engineer, Enterprise AI at Mediacorp (Singapore). AI-drawn manga, a browser game, an autonomous trading desk, a 3D campus, and six years of shipping enterprise systems.">
+  <meta name="description" content="ZAC Studios — Zhang Cheng, Senior Engineer, Enterprise AI at Mediacorp (Singapore). AI-drawn manga, a browser game, an autonomous trading desk, two scroll-built 3D worlds, and six years of shipping enterprise systems.">
   <meta property="og:title" content="ZAC Studios — Zhang Cheng, AI Engineer &amp; Builder">
-  <meta property="og:description" content="AI-drawn manga, a browser game, an autonomous paper-trading desk, and a 3D campus that builds as you scroll. Directed by a human, built by agents.">
+  <meta property="og:description" content="AI-drawn manga, a browser game, an autonomous paper-trading desk, and two 3D worlds — a media campus and Tiananmen — that build themselves as you scroll. Directed by a human, built by agents.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="assets/thumbs/campus.jpg">
   <meta name="theme-color" content="#fdf4ff">
@@ -132,6 +132,7 @@
     .band-inner{max-width:1560px;margin:0 auto;padding:0 clamp(20px,4vw,64px)}
     .band-manga{background:rgba(255,255,255,.6)}
     .band-projects{background:rgba(240,230,255,.65)}
+    .band-3d{background:rgba(224,241,255,.7)}
     .band-xp{background:rgba(255,255,255,.6)}
 
     .sec-head{display:flex;align-items:center;gap:16px;margin-bottom:14px}
@@ -141,6 +142,12 @@
       background:linear-gradient(95deg,#e51f8f,#7a2df0 55%,#0f9fe0);
       -webkit-background-clip:text;background-clip:text;color:transparent}
     .sec-sub{max-width:760px;margin-bottom:44px;font-size:1.05rem}
+    .sec-sub code{font-family:"JetBrains Mono",monospace;font-size:.86em;color:var(--violet);
+      background:#f3e9ff;padding:2px 7px;border-radius:6px}
+    /* links inside body copy need to look like links — the global reset strips them */
+    .sec-sub a{color:var(--pink-ink);text-decoration:underline;text-underline-offset:3px;
+      text-decoration-thickness:2px;text-decoration-color:rgba(255,63,174,.45);transition:color .2s}
+    .sec-sub a:hover{color:var(--violet);text-decoration-color:var(--violet)}
 
     /* floating decorations — they live in the side space the old layout left empty */
     .deco{position:absolute;z-index:1;font-size:clamp(26px,3.6vw,54px);pointer-events:none;user-select:none;
@@ -291,7 +298,12 @@
 
     /* ===== projects ===== */
     .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
-    @media(max-width:1020px){.tiles{grid-template-columns:1fr}}
+    /* the 3D category runs two to a row — they are the biggest things here */
+    @media(min-width:1021px){.tiles-2{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    /* a lone tile on the second row sits in the middle column, not adrift on the left */
+    .tiles a.tile:nth-child(4):last-child{grid-column:2}
+    @media(max-width:1020px){.tiles,.tiles-2{grid-template-columns:1fr}
+      .tiles a.tile:nth-child(4):last-child{grid-column:auto}}
     a.tile{position:relative;display:flex;flex-direction:column;background:var(--card);
       border:2px solid var(--border);border-radius:var(--radius);overflow:hidden;
       transition:transform .25s,border-color .25s,box-shadow .25s}
@@ -421,7 +433,7 @@
       <a href="#manga">Manga</a>
       <a href="prompt-injection/">Games</a>
       <a href="trading/" class="nav-live">Trading <i></i></a>
-      <a href="campus/">3D Campus</a>
+      <a href="#three-d">3D Projects</a>
       <a href="#experience">Experience</a>
       <a href="influencer/">Influencer</a>
       <span class="spacer"></span>
@@ -478,7 +490,7 @@
       </div>
 
       <p class="hero-sub">I don't just use AI — <b>I direct it.</b> Agents I command draw the manga,
-        trade a live desk, and build the 3D campus below. Move your mouse — they left fairy dust everywhere.</p>
+        trade a live desk, and raise the 3D worlds below. Move your mouse — they left fairy dust everywhere.</p>
       <div class="cta">
         <a class="btn btn-primary" href="#manga">Read the manga</a>
         <a class="btn btn-ghost" href="#projects">See the projects</a>
@@ -497,9 +509,9 @@
     <div class="marquee">
       <div class="marquee-track">
         <span>&#10022; Manga</span><span>&#10022; Games</span><span>&#10022; Live Trading</span>
-        <span>&#10022; 3D Campus</span><span>&#10022; OneSheet</span><span>&#10022; Built by AI agents</span>
+        <span>&#10022; 3D Campus</span><span>&#10022; Tiananmen</span><span>&#10022; OneSheet</span><span>&#10022; Built by AI agents</span>
         <span>&#10022; Manga</span><span>&#10022; Games</span><span>&#10022; Live Trading</span>
-        <span>&#10022; 3D Campus</span><span>&#10022; OneSheet</span><span>&#10022; Built by AI agents</span>
+        <span>&#10022; 3D Campus</span><span>&#10022; Tiananmen</span><span>&#10022; OneSheet</span><span>&#10022; Built by AI agents</span>
       </div>
     </div>
     </div>
@@ -594,8 +606,9 @@
       <span class="deco deco-lg" style="left:1.5%;bottom:160px;animation-delay:2s" aria-hidden="true">&#10024;</span>
       <div class="band-inner">
         <div class="sec-head reveal"><span class="sec-index">02</span><h2>Projects</h2></div>
-        <p class="sec-sub reveal">Six things you can open right now — two games, a live trading desk, a 3D city
-          block, a spreadsheet engine, and a virtual influencer built on my own face.
+        <p class="sec-sub reveal">Five things you can open right now — two games, a live trading desk, a
+          spreadsheet engine, and a virtual influencer built on my own face. The two 3D worlds have a
+          category of their own, <a href="#three-d"><b>just below</b></a>.
           <b>All of them were built by AI agents under my direction.</b>
           Click any card.</p>
 
@@ -667,23 +680,6 @@
               <span class="tile-cta">Open the live desk <i aria-hidden="true">&rarr;</i></span>
             </div>
           </a>
-
-          <a class="tile reveal" href="campus/" aria-label="Build the campus — the 3D media campus">
-            <div class="tile-thumb">
-              <img src="assets/thumbs/campus.jpg" width="1280" height="720" loading="lazy"
-                   alt="The finished 3D campus: a curved glass hull over a green-glass podium, theatre drums, lawns and trees">
-            </div>
-            <div class="tile-body">
-              <p class="tag">Interactive · three.js</p>
-              <h3>3D Campus</h3>
-              <p class="desc">A media campus that flies itself together as you scroll — ground, podium, drums,
-                hull, sky terrace, roof, trees, then the plaza and the people on it. Every mesh is written in
-                code, every texture painted at runtime.</p>
-              <p class="metric">1,027 meshes · 93k triangles · 0 assets downloaded</p>
-              <div class="foot"><span class="chip">three.js</span><span class="chip">GLB / OBJ export</span></div>
-              <span class="tile-cta">Build the campus <i aria-hidden="true">&rarr;</i></span>
-            </div>
-          </a>
         </div>
 
         <a class="tile tile-wide reveal" href="onesheet/" aria-label="Open the sheet — OneSheet">
@@ -705,12 +701,61 @@
       </div>
     </section>
 
-    <!-- ===== 03 · EXPERIENCE ===== -->
+    <!-- ===== 03 · 3D PROJECTS ===== -->
+    <section class="band band-3d" id="three-d">
+      <span class="deco deco-lg" style="left:1.5%;top:130px;animation-delay:1.4s" aria-hidden="true">&#127959;</span>
+      <span class="deco deco-lg" style="right:1.5%;bottom:150px;animation-delay:.5s" aria-hidden="true">&#11088;</span>
+      <div class="band-inner">
+        <div class="sec-head reveal"><span class="sec-index">03</span><h2>3D Projects</h2></div>
+        <p class="sec-sub reveal">Two worlds you can walk into, both built the same stubborn way:
+          <b>no model files and no image files.</b> Every mesh is written down in code and every texture is
+          painted into a <code>&lt;canvas&gt;</code> the moment the page loads — then the whole thing flies
+          itself together as you scroll, and leaves as a real <code>GLB</code> you can open in Blender.</p>
+
+        <div class="tiles tiles-2">
+          <a class="tile reveal" href="campus/" aria-label="Build the campus — the 3D media campus">
+            <div class="tile-thumb">
+              <img src="assets/thumbs/campus.jpg" width="1280" height="720" loading="lazy"
+                   alt="The finished 3D campus: a curved glass hull over a green-glass podium, theatre drums, lawns and trees">
+            </div>
+            <div class="tile-body">
+              <p class="tag">Interactive · three.js</p>
+              <h3>3D Campus</h3>
+              <p class="desc">A media campus that flies itself together as you scroll — ground, podium, drums,
+                hull, sky terrace, roof, trees, then the plaza and the people on it. Three lighting rigs move
+                the hour from morning to dusk, and a drone orbit takes over whenever you ask it to.</p>
+              <p class="metric">1,027 meshes · 93k triangles · 0 assets downloaded</p>
+              <div class="foot"><span class="chip">Extruded hull profile</span><span class="chip">PMREM environment</span><span class="chip">GLB / OBJ export</span></div>
+              <span class="tile-cta">Build the campus <i aria-hidden="true">&rarr;</i></span>
+            </div>
+          </a>
+
+          <a class="tile reveal" href="tiananmen/" aria-label="Raise the gate — Tiananmen, the Gate of Heavenly Peace in 3D">
+            <div class="tile-thumb">
+              <img src="assets/thumbs/tiananmen.svg" width="1280" height="720" loading="lazy"
+                   alt="Tiananmen: the crimson wall with its five arches under two golden hip roofs, the marble bridges over the moat in front">
+            </div>
+            <div class="tile-body">
+              <p class="tag">Interactive · three.js</p>
+              <h3>Tiananmen &middot; 天安门</h3>
+              <p class="desc">The Gate of Heavenly Peace, raised piece by piece: five arches cut clean through
+                36&nbsp;metres of wall, two golden roofs swept from one profile function, the marble bridges
+                over the Golden Water — then the whole square behind it, 900 people and all.</p>
+              <p class="metric">870 meshes · 1.9M triangles · 900 people in 6 draw calls</p>
+              <div class="foot"><span class="chip">Extruded arch tunnels</span><span class="chip">Swept roof profile</span><span class="chip">Instanced crowd</span></div>
+              <span class="tile-cta">Raise the gate <i aria-hidden="true">&rarr;</i></span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 04 · EXPERIENCE ===== -->
     <section class="band band-xp" id="experience">
       <span class="deco deco-lg" style="left:1.5%;top:140px;animation-delay:1.1s" aria-hidden="true">&#127802;</span>
       <span class="deco deco-lg" style="right:1.5%;bottom:180px;animation-delay:.3s" aria-hidden="true">&#129703;</span>
       <div class="band-inner">
-        <div class="sec-head reveal"><span class="sec-index">03</span><h2>Experience</h2></div>
+        <div class="sec-head reveal"><span class="sec-index">04</span><h2>Experience</h2></div>
         <p class="sec-sub reveal">Six years of shipping enterprise systems and driving AI adoption —
           <b>Singapore-based</b>, fully fluent in English and native Mandarin.</p>
 
@@ -832,7 +877,7 @@
           <a href="https://www.linkedin.com/in/zhangcheng1997" target="_blank" rel="noopener">LinkedIn</a>
           <a href="https://github.com/zhangcheng0605" target="_blank" rel="noopener">GitHub</a>
           <a href="trading/">Live trading desk</a>
-          <a href="campus/">3D campus</a>
+          <a href="#three-d">3D projects</a>
         </div>
       </div>
     </section>

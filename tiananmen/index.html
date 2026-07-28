@@ -3,33 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3D Campus — a media campus that builds as you scroll · Zhang Cheng</title>
-  <meta name="description" content="A procedural three.js media campus: 1,027 meshes written by hand, every texture painted into a canvas at runtime, flown into place phase by phase as you scroll — and exportable as GLB or OBJ.">
-  <meta property="og:title" content="3D Campus — a media campus that builds as you scroll">
-  <meta property="og:description" content="No model files, no image files: hand-written geometry and canvas-painted textures. Scroll flies the campus together phase by phase — hull, sky terrace, roof, plaza, people — three lighting rigs change the hour, and the whole model exports to GLB.">
+  <title>Tiananmen — the Gate of Heavenly Peace, raised as you scroll · Zhang Cheng</title>
+  <meta name="description" content="A procedural three.js Tiananmen: the five arched tunnels, the double-eaved gatehouse, the marble bridges over the Golden Water moat and 900 people on the square — every mesh hand-written, every texture painted into a canvas at runtime, and exportable as GLB or OBJ.">
+  <meta property="og:title" content="Tiananmen — the Gate of Heavenly Peace, raised as you scroll">
+  <meta property="og:description" content="No model files, no image files. Five real arch tunnels cut through 36 metres of extruded wall, a swept curve makes the golden hip roof, and the whole square — Monument, Great Hall, Museum, Mausoleum — drops into place phase by phase as you scroll.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="../assets/thumbs/campus.jpg">
+  <meta property="og:image" content="../assets/thumbs/tiananmen.svg">
   <meta name="theme-color" content="#fdf4ff">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#127959;</text></svg>">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#127983;</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Quicksand:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 
-  <!-- three.js is served from this repo (campus/vendor/three) — no CDN, works offline. -->
+  <!-- three.js is served from this repo — no CDN, works offline. The pinned
+       copy and the <three-d-stage> element live in campus/, which is where
+       this site keeps its shared 3D plumbing; both 3D projects use them. -->
   <script type="importmap">
   {
     "imports": {
-      "three": "./vendor/three/three.module.min.js",
-      "three/addons/controls/OrbitControls.js": "./vendor/three/OrbitControls.min.js",
-      "three/addons/exporters/OBJExporter.js": "./vendor/three/OBJExporter.min.js",
-      "three/addons/exporters/GLTFExporter.js": "./vendor/three/GLTFExporter.min.js"
+      "three": "../campus/vendor/three/three.module.min.js",
+      "three/addons/controls/OrbitControls.js": "../campus/vendor/three/OrbitControls.min.js",
+      "three/addons/exporters/OBJExporter.js": "../campus/vendor/three/OBJExporter.min.js",
+      "three/addons/exporters/GLTFExporter.js": "../campus/vendor/three/GLTFExporter.min.js"
     }
   }
   </script>
 
   <style>
     :root{
-      /* candy-neon — same tokens as the homepage */
+      /* candy-neon — same tokens as the homepage and the campus */
       --background:#fdf4ff; --background-2:#ffffff;
       --foreground:#38235c;
       --card:#ffffff;
@@ -39,6 +41,7 @@
       --primary:#8b3dff; --primary-foreground:#ffffff;
       --pink:#ff3fae; --pink-ink:#c9106f; --purple:#8b3dff; --violet:#6428d8;
       --cyan:#25c4ff; --green:#12b981;
+      --vermilion:#b5382a; /* the one colour borrowed from the scene */
       --radius:18px;
       --grad:linear-gradient(95deg,#ef1f96,#7a2df0 46%,#0f9fe0);
       --glass:rgba(255,255,255,.86);
@@ -54,7 +57,6 @@
     ::selection{background:rgba(255,63,174,.25)}
     :focus-visible{outline:3px solid var(--ring);outline-offset:3px;border-radius:6px}
     .mono{font-family:"JetBrains Mono",monospace}
-    .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
     .skip-link{position:fixed;top:-100px;left:16px;z-index:100;padding:10px 18px;border-radius:99px;
       background:var(--pink);color:#fff;font-weight:700;transition:top .2s}
     .skip-link:focus{top:16px}
@@ -82,15 +84,15 @@
       .nav::-webkit-scrollbar{display:none}.nav a{font-size:.82rem}}
 
     /* ===== the build: a tall section with a sticky stage inside it ===== */
-    #build{position:relative;height:600svh}
-    /* campus.js sets this when the reader prefers reduced motion: one
-       viewport, finished campus, no scroll-driven assembly */
-    body.campus-static #build{height:100svh}
-    #build .sticky{position:sticky;top:0;height:100svh;overflow:hidden;background:#eaf1f8}
+    #build{position:relative;height:900svh}
+    /* tiananmen.js sets this when the reader prefers reduced motion: one
+       viewport, finished square, no scroll-driven assembly */
+    body.gate-static #build{height:100svh}
+    #build .sticky{position:sticky;top:0;height:100svh;overflow:hidden;background:#a9cbe4}
     three-d-stage{display:block;width:100%;height:100%}
     three-d-stage:not(:defined){visibility:hidden}
     .stage-veil{position:absolute;inset:0;pointer-events:none;
-      background:linear-gradient(180deg,rgba(253,244,255,.4) 0,rgba(253,244,255,0) 26%,rgba(253,244,255,0) 62%,rgba(253,244,255,.45) 100%)}
+      background:linear-gradient(180deg,rgba(253,244,255,.34) 0,rgba(253,244,255,0) 24%,rgba(253,244,255,0) 64%,rgba(253,244,255,.4) 100%)}
 
     /* HUD */
     #hud{position:absolute;top:86px;left:20px;z-index:6;display:flex;flex-direction:column;gap:10px;
@@ -104,58 +106,33 @@
       backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
     .hud-btns button:hover{border-color:var(--pink);color:var(--pink-ink)}
     .hud-btns button.active{background:var(--grad);color:#fff;border-color:transparent;font-weight:700}
-    .hud-btns button[disabled]{opacity:.45;cursor:default}
-
-    /* tweaks panel */
-    #tweaks{background:var(--glass);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-      border:2px solid var(--border);border-radius:14px;padding:14px 16px 16px;
-      display:flex;flex-direction:column;gap:11px;max-height:min(60svh,460px);overflow-y:auto}
-    #tweaks[hidden]{display:none}
-    .tw-section{font-family:"JetBrains Mono",monospace;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
-      color:var(--pink-ink);margin-top:2px}
-    .tw-section:first-child{margin-top:0}
-    .tw-row{display:flex;flex-direction:column;gap:6px}
-    .tw-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;
-      font-size:.8rem;color:var(--muted-foreground)}
-    .tw-val{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--violet)}
-    #tweaks input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:3px;border-radius:99px;
-      background:rgba(139,61,255,.25);accent-color:var(--pink)}
-    #tweaks input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;
-      background:var(--pink);border:none;cursor:pointer}
-    #tweaks input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-radius:50%;
-      background:var(--pink);cursor:pointer}
-    .tw-seg{border:none}
-    .tw-seg legend{font-size:.8rem;color:var(--muted-foreground);margin-bottom:6px;padding:0}
-    .tw-seg-opts{display:flex;gap:5px;position:relative}
-    /* visually hidden but focusable; pointer-events:none so the 1px box can
-       never swallow a click meant for the HUD behind it — the label activates it */
-    .tw-seg-opts input{position:absolute;opacity:0;width:1px;height:1px;margin:0;
-      clip-path:inset(50%);pointer-events:none}
-    .tw-seg-opts label{flex:1;text-align:center;font-family:"JetBrains Mono",monospace;font-size:.68rem;
-      padding:6px 4px;border:1px solid var(--border);border-radius:99px;color:var(--muted-foreground);
-      cursor:pointer;transition:color .2s,border-color .2s,background .2s}
-    .tw-seg-opts label:hover{color:var(--pink-ink)}
-    .tw-seg-opts input:checked+label{background:rgba(255,63,174,.12);border-color:var(--pink);color:var(--pink-ink)}
-    .tw-seg-opts input:focus-visible+label{outline:2px solid var(--ring);outline-offset:2px}
-    .tw-reset{appearance:none;cursor:pointer;align-self:flex-start;background:none;border:none;padding:2px 0;
-      font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.06em;color:var(--muted-foreground);
-      text-decoration:underline;text-underline-offset:3px}
-    .tw-reset:hover{color:var(--pink-ink)}
 
     /* title card over the empty site */
     #titleCard{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:center;
       align-items:center;text-align:center;padding:0 26px;pointer-events:none;transition:opacity .25s linear}
-    #titleCard .eyebrow{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.24em;
-      text-transform:uppercase;color:var(--violet);margin-bottom:16px;text-shadow:0 1px 14px rgba(255,255,255,.9)}
-    #titleCard .eyebrow::before{content:"\25C6  ";color:var(--pink)}
-    #titleCard h1{font-weight:800;font-size:clamp(2.4rem,7vw,4.6rem);
-      line-height:1.05;text-shadow:0 2px 30px rgba(255,255,255,.85)}
-    #titleCard h1 em{font-style:italic;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-    #titleCard p.sub{max-width:520px;margin-top:18px;color:var(--foreground);font-size:clamp(.95rem,2.2vw,1.1rem);
-      text-shadow:0 1px 16px rgba(255,255,255,.9)}
+    #titleCard .cn{font-family:"Noto Serif SC","Songti SC","SimSun",serif;font-weight:700;
+      font-size:min(12vw,104px);letter-spacing:.34em;margin-left:.34em;color:#6d1a13;
+      text-shadow:0 2px 30px rgba(255,255,255,.7)}
+    #titleCard h1{font-weight:800;font-size:clamp(1.5rem,4.2vw,2.5rem);margin-top:10px;
+      color:#3b2b20;text-shadow:0 2px 26px rgba(255,255,255,.85)}
+    #titleCard p.sub{max-width:520px;margin-top:16px;color:#3b2b20;font-size:clamp(.95rem,2.2vw,1.08rem);
+      text-shadow:0 1px 16px rgba(255,255,255,.92)}
+
+    /* the story caption, on the left above the rail */
+    /* the scene runs from pale paving to deep vermilion behind this, so the
+       caption carries its own glass rather than trusting a text-shadow */
+    #caption{position:absolute;left:20px;bottom:96px;z-index:6;max-width:min(430px,calc(100vw - 40px));
+      pointer-events:none;opacity:0;transition:opacity .3s;
+      padding:14px 18px 16px;border-radius:14px;border:2px solid var(--border);
+      background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+      box-shadow:0 10px 30px rgba(139,61,255,.12)}
+    #caption .k{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.22em;
+      text-transform:uppercase;color:var(--vermilion);margin-bottom:7px}
+    #caption .t{font-family:"Baloo 2",Quicksand,sans-serif;font-weight:700;
+      font-size:clamp(1.02rem,2.2vw,1.32rem);line-height:1.3;color:#3b2b20}
 
     /* progress rail + hints */
-    #rail{position:absolute;left:20px;bottom:22px;z-index:6;width:min(320px,calc(100vw - 40px))}
+    #rail{position:absolute;left:20px;bottom:22px;z-index:6;width:min(340px,calc(100vw - 40px))}
     .rail-track{height:3px;border-radius:99px;background:rgba(139,61,255,.22);overflow:hidden}
     .rail-track span{display:block;height:100%;width:0;background:var(--grad);transition:width .12s linear}
     #railLabel{margin-top:9px;font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.1em;
@@ -180,9 +157,9 @@
       .hud-btns{gap:6px}
       .hud-btns button{font-size:.68rem;padding:8px 12px}
       #rail{left:14px;width:calc(100vw - 28px)}
+      #caption{left:14px;bottom:104px;max-width:calc(100vw - 28px)}
       #scrollHint{bottom:70px}
       #dragHint{display:none}
-      #tweaks{max-width:280px}
     }
 
     /* ===== notes below the build ===== */
@@ -272,41 +249,44 @@
   </header>
 
   <main>
-    <!-- ===== the scroll-built campus ===== -->
-    <section id="build" aria-label="The campus, assembled as you scroll">
+    <!-- ===== the scroll-raised gate ===== -->
+    <section id="build" aria-label="Tiananmen, raised as you scroll">
       <div class="sticky">
-        <three-d-stage name="media-campus" background="#eaf1f8" hide-chrome></three-d-stage>
+        <three-d-stage name="tiananmen" background="#a9cbe4" hide-chrome></three-d-stage>
         <div class="stage-veil" aria-hidden="true"></div>
 
         <div id="titleCard">
-          <p class="eyebrow">three.js &middot; procedural &middot; no model files</p>
-          <h1>A campus that <em>builds as you scroll</em></h1>
-          <p class="sub">Ground, podium, drums, hull, sky terrace, roof, trees, plaza, people — every phase
-            flies into place on the way down, while the camera circles the site.</p>
+          <p class="cn" aria-hidden="true">天安门</p>
+          <h1>The Gate of Heavenly Peace</h1>
+          <p class="sub">Ground, moat, five bridges, the crimson wall and its five tunnels, the terrace,
+            the double-eaved hall, then the whole square behind it — each piece falls out of the sky as
+            you scroll.</p>
         </div>
 
         <div id="hud">
-          <p class="hud-title">Media Campus</p>
+          <p class="hud-title">Tiananmen · 天安门</p>
           <div class="hud-btns">
-            <button id="btnOrbit" type="button">Drone orbit</button>
-            <button id="btnBuild" type="button">Play the build</button>
+            <button id="btnPlay" type="button">Raise the gate</button>
             <button id="btnReset" type="button">Reset view</button>
-            <button id="btnTweaks" type="button" aria-expanded="false" aria-controls="tweaks">Look &amp; light</button>
           </div>
-          <div id="tweaks" hidden></div>
+        </div>
+
+        <div id="caption" aria-live="polite">
+          <p class="k" id="capK"></p>
+          <p class="t" id="capT"></p>
         </div>
 
         <div id="rail">
           <div class="rail-track"><span id="railFill"></span></div>
-          <p id="railLabel">Ground, roads and lawns</p>
+          <p id="railLabel">Bare ground</p>
         </div>
 
-        <p id="scrollHint">Scroll to build the campus &darr;</p>
+        <p id="scrollHint">Scroll to raise the gate &darr;</p>
         <p id="dragHint" aria-hidden="true">Drag to look around<br>Two fingers on touch</p>
 
         <div id="stageMsg" role="status">
           <div class="spin" aria-hidden="true"></div>
-          <p class="m">Pouring the foundations&hellip;</p>
+          <p class="m">Laying the paving&hellip;</p>
         </div>
       </div>
     </section>
@@ -314,102 +294,112 @@
     <!-- ===== notes ===== -->
     <section class="wrap" id="notes">
       <div class="sec-head reveal"><span class="sec-index">01</span><h2>What you just scrolled through</h2></div>
-      <p class="sec-sub reveal">A stylised media campus — the long glass hull, the sky terrace on its
-        colonnade, the theatre drums, the satellite dish compound out back.
+      <p class="sec-sub reveal">The Gate of Heavenly Peace and the square it faces — the moat and its five
+        marble bridges, the huabiao columns, the stone lions, the flagpole, the Monument to the People's
+        Heroes, the Great Hall and the Museum down either flank, and the Mausoleum closing the far end.
         <b>Nothing here was downloaded.</b> There is no model file and no image file: every mesh is written
-        down in code, and every texture is painted into a <code>&lt;canvas&gt;</code> at runtime by a seeded
-        generator, so the same 16 window tints and the same blades of grass come back on every load.</p>
+        down in code, and every texture — the glazed roof tiles, the studded doors, the window lattice, the
+        bracket band under the eaves, the portrait and its two slogan boards — is painted into a
+        <code>&lt;canvas&gt;</code> at runtime.</p>
 
       <div class="figures reveal">
-        <div class="fig"><div class="v" data-campus-stat="meshes">1,027</div><div class="k">meshes</div></div>
-        <div class="fig"><div class="v" data-campus-stat="triangles">93k</div><div class="k">triangles</div></div>
-        <div class="fig"><div class="v" data-campus-stat="materials">38</div><div class="k">materials</div></div>
-        <div class="fig"><div class="v" data-campus-stat="trees">167</div><div class="k">trees planted</div></div>
-        <div class="fig"><div class="v" data-campus-stat="people">32</div><div class="k">people about</div></div>
+        <div class="fig"><div class="v" data-tiananmen-stat="meshes">—</div><div class="k">meshes</div></div>
+        <div class="fig"><div class="v" data-tiananmen-stat="triangles">—</div><div class="k">triangles</div></div>
+        <div class="fig"><div class="v" data-tiananmen-stat="materials">—</div><div class="k">materials</div></div>
+        <div class="fig"><div class="v" data-tiananmen-stat="people">—</div><div class="k">people on the square</div></div>
+        <div class="fig"><div class="v" data-tiananmen-stat="flags">—</div><div class="k">flags, all waving</div></div>
         <div class="fig"><div class="v">0</div><div class="k">asset files loaded</div></div>
       </div>
 
       <div class="phases">
         <div class="phase reveal"><div class="n">00</div>
-          <div><h3>Ground</h3><p>A paved plate, four roads, lawns front and back with their kerbs, footpaths,
-            and the staff car park. Thirteen context blocks sit beyond the roads and fade into haze — they are
-            always there, so the site never looks like it is floating in a void.</p></div></div>
+          <div><h3>Ground</h3><p>Beige earth to the horizon, a 1.6&nbsp;km plate of paving over the square,
+            Chang'an Avenue running east–west with its lane markings, and a sky painted as a three-stop
+            gradient so the fog has something to fade into.</p></div></div>
         <div class="phase reveal"><div class="n">01</div>
-          <div><h3>Podium</h3><p>Three green-glass volumes, the entrance canopy on its two posts, the media
-            screen, and two planted terraces stepping back from the front.</p></div></div>
+          <div><h3>Gardens</h3><p>Lawns and flower beds pop in along the approach — each bed a few hundred
+            instanced spheres coloured by how far they sit from the centre, so the planting reads as
+            concentric rings the way festival planting actually does.</p></div></div>
         <div class="phase reveal"><div class="n">02</div>
-          <div><h3>Cores &amp; columns</h3><p>Two concrete cores and a row of four columns — the things the hull
-            above has to land on.</p></div></div>
+          <div><h3>Moat and five bridges</h3><p>The Golden Water river, its two stone edges, and five arched
+            bridges — each deck a slice of a 22&nbsp;m cylinder, with balusters and hand rails following the
+            curve step by step.</p></div></div>
         <div class="phase reveal"><div class="n">03</div>
-          <div><h3>Drums</h3><p>The theatre drum and its smaller sibling: a glazed base, a bronze-metal body,
-            a green roof.</p></div></div>
+          <div><h3>The gate wall</h3><p>Five arched passages cut clean through 36&nbsp;metres of wall: the
+            wall is one extruded shape and the arches are holes in it, so they are real tunnels rather than
+            dark rectangles painted on a box. Then the studded doors, the flanking walls with their tile
+            coping and four wall pavilions, the portrait in its gilt frame, and the two slogan boards.</p></div></div>
         <div class="phase reveal"><div class="n">04</div>
-          <div><h3>Hull, lower tier</h3><p>Extrusions of one curved floor profile — white panel band, glass
-            band, repeat — on a plate inset from the tier above, under a dark soffit.</p></div></div>
+          <div><h3>Terrace</h3><p>The rostrum: a marble platform ringed by a balustrade of instanced posts,
+            with fourteen flags along the parapet.</p></div></div>
         <div class="phase reveal"><div class="n">05</div>
-          <div><h3>Sky terrace</h3><p>The floor that is left open: a deck, a glass wall recessed well back
-            from the edge, a planted band, and eighteen white columns following the curve — so the mass above
-            reads as an overhang rather than a taller box.</p></div></div>
+          <div><h3>The hall below</h3><p>Nine bays — twenty vermilion columns, lattice windows and doors front
+            and back, the tie beam over them, and nine red lanterns hung between the columns.</p></div></div>
         <div class="phase reveal"><div class="n">06</div>
-          <div><h3>Hull, upper tier</h3><p>The belt, then seven taller storeys where the glass is wider than
-            the panel between it, and the parapet that closes the top.</p></div></div>
+          <div><h3>The lower roof</h3><p>The first of the two golden roofs, swept from a single profile
+            function: the eaves widen and sag on a power curve while an extra term lifts only the diagonals,
+            which is what gives the corners their upturn. Ridge beasts walk down every hip.</p></div></div>
         <div class="phase reveal"><div class="n">07</div>
-          <div><h3>Roof</h3><p>Deck, roof garden, plant enclosure, two masts, air-handling boxes and a pair of
-            uplink dishes.</p></div></div>
+          <div><h3>The upper storey</h3><p>A shorter hall on the same plan, its own balustraded balcony, and
+            the gilt emblem on the axis.</p></div></div>
         <div class="phase reveal"><div class="n">08</div>
-          <div><h3>Landscape</h3><p>Trees with three-lobe crowns and randomised tilt, hedges, kerbed shrub beds
-            with the odd flowering shrub, and street lamps that light up after dark.</p></div></div>
+          <div><h3>The upper roof</h3><p>The same function again, wider and taller — the silhouette that puts
+            the ridge 34&nbsp;metres over the square.</p></div></div>
         <div class="phase reveal"><div class="n">09</div>
-          <div><h3>Plaza &amp; compound</h3><p>The forecourt fills in: a garden pavilion, a reflecting pond, a
-            polished ring on its plinth, three flags, benches, a coffee kiosk, a bus shelter, amphitheatre
-            steps facing the lawn — and behind the building, a fenced pad with three satellite dishes,
-            because it is a media campus.</p></div></div>
+          <div><h3>Foreground</h3><p>The pair of huabiao columns with their cloud discs and crouching beasts,
+            the stone lions on their pedestals, the ornate lamp pair on the axis, and the crowd-control
+            railings.</p></div></div>
         <div class="phase reveal"><div class="n">10</div>
-          <div><h3>People &amp; traffic</h3><p>Last, the thing that makes the rest read as buildings: people
-            on the plaza and the paths, cars on the roads and in the car park.</p></div></div>
+          <div><h3>People</h3><p>Nine hundred of them, in six instanced meshes — torso, head, hair, two legs,
+            two arms — each with its own height, facing, jacket, hair and trousers. They are what make the
+            rest read as architecture instead of a model on a table.</p></div></div>
+        <div class="phase reveal"><div class="n">11</div>
+          <div><h3>The square</h3><p>Last, the far end: the flagpole on its double plinth, the Monument to the
+            People's Heroes, the Great Hall and the National Museum facing each other across 700&nbsp;metres,
+            the Mausoleum, and then the trees and lamp standards that line the whole run.</p></div></div>
       </div>
     </section>
 
     <section class="wrap" id="how">
       <div class="sec-head reveal"><span class="sec-index">02</span><h2>How it works</h2></div>
-      <p class="sec-sub reveal">Four moving parts: a scroll timeline, a camera spline, three lighting rigs,
-        and an exporter.</p>
+      <p class="sec-sub reveal">Four moving parts: one profile function that makes every roof, a scroll
+        timeline, a camera spline, and an exporter.</p>
 
       <div class="grid">
         <div class="card reveal">
+          <p class="tag">The roof</p>
+          <h3>One function, six roofs</h3>
+          <p>A hip roof is swept, not modelled: sixteen rings of seventy-two points, each ring wider and
+            lower than the last on a power curve, with corner lift applied as
+            <code>|x&middot;z|<sup>2.2</sup></code> so it bites on the diagonals and nowhere else. The gate,
+            both storeys and all four wall pavilions come out of the same call with different numbers.</p>
+        </div>
+        <div class="card reveal">
           <p class="tag">The timeline</p>
           <h3>Scroll is the build order</h3>
-          <p>Parts are sorted by phase, then by height, and each phase owns a slice of the scroll. Every part
-            flies in from its own random point in the sky — position, rotation and scale all easing home, the
-            scale with a slight overshoot. Scroll back up and the campus takes itself apart in the same
+          <p>Every piece owns a slice of the scroll and an entrance: <code>drop</code> slams it down out of
+            the sky and bounces it once, <code>pop</code> bursts it into place with an overshoot,
+            <code>fade</code> simply arrives. Scroll back up and the square takes itself apart in the same
             order.</p>
         </div>
         <div class="card reveal">
           <p class="tag">The camera</p>
-          <h3>One spline, seven waypoints</h3>
-          <p>A Catmull-Rom curve carries the camera from the south approach, around the back, and home again,
-            while the look-at target climbs as the building grows. Drag at any time to take over — the
-            <b>drone orbit</b> button hands it to a wandering radius-and-height loop instead.</p>
+          <h3>Two splines, eight waypoints</h3>
+          <p>One Catmull-Rom curve carries the eye, a second carries what it is looking at — from under the
+            bridges, up past the rostrum, then away and up until the whole square is in frame. Drag at any
+            time to swing around the current look-at point; scrolling takes the wheel back.</p>
         </div>
         <div class="card reveal">
-          <p class="tag">The light</p>
-          <h3>Morning, noon, dusk</h3>
-          <p>Each preset paints its own sky gradient, then bakes that sky plus a sun sphere into a PMREM
-            environment map — which is what the glass and bronze actually reflect. A sun sprite tracks the key
-            light; at dusk it is swapped for a moon and 320 stars, the clouds turn slate, and the window
-            emissives, the media screen and the street lamps come up.</p>
-        </div>
-        <div class="card reveal">
-          <p class="tag">The sky</p>
-          <h3>Weather, cheaply</h3>
-          <p>Fourteen clouds, each a handful of squashed spheres, drift across the sky on their own clock and
-            wrap around — and five flattened spheres sit past the fog line as hills, so the horizon is a
-            landscape rather than a hard edge.</p>
+          <p class="tag">The crowd</p>
+          <h3>900 people, 6 draw calls</h3>
+          <p>Each person is six instances sharing one matrix — torso, head, hair, legs, arms — placed in four
+            bands: the walkway, the foot of the wall, the open square, and around the Monument. Per-instance
+            colour gives every one of them their own jacket, hair and trousers.</p>
         </div>
         <div class="card reveal">
           <p class="tag">The output</p>
           <h3>It leaves as a real model</h3>
-          <p>Every mesh and material is named, so the campus exports straight from the browser as
+          <p>Every mesh and material is named, so the gate exports straight from the browser as
             <code>GLB</code> or as <code>OBJ + MTL</code> — in metres, y-up, ready to open in Blender.</p>
         </div>
       </div>
@@ -417,22 +407,24 @@
       <div class="chips reveal">
         <span class="chip">three.js r184</span>
         <span class="chip">Vendored, no CDN</span>
-        <span class="chip">Canvas-generated textures</span>
-        <span class="chip">Extruded hull profile</span>
-        <span class="chip">PMREM environment</span>
+        <span class="chip">Canvas-painted textures</span>
+        <span class="chip">Extruded arch tunnels</span>
+        <span class="chip">Swept roof profile</span>
+        <span class="chip">Instanced crowd</span>
         <span class="chip">ACES filmic tone mapping</span>
         <span class="chip">Zero build step</span>
       </div>
 
-      <p class="note reveal"><b>A likeness, not a survey.</b> The proportions are drawn from the kind of media
-        campus I walk into — a long curved hull over a green-glass podium, drums for the studios — but the
-        geometry is hand-written, not measured. Rendering pauses whenever the stage scrolls out of view, and
-        the whole thing falls back to a single still frame if you have reduced motion turned on.</p>
+      <p class="note reveal"><b>A likeness, not a survey.</b> The proportions come from photographs and from
+        the shape everyone carries in their head — five arches, two golden roofs, the long red wall — but the
+        geometry is hand-written, not measured, and the portrait over the central arch is painted into a
+        canvas rather than photographed. Rendering pauses whenever the stage scrolls out of view, and the
+        whole thing falls back to a single finished frame if you have reduced motion turned on.</p>
 
       <div class="cta reveal">
-        <button class="btn btn-primary" type="button" data-campus-export="glb" disabled>Download GLB</button>
-        <button class="btn btn-ghost" type="button" data-campus-export="obj" disabled>Download OBJ + MTL</button>
-        <a class="btn btn-ghost" href="../tiananmen/">The other one: Tiananmen &rarr;</a>
+        <button class="btn btn-primary" type="button" data-tiananmen-export="glb" disabled>Download GLB</button>
+        <button class="btn btn-ghost" type="button" data-tiananmen-export="obj" disabled>Download OBJ + MTL</button>
+        <a class="btn btn-ghost" href="../campus/">The other one: 3D Campus &rarr;</a>
         <a class="btn btn-ghost" href="../#three-d">Back to 3D Projects</a>
       </div>
     </section>
@@ -444,14 +436,13 @@
   </footer>
 
   <noscript>
-    <p style="max-width:70ch;margin:0 auto 60px;padding:0 24px;color:#f4eeda">
-      The campus is drawn with WebGL, so it needs JavaScript. The notes above describe what it builds.
+    <p style="max-width:70ch;margin:0 auto 60px;padding:0 24px">
+      The gate is drawn with WebGL, so it needs JavaScript. The notes above describe what it builds.
     </p>
   </noscript>
 
-  <script src="three-d-stage.js"></script>
-  <script type="module" src="campus.js"></script>
-  <script src="controls.js" defer></script>
+  <script src="../campus/three-d-stage.js"></script>
+  <script type="module" src="tiananmen.js"></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -460,7 +451,7 @@
     (function () {
       var msg = document.getElementById('stageMsg');
       var stage = document.querySelector('three-d-stage');
-      window.addEventListener('campus-ready', function () { msg.hidden = true; }, { once: true });
+      window.addEventListener('tiananmen-ready', function () { msg.hidden = true; }, { once: true });
       if (stage && stage.ready) {
         stage.ready.catch(function () {
           msg.querySelector('.spin').remove();
