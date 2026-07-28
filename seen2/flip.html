@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SEEN — Chapter Two: After Hours · the book</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128065;</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,600;0,6..96,700;1,6..96,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ---- the room the book sits in ---------------------------------------- */
+  :root{
+    --paper-a:#f8f3e8; --paper-b:#efe7d6; --paper-c:#e6dbc6;
+    --ink:#241f1a; --ink-soft:#3a322a; --faint:#a08f76;
+    --rose:#a82f66; --rose-deep:#7d2a4e; --rose-pale:#c26a92;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0;height:100%;background:#f7ecff;overflow:hidden;
+    overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
+  body{font-family:'Cormorant Garamond',Georgia,serif;color:var(--ink);
+    -webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none}
+  img{-webkit-user-drag:none;user-drag:none}
+  button{font:inherit;color:inherit}
+  :focus-visible{outline:2px solid var(--rose);outline-offset:3px}
+
+  .room{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(130% 110% at 50% 30%,#ffffff 0%,#f7ecff 42%,#ecdcfb 100%);
+    touch-action:none}
+  .room::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:radial-gradient(62% 42% at 50% 100%,rgba(255,63,174,.13),rgba(255,255,255,0) 70%)}
+
+  .head{position:absolute;top:14px;left:0;right:0;display:flex;justify-content:space-between;
+    align-items:baseline;padding:0 22px;pointer-events:none;
+    font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.34em;
+    text-transform:uppercase;color:#8b6fae}
+  .head b{font-weight:500;letter-spacing:.12em;
+    background:linear-gradient(95deg,#ef1f96,#7a2df0 46%,#0f9fe0);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+
+  /* ---- the book --------------------------------------------------------- */
+  .stage{position:relative;flex:none;cursor:grab;touch-action:none}
+  .stage.grabbing{cursor:grabbing}
+  .underlight{position:absolute;left:3%;right:3%;bottom:-40px;height:70px;pointer-events:none;
+    background:radial-gradient(50% 50% at 50% 50%,rgba(70,30,90,.42),rgba(0,0,0,0) 72%);
+    filter:blur(8px)}
+  .book{position:absolute;inset:0;perspective:2600px;perspective-origin:50% 42%}
+  .stack{position:absolute;top:3px;bottom:3px;z-index:0;
+    background:repeating-linear-gradient(to var(--dir),#ece4d2 0,#ece4d2 1.2px,#b3a68c 1.2px,#b3a68c 2.4px)}
+  .stack.r{--dir:right;border-radius:0 3px 3px 0;box-shadow:3px 4px 10px rgba(40,20,60,.34)}
+  .stack.l{--dir:left;border-radius:3px 0 0 3px;box-shadow:-3px 4px 10px rgba(40,20,60,.34)}
+
+  .leaf{position:absolute;left:50%;top:0;transform-origin:left center;
+    transform-style:preserve-3d}
+  .leaf.hot{will-change:transform}
+  .face{position:absolute;inset:0;overflow:hidden;background:var(--paper-b);
+    backface-visibility:hidden;-webkit-backface-visibility:hidden;
+    box-shadow:0 0 0 1px rgba(60,40,20,.30)}
+  .face.f{border-radius:3px 7px 7px 3px}
+  .face.b{border-radius:7px 3px 3px 7px;transform:rotateY(180deg)}
+  /* the gutter: paper darkens where it curves into the spine */
+  .gutter{position:absolute;inset:0;pointer-events:none;z-index:3}
+  .face.f>.gutter{background:linear-gradient(to right,rgba(20,12,8,.30),rgba(20,12,8,.07) 7%,
+    rgba(255,255,255,0) 16%,rgba(255,255,255,0) 92%,rgba(20,12,8,.10) 100%)}
+  .face.b>.gutter{background:linear-gradient(to left,rgba(20,12,8,.30),rgba(20,12,8,.07) 7%,
+    rgba(255,255,255,0) 16%)}
+  /* the moving shade, driven per frame while a leaf is in the air */
+  .shade{position:absolute;inset:0;pointer-events:none;opacity:0;z-index:4}
+  .face.f>.shade{background:linear-gradient(to left,rgba(0,0,0,.5),rgba(0,0,0,.1) 42%,rgba(0,0,0,0) 75%)}
+  .face.b>.shade{background:linear-gradient(to right,rgba(255,255,255,.4),rgba(255,255,255,.05) 45%,rgba(0,0,0,.26) 100%)}
+  .flipshade{position:absolute;left:50%;top:0;transform-origin:left center;pointer-events:none;
+    opacity:0;border-radius:6px;will-change:transform,opacity;
+    background:linear-gradient(to right,rgba(10,5,2,.5),rgba(10,5,2,.16) 55%,rgba(10,5,2,0) 85%)}
+  .corner{position:absolute;right:0;bottom:0;width:104px;height:104px;pointer-events:none;
+    border-bottom-right-radius:7px;transition:opacity .3s ease;
+    background:linear-gradient(315deg,rgba(255,255,255,.85) 0%,rgba(240,232,216,.6) 28%,
+      rgba(0,0,0,.22) 30%,rgba(0,0,0,0) 46%);
+    clip-path:polygon(100% 0,100% 100%,0 100%);
+    animation:cornerBreathe 3.4s ease-in-out infinite}
+  .corner.gone{animation:none;opacity:0}
+  @keyframes cornerBreathe{0%,100%{opacity:.5;transform:translate(0,0)}50%{opacity:1;transform:translate(-6px,-6px)}}
+
+  /* ---- what is printed on a page ---------------------------------------- */
+  .paper{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden;
+    padding:24px 26px 18px;
+    background:linear-gradient(160deg,var(--paper-a) 0%,var(--paper-b) 55%,var(--paper-c) 100%)}
+  .paper::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.35;
+    mix-blend-mode:multiply;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.055'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .paper>*{position:relative;z-index:1}
+
+  .run{flex:none;display:flex;justify-content:space-between;align-items:baseline;
+    font-family:'JetBrains Mono',monospace;font-size:8.5px;font-weight:500;letter-spacing:.3em;
+    text-transform:uppercase;color:var(--faint)}
+  .folio{flex:none;text-align:center;margin-top:10px;
+    font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.3em;color:var(--faint)}
+  .hair{flex:none;height:1px;margin:11px 0 0;
+    background:linear-gradient(to right,rgba(160,143,118,.75),rgba(160,143,118,0))}
+
+  /* art page */
+  .plate{flex:1 1 auto;min-height:0;display:flex;align-items:center;justify-content:center;
+    margin:12px -8px 0}
+  .plate img{max-width:100%;max-height:100%;width:auto;height:auto;display:block;
+    border-radius:2px;background:#e2d7c2;
+    box-shadow:0 3px 14px rgba(60,35,15,.30),0 0 0 1px rgba(60,40,20,.28)}
+  .cap{flex:none;margin-top:14px;border-top:1px solid rgba(160,143,118,.55);padding-top:9px}
+  .cap-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .tag{font-family:'JetBrains Mono',monospace;font-size:8.5px;font-weight:700;letter-spacing:.26em;
+    text-transform:uppercase;color:var(--rose);white-space:nowrap}
+  .rule{flex:1;height:1px;background:linear-gradient(to right,rgba(160,143,118,.55),rgba(160,143,118,0))}
+  .pn{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.2em;color:var(--faint);white-space:nowrap}
+  .line{font-family:'Space Grotesk',system-ui,sans-serif;font-size:14px;font-weight:400;
+    line-height:1.5;color:var(--ink-soft);text-wrap:pretty}
+  .line q{quotes:"\201C" "\201D";font-style:italic;color:var(--ink)}
+  .line em{font-style:normal;font-family:'JetBrains Mono',monospace;font-size:.88em;font-weight:700;
+    color:var(--rose);letter-spacing:.01em}
+
+  /* prose page */
+  .paper.prose{padding-left:34px;padding-right:34px}
+  .ptitle{flex:none;font-family:'Bodoni Moda',Didot,serif;font-size:calc(28px * var(--pf,1));line-height:1.1;
+    letter-spacing:.01em;color:var(--ink);margin:calc(19px * var(--pf,1)) 0 0}
+  .dink{flex:none;display:flex;align-items:center;gap:9px;margin:calc(9px * var(--pf,1)) 0 calc(15px * var(--pf,1))}
+  .dink i{width:24px;height:1px;background:var(--rose-pale);display:block}
+  .dink b{width:4px;height:4px;background:var(--rose-pale);transform:rotate(45deg);display:block}
+  .body1,.body2{font-size:calc(16px * var(--pf,1));line-height:1.56;color:var(--ink-soft);text-wrap:pretty;margin:0}
+  .body2{margin-top:calc(11px * var(--pf,1))}
+  /* a display cut of Bodoni thins its hairlines to nothing at this size, and an
+     H loses its crossbar — ask for the text cut and a little more weight */
+  .dropcap{float:left;font-family:'Bodoni Moda',Didot,serif;font-size:calc(48px * var(--pf,1));
+    font-weight:600;font-variation-settings:'opsz' 12;font-optical-sizing:none;
+    line-height:.82;padding:5px 10px 0 0;color:var(--rose-deep)}
+  .spring{flex:1 1 auto;min-height:14px}
+  .pull{flex:none;border-top:1px solid rgba(160,143,118,.5);padding-top:calc(12px * var(--pf,1));
+    font-style:italic;font-size:calc(17px * var(--pf,1));line-height:1.42;color:var(--rose-deep);text-wrap:pretty}
+
+  /* cover */
+  .paper.cover{padding:0;background:#1d1712}
+  .cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 22%}
+  .cover .wash{position:absolute;inset:0;background:
+    linear-gradient(180deg,rgba(30,22,14,.42) 0%,rgba(30,22,14,.05) 26%,rgba(28,18,12,.72) 68%,rgba(24,15,10,.94) 100%)}
+  .cover .copy{position:absolute;left:0;right:0;bottom:0;padding:0 30px 30px;text-align:center;color:#f6efe2}
+  .cover .imprint{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.46em;
+    text-transform:uppercase;color:#e8bfd4;margin-bottom:12px}
+  .cover h1{font-family:'Bodoni Moda',Didot,serif;font-weight:700;font-size:74px;line-height:.86;
+    letter-spacing:.06em;margin:0;text-shadow:0 6px 34px rgba(0,0,0,.55)}
+  .cover .sub{font-family:'Bodoni Moda',Didot,serif;font-style:italic;font-size:19px;margin-top:9px;color:#f0dfe8}
+  .cover .crule{width:44px;height:1px;background:var(--rose-pale);margin:15px auto 13px}
+  .cover .tagline{font-size:16.5px;line-height:1.5;color:#e9dfd0;max-width:300px;margin:0 auto;text-wrap:pretty}
+  .cover .by{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.2em;
+    text-transform:uppercase;color:#b9a493;margin-top:20px}
+
+  /* frontispiece + endpaper */
+  .plate-mid{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;text-align:center;gap:14px;padding:0 12px}
+  .kick{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.46em;
+    text-transform:uppercase;color:var(--faint)}
+  .prev-lines{font-family:'Bodoni Moda',Didot,serif;font-size:21px;line-height:1.5;color:var(--ink);text-wrap:pretty}
+  .prev-lines span{display:block}
+  .prev-lines span:last-child{color:var(--rose-deep);font-style:italic;margin-top:6px}
+  .note{font-size:16.5px;line-height:1.6;font-style:italic;color:var(--ink-soft);max-width:290px;text-wrap:pretty}
+  .fin{font-family:'Bodoni Moda',Didot,serif;font-style:italic;font-size:40px;line-height:1.06;
+    color:var(--ink);text-wrap:balance}
+  .coda{font-size:16.5px;line-height:1.6;color:var(--ink-soft);max-width:290px;text-wrap:pretty}
+  .dink.mid{justify-content:center}
+
+  /* ---- controls --------------------------------------------------------- */
+  .hud{position:absolute;left:0;right:0;bottom:18px;display:flex;align-items:center;
+    justify-content:center;gap:20px}
+  .hud button{width:38px;height:38px;border-radius:50%;border:2px solid rgba(139,61,255,.30);
+    background:rgba(255,255,255,.85);color:#6428d8;font-size:17px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:background .25s,border-color .25s,opacity .25s}
+  .hud button:hover{background:rgba(139,61,255,.12);border-color:rgba(220,140,180,.7)}
+  .hud button[disabled]{opacity:.3;cursor:default}
+  .label{min-width:190px;text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;
+    letter-spacing:.3em;text-transform:uppercase;color:#8b6fae}
+  .snd{position:absolute;right:18px;bottom:20px;width:34px;height:34px;border-radius:50%;
+    border:2px solid rgba(139,61,255,.24);background:rgba(255,255,255,.75);color:#6428d8;
+    font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:opacity .25s}
+  .snd.off{opacity:.42}
+  .pbar{position:absolute;left:0;bottom:0;right:0;height:2px;transform-origin:0 50%;transform:scaleX(0);
+    background:linear-gradient(95deg,#ef1f96,#7a2df0 46%,#0f9fe0);
+    transition:transform .5s cubic-bezier(.4,.05,.2,1)}
+
+  @media (max-width:640px){
+    .head{font-size:8.5px;letter-spacing:.22em;padding:0 14px}
+    .label{min-width:130px;font-size:9px;letter-spacing:.2em}
+    .snd{right:10px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .corner{animation:none;opacity:.75}
+    .pbar{transition:none}
+  }
+</style>
+</head>
+<body>
+<div class="room" id="room">
+  <div class="head">
+    <span>SEEN &middot; Chapter Two</span>
+    <span>Marcus <b id="meter">148,663</b></span>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="underlight" aria-hidden="true"></div>
+    <div class="book" id="book">
+      <div class="stack l" id="stackL" aria-hidden="true"></div>
+      <div class="stack r" id="stackR" aria-hidden="true"></div>
+      <div class="flipshade" id="fshade" aria-hidden="true"></div>
+      <div class="corner" id="corner" aria-hidden="true"></div>
+    </div>
+  </div>
+
+  <div class="hud">
+    <button id="prev" aria-label="Previous page">&lsaquo;</button>
+    <div class="label" id="label" aria-live="polite">Cover</div>
+    <button id="next" aria-label="Next page">&rsaquo;</button>
+  </div>
+  <button class="snd" id="snd" aria-label="Turn page-turn sound off" title="Page-turn sound">&#9834;</button>
+  <div class="pbar" id="pbar" aria-hidden="true"></div>
+</div>
+
+<script src="chapter2.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var PANELS = window.SEEN2.PANELS, DIMS = window.SEEN2.DIMS;
+
+  /* ------------------------------------------------------------------ *
+   * The prose edition. One interlude opens each of the chapter's ten
+   * movements; the art of that movement follows it, one panel to a page.
+   * ------------------------------------------------------------------ */
+  /* PROSE:START */
+  var COVERTAG = 'He hears everything now. Almost none of it is about him.';
+  var FRONTIS = {
+    line1: 'Everybody liked Ethan Cole. Nobody ever had to mean it.',
+    line2: 'A machine on no inventory gave him a can he did not choose.',
+    line3: 'Every head carries a number now. His reads 1,203 — it went up when he smiled.',
+    note:
+      'Chapter Two is three days later. The volume is still on, and he has begun ' +
+      'keeping a private file on everyone he works with.',
+  };
+  var ENDPAPER = {
+    fin: 'He was nineteen.',
+    coda:
+      'Whatever the machine in the basement was, it was not the beginning. Something ' +
+      'that leaves no count and no footage already has his number.',
+  };
+  var PROSE = [
+    { folio: 'I', title: 'Since Monday', drop: 'T',
+      first:
+        'hree days. He has tried the fire stairs, the roof door, both hands clamped ' +
+        'over his ears in a locked cubicle with the light off, and none of it touches ' +
+        'the volume, because the volume was never in the ear. It comes up through the ' +
+        'concrete. It arrives already inside the sentence, the way your own thoughts ' +
+        'arrive.',
+      second:
+        'Sleep needs a room with nobody in it. There is no such room. Monday night he ' +
+        'lay down and the building lay down with him — the cleaner doing sums, the ' +
+        'guard humming the same four bars since March. Silence, it turns out, was a ' +
+        'thing other people were doing for him his whole life, and nobody had thought ' +
+        'to mention it.',
+      pull: 'He can read every number in the building. His own needs a mirror.',
+    },
+    { folio: 'II', title: 'Four Inches', drop: 'S',
+      first:
+        'he leans over to point at a column, and the thought arrives ahead of her hand ' +
+        '— specific, unhurried, filthy, addressed to nobody at all. No one was ever ' +
+        'meant to be in the room for it. He pushes his chair back four inches. The ' +
+        'chair has castors. It goes considerably further than four inches.',
+      second:
+        'The cup goes over. Coffee crosses three weeks of printouts, and every desk on ' +
+        'the floor looks up at once. They apologise to each other for the mess and the ' +
+        'distance, which are the only parts either of them can name out loud. Under the ' +
+        'paper the ring dries brown by lunchtime. By lunchtime she has filed him too, ' +
+        'under a heading she will not open again.',
+      pull:
+        'He flinched at a thought she had not finished having. She will only ever ' +
+        'remember the flinch.',
+    },
+    { folio: 'III', title: 'Two Seconds', drop: 'C',
+      first:
+        'hloe gets to the slide she is proudest of and her voice goes up at the end, ' +
+        'which is what happens when a thing is actually yours. The man beside her hears ' +
+        'the same sentence and decides, in about two seconds, to walk it into a meeting ' +
+        'with his own name on the cover. There is no cruelty anywhere in the thought. ' +
+        'It is closer to shopping.',
+      second:
+        'Three weeks of his own work went the same way, in a room that laughed. He ' +
+        'looks at his screen until the moment is over. He has no proof. It is not his ' +
+        'business. Saying it out loud ends one career, and not the thief’s. Every ' +
+        'reason is true. None of them is the reason. Somewhere above his own head a ' +
+        'number moves, and he does not look up.',
+      pull: 'He always believed he stayed quiet because he could not be sure. He was sure.',
+    },
+    { folio: 'IV', title: 'Between Floors', drop: 'T',
+      first:
+        'wenty minutes, minimum. The emergency light comes on, greener than the cabin ' +
+        'light, and the fan keeps running because the fan is on the same circuit as the ' +
+        'doors. At minute five Diana Shaw steps out of her heels and stands them neatly ' +
+        'in the corner, finished with them. Then she stops making conversation, which ' +
+        'takes him a while to understand is not rudeness.',
+      second:
+        'He gets three things out of twenty minutes. Whether the ceiling hatch would ' +
+        'hold her. Whether her sister ever reached the hospital. How much longer she ' +
+        'can go on being the pleasant surface of a company that has never once asked ' +
+        'her a question with an answer in it. He waits to turn up somewhere in it. He ' +
+        'does not turn up.',
+      pull:
+        'He has spent thirty-one years being careful for an audience that was never ' +
+        'there.',
+    },
+    { folio: 'V', title: 'Eleven Years', drop: 'F',
+      first:
+        'orty an hour. She gives the figure without stopping to work it out, then gives ' +
+        'the phrases: he is in a meeting, she has just stepped out, of course, no ' +
+        'problem at all. Eleven years of standing in a doorway so that nobody behind ' +
+        'her has to be seen. She has never thought of any of it as a moral question. ' +
+        'Nobody has ever asked her to.',
+      second:
+        'Sixty thousand one hundred and nine, and not one of them told for herself. ' +
+        'Then, sideways, she mentions that a mistake of his went up to Marcus last week ' +
+        'as a fault in the system. The number moves while she is saying it. She does ' +
+        'not notice. It has not occurred to her that this is information.',
+      pull:
+        'Sixty thousand one hundred and ten. One of them is his, and she was never ' +
+        'going to tell him.',
+    },
+    { folio: 'VI', title: 'Nine', drop: 'S',
+      first:
+        'onya Vale gets nowhere near the truth and lands on something worse: that he ' +
+        'has started looking at people, actually looking, and that a man does not begin ' +
+        'doing that in his thirties for no reason. She asks what happened to him, and ' +
+        'then does the difficult part, which is to stop talking and wait.',
+      second:
+        'Nine. It holds at nine through the whole conversation — through the greeting, ' +
+        'through the part where she is kind to him, through every place a normal person ' +
+        'rounds something off. He gets as far as the basement and the can. Then he ' +
+        'works out what it would cost her to know, and says long quarter instead. His ' +
+        'own moves twice while he says it.',
+      pull:
+        'Nine lies in a lifetime, four times passed over. The building is not confused ' +
+        'about what it wants.',
+    },
+    { folio: 'VII', title: 'The One Exception', drop: 'L',
+      first:
+        'antern light, a long table, attendance not optional. Greg is four beers in ' +
+        'with an arm across his shoulders, telling the room this one is the best of ' +
+        'them. Underneath, in the same warm breath: why do you get to look like that. ' +
+        'Ethan has spent his life assuming the second thing is always the true one. It ' +
+        'is not. Both are, in a man who would carry him to a taxi.',
+      second:
+        'Then Jamie switches seats, takes her blazer off and puts the morning on the ' +
+        'table between them. He gets three seconds’ warning that she is about to be ' +
+        'direct, and the warning does him no good whatsoever. She thinks it, then she ' +
+        'says it, in that order, at the same size. There is no gap in her to stand in.',
+      pull: 'Everyone else he overhears. Jamie he has to answer.',
+    },
+    { folio: 'VIII', title: 'The Bicycle', drop: 'C',
+      first:
+        'hloe puts a glass down badly and tells him he is the only good person at this ' +
+        'company. She means it. The number over her goes from 412 to 413 while she is ' +
+        'meaning it. Underneath the sentence she is also doing something quieter — ' +
+        'arranging herself in front of a man she has decided is worth being liked by — ' +
+        'and whatever the count is reading, it is reading that.',
+      second:
+        'Then Marcus arrives late, settles the whole table before anyone can reach for ' +
+        'a wallet, and spends ninety seconds on his father and a bicycle. No father ' +
+        'like that, no bicycle, nothing broken — he builds it standing up, at speed, ' +
+        'because the table wanted a story. Four hundred lies inside a minute and a ' +
+        'half. The table is moved to tears at a little over four a second.',
+      pull:
+        'Ethan has held the same face for years. It is the one thing of his nobody has ' +
+        'taken credit for.',
+    },
+    { folio: 'IX', title: 'Recount', drop: 'H',
+      first:
+        'e leaves the table quietly because he is going to be sick and would rather do ' +
+        'it out of earshot. The air off the ramp is cold and fixes nothing. He does not ' +
+        'go home. He goes down to B2 instead — sodium light, wet concrete, a drain that ' +
+        'never quite finishes — and the garage is empty except for the part of it that ' +
+        'is not.',
+      second:
+        'Two men in the slot between parked cars: Marcus, and a stranger whose whole ' +
+        'life comes to thirty-one. The envelope goes across, thick, no name, no ' +
+        'greeting, nothing said at all, and above Marcus the count goes 149,061, ' +
+        '149,064, 149,071. Nobody has spoken and the ledger is filling anyway. Behind a ' +
+        'pillar Ethan runs the week again with the rule corrected. Every total comes ' +
+        'out different. Including his own.',
+      pull: 'All week he has done nothing, carefully. Nothing, it turns out, is a plan.',
+    },
+    { folio: 'X', title: 'The Second Column', drop: 'Z',
+      first:
+        'ero. Not low — zero, in a lobby where Diana Shaw sits at reception with sixty ' +
+        'thousand over her head. He gets four people deep into the crush and there is ' +
+        'nobody left to reach. Diana gives him two minutes of the footage and makes ' +
+        'sure he knows he owes her. Same timestamp. Same crowd. A clear metre of tile ' +
+        'where a man had been standing.',
+      second:
+        'At home he deletes EVERYONE — RANKED and starts again with two columns: LIES ' +
+        'TOLD, WHO IT PROTECTED. The first column he can fill from memory, all twelve ' +
+        'hundred of them. The second is slower, and it keeps coming out with his own ' +
+        'name in it. Then a highlighted row twelve years old, which makes him nineteen. ' +
+        'He puts his hand on the keys. The second column stays empty.',
+      pull:
+        'He knows what belongs in the second column of that row. He is not going to ' +
+        'write it.',
+    }
+  ];
+  /* PROSE:END */
+
+  // how many panels belong to each interlude, in order — 69 in total
+  var ACTS = [2, 6, 4, 6, 6, 4, 7, 11, 9, 14];
+
+  /* ---- the page list ------------------------------------------------- */
+  var faces = [];
+  faces.push({ type: 'cover' });
+  faces.push({ type: 'front' });
+  var panel = 0;
+  for (var a = 0; a < ACTS.length; a++) {
+    faces.push({ type: 'prose', tx: PROSE[a] });
+    for (var j = 0; j < ACTS[a]; j++) faces.push({ type: 'art', i: panel++ });
+  }
+  faces.push({ type: 'end' });
+  // a book is made of leaves; every leaf needs two faces
+  if (faces.length % 2) faces.splice(faces.length - 1, 0, { type: 'blank' });
+  // front matter is unnumbered, the way it is in a printed book
+  for (var f = 2; f < faces.length; f++) faces[f].folio = f - 1;
+  var FOLIOS = faces.length - 2;
+  var N = faces.length / 2;                       // leaves
+
+  /* ---- printing ------------------------------------------------------ */
+  var PW = 420, PH = 630;
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+  function plain(s) { return String(s).replace(/<[^>]+>/g, ''); }
+  function pad(n) { return n < 10 ? '0' + n : String(n); }
+
+  function runHead(right) {
+    return '<div class="run"><span>SEEN &middot; After Hours</span><span>' + (right || '') + '</span></div>';
+  }
+  function folioBar(f) { return '<div class="folio">' + (f.folio || '') + '</div>'; }
+
+  function faceHTML(f) {
+    if (f.type === 'cover') {
+      return '<div class="paper cover">' +
+        '<img data-src="c2_p12_03.jpg" alt="" width="1122" height="1402" decoding="async">' +
+        '<div class="wash"></div>' +
+        '<div class="copy">' +
+          '<div class="imprint">An AI-drawn manga &middot; No. 2</div>' +
+          '<h1>SEEN</h1>' +
+          '<div class="sub">Chapter Two &mdash; After Hours</div>' +
+          '<div class="crule"></div>' +
+          '<p class="tagline">' + esc(COVERTAG) + '</p>' +
+          '<div class="by">Written and drawn with AI &middot; Zhang Cheng</div>' +
+        '</div></div>';
+    }
+    if (f.type === 'front') {
+      return '<div class="paper">' + runHead('') +
+        '<div class="plate-mid">' +
+          '<div class="kick">Previously</div>' +
+          '<div class="prev-lines"><span>' + esc(FRONTIS.line1) + '</span><span>' +
+            esc(FRONTIS.line2) + '</span><span>' + esc(FRONTIS.line3) + '</span></div>' +
+          '<div class="dink mid"><i></i><b></b><i></i></div>' +
+          '<p class="note">' + esc(FRONTIS.note) + '</p>' +
+        '</div><div class="folio"></div></div>';
+    }
+    if (f.type === 'prose') {
+      var t = f.tx || {};
+      return '<div class="paper prose">' + runHead(esc(t.folio || '')) +
+        '<div class="hair"></div>' +
+        '<div class="ptitle">' + esc(t.title || '') + '</div>' +
+        '<div class="dink"><i></i><b></b></div>' +
+        '<p class="body1"><span class="dropcap">' + esc(t.drop || '') + '</span>' + esc(t.first || '') + '</p>' +
+        (t.second ? '<p class="body2">' + esc(t.second) + '</p>' : '') +
+        '<div class="spring"></div>' +
+        '<div class="pull">' + esc(t.pull || '') + '</div>' +
+        folioBar(f) + '</div>';
+    }
+    if (f.type === 'art') {
+      var p = PANELS[f.i], d = DIMS[p[0]] || [1000, 1000];
+      var alt = 'Panel ' + (f.i + 1) + ' — ' + plain(p[2]).replace(/"/g, '');
+      return '<div class="paper">' + runHead('') +
+        '<div class="plate"><img data-src="' + p[0] + '.jpg" alt="' + esc(alt) + '" ' +
+          'width="' + d[0] + '" height="' + d[1] + '" decoding="async"></div>' +
+        '<figcaption class="cap">' +
+          '<span class="cap-top"><span class="tag">' + esc(p[1]) + '</span>' +
+          '<span class="rule"></span><span class="pn">' + pad(f.i + 1) + ' / ' + PANELS.length + '</span></span>' +
+          '<span class="line">' + p[2] + '</span>' +
+        '</figcaption>' + folioBar(f) + '</div>';
+    }
+    if (f.type === 'end') {
+      return '<div class="paper">' + runHead('') +
+        '<div class="plate-mid">' +
+          '<div class="kick">End of Chapter Two</div>' +
+          '<div class="fin">' + esc(ENDPAPER.fin) + '</div>' +
+          '<div class="dink mid"><i></i><b></b><i></i></div>' +
+          '<p class="coda">' + esc(ENDPAPER.coda) + '</p>' +
+          '<div class="kick">To be continued</div>' +
+        '</div>' + folioBar(f) + '</div>';
+    }
+    return '<div class="paper">' + runHead('') + '<div class="spring"></div>' + folioBar(f) + '</div>';
+  }
+
+  /* ---- build the leaves ---------------------------------------------- */
+  var book = document.getElementById('book');
+  var stage = document.getElementById('stage');
+  var fshade = document.getElementById('fshade');
+  var corner = document.getElementById('corner');
+  var stackL = document.getElementById('stackL'), stackR = document.getElementById('stackR');
+  var labelEl = document.getElementById('label'), meterEl = document.getElementById('meter');
+  var pbar = document.getElementById('pbar');
+  var prevBtn = document.getElementById('prev'), nextBtn = document.getElementById('next');
+  var sndBtn = document.getElementById('snd');
+
+  var nodes = [], images = [];                    // per leaf, and every <img> in face order
+  var frag = document.createDocumentFragment();
+  for (var i = 0; i < N; i++) {
+    var leaf = document.createElement('div');
+    leaf.className = 'leaf';
+    leaf.style.width = PW + 'px';
+    leaf.style.height = PH + 'px';
+    leaf.innerHTML =
+      '<div class="face f">' + faceHTML(faces[2 * i]) + '<div class="gutter"></div><div class="shade"></div></div>' +
+      '<div class="face b">' + faceHTML(faces[2 * i + 1]) + '<div class="gutter"></div><div class="shade"></div></div>';
+    nodes.push(leaf);
+    frag.appendChild(leaf);
+  }
+  book.insertBefore(frag, fshade);
+  for (var q = 0; q < N; q++) {
+    images.push(nodes[q].children[0].querySelector('img'));
+    images.push(nodes[q].children[1].querySelector('img'));
+  }
+
+  fshade.style.width = PW + 'px'; fshade.style.height = PH + 'px';
+  fshade.style.zIndex = String(N + 3);
+  corner.style.zIndex = String(N + 6);
+  stackL.style.right = 'calc(50% + ' + PW + 'px)';
+  stackR.style.left = 'calc(50% + ' + PW + 'px)';
+
+  /* ---- art arrives just before you get to it -------------------------- */
+  function hydrate(idx, then) {
+    var im = images[idx];
+    if (!im || im.getAttribute('src')) { if (then) then(); return; }
+    if (then) {
+      im.addEventListener('load', then, { once: true });
+      im.addEventListener('error', then, { once: true });
+    }
+    im.setAttribute('src', im.getAttribute('data-src'));
+  }
+  var queue = [], queued = {}, warming = 0;
+  function warm() {
+    while (warming < 2 && queue.length) {
+      warming++;
+      hydrate(queue.shift(), function () { warming--; warm(); });
+    }
+  }
+  function around(t) {
+    var lo = Math.max(0, 2 * (t - 1)), hi = Math.min(images.length - 1, 2 * (t + 2) + 1);
+    for (var k = lo; k <= hi; k++) hydrate(k);                 // the spread and its neighbours, now
+    var far = Math.min(images.length - 1, 2 * (t + 10) + 1);   // the rest of the way ahead, gently
+    for (var j = hi + 1; j <= far; j++) if (!queued[j]) { queued[j] = 1; queue.push(j); }
+    warm();
+  }
+
+  /* ---- sound: paper, synthesised ------------------------------------- */
+  var soundOn = true, ac = null;
+  function ctx() {
+    if (!ac) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      ac = new AC();
+    }
+    if (ac.state === 'suspended') ac.resume();
+    return ac;
+  }
+  function noise(c, dur) {
+    var len = Math.floor(c.sampleRate * dur), buf = c.createBuffer(1, len, c.sampleRate);
+    var d = buf.getChannelData(0), last = 0;
+    for (var k = 0; k < len; k++) {
+      var t = k / len, hiss = Math.random() * 2 - 1;
+      last = 0.72 * last + 0.28 * hiss;
+      var burst = Math.random() < 0.010 ? (Math.random() * 2 - 1) * 1.9 : 0;
+      d[k] = (last * 1.5 + hiss * 0.5 + burst) * Math.sin(Math.PI * Math.pow(t, 0.65));
+    }
+    return buf;
+  }
+  function playFlip(strength) {
+    if (!soundOn) return;
+    var c = ctx(); if (!c) return;
+    var vol = 0.9 * (strength || 1), t = c.currentTime, dur = 0.44;
+    var src = c.createBufferSource(); src.buffer = noise(c, dur);
+    var bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 0.7;
+    bp.frequency.setValueAtTime(800 + Math.random() * 300, t);
+    bp.frequency.exponentialRampToValueAtTime(4400 + Math.random() * 600, t + 0.16);
+    bp.frequency.exponentialRampToValueAtTime(1300, t + dur);
+    var hp = c.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 420;
+    var g = c.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.95 * vol, t + 0.035);
+    g.gain.exponentialRampToValueAtTime(0.42 * vol, t + 0.19);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    src.connect(bp); bp.connect(hp); hp.connect(g); g.connect(c.destination);
+    src.start(t); src.stop(t + dur);
+    var o = c.createOscillator(), og = c.createGain();
+    o.type = 'sine';
+    o.frequency.setValueAtTime(150, t + dur * 0.72);
+    o.frequency.exponentialRampToValueAtTime(58, t + dur * 0.98);
+    og.gain.setValueAtTime(0.0001, t + dur * 0.72);
+    og.gain.exponentialRampToValueAtTime(0.45 * vol, t + dur * 0.78);
+    og.gain.exponentialRampToValueAtTime(0.0001, t + dur + 0.12);
+    o.connect(og); og.connect(c.destination);
+    o.start(t + dur * 0.7); o.stop(t + dur + 0.14);
+  }
+  function playGrab() {
+    if (!soundOn) return;
+    var c = ctx(); if (!c) return;
+    var t = c.currentTime, vol = 0.21;
+    var src = c.createBufferSource(); src.buffer = noise(c, 0.11);
+    var bp = c.createBiquadFilter(); bp.type = 'bandpass'; bp.Q.value = 1.1; bp.frequency.value = 2400;
+    var g = c.createGain();
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.11);
+    src.connect(bp); bp.connect(g); g.connect(c.destination);
+    src.start(t); src.stop(t + 0.12);
+  }
+
+  /* ---- the flip itself ------------------------------------------------ */
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var canHover = matchMedia('(hover: hover)').matches;
+  var SPEED = 0.9, CURL = 13;
+  var target = 0, scale = 1, single = false, everFlipped = false;
+  var busy = false, drag = null, grabT = 0.9, tiltSign = 1;
+  var raf = 0, rto = 0, hraf = 0, hoverP = 0, hoverTgt = 0, hoverIdx = 0;
+
+  function frameT(p) {
+    var lift = Math.sin(Math.PI * p);
+    var tilt = -(CURL * grabT * tiltSign) * lift;
+    return {
+      lift: lift,
+      transform: 'rotate(' + tilt.toFixed(3) + 'deg) rotateY(' + (-180 * p).toFixed(3) +
+                 'deg) translateZ(' + (lift * 30).toFixed(2) + 'px)',
+      shadowT: 'rotate(' + (tilt * 0.8).toFixed(3) + 'deg) rotateY(' + (-166 * p).toFixed(3) + 'deg)'
+    };
+  }
+  function applyFrame(i, p) {
+    var nd = nodes[i]; if (!nd) return;
+    var fr = frameT(p);
+    nd.style.transform = fr.transform;
+    nd.style.zIndex = (p > 0.002 && p < 0.998) ? N + 4 : (p >= 0.5 ? i + 1 : N - i);
+    var front = nd.children[0], back = nd.children[1], showBack = p > 0.5;
+    front.style.visibility = showBack ? 'hidden' : 'visible';
+    back.style.visibility = showBack ? 'visible' : 'hidden';
+    front.lastElementChild.style.opacity = (0.7 * fr.lift).toFixed(3);
+    back.lastElementChild.style.opacity = (0.75 * fr.lift).toFixed(3);
+    fshade.style.opacity = (0.5 * fr.lift).toFixed(3);
+    fshade.style.transform = fr.shadowT;
+  }
+  function easeInOutQuart(u) { return u < 0.5 ? 8 * u * u * u * u : 1 - Math.pow(-2 * u + 2, 4) / 2; }
+  function easeOutCubic(u) { return 1 - Math.pow(1 - u, 3); }
+
+  function runFlip(idx, from, to, dur, ease, done) {
+    cancelAnimationFrame(raf); clearTimeout(rto);
+    if (reduce) { applyFrame(idx, to); done(); return; }
+    var t0 = performance.now(), ended = false;
+    function finish() {
+      if (ended) return; ended = true;
+      clearTimeout(rto); cancelAnimationFrame(raf);
+      applyFrame(idx, to); done();
+    }
+    function step(now) {
+      if (ended) return;
+      var u = Math.min(1, (now - t0) / dur), p = from + (to - from) * ease(u);
+      applyFrame(idx, p);
+      if (u < 1) raf = requestAnimationFrame(step); else finish();
+    }
+    raf = requestAnimationFrame(step);
+    rto = setTimeout(finish, dur + 150);
+  }
+
+  function cancelHover() {
+    cancelAnimationFrame(hraf); hraf = 0;
+    if (hoverP && !busy && !drag) applyFrame(hoverIdx, 0);
+    hoverP = 0; hoverTgt = 0;
+  }
+
+  function go(dir) {
+    if (busy || drag) return;
+    var t = target + dir;
+    if (t < 0 || t > N) return;
+    var idx = dir > 0 ? target : t;
+    cancelHover();
+    busy = true; tiltSign = dir; grabT = 0.9;
+    playFlip(1);
+    target = t; everFlipped = true; chrome();
+    runFlip(idx, dir > 0 ? 0 : 1, dir > 0 ? 1 : 0,
+      Math.max(320, SPEED * 950), easeInOutQuart,
+      function () { busy = false; settle(); });
+  }
+
+  /* ---- pointer -------------------------------------------------------- */
+  // where the visible page actually is, in client pixels
+  function shiftFor() {
+    if (single) return target === N ? PW / 2 : -PW / 2;
+    return target === 0 ? -PW / 2 : (target === N ? PW / 2 : 0);
+  }
+  function box() {
+    var r = stage.getBoundingClientRect();
+    var shift = shiftFor();
+    return {
+      r: r, s: scale,
+      spine: r.left + (PW + shift) * scale,
+      right: r.left + (2 * PW + shift) * scale
+    };
+  }
+  stage.addEventListener('pointerdown', function (e) {
+    if (busy) return;
+    var b = box();
+    var back = single ? (e.clientX < b.spine + PW * scale * 0.22) : (e.clientX < b.spine);
+    var dir = back ? -1 : 1, t = target + dir;
+    if (t < 0 || t > N) return;
+    cancelHover();
+    ctx();
+    var gy = Math.max(0, Math.min(1, (e.clientY - b.r.top) / Math.max(1, b.r.height)));
+    grabT = 0.5 + 0.7 * gy;
+    tiltSign = dir;
+    drag = {
+      idx: dir > 0 ? target : t, dir: dir, x0: e.clientX, y0: e.clientY, moved: 0,
+      w: Math.max(80, PW * scale),
+      samples: [{ x: e.clientX, t: performance.now() }]
+    };
+    stage.classList.add('grabbing');
+    playGrab();
+    try { stage.setPointerCapture(e.pointerId); } catch (err) {}
+  });
+  stage.addEventListener('pointermove', function (e) {
+    if (!drag) {
+      if (!canHover || busy || reduce) return;
+      var b = box();
+      var relX = (e.clientX - b.spine) / Math.max(1, b.right - b.spine);
+      var relY = (e.clientY - b.r.top) / Math.max(1, b.r.height);
+      var inZone = relX > 0.68 && relX < 1.05 && relY > 0.70 && target < N;
+      var tgt = inZone ? 0.045 : 0;
+      if (tgt !== hoverTgt) {
+        hoverTgt = tgt; hoverIdx = target;
+        if (!hraf) {
+          (function loop() {
+            var cur = hoverP, want = hoverTgt, nx = cur + (want - cur) * 0.16;
+            hoverP = Math.abs(nx - want) < 0.0008 ? want : nx;
+            if (!busy && !drag) { grabT = 1; applyFrame(hoverIdx, hoverP); }
+            hraf = (hoverP === want) ? 0 : requestAnimationFrame(loop);
+          })();
+        }
+      }
+      return;
+    }
+    var now = performance.now();
+    drag.samples.push({ x: e.clientX, t: now });
+    if (drag.samples.length > 7) drag.samples.shift();
+    var dx = e.clientX - drag.x0;
+    drag.moved = Math.max(drag.moved, Math.abs(dx) + Math.abs(e.clientY - drag.y0));
+    var p = drag.dir > 0
+      ? Math.max(0, Math.min(1, -dx / drag.w))
+      : Math.max(0, Math.min(1, 1 - dx / drag.w));
+    drag.p = p;
+    applyFrame(drag.idx, p);
+  });
+  function release() {
+    var d = drag; if (!d) return;
+    drag = null;
+    stage.classList.remove('grabbing');
+    if (d.moved < 8) { go(d.dir); return; }
+    var p = d.p === undefined ? (d.dir > 0 ? 0 : 1) : d.p;
+    var s = d.samples, last = s[s.length - 1], first = s[0];
+    for (var k = s.length - 2; k >= 0; k--) { first = s[k]; if (last.t - s[k].t > 60) break; }
+    var v = (last.t - first.t) > 4 ? (last.x - first.x) / (last.t - first.t) : 0;
+    var dpdt = -v / d.w;
+    var commit = d.dir > 0 ? (p + dpdt * 150) > 0.3 : (p + dpdt * 150) < 0.7;
+    var to = commit ? (d.dir > 0 ? 1 : 0) : (d.dir > 0 ? 0 : 1);
+    var t = commit ? target + d.dir : target;
+    var rate = Math.max(Math.abs(dpdt), 1 / (SPEED * 1000));
+    var dur = Math.max(150, Math.min(SPEED * 1050, Math.abs(to - p) / rate));
+    busy = true;
+    if (commit) playFlip(Math.min(1.3, 0.8 + rate * 260)); else playGrab();
+    target = t; everFlipped = true; chrome();
+    runFlip(d.idx, p, to, dur, easeOutCubic,
+      function () { busy = false; settle(); });
+  }
+  stage.addEventListener('pointerup', release);
+  stage.addEventListener('pointercancel', release);
+  stage.addEventListener('pointerleave', function () {
+    if (!drag) { hoverTgt = 0; if (hoverP && !hraf) cancelHover(); }
+  });
+
+  /* ---- chrome, layout, keys ------------------------------------------- */
+  function label() {
+    if (!everFlipped) return 'Drag the corner \u203a';
+    if (target === 0) return 'Cover';
+    if (target >= N) return 'Fin.';
+    var rp = faces[2 * target];
+    return rp && rp.folio ? 'Page ' + rp.folio + ' of ' + FOLIOS : 'Previously';
+  }
+  function chrome() {
+    labelEl.textContent = label();
+    prevBtn.disabled = target <= 0;
+    nextBtn.disabled = target >= N;
+    corner.classList.toggle('gone', !!(busy || drag || target >= N));
+    pbar.style.transform = 'scaleX(' + (target / N).toFixed(4) + ')';
+    // Marcus's counter, climbing across the chapter exactly as far as it does in it
+    meterEl.textContent = Math.round(148663 + 408 * (target / N)).toLocaleString('en-US');
+    hot();
+    around(target);
+  }
+  // only the two leaves either side of the spine can move; they get the layer
+  var lastHot = [];
+  function hot() {
+    var want = [nodes[target - 1], nodes[target]].filter(Boolean);
+    for (var k = 0; k < lastHot.length; k++)
+      if (want.indexOf(lastHot[k]) < 0) lastHot[k].classList.remove('hot');
+    for (var j = 0; j < want.length; j++) want[j].classList.add('hot');
+    lastHot = want;
+  }
+  function edge(k) { return k ? Math.min(46, 1.15 * k + 2) : 0; }
+  function settle() {
+    book.style.transform = 'translateX(' + shiftFor() + 'px)';
+    stackL.style.width = edge(target) + 'px';
+    stackR.style.width = edge(N - target) + 'px';
+    stackL.style.display = target ? 'block' : 'none';
+    stackR.style.display = target < N ? 'block' : 'none';
+    chrome();
+  }
+
+  function measure() {
+    var w = window.innerWidth, h = window.innerHeight;
+    single = w < 900;
+    scale = single
+      ? Math.min((w - 22) / PW, (h - 118) / PH)
+      : Math.min((w - 90) / (PW * 2), (h - 140) / PH, 1.45);
+    scale = Math.max(0.2, scale);
+    stage.style.width = (PW * 2) + 'px';
+    stage.style.height = PH + 'px';
+    stage.style.transform = 'scale(' + scale + ')';
+    // one page at a time means one page on screen: trim the empty half away
+    stage.style.clipPath = single ? 'inset(-90px 24% -90px 24%)' : 'none';
+    settle();
+  }
+
+  var EASE = 'cubic-bezier(.4,.05,.2,1)';
+  book.style.transition = 'transform ' + Math.max(0.25, SPEED * 0.85) + 's ' + EASE;
+  stackL.style.transition = 'width .5s ' + EASE;
+  stackR.style.transition = 'width .5s ' + EASE;
+
+  window.addEventListener('resize', measure);
+  window.addEventListener('orientationchange', measure);
+  prevBtn.addEventListener('click', function () { go(-1); });
+  nextBtn.addEventListener('click', function () { go(1); });
+  sndBtn.addEventListener('click', function () {
+    soundOn = !soundOn;
+    sndBtn.classList.toggle('off', !soundOn);
+    sndBtn.setAttribute('aria-label', soundOn ? 'Turn page-turn sound off' : 'Turn page-turn sound on');
+  });
+
+  function onKey(e) {
+    if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); go(1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(-1); }
+    else if (e.key === 'Home') { e.preventDefault(); jump(0); }
+    else if (e.key === 'End') { e.preventDefault(); jump(N); }
+  }
+  function jump(t) {
+    if (busy || drag) return;
+    t = Math.max(0, Math.min(N, t));
+    for (var k = 0; k < N; k++) applyFrame(k, k < t ? 1 : 0);
+    target = t; everFlipped = true;
+    settle();
+  }
+  window.addEventListener('keydown', onKey);
+  // the book usually lives in an iframe; let the page around it drive the keys too
+  window.addEventListener('message', function (e) {
+    if (!e.data || e.data.seen2 !== 'key') return;
+    if (e.data.key === 'next') go(1);
+    if (e.data.key === 'prev') go(-1);
+  });
+
+  /* A page of a book cannot scroll: whatever is set on it has to fit on it.
+     Bodoni and Cormorant are narrower than the serif that stands in while they
+     load, so every prose page is measured and, if it is long, set a step
+     smaller until it sits inside its own margins. */
+  function fitProse() {
+    var pp = document.querySelectorAll('.paper.prose'), worst = 1, k;
+    for (k = 0; k < pp.length; k++) {
+      var el = pp[k], f = 1;
+      el.style.removeProperty('--pf');
+      while (el.scrollHeight > el.clientHeight + 1 && f > 0.78) {
+        f = Math.round((f - 0.02) * 1000) / 1000;
+        el.style.setProperty('--pf', String(f));
+      }
+      if (f < worst) worst = f;
+    }
+    // the longest page sets the size, and every page is set at that size
+    for (k = 0; k < pp.length; k++) pp[k].style.setProperty('--pf', String(worst));
+  }
+
+  for (var z = 0; z < N; z++) applyFrame(z, 0);
+  measure();
+  fitProse();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitProse);
+  around(0);
+})();
+</script>
+</body>
+</html>
