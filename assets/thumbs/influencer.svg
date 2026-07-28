@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-label="Virtual influencer project: a hawker signboard reading 'one stall at a time'">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff4fd"/>
+      <stop offset="0.5" stop-color="#f4e9ff"/>
+      <stop offset="1" stop-color="#eaf6ff"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ff3fae" stop-opacity="0.34"/>
+      <stop offset="0.5" stop-color="#8b3dff" stop-opacity="0.24"/>
+      <stop offset="1" stop-color="#25c4ff" stop-opacity="0.34"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="720" fill="url(#sky)"/>
+  <ellipse cx="180" cy="40" rx="440" ry="250" fill="url(#glow)"/>
+  <ellipse cx="1120" cy="690" rx="440" ry="250" fill="url(#glow)"/>
+
+  <g stroke="#6d28d9" stroke-opacity="0.07">
+    <path d="M0 120H1280M0 240H1280M0 360H1280M0 480H1280M0 600H1280"/>
+    <path d="M160 0V720M320 0V720M480 0V720M640 0V720M800 0V720M960 0V720M1120 0V720"/>
+  </g>
+
+  <!-- signboard -->
+  <rect x="72" y="76" width="1136" height="568" rx="30" fill="#4a1b9c"/>
+  <rect x="96" y="100" width="1088" height="520" rx="16" fill="none" stroke="#ffb830" stroke-opacity="0.34" stroke-width="3"/>
+
+  <text x="140" y="166" fill="#ffe9b8" fill-opacity="0.7"
+        font-family="'JetBrains Mono',ui-monospace,monospace" font-size="20" letter-spacing="7">小贩中心 · SINGAPORE</text>
+  <circle cx="975" cy="159" r="7" fill="#ffb830"/>
+  <text x="995" y="166" fill="#ffb830"
+        font-family="'JetBrains Mono',ui-monospace,monospace" font-size="18" letter-spacing="3">IN PRODUCTION</text>
+  <line x1="140" y1="192" x2="1140" y2="192" stroke="#ffe9b8" stroke-opacity="0.24" stroke-width="2"/>
+
+  <text x="140" y="252" fill="#ffe9b8" fill-opacity="0.72"
+        font-family="'JetBrains Mono',ui-monospace,monospace" font-size="30" letter-spacing="18">一摊一摊吃</text>
+
+  <g fill="#ffb830" font-family="Anton,'Arial Black',sans-serif" font-size="108" letter-spacing="1">
+    <text x="140" y="386">ONE STALL</text>
+    <text x="140" y="494">AT A TIME</text>
+  </g>
+
+  <text x="140" y="562" fill="#ffe9b8" fill-opacity="0.82"
+        font-family="Inter,system-ui,sans-serif" font-size="26">A real person, scaled by AI — every frame scored before it ships.</text>
+</svg>

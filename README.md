@@ -23,6 +23,10 @@ The landing page is three full-width blocks on a bright candy-neon theme: **mang
   `controls.js` the look-and-light panel, `vendor/three/` a pinned copy of three.js r184 (see the
   README there) so the page needs no CDN.
 - `trading/` — the autonomous trading desk: bots, routines, P&L, risk engine, postmortem.
+- `influencer/` — the virtual influencer: a likeness model trained on my own face, the pipeline
+  behind it, and the identity gate that scores every frame before it ships. Media are placeholder
+  `.slot` divs, each labelled with the aspect ratio it expects; `[RATE]` in the brands section
+  still needs prices. `assets/thumbs/influencer.svg` is a stand-in for the card thumbnail.
 - `prompt-injection/` — a typing-defence game (`game.html`) with its build story.
 - `onesheet/` — a spreadsheet engine in a single offline HTML file.
 - `seen/`, `seen2/`, `seen3/` — *SEEN*, chapters 1–3. `comic/`, `comic2/`, `comic3/` — *Witch of the
