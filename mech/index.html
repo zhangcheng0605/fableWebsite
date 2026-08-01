@@ -3,37 +3,100 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SENTINEL-9 — Scroll Assembly · Zhang Cheng</title>
-<meta name="description" content="SENTINEL-9 — a scroll-driven 3D exo-frame assembly built with Three.js. Scrolling drives the build sequence; drag to orbit. By Zhang Cheng.">
-<meta property="og:title" content="SENTINEL-9 — scroll-driven 3D assembly">
-<meta property="og:description" content="A heavy exo-frame that assembles itself as you scroll. Real-time WebGL, built with Three.js.">
+<title>SENTINEL-9 — Blueprint &amp; Assembly · Zhang Cheng</title>
+<meta name="description" content="SENTINEL-9 — two scroll-driven builds of one exo-frame: a 2D exploded blueprint drawn in SVG, then the same frame assembling in real-time 3D. By Zhang Cheng.">
+<meta property="og:title" content="SENTINEL-9 — scroll-driven blueprint and 3D assembly">
+<meta property="og:description" content="Scroll once for the exploded blueprint, again for the heavy exo-frame assembling itself in real-time WebGL.">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#eef0f2">
+<meta name="theme-color" content="#e9e6e0">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><text y=\'.9em\' font-size=\'90\'>&#129302;</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script type="importmap">
 {
   "imports": { "three": "../campus/vendor/three/three.module.js" }
 }
 </script>
 <style>
-  html, body { margin:0; padding:0; background:#eef0f2; }
+  html, body { margin:0; padding:0; background:#e9e6e0; }
   body { font-family:"SF Mono","Cascadia Code",Consolas,monospace; }
-  #stage { position:fixed; inset:0; width:100vw; height:100vh; }
-  #spacer { height:1200vh; }
-  #flash { position:fixed; inset:0; background:#fff; opacity:0; pointer-events:none; }
-  #title { position:fixed; top:11vh; left:0; right:0; text-align:center; pointer-events:none; color:#2b3238; transition:opacity .3s; }
+
+  /* Two acts, one scrollbar. Each act pins a 100vh stage inside its own tall section,
+     so each timeline is scrubbed by the scroll *through that section* rather than the page. */
+  .act { position:relative; }
+  .act > .pin { position:sticky; top:0; height:100vh; overflow:hidden; }
+  .act .fixed { opacity:0; pointer-events:none; transition:opacity .35s; }
+  body.at-2d #sec2d .fixed, body.at-3d #sec3d .fixed { opacity:1; pointer-events:auto; }
+
+  /* ===================== ACT I — 2D exploded blueprint ===================== */
+  #sec2d { height:700vh; background:#e9e6e0; color:#16161a;
+           font-family:"IBM Plex Mono",ui-monospace,"SF Mono",Consolas,monospace; }
+  #sec2d .pin { background:#e9e6e0; }
+  #bp { position:absolute; inset:0; width:100%; height:100%; display:block; }
+  .bp-copy { position:absolute; left:5.2vw; top:8vh; max-width:min(30ch,26vw); pointer-events:none; }
+  .bp-copy .kick { font-size:11px; letter-spacing:.22em; opacity:.5; margin-bottom:14px; }
+  .bp-copy h1 { font-family:Archivo,"Helvetica Neue",sans-serif; font-weight:700; font-size:clamp(26px,3.1vw,54px);
+                line-height:.94; letter-spacing:-.03em; margin:0 0 16px; }
+  .bp-copy p { font-size:13px; line-height:1.55; margin:0; max-width:32ch; opacity:.72; text-wrap:pretty; }
+  #bpPlay { position:fixed; right:5.2vw; top:8vh; z-index:12; display:flex; align-items:center; gap:10px;
+            background:#16161a; color:#e9e6e0; border:0; border-radius:999px; padding:11px 20px 11px 16px;
+            font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:12px; letter-spacing:.14em; cursor:pointer; }
+  #bpPlay:hover { background:#000; }
+  #bpPlay .ico { display:inline-block; width:0; height:0; border-left:9px solid #e9e6e0;
+                 border-top:6px solid transparent; border-bottom:6px solid transparent; }
+  #bpPlay.on .ico { width:9px; height:12px; border:0; border-left:3px solid #e9e6e0; border-right:3px solid #e9e6e0; }
+  .bp-foot { position:absolute; left:5.2vw; right:5.2vw; bottom:6vh; display:flex; align-items:center;
+             justify-content:space-between; gap:28px; font-size:12px; letter-spacing:.14em; pointer-events:none; }
+  .bp-foot .l { flex:0 0 auto; display:flex; gap:22px; align-items:baseline; }
+  .bp-foot .dim { opacity:.45; }
+  .bp-foot .num { font-variant-numeric:tabular-nums; }
+  .bp-foot .c { flex:1 1 auto; min-width:0; text-align:center; font-size:11px; letter-spacing:.2em;
+                opacity:.35; white-space:nowrap; overflow:hidden; }
+  .bp-foot .scrub { flex:0 0 auto; width:min(340px,28vw); height:30px; background:#16161a; border-radius:6px;
+                    padding:0 9px; display:flex; align-items:center; }
+  .bp-foot .track { position:relative; flex:1; height:14px;
+                    background:repeating-linear-gradient(90deg,rgba(233,230,224,.85) 0 1px,transparent 1px 7px); }
+  .bp-foot [data-head] { position:absolute; top:-4px; left:0; width:2px; height:22px; background:#c8332b; border-radius:1px; }
+  @media (max-width:900px){
+    /* the drawing gets its own band so the copy and the readout never sit on top of it */
+    #bp { top:23vh; bottom:auto; height:62vh; }   /* explicit — an svg with a viewBox ignores `bottom` when height is auto */
+    .bp-copy { max-width:min(34ch,68vw); top:9vh; }
+    .bp-copy p { font-size:12px; }
+    [data-labels] { display:none !important; }     /* leader lines need the wide frame */
+    #bpPlay { top:auto; bottom:calc(6vh + 40px); right:14px; padding:9px 16px 9px 13px; font-size:11px; }
+    .bp-foot { gap:14px; font-size:10px; letter-spacing:.1em; bottom:5vh; }
+    .bp-foot .l { gap:12px; }
+    .bp-foot .c { display:none; }
+    .bp-foot .scrub { flex:1 1 auto; width:auto; min-width:64px; max-width:190px; height:24px; }
+  }
+
+  /* ---- hand-off between the two acts ---- */
+  #handoff { height:70vh; background:#e9e6e0; color:#16161a; display:flex; align-items:center; justify-content:center;
+             font-family:"IBM Plex Mono",ui-monospace,monospace; }
+  #handoff .in { display:flex; flex-direction:column; align-items:center; gap:16px;
+                 font-size:11px; letter-spacing:.28em; text-transform:uppercase; }
+  #handoff .up { opacity:.35; }
+  #handoff .dn { color:#c8332b; }
+  #handoff .rule { width:1px; height:56px; background:linear-gradient(#16161a33,#16161a); }
+
+  /* ===================== ACT II — real-time 3D assembly ===================== */
+  #sec3d { height:1200vh; background:#eef0f2; }
+  #sec3d .pin { background:#eef0f2; }
+  #stage { position:absolute; left:0; top:0; width:100vw; height:100vh; }
+  #flash { position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none; }
+  #title { position:absolute; top:11vh; left:0; right:0; text-align:center; pointer-events:none; color:#2b3238; transition:opacity .3s; }
   #title .nm { font-size:min(9vw,74px); letter-spacing:.3em; margin-left:.3em; font-weight:700; }
   #title .sub { font-size:min(2.6vw,15px); letter-spacing:.5em; margin-left:.5em; color:#6d7a85; margin-top:12px; }
-  #hud { position:fixed; left:4vw; bottom:8vh; pointer-events:none; color:#28323a; opacity:0; transition:opacity .2s; }
+  #hud { position:absolute; left:4vw; bottom:8vh; pointer-events:none; color:#28323a; opacity:0; transition:opacity .2s; }
   #hud .ph { font-size:13px; letter-spacing:.35em; color:#8794a0; margin-bottom:6px; }
   #hud .st { font-size:24px; letter-spacing:.12em; }
   #hud .pc { font-size:13px; margin-top:6px; color:#8794a0; }
-  #hint { position:fixed; bottom:3.5vh; left:0; right:0; text-align:center; pointer-events:none; font-size:11px; letter-spacing:.45em; text-transform:uppercase; color:#8794a0; transition:opacity .4s; }
-  #bar { position:fixed; top:0; left:0; height:3px; width:0; background:#5b6b78; z-index:5; }
-  #playBtn { position:fixed; top:18px; right:18px; z-index:6; font:600 12px/1 "SF Mono",Consolas,monospace; letter-spacing:.2em;
+  #hint { position:absolute; bottom:3.5vh; left:0; right:0; text-align:center; pointer-events:none; font-size:11px; letter-spacing:.45em; text-transform:uppercase; color:#8794a0; transition:opacity .4s; }
+  #bar { position:fixed; top:0; left:0; height:3px; width:0; background:#5b6b78; z-index:11; }
+  #playBtn { position:fixed; top:18px; right:18px; z-index:12; font:600 12px/1 "SF Mono",Consolas,monospace; letter-spacing:.2em;
     color:#28323a; background:rgba(255,255,255,.85); border:1.5px solid #b08d3e; border-radius:3px; padding:11px 16px; cursor:pointer; }
   #playBtn:hover { background:#fff; border-color:#8a6a24; }
-  #playBtn { z-index:12; }                        /* above the nav pill, never covered by it */
   @media (max-width:900px){                       /* pill is centred and wide here — drop below it */
     #playBtn { top:auto; bottom:calc(3.5vh + 26px); right:14px; }
   }
@@ -73,14 +136,591 @@
     <a href="../#contact">Contact</a>
   </nav>
 </header>
-<div id="spacer"></div>
-<canvas id="stage"></canvas>
-<div id="flash"></div>
-<div id="bar"></div>
-<div id="title"><div class="nm">SENTINEL-9</div><div class="sub">HEAVY EXO-FRAME · SCROLL TO ASSEMBLE</div></div>
-<div id="hud"><div class="ph" id="hudPh"></div><div class="st" id="hudSt"></div><div class="pc" id="hudPc"></div></div>
-<div id="hint">Scroll to assemble · drag to orbit</div>
-<button id="playBtn">▶ PLAY ASSEMBLY</button>
+<!-- ============================ ACT I — 2D exploded blueprint ============================ -->
+<section id="sec2d" class="act">
+  <div class="pin">
+
+<svg id="bp" viewBox="-420 -30 2060 1140" preserveAspectRatio="xMidYMid meet" role="img"
+     fill="none" stroke="#16161A" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round">
+<title>Mk XLIV siege armour — exploded blueprint of thirty-seven armour modules</title>
+<defs>
+
+<g id="p-helm">
+<path d="M-58,-26 C-58,-50 -36,-62 0,-62 C36,-62 58,-50 58,-26 L60,16 L46,46 L-46,46 L-60,16 Z"></path>
+<path d="M-58,-24 L-40,-31 L40,-31 L58,-24" stroke-width="1.1"></path>
+<path d="M0,-62 L0,-31" stroke-width="1.1"></path>
+<path d="M-46,46 L-46,31 L46,31 L46,46" stroke-width="1.1"></path>
+<circle cx="-52" cy="4" r="10"></circle><circle cx="-52" cy="4" r="4.5" stroke-width="1"></circle>
+<circle cx="52" cy="4" r="10"></circle><circle cx="52" cy="4" r="4.5" stroke-width="1"></circle>
+<path d="M-28,-55 L28,-55" stroke-width="5" stroke-dasharray="1.1 5"></path>
+<path d="M-60,10 L-47,10 M47,10 L60,10" stroke-width="1.1"></path>
+<path d="M-44,-42 L-30,-49 M44,-42 L30,-49" stroke-width="1.1"></path>
+</g>
+
+<g id="p-face">
+<path d="M-44,-30 C-44,-46 -24,-54 0,-54 C24,-54 44,-46 44,-30 L44,4 L32,30 L-32,30 L-44,4 Z"></path>
+<path d="M-41,-21 L-20,-31 L20,-31 L41,-21" stroke-width="1.1"></path>
+<path d="M-36,-14 L-12,-19 L-11,-7 L-35,-4 Z"></path>
+<path d="M36,-14 L12,-19 L11,-7 L35,-4 Z"></path>
+<path d="M-4,-3 L4,-3 L3,11 L-3,11 Z" stroke-width="1.1"></path>
+<path d="M-27,11 L27,11 M-24,19 L24,19 M-19,26 L19,26" stroke-width="2.2"></path>
+<path d="M-44,-4 L-33,-4 M44,-4 L33,-4" stroke-width="1"></path>
+</g>
+
+<g id="p-face-hot" stroke="#C8332B" stroke-width="2.4">
+<path d="M-36,-14 L-12,-19 L-11,-7 L-35,-4 Z"></path>
+<path d="M36,-14 L12,-19 L11,-7 L35,-4 Z"></path>
+</g>
+
+<g id="p-neck">
+<path d="M-22,-17 L22,-17 L27,17 L-27,17 Z"></path>
+<path d="M-24,-6 L24,-6 M-26,5 L26,5" stroke-width="4" stroke-dasharray="1.1 4.5"></path>
+</g>
+
+<g id="p-chest">
+<path d="M-176,-84 L-120,-97 L120,-97 L176,-84 L186,-8 L150,86 L-150,86 L-186,-8 Z"></path>
+<path d="M-152,-70 L-104,-81 L104,-81 L152,-70" stroke-width="1.1"></path>
+<path d="M-62,-97 L-62,86 M62,-97 L62,86" stroke-width="1.1"></path>
+<path d="M-150,86 L-150,58 L150,58 L150,86" stroke-width="1.1"></path>
+<path d="M-168,-40 L-102,-40 M102,-40 L168,-40" stroke-width="11" stroke-dasharray="1.2 7.5"></path>
+<path d="M-146,24 L-88,24 M88,24 L146,24" stroke-width="8" stroke-dasharray="1.2 7.5"></path>
+<path d="M-40,-93 L40,-93 L44,-77 L-44,-77 Z" stroke-width="1.1"></path>
+<path d="M-176,-84 L-186,-8 M176,-84 L186,-8" stroke-width="1.1"></path>
+<path d="M-120,-97 L-108,86 M120,-97 L108,86" stroke-width="1"></path>
+</g>
+
+<g id="p-arc">
+<circle r="52"></circle><circle r="44" stroke-width="1.1"></circle>
+<circle r="38" stroke-width="5.5" stroke-dasharray="1.3 6.5"></circle>
+<circle r="28"></circle><circle r="19" stroke-width="1.1"></circle><circle r="9"></circle>
+<path d="M0,-28 L0,-19 M0,19 L0,28 M-28,0 L-19,0 M19,0 L28,0" stroke-width="1.1"></path>
+<path d="M-20,-20 L-13.4,-13.4 M20,-20 L13.4,-13.4 M-20,20 L-13.4,13.4 M20,20 L13.4,13.4" stroke-width="1.1"></path>
+</g>
+
+<g id="p-arc-hot" stroke="#C8332B" stroke-width="2.6">
+<circle r="28"></circle><circle r="19"></circle><circle r="9"></circle>
+<path d="M0,-28 L0,-19 M0,19 L0,28 M-28,0 L-19,0 M19,0 L28,0"></path>
+</g>
+
+<g id="p-abs">
+<path d="M-104,-48 L104,-48 L112,20 L92,50 L-92,50 L-112,20 Z"></path>
+<path d="M-100,-30 L100,-30 M-104,-7 L104,-7 M-102,16 L102,16" stroke-width="7" stroke-dasharray="1.2 7"></path>
+<path d="M0,-48 L0,50" stroke-width="1"></path>
+</g>
+
+<g id="p-hips">
+<path d="M-146,-44 L146,-44 L156,26 L116,66 L-116,66 L-156,26 Z"></path>
+<path d="M-118,-44 L-118,66 M118,-44 L118,66" stroke-width="1.1"></path>
+<circle cy="4" r="30"></circle><circle cy="4" r="19" stroke-width="1.1"></circle>
+<circle cy="4" r="25" stroke-width="4.6" stroke-dasharray="1.2 6"></circle>
+<path d="M-98,44 L-42,44 M42,44 L98,44" stroke-width="6.4" stroke-dasharray="1.2 7"></path>
+</g>
+
+<g id="p-back">
+<path d="M-142,-72 L142,-72 L158,58 L-158,58 Z" stroke-width="1.2"></path>
+<path d="M-118,-72 L-118,58 M118,-72 L118,58" stroke-width="1"></path>
+<path d="M-150,-22 L150,-22" stroke-width="12" stroke-dasharray="1.3 9"></path>
+<path d="M-150,30 L150,30" stroke-width="8" stroke-dasharray="1.3 9"></path>
+</g>
+
+<g id="p-pauldron">
+<path d="M-98,-56 C-42,-88 40,-80 90,-46 L98,26 C60,68 -30,76 -94,44 Z"></path>
+<path d="M-86,-42 C-36,-70 34,-63 80,-33" stroke-width="1.1"></path>
+<path d="M-90,12 C-30,40 42,36 92,4" stroke-width="1.1"></path>
+<path d="M-82,-15 C-26,5 36,3 86,-15" stroke-width="7" stroke-dasharray="1.3 7.5"></path>
+<path d="M-32,-78 L-34,72 M28,-74 L30,74" stroke-width="1"></path>
+<circle cx="-62" cy="32" r="6" stroke-width="1"></circle>
+<circle cx="62" cy="-22" r="6" stroke-width="1"></circle>
+<path d="M-98,-56 L-110,10 L-94,44" stroke-width="1.1"></path>
+</g>
+
+<g id="p-delt">
+<path d="M-40,-30 L40,-30 L47,26 L-47,26 Z"></path>
+<ellipse cy="-30" rx="40" ry="12"></ellipse>
+<ellipse cy="26" rx="47" ry="14"></ellipse>
+<path d="M-43,-3 L43,-3" stroke-width="7.6" stroke-dasharray="1.2 6"></path>
+</g>
+
+<g id="p-uarm">
+<path d="M-38,-42 L38,-42 L43,42 L-43,42 Z"></path>
+<ellipse cy="-42" rx="38" ry="11"></ellipse>
+<ellipse cy="42" rx="43" ry="12"></ellipse>
+<path d="M-40,-17 L40,-17 M-42,11 L42,11" stroke-width="7" stroke-dasharray="1.2 6"></path>
+<path d="M-52,-30 L-52,32" stroke-width="1.2"></path>
+<circle cx="-52" cy="-30" r="5" stroke-width="1"></circle>
+<circle cx="-52" cy="32" r="5" stroke-width="1"></circle>
+</g>
+
+<g id="p-elbow">
+<circle r="34"></circle><circle r="23" stroke-width="1.1"></circle>
+<circle r="29" stroke-width="5.4" stroke-dasharray="1.2 6"></circle>
+<circle r="10" stroke-width="1"></circle>
+</g>
+
+<g id="p-farm">
+<path d="M-52,-54 L52,-54 L65,50 L-65,50 Z"></path>
+<ellipse cy="-54" rx="52" ry="14"></ellipse>
+<ellipse cy="50" rx="65" ry="16"></ellipse>
+<path d="M-57,-22 L57,-22" stroke-width="9" stroke-dasharray="1.3 7"></path>
+<path d="M-61,16 L61,16" stroke-width="1.1"></path>
+<path d="M-30,24 L30,24 L34,42 L-34,42 Z" stroke-width="1.1"></path>
+<path d="M-65,50 L-65,64 L65,64 L65,50" stroke-width="1.1"></path>
+<path d="M-73,-20 L-73,24 M73,-20 L73,24" stroke-width="1"></path>
+</g>
+
+<g id="p-fist">
+<path d="M-52,-30 L52,-30 L58,26 L44,44 L-44,44 L-58,26 Z"></path>
+<path d="M-53,-8 L53,-8" stroke-width="1.1"></path>
+<path d="M-34,-30 L-34,-8 M-11,-30 L-11,-8 M12,-30 L12,-8 M35,-30 L35,-8" stroke-width="1"></path>
+<path d="M-46,12 L46,12" stroke-width="7.6" stroke-dasharray="1.3 7"></path>
+<path d="M-58,-2 L-74,6 L-71,26 L-55,23" stroke-width="1.3"></path>
+</g>
+
+<g id="p-rep">
+<circle r="26"></circle><circle r="17" stroke-width="1.1"></circle><circle r="8"></circle>
+<circle r="22" stroke-width="3.8" stroke-dasharray="1.2 5.5"></circle>
+</g>
+
+<g id="p-ball">
+<circle r="30"></circle>
+<ellipse rx="12" ry="30" stroke-width="1"></ellipse>
+<path d="M-30,0 L30,0" stroke-width="1"></path>
+<circle r="24" stroke-width="4.4" stroke-dasharray="1.2 5.5"></circle>
+</g>
+
+<g id="p-thigh">
+<path d="M-46,-60 L46,-60 L55,58 L-55,58 Z"></path>
+<ellipse cy="-60" rx="46" ry="13"></ellipse>
+<ellipse cy="58" rx="55" ry="15"></ellipse>
+<path d="M-50,-26 L50,-26 M-53,20 L53,20" stroke-width="8.4" stroke-dasharray="1.3 7"></path>
+<path d="M-60,-42 L-60,42 M60,-42 L60,42" stroke-width="1.2"></path>
+<circle cx="-60" cy="-42" r="5.5" stroke-width="1"></circle>
+<circle cx="60" cy="-42" r="5.5" stroke-width="1"></circle>
+</g>
+
+<g id="p-knee">
+<circle r="42"></circle><circle r="29" stroke-width="1.1"></circle>
+<circle r="36" stroke-width="6" stroke-dasharray="1.3 7.5"></circle>
+<path d="M-42,0 L42,0" stroke-width="1"></path>
+<path d="M-26,-48 L26,-48 L32,-34 L-32,-34 Z" stroke-width="1.2"></path>
+</g>
+
+<g id="p-shin">
+<path d="M-44,-54 L44,-54 L51,52 L-51,52 Z"></path>
+<ellipse cy="-54" rx="44" ry="12"></ellipse>
+<ellipse cy="52" rx="51" ry="14"></ellipse>
+<path d="M-47,-22 L47,-22 M-49,16 L49,16" stroke-width="7.8" stroke-dasharray="1.3 7"></path>
+<path d="M0,-54 L0,52" stroke-width="1"></path>
+</g>
+
+<g id="p-foot">
+<path d="M-56,-26 L56,-26 L74,16 L64,36 L-64,36 L-74,16 Z"></path>
+<path d="M-64,20 L64,20" stroke-width="1.1"></path>
+<path d="M-54,30 L54,30" stroke-width="6.2" stroke-dasharray="1.3 7"></path>
+<path d="M-30,-26 L-30,20 M30,-26 L30,20" stroke-width="1"></path>
+</g>
+
+<g id="p-rack">
+<path d="M-54,-36 L54,-36 L60,36 L-60,36 Z"></path>
+<path d="M-54,-36 L-56,36 M54,-36 L56,36" stroke-width="1.1"></path>
+<circle cx="-31" cy="-17" r="11"></circle><circle cx="0" cy="-17" r="11"></circle><circle cx="31" cy="-17" r="11"></circle>
+<circle cx="-32" cy="14" r="11"></circle><circle cx="0" cy="14" r="11"></circle><circle cx="32" cy="14" r="11"></circle>
+<circle cx="-31" cy="-17" r="5" stroke-width="1"></circle><circle cx="0" cy="-17" r="5" stroke-width="1"></circle><circle cx="31" cy="-17" r="5" stroke-width="1"></circle>
+<circle cx="-32" cy="14" r="5" stroke-width="1"></circle><circle cx="0" cy="14" r="5" stroke-width="1"></circle><circle cx="32" cy="14" r="5" stroke-width="1"></circle>
+</g>
+
+<g id="p-thrust">
+<path d="M-26,-42 L26,-42 L41,44 L-41,44 Z"></path>
+<ellipse cy="-42" rx="26" ry="9"></ellipse>
+<ellipse cy="44" rx="41" ry="13"></ellipse>
+<ellipse cy="44" rx="30" ry="9" stroke-width="1.1"></ellipse>
+<path d="M-33,10 L33,10" stroke-width="6.2" stroke-dasharray="1.2 6"></path>
+</g>
+
+<g id="p-msl">
+<path d="M0,-20 L7,-4 L7,16 L-7,16 L-7,-4 Z"></path>
+<path d="M-7,4 L-14,18 L-7,16 M7,4 L14,18 L7,16" stroke-width="1.1"></path>
+<path d="M-7,8 L7,8" stroke-width="1"></path>
+</g>
+
+</defs>
+
+<g data-cam style="transform-box:view-box;transform-origin:800px 520px">
+
+<g data-cons stroke="#16161A" opacity="0.16" stroke-width="1" stroke-dasharray="7 7">
+<path d="M800,60 L800,960"></path>
+<path d="M240,520 L1360,520"></path>
+<path d="M240,930 L1360,930"></path>
+<circle cx="800" cy="520" r="410" stroke-dasharray="3 9"></circle>
+</g>
+
+<g data-rig="back">
+<g data-part data-o="3" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-back" transform="translate(800,318)"></use></g>
+<g data-part data-o="36" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-thrust" transform="translate(730,404)"></use></g>
+<g data-part data-o="37" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-thrust" transform="translate(870,404) scale(-1,1)"></use></g>
+<g data-part data-o="34" data-rack style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-rack" transform="translate(668,206)"></use></g>
+<g data-part data-o="35" data-rack style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-rack" transform="translate(932,206) scale(-1,1)"></use></g>
+</g>
+
+<g data-rig="legL" style="transform-box:view-box;transform-origin:735px 552px">
+<g data-part data-o="9" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-ball" transform="translate(735,552)"></use></g>
+<g data-part data-o="11" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-thigh" transform="translate(726,644)"></use></g>
+<g data-part data-o="13" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-knee" transform="translate(722,728)"></use></g>
+<g data-part data-o="15" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-shin" transform="translate(720,806)"></use></g>
+<g data-part data-o="17" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-ball" transform="translate(718,868) scale(0.62)"></use></g>
+<g data-part data-o="19" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-foot" transform="translate(714,898)"></use></g>
+</g>
+
+<g data-rig="legR" style="transform-box:view-box;transform-origin:865px 552px">
+<g data-part data-o="10" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-ball" transform="translate(865,552) scale(-1,1)"></use></g>
+<g data-part data-o="12" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-thigh" transform="translate(874,644) scale(-1,1)"></use></g>
+<g data-part data-o="14" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-knee" transform="translate(878,728) scale(-1,1)"></use></g>
+<g data-part data-o="16" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-shin" transform="translate(880,806) scale(-1,1)"></use></g>
+<g data-part data-o="18" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-ball" transform="translate(882,868) scale(-0.62,0.62)"></use></g>
+<g data-part data-o="20" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-foot" transform="translate(886,898) scale(-1,1)"></use></g>
+</g>
+
+<g data-part data-o="1" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-hips" transform="translate(800,504)"></use></g>
+<g data-part data-o="2" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-abs" transform="translate(800,428)"></use></g>
+<g data-part data-o="4" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-chest" transform="translate(800,298)"></use></g>
+<g data-part data-o="5" data-arc style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-arc" transform="translate(800,316)"></use></g>
+<g data-hot="arc" opacity="0" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-arc-hot" transform="translate(800,316)"></use></g>
+<g data-part data-o="6" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-neck" transform="translate(800,230)"></use></g>
+<g data-part data-o="7" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-helm" transform="translate(800,168)"></use></g>
+<g data-part data-o="8" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-face" transform="translate(800,178)"></use></g>
+<g data-hot="eyes" opacity="0"><use href="#p-face-hot" transform="translate(800,178)"></use></g>
+
+<g data-rig="armR" style="transform-box:view-box;transform-origin:988px 300px">
+<g data-part data-o="22" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-delt" transform="translate(988,322) scale(-1,1)"></use></g>
+<g data-part data-o="24" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-uarm" transform="translate(1000,396) scale(-1,1)"></use></g>
+<g data-part data-o="26" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-elbow" transform="translate(1006,466) scale(-1,1)"></use></g>
+<g data-part data-o="28" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-farm" transform="translate(1010,544) scale(-1,1)"></use></g>
+<g data-part data-o="30" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-fist" transform="translate(1014,636) scale(-1,1)"></use></g>
+</g>
+
+<g data-rig="armL" style="transform-box:view-box;transform-origin:612px 300px">
+<g data-part data-o="21" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-delt" transform="translate(612,322)"></use></g>
+<g data-part data-o="23" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-uarm" transform="translate(600,396)"></use></g>
+<g data-part data-o="25" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-elbow" transform="translate(594,466)"></use></g>
+<g data-part data-o="27" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-farm" transform="translate(590,544)"></use></g>
+<g data-part data-o="29" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-fist" transform="translate(586,636)"></use></g>
+<g data-part data-o="31" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-rep" transform="translate(586,644)"></use></g>
+<g data-burst opacity="0" stroke="#C8332B" style="transform-box:fill-box;transform-origin:50% 50%">
+<circle data-bring cx="586" cy="644" r="30" stroke-width="2"></circle>
+<circle data-bring cx="586" cy="644" r="52" stroke-width="1.6"></circle>
+<circle data-bring cx="586" cy="644" r="76" stroke-width="1.2"></circle>
+<g data-brays stroke-width="1.4">
+<path d="M586,606 L586,566 M586,682 L586,722 M548,644 L508,644 M624,644 L664,644"></path>
+<path d="M559,617 L531,589 M613,671 L641,699 M613,617 L641,589 M559,671 L531,699"></path>
+<path d="M572,610 L558,576 M600,678 L614,712 M600,610 L614,576 M572,678 L558,712"></path>
+</g>
+</g>
+</g>
+
+<g data-part data-o="32" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-pauldron" transform="translate(614,252)"></use></g>
+<g data-part data-o="33" style="transform-box:fill-box;transform-origin:50% 50%"><use href="#p-pauldron" transform="translate(986,252) scale(-1,1)"></use></g>
+
+<g data-missiles stroke="#16161A"></g>
+
+</g>
+
+<g data-labels font-family="'IBM Plex Mono',monospace" font-size="15" letter-spacing="0.06em">
+<g data-lead><path d="M1490,214 L1252,214 L1160,262 L1104,262" stroke-width="1" opacity="0.55"></path><text x="1500" y="219" text-anchor="end" fill="#16161A" stroke="none">pauldron</text></g>
+<g data-lead><path d="M1490,250 L1300,250 L1210,318 L1094,318" stroke-width="1" opacity="0.55"></path><text x="1500" y="255" text-anchor="end" fill="#16161A" stroke="none">missile rack</text></g>
+<g data-lead><path d="M1490,286 L1330,286 L1240,404 L1188,404" stroke-width="1" opacity="0.55"></path><text x="1500" y="291" text-anchor="end" fill="#16161A" stroke="none">thruster</text></g>
+<g data-lead><path d="M1490,322 L1300,322 L1190,544 L1084,544" stroke-width="1" opacity="0.55"></path><text x="1500" y="327" text-anchor="end" fill="#16161A" stroke="none">gauntlet</text></g>
+<g data-lead><path d="M1490,358 L1260,358 L1080,728 L928,728" stroke-width="1" opacity="0.55"></path><text x="1500" y="363" text-anchor="end" fill="#16161A" stroke="none">knee servo</text></g>
+<g data-lead><path d="M110,610 L330,610 L470,178 L742,178" stroke-width="1" opacity="0.55"></path><text x="100" y="615" text-anchor="start" fill="#16161A" stroke="none">optics</text></g>
+<g data-lead><path d="M110,646 L360,646 L500,316 L742,316" stroke-width="1" opacity="0.55"></path><text x="100" y="651" text-anchor="start" fill="#16161A" stroke="none">arc reactor</text></g>
+<g data-lead><path d="M110,682 L400,682 L470,644 L554,644" stroke-width="1" opacity="0.55"></path><text x="100" y="687" text-anchor="start" fill="#16161A" stroke="none">repulsor</text></g>
+<g data-lead><path d="M110,718 L420,718 L560,504 L638,504" stroke-width="1" opacity="0.55"></path><text x="100" y="723" text-anchor="start" fill="#16161A" stroke="none">hip actuator</text></g>
+<g data-lead><path d="M110,754 L440,754 L580,806 L664,806" stroke-width="1" opacity="0.55"></path><text x="100" y="759" text-anchor="start" fill="#16161A" stroke="none">shin plating</text></g>
+</g>
+</svg>
+
+    <div class="bp-copy" data-copy>
+      <div class="kick">MK XLIV — EXPLODED VIEW</div>
+      <h1>The complete<br>siege assembly</h1>
+      <p>Thirty-seven armour modules seat onto the frame, lock, and go hot. Scroll to drive the sequence — or let it run.</p>
+    </div>
+
+    <div class="bp-foot">
+      <div class="l"><span class="dim">PHASE</span><span data-phase>EXPLODED</span><span class="dim num" data-pct>000%</span></div>
+      <div class="c">HULKBUSTER / STARK INDUSTRIES</div>
+      <div class="scrub"><div class="track"><div data-head></div></div></div>
+    </div>
+
+  </div>
+  <button id="bpPlay" class="fixed" data-play aria-label="Play the blueprint sequence">
+    <span class="ico"></span><span data-playlabel>PLAY</span>
+  </button>
+</section>
+
+<div id="handoff">
+  <div class="in">
+    <div class="up">▲ MK XLIV · 2D blueprint</div>
+    <div class="rule"></div>
+    <div class="dn">SENTINEL-9 · real-time 3D ▼</div>
+  </div>
+</div>
+
+<!-- ============================ ACT II — real-time 3D assembly ============================ -->
+<section id="sec3d" class="act">
+  <div class="pin">
+    <canvas id="stage"></canvas>
+    <div id="flash"></div>
+    <div id="title"><div class="nm">SENTINEL-9</div><div class="sub">HEAVY EXO-FRAME · SCROLL TO ASSEMBLE</div></div>
+    <div id="hud"><div class="ph" id="hudPh"></div><div class="st" id="hudSt"></div><div class="pc" id="hudPc"></div></div>
+    <div id="hint">Scroll to assemble · drag to orbit</div>
+  </div>
+  <div id="bar" class="fixed"></div>
+  <button id="playBtn" class="fixed">▶ PLAY ASSEMBLY</button>
+</section>
+
+<script src="vendor/anime.umd.min.js"></script>
+<script>
+/* ============================================================================
+   ACT I — the exploded blueprint.
+   Scroll through #sec2d scrubs an anime.js timeline: every module draws itself
+   on, then flies down a curved path into its seat; the frame powers up, fires,
+   and empties its racks. Without JS the SVG still renders as a clean assembled
+   blueprint, which is the fallback we want.
+   ========================================================================== */
+(() => {
+  const OPT = { accent:'#C8332B', spread:380, runtime:18000 };  // runtime = auto-play seconds
+  const act = document.getElementById('sec2d');
+  if (!act) return;
+
+  // the wide frame carries the leader lines; phones get a tight crop around the frame itself
+  const svg = document.getElementById('bp');
+  const VIEW = { wide:'-420 -30 2060 1140', tight:'430 20 740 1030' };
+  let view = '';
+  const fitView = () => {
+    const want = innerWidth < 900 ? VIEW.tight : VIEW.wide;
+    if (want !== view) svg.setAttribute('viewBox', view = want);
+  };
+  fitView();
+  addEventListener('resize', fitView);
+
+  let tries = 0;
+  const start = () => {
+    if (window.anime) return build(window.anime);
+    if (++tries < 60) setTimeout(start, 80);     // vendored bundle still parsing; if it never lands,
+  };                                             // the svg stays a clean assembled blueprint
+  start();
+
+  function build(A){
+    const defs = svg.querySelector('defs');
+    const NS = 'http://www.w3.org/2000/svg';
+
+    // <use> can't be stroke-drawn — inline every referenced symbol as real geometry
+    for (const u of [...svg.querySelectorAll('[data-cam] use')]){
+      const src = defs.querySelector(u.getAttribute('href'));
+      if (!src) continue;
+      const wrap = document.createElementNS(NS, 'g');
+      for (const a of src.attributes) if (a.name !== 'id' && a.name !== 'transform') wrap.setAttribute(a.name, a.value);
+      const t = u.getAttribute('transform');
+      if (t) wrap.setAttribute('transform', t);
+      for (const c of src.childNodes) wrap.appendChild(c.cloneNode(true));
+      u.replaceWith(wrap);
+    }
+    for (const n of svg.querySelectorAll('[stroke="#C8332B"]')) n.setAttribute('stroke', OPT.accent);
+
+    const cam   = svg.querySelector('[data-cam]');
+    const parts = [...svg.querySelectorAll('[data-part]')];
+    const arcs  = document.createElementNS(NS, 'g');
+    defs.appendChild(arcs);
+
+    // outlines that can be stroke-drawn — skip anything using dashes as texture
+    for (const el of parts){
+      el._draw = A.svg.createDrawable([...el.querySelectorAll('path,circle,ellipse')]
+        .filter(n => !n.getAttribute('stroke-dasharray') && n.getTotalLength && n.getTotalLength() > 2));
+      el._solid = [...el.querySelectorAll('[stroke-dasharray]')];
+    }
+    const leads = A.svg.createDrawable([...svg.querySelectorAll('[data-lead] path')]);
+
+    const holder = svg.querySelector('[data-missiles]');
+    const mSrc = defs.querySelector('#p-msl'), msl = [];
+    for (let i = 0; i < 16; i++){
+      const g = document.createElementNS(NS, 'g'), wrap = document.createElementNS(NS, 'g'), left = i % 2 === 0;
+      wrap.setAttribute('transform', 'translate(' + ((left ? 668 : 932) + ((i % 6) - 2.5) * 12) + ',' + (206 + (i % 3) * 8) + ')');
+      for (const c of mSrc.childNodes) wrap.appendChild(c.cloneNode(true));
+      g.appendChild(wrap);
+      g.setAttribute('opacity', '0');
+      g.style.transformBox = 'fill-box';
+      g.style.transformOrigin = '50% 50%';
+      g._dir = left ? -1 : 1;
+      holder.appendChild(g);
+      msl.push(g);
+    }
+
+    /* ---- each module gets its own curved flight path, in its local offset space ---- */
+    const CX = 800, CY = 520, S = OPT.spread;
+    for (const el of parts){
+      const b = el.getBBox();
+      const dx = b.x + b.width / 2 - CX, dy = b.y + b.height / 2 - CY;
+      const L = Math.hypot(dx, dy) || 1, d = S * (0.55 + Math.random() * 0.95);
+      const fx = (dx / L) * d + (Math.random() - 0.5) * S * 0.5;
+      const fy = (dy / L) * d * 0.8 + (Math.random() - 0.5) * S * 0.5 - S * 0.15;
+      el._fr = (Math.random() - 0.5) * 64;
+      el._fs = 0.66 + Math.random() * 0.26;
+      const bow = (Math.random() < 0.5 ? -1 : 1) * (0.28 + Math.random() * 0.4);
+      const p = document.createElementNS(NS, 'path');
+      p.setAttribute('d', 'M' + fx + ',' + fy + ' Q' + (fx * 0.5 - fy * bow) + ',' + (fy * 0.5 + fx * bow) + ' 0,0');
+      arcs.appendChild(p);
+      el._path = A.svg.createMotionPath(p);
+      A.utils.set(el, { translateX:fx, translateY:fy, rotate:el._fr, scale:el._fs, opacity:1 });
+      A.utils.set(el._solid, { opacity:0 });
+    }
+
+    const ordered = parts.slice().sort((a, b) => (+a.dataset.o) - (+b.dataset.o));
+    const STAG = 112, FLY = 1150, DRAW = 560, HOLD = 420;
+    const tl = A.createTimeline({ autoplay:false, defaults:{ ease:'outExpo' } });
+
+    ordered.forEach((el, i) => {
+      const t0 = i * STAG;
+      A.utils.set(el._draw, { draw:'0 0' });
+      tl.add(el._draw, { draw:['0 0', '0 1'], duration:DRAW, ease:'inOutQuad',
+                         delay:A.stagger(26, { from:'center' }) }, t0);
+      if (el._solid.length) tl.add(el._solid, { opacity:[0, 1], duration:380 }, t0 + 220);
+      tl.add(el, { translateX:el._path.translateX, translateY:el._path.translateY,
+                   rotate:[el._fr, 0], scale:[el._fs, 1], duration:FLY, ease:'outQuint' }, t0 + HOLD);
+      tl.add(el, { keyframes:[{ scale:1.035, duration:90 }, { scale:1, duration:260, ease:'outBack' }] },
+             t0 + HOLD + FLY - 120);
+    });
+    const T = (ordered.length - 1) * STAG + HOLD + FLY;
+
+    A.utils.set(leads, { draw:'0 0' });
+    tl.add(leads, { draw:['0 0', '0 1'], duration:780, ease:'inOutQuad', delay:A.stagger(130) }, 500);
+    svg.querySelectorAll('[data-lead] text').forEach((t, i) => {
+      A.utils.set(t, { opacity:0 });
+      tl.add(t, { opacity:[0, 1], duration:400 }, 900 + i * 130);
+    });
+
+    tl.add(cam, { scale:[1, 1.07], y:[0, -14], duration:900, ease:'inOutQuad' }, T - 200);
+    tl.add(svg.querySelector('[data-cons]'), { opacity:[0.16, 0.06], duration:700 }, T - 200);
+
+    tl.add(svg.querySelector('[data-hot="arc"]'), { opacity:[0, 1], scale:[1.5, 1], duration:620, ease:'outBack' }, T + 500);
+    tl.add(svg.querySelector('[data-hot="eyes"]'), { opacity:[0, 1], duration:300 }, T + 780);
+    tl.add(svg.querySelector('[data-arc]'), { keyframes:[
+      { scale:1.06, duration:450, ease:'inOutSine' }, { scale:1, duration:450, ease:'inOutSine' } ] }, T + 620);
+    tl.add(svg.querySelector('[data-rig="legL"]'), { rotate:[0, -3], duration:700 }, T + 400);
+    tl.add(svg.querySelector('[data-rig="legR"]'), { rotate:[0, 4], duration:700 }, T + 400);
+    tl.add(svg.querySelector('[data-rig="armR"]'), { rotate:[0, -14], duration:800, ease:'outBack' }, T + 500);
+
+    tl.add(svg.querySelector('[data-rig="armL"]'), { rotate:[0, 52], duration:1150, ease:'outBack' }, T + 1400);
+    tl.add(act.querySelector('[data-copy]'), { opacity:[1, 0.08], duration:700, ease:'inOutQuad' }, T + 1250);
+    tl.add(cam, { scale:[1.07, 1.13], x:[0, 40], y:[-14, 10], duration:1100, ease:'inOutQuad' }, T + 1400);
+    tl.add(svg.querySelector('[data-burst]'), { opacity:[0, 1], duration:220 }, T + 2350);
+    svg.querySelectorAll('[data-bring]').forEach((c, i) => {
+      tl.add(c, { scale:[0.25, 1.9], opacity:[1, 0], duration:900, ease:'outQuad' }, T + 2400 + i * 150);
+      tl.add(c, { scale:[0.25, 2.1], opacity:[1, 0], duration:900, ease:'outQuad' }, T + 3100 + i * 150);
+    });
+    tl.add(svg.querySelector('[data-brays]'), { keyframes:[
+      { opacity:1, scale:1.1, duration:220 }, { opacity:0.3, duration:200 },
+      { opacity:1, scale:1.35, duration:260 }, { opacity:0, duration:420 } ] }, T + 2400);
+
+    svg.querySelectorAll('[data-rack]').forEach((r, i) => {
+      tl.add(r, { y:[0, -16], rotate:[0, i ? 6 : -6], duration:500, ease:'outBack' }, T + 3900);
+    });
+    tl.add(cam, { scale:[1.13, 0.94], x:[40, 0], y:[10, -30], duration:1400, ease:'inOutQuad' }, T + 3900);
+    msl.forEach((m, i) => {
+      const d = m._dir;
+      tl.add(m, { keyframes:[
+        { x:d * 30, y:-40, opacity:1, rotate:d * 8, duration:220, ease:'outQuad' },
+        { x:d * (300 + Math.random() * 320), y:-(420 + Math.random() * 300), rotate:d * 34, opacity:0, duration:1000, ease:'inQuad' }
+      ] }, T + 4200 + i * 150);
+    });
+    tl.pause();
+
+    /* ---- readout ---- */
+    const phaseEl = act.querySelector('[data-phase]'), pctEl = act.querySelector('[data-pct]');
+    const headEl = act.querySelector('[data-head]');
+    headEl.style.background = OPT.accent;
+    const PH = [[0.02,'EXPLODED'],[0.44,'ASSEMBLY'],[0.52,'LOCK'],[0.62,'POWER'],[0.80,'REPULSOR'],[1.01,'BARRAGE']];
+    let lastPh = '';
+    const hud = (p) => {
+      pctEl.textContent = String(Math.round(p * 100)).padStart(3, '0') + '%';
+      headEl.style.left = (p * 100) + '%';
+      for (const [t, n] of PH) if (p < t){ if (lastPh !== n){ lastPh = n; phaseEl.textContent = n; } break; }
+    };
+
+    /* ---- scroll → target progress, eased toward it every frame ----
+       measured against this section only, so the 3D act below scrubs independently */
+    let top = 0, range = 1;
+    const measure = () => { top = act.getBoundingClientRect().top + scrollY; range = Math.max(1, act.offsetHeight - innerHeight); };
+    measure();
+    addEventListener('resize', measure);
+    addEventListener('load', measure);
+
+    let cur = 0, want = 0, last = 0, painted = false;
+    const pull = () => {
+      want = Math.min(1, Math.max(0, (scrollY - top) / range));
+      const now = performance.now(), dt = now - last;
+      if (dt < 8) return;
+      last = now;
+      const d = want - cur;
+      if (!d && painted) return;
+      // ease at frame rate, but snap when frames are starved (hidden tab, throttled timers)
+      cur = Math.abs(d) < 0.0004 || dt > 200 ? want : cur + d * 0.18;
+      tl.seek(tl.duration * cur);
+      hud(cur);
+      painted = true;
+    };
+    addEventListener('scroll', pull, { passive:true });
+    addEventListener('resize', pull);
+    (function loop(){ requestAnimationFrame(loop); pull(); })();
+
+    /* ---- auto-play: anime drives the scroll position, the scrub still owns the timeline ---- */
+    const btn = act.querySelector('[data-play]'), label = act.querySelector('[data-playlabel]');
+    let drive = null;
+    const stop = () => { if (drive){ drive.pause(); drive = null; } btn.classList.remove('on'); label.textContent = 'PLAY'; };
+    btn.addEventListener('click', () => {
+      if (drive) return stop();
+      const from = scrollY >= top + range - 4 ? top : Math.min(top + range, Math.max(top, scrollY));
+      scrollTo(0, from);
+      const o = { y:from };
+      btn.classList.add('on'); label.textContent = 'PAUSE';
+      drive = A.animate(o, {
+        y: top + range, ease:'linear',
+        duration: Math.max(600, OPT.runtime * (1 - (from - top) / range)),
+        onUpdate: () => scrollTo(0, o.y),
+        onComplete: () => { drive = null; btn.classList.remove('on'); label.textContent = 'PLAY'; }
+      });
+    });
+    for (const ev of ['wheel','touchstart']) addEventListener(ev, () => { if (drive) stop(); }, { passive:true });
+
+    /* ---- pointer parallax — on the svg, so it never fights the camera group ---- */
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches || matchMedia('(hover: none)').matches;
+    if (!still){
+      svg.parentElement.style.perspective = '1800px';
+      const tilt = A.createAnimatable(svg, { rotateX:700, rotateY:700, ease:'outQuad' });
+      addEventListener('pointermove', (e) => {
+        if (!document.body.classList.contains('at-2d')) return;
+        const r = svg.getBoundingClientRect();
+        tilt.rotateY(((e.clientX - r.left) / r.width - 0.5) * 8)
+            .rotateX((0.5 - (e.clientY - r.top) / r.height) * 6);
+      }, { passive:true });
+    }
+  }
+})();
+
+/* Which act owns the viewport — drives which floating controls are live. */
+(() => {
+  const a2 = document.getElementById('sec2d'), a3 = document.getElementById('sec3d'), cl = document.body.classList;
+  let queued = false;
+  const mark = () => {
+    queued = false;
+    const mid = innerHeight / 2, r2 = a2.getBoundingClientRect(), r3 = a3.getBoundingClientRect();
+    cl.toggle('at-2d', r2.top <= mid && r2.bottom >= mid);
+    cl.toggle('at-3d', r3.top <= mid && r3.bottom >= mid);
+  };
+  const ping = () => { if (!queued){ queued = true; requestAnimationFrame(mark); } };
+  addEventListener('scroll', ping, { passive:true });
+  addEventListener('resize', ping);
+  mark();
+})();
+</script>
 
 <script type="module">
 import * as THREE from 'three';
@@ -728,9 +1368,15 @@ const camTgt = new THREE.CatmullRomCurve3([
   new THREE.Vector3(0,29,0), new THREE.Vector3(0,19,0), new THREE.Vector3(-8,350,7)
 ]);
 
+/* progress is measured across this act's own section, not the whole document —
+   the blueprint above owns the first stretch of the same scrollbar */
+const act = document.getElementById('sec3d');
+let actTop = 0, actRange = 1;
+function measureAct(){ actTop = act.getBoundingClientRect().top + scrollY; actRange = Math.max(1, act.offsetHeight - innerHeight); }
 let target = 0, smooth = 0;
-const readScroll = () => { const max = document.documentElement.scrollHeight - innerHeight; target = max>0 ? scrollY/max : 0; };
+const readScroll = () => { target = Math.min(1, Math.max(0,(scrollY-actTop)/actRange)); };
 addEventListener('scroll', readScroll, { passive:true });
+addEventListener('load', ()=>{ measureAct(); readScroll(); });
 let yaw=0, pitch=0, dragging=false, lx=0, ly=0;
 canvas.addEventListener('pointerdown', e=>{ dragging=true; lx=e.clientX; ly=e.clientY; });
 addEventListener('pointermove', e=>{ if(!dragging) return;
@@ -745,13 +1391,12 @@ function stopPlay(){ playing = false; playBtn.textContent = '▶ PLAY ASSEMBLY';
 playBtn.addEventListener('click', () => {
   if (playing){ stopPlay(); return; }
   playing = true; playBtn.textContent = '■ STOP';
-  const max = document.documentElement.scrollHeight - innerHeight;
-  const from = 0, t0 = performance.now();
-  scrollTo(0, 0); smooth = 0;
+  const t0 = performance.now();
+  scrollTo(0, actTop); smooth = 0;
   (function step(ts){
     if (!playing) return;
     const k = Math.min(1, (ts - t0)/20000);
-    scrollTo(0, from + (max-from)*k);
+    scrollTo(0, actTop + actRange*k);
     if (k < 1) requestAnimationFrame(step); else stopPlay();
   })(t0);
 });
@@ -775,10 +1420,14 @@ const titleEl=document.getElementById('title'), hintEl=document.getElementById('
 const V1=new THREE.Vector3(), V2=new THREE.Vector3(), SPH=new THREE.Spherical();
 const clock = new THREE.Clock();
 function resize(){ renderer.setSize(innerWidth,innerHeight,false); camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix(); }
-addEventListener('resize', resize); resize(); readScroll();
+addEventListener('resize', ()=>{ resize(); measureAct(); readScroll(); });
+resize(); measureAct(); readScroll();
 
 renderer.setAnimationLoop(()=>{
   const dt = Math.min(clock.getDelta(),0.05), t = clock.getElapsedTime();
+  readScroll();
+  const y = scrollY;                                            // idle while the blueprint act holds the viewport
+  if (y + innerHeight <= actTop || y >= actTop + actRange + innerHeight){ smooth = target; return; }
   smooth += (target-smooth)*0.08;
   const p = Math.min(1, Math.max(0,smooth));
   updateParts(p,t); updateSparks(dt); updateMissiles(p,t);
