@@ -1,402 +1,1331 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Virtual Influencer — Zhang Cheng</title>
-  <meta name="description" content="A real person, scaled by AI. A likeness model trained on my own face, a Claude-driven content brain, and an identity gate that scores every frame before it ships. Singapore hawker food, thirty posts a month.">
-  <meta property="og:title" content="Virtual Influencer — Zhang Cheng">
-  <meta property="og:description" content="My own face, trained into a model. Every generated frame gets scored against real photographs before it can be published. Built by AI agents under my direction.">
-  <meta property="og:type" content="website">
-  <meta name="theme-color" content="#fdf4ff">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍜</text></svg>">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      /* House candy-neon tokens, shared with the landing page and the desk. */
-      --bg:#fdf4ff; --ink:#38235c;
-      --pink:#ff3fae; --pink-ink:#c9106f;
-      --purple:#8b3dff; --violet:#6428d8;
-      --cyan:#25c4ff; --gold:#ffb830; --green:#12b981;
-      --card:#ffffff; --sunk:#f3e9ff;
-      --border:rgba(139,61,255,.20); --border-pink:rgba(255,63,174,.30);
-      --grad:linear-gradient(95deg,#ef1f96,#7a2df0 46%,#0f9fe0);
-      --radius:18px;
-      /* The signboard: a hawker stall sign rendered in house colours —
-         deep violet panel, laminated gold type. */
-      --board:#4a1b9c; --board-ink:#ffe9b8; --board-gold:var(--gold);
-      --shadow:0 14px 44px rgba(139,61,255,.22);
-    }
-    *{margin:0;padding:0;box-sizing:border-box}
-    html{scroll-behavior:smooth;scroll-padding-top:92px}
-    body{background:var(--bg);color:var(--ink);font-family:Inter,system-ui,-apple-system,sans-serif;
-         -webkit-font-smoothing:antialiased;overflow-x:hidden;line-height:1.65}
-    a{color:inherit}
-    ::selection{background:rgba(255,63,174,.25)}
-    :focus-visible{outline:2px solid var(--purple);outline-offset:3px;border-radius:4px}
-    h1,h2,h3{text-wrap:balance}
-    .mono{font-family:"JetBrains Mono",monospace}
-    .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZHANG CHENG — Virtual Influencer</title>
+<meta name="description" content="Zhang Cheng is a virtual influencer rendered from a real, licensed likeness. Editorial-grade campaign imagery for fashion, tech, food and lifestyle brands — any city, any season, any style, zero reshoots.">
+<meta property="og:title" content="ZHANG CHENG — Virtual Influencer">
+<meta property="og:description" content="One face. Your campaign. AI-rendered from a real licensed likeness — editorial imagery for brands that move fast.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://zhangcheng0605.github.io/fableWebsite/influencer/assets/img/editorial/01-cinematic-night-street.webp">
+<meta name="theme-color" content="#08080a">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%2308080a'/><text x='50' y='72' font-size='58' font-family='Arial Black' font-weight='900' fill='%23ff4b2e' text-anchor='middle'>Z</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============ tokens ============ */
+:root{
+  --bg:#08080a; --panel:#0e0e12; --panel2:#121218;
+  --ink:#f0ece4; --dim:rgba(240,236,228,.62); --faint:rgba(240,236,228,.55);
+  --line:rgba(240,236,228,.1); --line2:rgba(240,236,228,.16);
+  --acc:#ff4b2e; --acc-soft:rgba(255,75,46,.14); --amber:#ffb247;
+  --disp:"Bebas Neue",Impact,sans-serif;
+  --body:"Manrope",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+  --pad:clamp(20px,4vw,56px);
+  --e:cubic-bezier(.22,.8,.24,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.6;
+  -webkit-font-smoothing:antialiased;overflow-x:clip}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+::selection{background:var(--acc);color:#0a0503}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+h1,h2,h3{font-weight:400}
+body.mouse-live,body.mouse-live a,body.mouse-live button,
+body.mouse-live [data-lb],body.mouse-live .print,body.mouse-live .dpile,
+body.mouse-live .mrow,body.mouse-live .ritem{cursor:none}
 
-    .skip-link{position:fixed;top:-100px;left:16px;z-index:100;padding:10px 18px;border-radius:99px;
-      background:var(--pink);color:#fff;font-weight:600;transition:top .2s;text-decoration:none}
-    .skip-link:focus{top:16px}
+/* ============ film grain ============ */
+.grain{position:fixed;inset:-4%;z-index:300;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation:grain .7s steps(6) infinite}
+@keyframes grain{
+  0%{transform:translate(0,0)}20%{transform:translate(-1.5%,1%)}40%{transform:translate(1%,-1.5%)}
+  60%{transform:translate(-1%,-1%)}80%{transform:translate(1.5%,1.5%)}100%{transform:translate(0,0)}}
+@media(max-width:820px){.grain{display:none}}
 
-    .bg{position:fixed;inset:0;z-index:-2;background:
-        radial-gradient(55vw 45vh at 18% -5%,rgba(255,183,226,.5),transparent 62%),
-        radial-gradient(50vw 42vh at 88% 30%,rgba(178,140,255,.35),transparent 60%),
-        radial-gradient(60vw 50vh at 50% 110%,rgba(126,216,255,.45),transparent 65%),
-        linear-gradient(180deg,#fff4fd,#f4e9ff 45%,#eaf6ff)}
-    .gridlines{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
-        background-image:linear-gradient(rgba(109,40,217,.05) 1px,transparent 1px),
-                         linear-gradient(90deg,rgba(109,40,217,.05) 1px,transparent 1px);
-        background-size:56px 56px;
-        mask-image:radial-gradient(70vw 70vh at 50% 20%,#000 0%,transparent 80%)}
+/* ============ preloader ============ */
+.loader{position:fixed;inset:0;z-index:500;background:var(--bg);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:14px;transition:transform .4s var(--e),visibility 0s .4s}
+.loader.off{transform:translateY(-101%);visibility:hidden}
+.loader .lg{font-family:var(--disp);font-size:clamp(3rem,10vw,6rem);letter-spacing:.06em;line-height:1}
+.loader .lg i{font-style:normal;color:var(--acc)}
+.loader .pct{font-family:var(--mono);font-size:.8rem;color:var(--faint);letter-spacing:.2em}
 
-    /* ---------- nav ---------- */
-    .nav-wrap{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);
-      background:rgba(253,244,255,.82);border-bottom:1px solid var(--border)}
-    .nav{max-width:1120px;margin:0 auto;padding:14px 22px;display:flex;gap:22px;align-items:center;
-      font-size:.86rem;font-weight:600;flex-wrap:wrap}
-    .nav a{text-decoration:none;color:var(--ink);opacity:.72}
-    .nav a:hover,.nav a:focus-visible{opacity:1;color:var(--pink-ink)}
-    .nav .logo{font-family:Anton,sans-serif;font-size:1.15rem;letter-spacing:.06em;opacity:1;margin-right:auto}
-    .nav .logo span{color:var(--pink)}
+/* ============ chrome ============ */
+.progress{position:fixed;top:0;left:0;right:0;height:2px;z-index:260;background:transparent}
+.progress i{display:block;height:100%;background:var(--acc);transform-origin:0 50%;transform:scaleX(0)}
+.nav{position:fixed;top:0;left:0;right:0;z-index:250;display:flex;align-items:center;gap:22px;
+  padding:16px var(--pad);transition:background .35s,border-color .35s,padding .35s;border-bottom:1px solid transparent}
+.nav.solid{background:rgba(8,8,10,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom-color:var(--line);padding-block:11px}
+.nav .logo{font-family:var(--disp);font-size:1.5rem;letter-spacing:.1em;text-decoration:none;margin-right:auto;line-height:1}
+.nav .logo i{font-style:normal;color:var(--acc)}
+.nav a.lnk{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-decoration:none;
+  color:var(--dim);text-transform:uppercase;transition:color .2s}
+.nav a.lnk:hover{color:var(--ink)}
+.nav .book{font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;
+  text-decoration:none;color:#0a0503;background:var(--acc);padding:9px 18px;border-radius:99px;
+  font-weight:600;transition:transform .2s var(--e),background .2s}
+.nav .book:hover{transform:translateY(-2px);background:#ff5c42}
+@media(max-width:1080px){.nav a.lnk{display:none}}
 
-    main{max-width:1120px;margin:0 auto;padding:0 22px}
-    section{padding-block:clamp(48px,7vw,86px);border-bottom:1px solid var(--border)}
-    section:last-of-type{border-bottom:0}
+/* ============ viewfinder cursor ============ */
+.vf{position:fixed;top:0;left:0;z-index:400;pointer-events:none;width:26px;height:26px;
+  transform:translate(-50%,-50%);display:none;opacity:0;transition:opacity .3s;color:var(--ink)}
+body.mouse-live .vf{opacity:1}
+@media(pointer:fine){.vf{display:block}}
+.vf svg{width:100%;height:100%;display:block;transition:transform .28s var(--e);overflow:visible}
+.vf .rec{position:absolute;top:-8px;right:-10px;width:6px;height:6px;border-radius:50%;
+  background:#ff2d2d;animation:pulse 1.6s ease infinite;transition:transform .28s var(--e)}
+.vf .vlabel{position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%) translateY(-4px);
+  font-family:var(--mono);font-size:.56rem;letter-spacing:.2em;color:var(--ink);
+  background:rgba(8,8,10,.75);border:1px solid var(--line2);padding:3px 9px;border-radius:99px;
+  opacity:0;transition:opacity .25s,transform .25s;white-space:nowrap}
+.vf.big{color:var(--acc)}
+.vf.big svg{transform:scale(2.1)}
+.vf.big .rec{transform:translate(10px,-10px)}
+.vf.big .vlabel{opacity:1;transform:translateX(-50%) translateY(14px)}
+.vf.link{color:var(--acc)}
+.vf.link svg{transform:scale(1.45)}
+.vf.snap svg{transform:scale(.7)}
+@keyframes pulse{50%{opacity:.3}}
+.heart{position:fixed;z-index:399;pointer-events:none;left:var(--hx);top:var(--hy);
+  font-size:var(--hs,18px);color:var(--hc,#ff4b2e);animation:heartUp .95s ease-out forwards}
+@keyframes heartUp{0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}
+  18%{opacity:1;transform:translate(-50%,-60%) scale(1.05)}
+  100%{opacity:0;transform:translate(calc(-50% + var(--hdx,0px)),calc(-50% - 120px)) scale(.9) rotate(var(--hr,0deg))}}
 
-    .sec-head{display:flex;align-items:baseline;gap:14px;margin-bottom:10px}
-    .sec-index{font-family:"JetBrains Mono",monospace;font-size:.78rem;font-weight:700;color:var(--pink-ink)}
-    h2{font-family:Anton,sans-serif;font-size:clamp(1.7rem,4vw,2.7rem);letter-spacing:.005em;
-       line-height:1.05;text-transform:uppercase;font-weight:400}
-    .sec-sub{max-width:62ch;margin-bottom:30px;font-size:1.04rem;opacity:.88}
-    h3{font-size:1.02rem;font-weight:700;margin-bottom:6px}
-    p+p{margin-top:1rem}
+/* ============ shared ============ */
+section{position:relative}
+.wrap{max-width:1480px;margin:0 auto;padding-inline:var(--pad)}
+.eyebrow{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:.72rem;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--acc)}
+.eyebrow::before{content:"";width:34px;height:1px;background:var(--acc)}
+.h2{font-family:var(--disp);font-size:clamp(3rem,8.5vw,7.2rem);line-height:.92;letter-spacing:.015em;
+  text-transform:uppercase;margin:14px 0 10px}
+.h2 .ghost{color:transparent;-webkit-text-stroke:1px rgba(240,236,228,.45)}
+.sub{max-width:56ch;color:var(--dim);font-size:clamp(.98rem,1.15vw,1.12rem)}
+.secpad{padding-block:clamp(90px,11vw,170px)}
+.count-tag{font-family:var(--mono);font-size:.72rem;color:var(--faint);letter-spacing:.18em}
+[data-rv]{opacity:0;transform:translateY(30px);transition:opacity .9s var(--e),transform .9s var(--e);
+  transition-delay:calc(var(--d,0)*90ms)}
+[data-rv].on{opacity:1;transform:none}
 
-    /* ---------- signboard hero ---------- */
-    .board{background:var(--board);color:var(--board-ink);border-radius:var(--radius);
-      padding:clamp(24px,4.5vw,52px);margin-top:clamp(28px,4vw,44px);box-shadow:var(--shadow);
-      display:grid;gap:22px;position:relative;overflow:hidden;
-      outline:3px solid rgba(255,184,48,.32);outline-offset:-12px}
-    .board-top{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;
-      font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
-      color:rgba(255,233,184,.7);border-bottom:1px solid rgba(255,233,184,.24);padding-bottom:14px}
-    .status{display:inline-flex;align-items:center;gap:8px;color:var(--board-gold)}
-    .status i{width:8px;height:8px;border-radius:50%;background:var(--board-gold);
-      box-shadow:0 0 0 4px rgba(255,184,48,.22)}
-    h1{font-family:Anton,sans-serif;font-weight:400;text-transform:uppercase;
-       font-size:clamp(2.1rem,6.6vw,4.2rem);line-height:.98;letter-spacing:.01em;color:var(--board-gold)}
-    h1 .zh{display:block;font-size:.26em;letter-spacing:.4em;color:rgba(255,233,184,.72);
-      margin-bottom:14px;text-transform:none}
-    .board p{max-width:52ch;color:rgba(255,233,184,.94);font-size:1.05rem}
-    .board p b{color:#fff}
+/* ============ hero + print deck ============ */
+.hero{height:100svh;min-height:640px;position:relative;display:flex;align-items:flex-end;overflow:clip}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-bg img{width:100%;height:100%;object-fit:cover;object-position:50% 18%;opacity:.5;
+  animation:kb 18s var(--e) infinite alternate}
+@keyframes kb{from{transform:scale(1.02)}to{transform:scale(1.12)}}
+.hero-scrim{position:absolute;inset:0;z-index:1;background:
+  linear-gradient(180deg,rgba(8,8,10,.72),rgba(8,8,10,.28) 34%,rgba(8,8,10,.34) 58%,rgba(8,8,10,.96) 92%),
+  radial-gradient(120% 60% at 50% 108%,rgba(8,8,10,.9),transparent 60%)}
+.deck{position:absolute;inset:0;z-index:2}
+.print{position:absolute;left:var(--x);top:var(--y);width:var(--w,15vw);touch-action:none;
+  transform:translate(calc(-50% + var(--px,0px)),calc(-50% + var(--py,0px))) rotate(var(--r,0deg));
+  filter:drop-shadow(0 16px 28px rgba(0,0,0,.55));will-change:transform;
+  animation:deal .9s var(--e) both;animation-delay:calc(.45s + var(--i,0)*110ms)}
+@keyframes deal{from{opacity:0;transform:translate(-50%,-20%) rotate(calc(var(--r,0deg) + 16deg)) scale(.7)}}
+.print img{width:100%;border-radius:4px;pointer-events:none}
+.print:hover{filter:drop-shadow(0 26px 44px rgba(0,0,0,.7))}
+.print.drag{filter:drop-shadow(0 34px 56px rgba(0,0,0,.75));z-index:60;animation:none}
+.hero-inner{width:100%;padding:0 var(--pad) clamp(48px,8vh,110px);position:relative;z-index:3;pointer-events:none}
+.hero-inner a,.hero-inner .status{pointer-events:auto}
+.hero .status{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-size:.7rem;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--ink);background:rgba(8,8,10,.55);
+  border:1px solid var(--line2);padding:9px 16px;border-radius:99px;backdrop-filter:blur(6px)}
+.hero .status i{width:7px;height:7px;border-radius:50%;background:#3ddc84;box-shadow:0 0 12px #3ddc84;
+  animation:pulse 1.8s ease infinite}
+.hero .status em{font-style:normal}
+@media(max-width:480px){.hero .status .xs-hide{display:none}}
+.hero h1{font-family:var(--disp);text-transform:uppercase;line-height:.88;letter-spacing:.01em;
+  font-size:clamp(3.2rem,min(12vw,18vh),11rem);margin-top:clamp(10px,2vh,22px);
+  text-shadow:0 6px 40px rgba(8,8,10,.8)}
+.hero h1 .row{display:block;overflow:hidden}
+.hero h1 .row span{display:block;transform:translateY(110%);animation:rise 1s var(--e) forwards}
+.hero h1 .row:nth-child(2) span{animation-delay:.12s}
+.hero h1 .row:nth-child(3) span{animation-delay:.24s}
+.hero h1 .acc{color:var(--acc)}
+@keyframes rise{to{transform:translateY(0)}}
+.hero .tag{display:flex;flex-wrap:wrap;align-items:center;gap:18px;margin-top:clamp(14px,2.6vh,26px)}
+.hero .tag p{max-width:44ch;color:var(--dim);font-size:clamp(.95rem,1.2vw,1.1rem);
+  text-shadow:0 2px 16px rgba(8,8,10,.9)}
+.cta{display:inline-flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--mono);
+  font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;font-weight:600;
+  padding:15px 28px;border-radius:99px;transition:transform .25s var(--e),background .25s,color .25s;will-change:transform}
+.cta.fill{background:var(--acc);color:#0a0503}
+.cta.fill:hover{background:#ff5c42}
+.cta.ghost{border:1px solid var(--line2);color:var(--ink);background:rgba(8,8,10,.45)}
+.cta.ghost:hover{border-color:var(--acc);color:var(--acc)}
+.hero .side{position:absolute;right:calc(var(--pad)/2);top:50%;transform:translateY(-50%) rotate(180deg);
+  writing-mode:vertical-rl;font-family:var(--mono);font-size:.64rem;letter-spacing:.34em;color:var(--faint);
+  text-transform:uppercase;z-index:3}
+@media(max-width:820px){.hero .side{display:none}}
+.scrolldn{position:absolute;left:50%;bottom:78px;transform:translateX(-50%);width:1px;height:52px;
+  background:var(--line2);overflow:hidden;z-index:3}
+.scrolldn::after{content:"";position:absolute;inset:0;background:var(--acc);transform:translateY(-100%);
+  animation:drip 1.8s var(--e) infinite}
+@keyframes drip{60%,100%{transform:translateY(100%)}}
+@media(max-width:820px),(max-height:700px){.scrolldn{display:none}}
+/* per-print placement — desktop */
+.print:nth-child(1){--x:63%;--y:28%;--w:14.5vw;--r:-5deg;--dp:1.2}
+.print:nth-child(2){--x:79%;--y:20%;--w:13vw;--r:4deg;--dp:.8}
+.print:nth-child(3){--x:91%;--y:44%;--w:14vw;--r:-3deg;--dp:1}
+.print:nth-child(4){--x:11%;--y:22%;--w:12.5vw;--r:6deg;--dp:.9}
+.print:nth-child(5){--x:26%;--y:14%;--w:13vw;--r:-4deg;--dp:1.1}
+.print:nth-child(6){--x:44%;--y:18%;--w:13.5vw;--r:3deg;--dp:.7}
+.print:nth-child(7){--x:71%;--y:64%;--w:12.5vw;--r:5deg;--dp:1.3}
+.print:nth-child(8){--x:88%;--y:78%;--w:12vw;--r:-6deg;--dp:.6}
+.print:nth-child(9){--x:54%;--y:40%;--w:15vw;--r:-2deg;--dp:1}
+.print:nth-child(10){--x:31%;--y:42%;--w:11.5vw;--r:7deg;--dp:.8}
+@media(max-width:820px){
+  .print{--w:27vw!important}
+  .print:nth-child(1){--x:18%;--y:12%}
+  .print:nth-child(2){--x:50%;--y:9%}
+  .print:nth-child(3){--x:82%;--y:13%}
+  .print:nth-child(4){--x:14%;--y:30%}
+  .print:nth-child(5){--x:46%;--y:26%}
+  .print:nth-child(6){--x:80%;--y:31%}
+  .print:nth-child(7){--x:22%;--y:47%}
+  .print:nth-child(8){--x:56%;--y:43%}
+  .print:nth-child(9){--x:87%;--y:49%;--w:30vw!important}
+  .print:nth-child(10){--x:64%;--y:57%;--w:24vw!important}
+}
 
-    .honest{display:inline-flex;align-items:flex-start;gap:10px;font-family:"JetBrains Mono",monospace;
-      font-size:.74rem;line-height:1.5;letter-spacing:.02em;background:rgba(255,184,48,.14);
-      border:1px solid rgba(255,184,48,.4);color:var(--board-gold);padding:10px 14px;border-radius:10px;
-      max-width:56ch}
+/* marquee */
+.marq{border-block:1px solid var(--line);padding-block:16px;overflow:clip;background:var(--bg);position:relative;z-index:2}
+.marq .track{display:flex;gap:0;width:max-content;animation:marq var(--spd,40s) linear infinite}
+.marq span{font-family:var(--disp);font-size:clamp(1.5rem,3vw,2.4rem);letter-spacing:.08em;
+  text-transform:uppercase;white-space:nowrap;padding-right:18px}
+.marq span i{font-style:normal;color:var(--acc);padding-left:18px}
+.marq.dimmed span{color:transparent;-webkit-text-stroke:1px rgba(240,236,228,.3)}
+.marq.dimmed span i{color:var(--acc);-webkit-text-stroke:0}
+@keyframes marq{to{transform:translateX(-50%)}}
 
-    .cta{display:flex;gap:12px;flex-wrap:wrap}
-    .btn{display:inline-block;text-decoration:none;font-weight:700;font-size:.88rem;
-      padding:12px 22px;border-radius:99px;transition:transform .15s ease}
-    .btn:hover,.btn:focus-visible{transform:translateY(-2px)}
-    .btn-primary{background:var(--board-gold);color:#3d1a05}
-    .btn-ghost{border:2px solid rgba(255,233,184,.5);color:var(--board-ink)}
+/* ============ manifesto ============ */
+.mani{padding-block:clamp(110px,14vw,200px)}
+.mani .scrub{font-family:var(--body);font-weight:700;font-size:clamp(1.7rem,3.6vw,3.3rem);
+  line-height:1.28;letter-spacing:-.01em;max-width:1000px}
+.mani .scrub .w{opacity:.45;transition:opacity .35s linear}
+.mani .scrub .w.lit{opacity:1}
+.mani .scrub .hl{color:var(--acc)}
+.chip{display:inline-flex;align-items:center;gap:10px;margin-top:34px;font-family:var(--mono);
+  font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);
+  border:1px solid rgba(255,178,71,.35);background:rgba(255,178,71,.07);padding:10px 16px;border-radius:8px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);margin-top:clamp(60px,7vw,100px)}
+.stat{background:var(--bg);padding:clamp(22px,3vw,40px)}
+.stat .n{font-family:var(--disp);font-size:clamp(2.6rem,5.5vw,4.6rem);line-height:1;color:var(--ink)}
+.stat .n b{font-weight:400;color:var(--acc)}
+.stat .l{font-family:var(--mono);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--faint);margin-top:8px}
+@media(max-width:820px){.stats{grid-template-columns:1fr 1fr}}
 
-    /* ---------- media placeholder slots ---------- */
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,220px),1fr));gap:16px}
-    figure{margin:0}
-    .slot{aspect-ratio:9/16;background:var(--sunk);border:2px dashed var(--border);
-      border-radius:14px;display:grid;place-content:center;text-align:center;gap:6px;padding:16px;
-      transition:border-color .18s ease,background .18s ease}
-    .slot.still{aspect-ratio:4/5}
-    .slot.wide{aspect-ratio:16/9}
-    .slot:hover{border-color:var(--pink);background:#fff}
-    .slot .plate{font-family:Anton,sans-serif;font-size:1.8rem;color:var(--purple);line-height:1}
-    .slot .kind{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.14em;
-      text-transform:uppercase;color:var(--pink-ink)}
-    figcaption{font-family:"JetBrains Mono",monospace;font-size:.72rem;opacity:.7;
-      padding-top:8px;line-height:1.45}
+/* ============ campaigns grid ============ */
+.work{background:var(--panel)}
+.whead{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px;
+  margin-bottom:clamp(40px,5vw,72px)}
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:clamp(10px,1.4vw,20px);grid-auto-flow:dense}
+.tile{position:relative;overflow:hidden;border-radius:6px;grid-column:span 4;background:var(--panel2)}
+.tile.wide{grid-column:span 8}
+.tile .ar{aspect-ratio:4/5.1;overflow:hidden}
+.tile.wide .ar{aspect-ratio:16/9.6}
+.tile img{width:100%;height:100%;object-fit:cover;transition:transform .9s var(--e),filter .9s var(--e);
+  filter:saturate(.92)}
+.tile:hover img{transform:scale(1.06);filter:saturate(1.05)}
+.tile .ov{position:absolute;inset:auto 0 0 0;padding:38px 18px 16px;display:flex;align-items:flex-end;
+  justify-content:space-between;gap:10px;background:linear-gradient(180deg,transparent,rgba(8,8,10,.86));
+  opacity:0;transform:translateY(12px);transition:opacity .4s var(--e),transform .4s var(--e)}
+.tile:hover .ov,.tile:focus-visible .ov{opacity:1;transform:none}
+.tile .ov .t{font-family:var(--disp);font-size:1.35rem;letter-spacing:.05em;text-transform:uppercase;line-height:1}
+.tile .ov .c{font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;color:#0a0503;background:var(--amber);
+  padding:4px 9px;border-radius:99px;white-space:nowrap;font-weight:600}
+@media(max-width:900px){.tile,.tile.wide{grid-column:span 6}.tile .ar,.tile.wide .ar{aspect-ratio:4/5}}
+@media(max-width:620px){.grid{grid-template-columns:1fr;gap:14px}.tile,.tile.wide{grid-column:span 1}
+  .tile .ar,.tile.wide .ar{aspect-ratio:auto}.tile img{height:auto}
+  .tile .ov{opacity:1;transform:none}}
+@media(hover:none){.tile .ov{opacity:1;transform:none}}
 
-    /* ---------- pipeline ---------- */
-    ol.pipeline{list-style:none;display:grid;gap:26px;max-width:74ch}
-    ol.pipeline li{display:grid;grid-template-columns:56px 1fr;gap:18px;align-items:start}
-    ol.pipeline .num{font-family:"JetBrains Mono",monospace;font-size:.8rem;font-weight:700;
-      color:var(--pink-ink);border-top:3px solid var(--pink);padding-top:8px;font-variant-numeric:tabular-nums}
-    ol.pipeline p{font-size:.98rem;opacity:.88}
+/* ============ taste menu ============ */
+.taste{background:var(--bg)}
+.mlist{columns:2;column-gap:clamp(40px,4vw,80px);margin-top:clamp(40px,5vw,70px)}
+@media(max-width:900px){.mlist{columns:1}}
+.mrow{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);
+  break-inside:avoid;position:relative}
+.mrow .no{font-family:var(--mono);font-size:.66rem;color:var(--faint);letter-spacing:.14em;flex:0 0 auto}
+.mrow h3{font-family:var(--disp);font-size:clamp(1.4rem,2.2vw,2.2rem);letter-spacing:.04em;line-height:1;
+  text-transform:uppercase;color:var(--dim);transition:color .3s,transform .3s var(--e)}
+.mrow:hover h3,.mrow:focus-visible h3{color:var(--ink);transform:translateX(8px)}
+.mrow .mtag{margin-left:auto;font-family:var(--mono);font-size:.6rem;letter-spacing:.16em;
+  color:var(--faint);text-transform:uppercase;flex:0 0 auto}
+.mrow:hover .mtag{color:var(--amber)}
+.mrow .thumb{display:none;width:58px;border-radius:4px;overflow:hidden;flex:0 0 auto}
+.mrow .thumb img{width:100%;height:58px;object-fit:cover}
+@media(max-width:900px),(hover:none){.mrow .thumb{display:block}}
+.mprev{position:fixed;z-index:240;width:min(300px,24vw);aspect-ratio:3/4;border-radius:8px;
+  overflow:hidden;pointer-events:none;opacity:0;transform:scale(.88) rotate(var(--pr,0deg));
+  transition:opacity .25s var(--e),transform .3s var(--e);box-shadow:0 30px 80px rgba(0,0,0,.65);
+  top:0;left:0;display:none}
+@media(hover:hover) and (pointer:fine){.mprev{display:block}}
+.mprev img{width:100%;height:100%;object-fit:cover}
+.mprev.show{opacity:1;transform:scale(1) rotate(var(--pr,0deg))}
 
-    /* ---------- cards / stats ---------- */
-    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
-      padding:24px;display:grid;gap:8px;align-content:start}
-    .card .price{font-family:"JetBrains Mono",monospace;font-size:.84rem;color:var(--pink-ink);
-      font-variant-numeric:tabular-nums}
-    .card ul{margin:6px 0 0;padding-left:18px;font-size:.93rem;opacity:.85}
-    .card li{margin-bottom:5px}
-    .chip{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:.68rem;
-      padding:4px 10px;border-radius:99px;background:var(--sunk);border:1px solid var(--border);
-      color:var(--violet);margin:2px 4px 2px 0}
+/* ============ poster break ============ */
+.poster{position:relative;height:min(88vh,860px);overflow:clip;display:grid;place-items:center}
+.poster .pbg{position:absolute;inset:-12% 0;z-index:-1;will-change:transform}
+.poster .pbg img{width:100%;height:100%;object-fit:cover;object-position:50% 30%}
+.poster::after{content:"";position:absolute;inset:0;background:rgba(8,8,10,.55);z-index:-1}
+.poster blockquote{font-family:var(--disp);font-size:clamp(2.6rem,7vw,6rem);line-height:1;
+  letter-spacing:.02em;text-transform:uppercase;text-align:center;max-width:16ch;padding:0 var(--pad)}
+.poster blockquote i{font-style:normal;color:var(--amber)}
+.poster .who{position:absolute;bottom:26px;left:0;right:0;text-align:center;font-family:var(--mono);
+  font-size:.68rem;letter-spacing:.26em;text-transform:uppercase;color:var(--dim)}
 
-    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:16px}
-    .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px}
-    .stat b{display:block;font-family:Anton,sans-serif;font-weight:400;font-size:2.1rem;line-height:1;
-      color:var(--violet);font-variant-numeric:tabular-nums}
-    .stat span{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.1em;
-      text-transform:uppercase;opacity:.7;display:block;margin-top:8px}
+/* ============ editorial masonry ============ */
+.masonry{columns:3;column-gap:clamp(10px,1.4vw,20px)}
+.masonry figure{break-inside:avoid;margin:0 0 clamp(10px,1.4vw,20px);position:relative;overflow:hidden;
+  border-radius:6px;background:var(--panel2)}
+.masonry img{width:100%;transition:transform .9s var(--e)}
+.masonry figure:hover img{transform:scale(1.05)}
+.masonry figcaption{position:absolute;inset:auto 0 0 0;padding:34px 16px 14px;font-family:var(--mono);
+  font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink);
+  background:linear-gradient(180deg,transparent,rgba(8,8,10,.8));opacity:0;transition:opacity .4s}
+.masonry figure:hover figcaption{opacity:1}
+@media(max-width:1000px){.masonry{columns:2}}
+@media(max-width:560px){.masonry{columns:1}}
+@media(hover:none){.masonry figcaption{opacity:1}}
 
-    /* ---------- gate callout ---------- */
-    .gate{background:var(--card);border:1px solid var(--border-pink);border-left:5px solid var(--pink);
-      border-radius:var(--radius);padding:clamp(22px,3.4vw,34px);display:grid;gap:14px;max-width:74ch}
-    .gate code{font-family:"JetBrains Mono",monospace;font-size:.82rem;background:var(--sunk);
-      padding:2px 7px;border-radius:6px;color:var(--violet)}
+/* ============ film diary ============ */
+.diarywrap{position:relative}
+.diary-sticky{position:sticky;top:0;height:100svh;overflow:clip;display:flex;flex-direction:column;justify-content:center}
+.diary-head{padding:0 var(--pad);margin-bottom:26px}
+.dtrack{display:flex;align-items:center;gap:clamp(18px,2.4vw,34px);width:max-content;
+  padding:0 var(--pad);will-change:transform}
+.dcard{flex:0 0 auto;width:clamp(210px,24vw,290px);transform:rotate(var(--r,0deg));
+  transition:transform .5s var(--e);position:relative}
+.dcard:hover{transform:rotate(0deg) scale(1.05);z-index:2}
+.dcard img{width:100%;border-radius:4px;box-shadow:0 18px 50px rgba(0,0,0,.55)}
+.dcard .dl{margin-top:10px;font-family:var(--mono);font-size:.62rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--faint);text-align:center}
+.dchap{flex:0 0 auto;display:flex;flex-direction:column;gap:8px;padding:0 clamp(8px,2vw,30px);min-width:150px}
+.dchap .no{font-family:var(--mono);font-size:.68rem;letter-spacing:.22em;color:var(--acc)}
+.dchap .nm{font-family:var(--disp);font-size:clamp(2.2rem,4.5vw,3.6rem);line-height:.95;
+  text-transform:uppercase;letter-spacing:.03em;white-space:nowrap}
+.dbar{position:absolute;bottom:34px;left:var(--pad);right:var(--pad);height:1px;background:var(--line)}
+.dbar i{display:block;height:100%;background:var(--acc);transform-origin:0 50%;transform:scaleX(0)}
 
-    /* ---------- disclosure ---------- */
-    .disclosure{background:var(--card);border:1px solid var(--border);border-left:5px solid var(--gold);
-      border-radius:var(--radius);padding:clamp(22px,3.4vw,34px);max-width:74ch}
-    .disclosure h2{margin-bottom:16px}
+/* ============ range ============ */
+.range{background:var(--panel)}
+.range-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(30px,4vw,70px)}
+.rlist{display:flex;flex-direction:column}
+.ritem{padding:clamp(24px,3vw,40px) 0;border-bottom:1px solid var(--line)}
+.ritem .rt{display:flex;align-items:baseline;gap:16px}
+.ritem .no{font-family:var(--mono);font-size:.7rem;color:var(--faint);letter-spacing:.14em}
+.ritem h3{font-family:var(--disp);font-size:clamp(2rem,3.4vw,3.2rem);line-height:1;letter-spacing:.03em;
+  text-transform:uppercase;color:var(--faint);transition:color .35s,transform .35s var(--e)}
+.ritem .med{font-family:var(--mono);font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--faint);margin-top:8px;opacity:0;transition:opacity .35s}
+.ritem.act h3{color:var(--ink);transform:translateX(10px)}
+.ritem.act .no{color:var(--acc)}
+.ritem.act .med{opacity:1;color:var(--amber)}
+.ritem .mimg{display:none}
+.rstage{position:sticky;top:0;height:100svh;display:flex;align-items:center}
+.rframe{position:relative;width:100%;aspect-ratio:3/4;max-height:78vh;border-radius:8px;overflow:hidden}
+.rframe img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;
+  transform:scale(1.06);transition:opacity .7s var(--e),transform .9s var(--e)}
+.rframe img.act{opacity:1;transform:scale(1)}
+.rcount{position:absolute;bottom:14px;right:16px;font-family:var(--mono);font-size:.7rem;
+  letter-spacing:.2em;color:var(--ink);background:rgba(8,8,10,.6);padding:6px 12px;border-radius:99px;
+  backdrop-filter:blur(6px)}
+@media(max-width:900px){
+  .range-grid{grid-template-columns:1fr}
+  .rstage{display:none}
+  .ritem .mimg{display:block;margin-top:16px;border-radius:6px;overflow:hidden}
+  .ritem .mimg img{width:100%}
+  .ritem h3{color:var(--ink)}
+  .ritem .med{opacity:1;color:var(--amber)}
+}
 
-    footer{max-width:1120px;margin:0 auto;padding:34px 22px 60px;
-      font-family:"JetBrains Mono",monospace;font-size:.72rem;opacity:.7;line-height:1.7}
+/* ============ dreams pile ============ */
+.dreams{background:radial-gradient(70% 90% at 75% 10%,rgba(110,70,255,.09),transparent 60%),
+  radial-gradient(60% 80% at 15% 90%,rgba(255,75,46,.06),transparent 60%),var(--bg)}
+.dstage{position:relative;height:max(86vh,620px);margin-top:clamp(36px,5vw,60px);
+  border:1px dashed rgba(240,236,228,.14);border-radius:14px;overflow:hidden}
+.dhint{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--disp);
+  font-size:clamp(2.2rem,6vw,5rem);letter-spacing:.06em;color:transparent;
+  -webkit-text-stroke:1px rgba(240,236,228,.16);text-transform:uppercase;pointer-events:none;
+  text-align:center;padding:0 20px}
+.dpile{position:absolute;left:var(--x);top:var(--y);width:clamp(150px,16vw,230px);touch-action:none;
+  transform:translate(-50%,-50%) rotate(var(--r,0deg));will-change:left,top;
+  filter:drop-shadow(0 18px 40px rgba(0,0,0,.6))}
+.dpile img{width:100%;border-radius:6px;pointer-events:none}
+.dpile:hover{filter:drop-shadow(0 28px 54px rgba(0,0,0,.75))}
+.dpile.drag{z-index:60}
+.dpile:nth-child(2){--x:14%;--y:26%;--r:-7deg}
+.dpile:nth-child(3){--x:30%;--y:60%;--r:5deg}
+.dpile:nth-child(4){--x:45%;--y:24%;--r:-3deg}
+.dpile:nth-child(5){--x:60%;--y:64%;--r:8deg}
+.dpile:nth-child(6){--x:76%;--y:30%;--r:-5deg}
+.dpile:nth-child(7){--x:88%;--y:62%;--r:4deg}
+.dpile:nth-child(8){--x:22%;--y:80%;--r:-8deg}
+.dpile:nth-child(9){--x:52%;--y:84%;--r:3deg}
+.dpile:nth-child(10){--x:8%;--y:56%;--r:6deg}
+.dpile:nth-child(11){--x:68%;--y:12%;--r:-4deg}
+.dpile:nth-child(12){--x:38%;--y:44%;--r:7deg}
+.dpile:nth-child(13){--x:84%;--y:88%;--r:-6deg}
+@media(max-width:700px){.dpile{width:32vw}}
 
-    .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
-    .reveal.visible{opacity:1;transform:none}
-    @media (prefers-reduced-motion:reduce){
-      *,*::before,*::after{animation:none!important;transition:none!important}
-      .reveal{opacity:1;transform:none}
-      html{scroll-behavior:auto}
-    }
-  </style>
+/* ============ why ============ */
+.why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);margin-top:clamp(46px,6vw,80px)}
+.wcard{background:var(--bg);padding:clamp(26px,3vw,44px);position:relative;overflow:hidden;
+  transition:background .4s}
+.wcard:hover{background:var(--panel2)}
+.wcard .no{font-family:var(--mono);font-size:.7rem;color:var(--acc);letter-spacing:.2em}
+.wcard h3{font-family:var(--disp);font-size:clamp(1.7rem,2.4vw,2.4rem);letter-spacing:.04em;
+  text-transform:uppercase;line-height:1;margin:16px 0 12px}
+.wcard p{color:var(--dim);font-size:.95rem}
+.wcard::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:2px;background:var(--acc);
+  transform:scaleX(0);transform-origin:0 50%;transition:transform .5s var(--e)}
+.wcard:hover::after{transform:scaleX(1)}
+@media(max-width:1000px){.why-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.why-grid{grid-template-columns:1fr}}
+
+/* ============ process ============ */
+.proc{background:var(--panel)}
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(16px,2vw,30px);
+  margin-top:clamp(46px,6vw,80px);position:relative}
+.steps::before{content:"";position:absolute;top:7px;left:0;right:0;height:1px;background:var(--line)}
+.step{position:relative;padding-top:30px}
+.step::before{content:"";position:absolute;top:0;left:0;width:14px;height:14px;border-radius:50%;
+  background:var(--bg);border:2px solid var(--acc)}
+.step .no{font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;color:var(--acc)}
+.step h3{font-family:var(--disp);font-size:1.5rem;letter-spacing:.05em;text-transform:uppercase;margin:8px 0 6px}
+.step p{color:var(--dim);font-size:.88rem}
+@media(max-width:900px){.steps{grid-template-columns:1fr;gap:26px}
+  .steps::before{top:0;bottom:0;left:7px;right:auto;width:1px;height:auto}
+  .step{padding-top:0;padding-left:32px}}
+
+/* ============ cta + photo trail ============ */
+.ctasec{padding-block:clamp(110px,14vw,200px);text-align:center;position:relative;overflow:clip}
+.ctasec .glow{position:absolute;inset:auto 0 -40%;height:80%;z-index:0;
+  background:radial-gradient(50% 100% at 50% 100%,rgba(255,75,46,.16),transparent 70%)}
+.trailwrap{position:absolute;inset:0;z-index:0;pointer-events:none}
+.tphoto{position:absolute;width:clamp(110px,12vw,170px);border-radius:6px;overflow:hidden;
+  transform:translate(-50%,-50%) rotate(var(--tr,0deg)) scale(.5);opacity:0;
+  animation:tpop 1.15s var(--e) forwards;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.tphoto img{width:100%;display:block}
+@keyframes tpop{
+  18%{opacity:.9;transform:translate(-50%,-50%) rotate(var(--tr,0deg)) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-62%) rotate(var(--tr,0deg)) scale(1.04)}}
+.ctasec .wrap{position:relative;z-index:1}
+.ctasec .big{font-family:var(--disp);font-size:clamp(3.4rem,10.5vw,9.6rem);line-height:.92;
+  text-transform:uppercase;letter-spacing:.015em}
+.ctasec .big .ghost{display:block;color:transparent;-webkit-text-stroke:1px rgba(240,236,228,.45)}
+.ctasec .big .solid{display:block}
+.ctasec .big .solid i{font-style:normal;color:var(--acc)}
+.ctasec p{margin:26px auto 40px;max-width:52ch;color:var(--dim)}
+.magnet{display:inline-block}
+.ctasec .mail{margin-top:26px;font-family:var(--mono);font-size:.78rem;letter-spacing:.14em;color:var(--faint)}
+.ctasec .mail a{color:var(--dim);text-decoration:underline;text-underline-offset:4px}
+.ctasec .mail a:hover{color:var(--acc)}
+
+/* ============ footer ============ */
+footer{border-top:1px solid var(--line);padding:34px var(--pad);display:flex;flex-wrap:wrap;
+  align-items:center;gap:14px;justify-content:space-between;font-family:var(--mono);
+  font-size:.68rem;letter-spacing:.14em;color:var(--faint);text-transform:uppercase}
+footer a{color:var(--dim);text-decoration:none}
+footer a:hover{color:var(--acc)}
+
+/* ============ lightbox ============ */
+.lb{position:fixed;inset:0;z-index:450;background:rgba(4,4,6,.94);backdrop-filter:blur(10px);
+  display:none;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:24px}
+.lb.open{display:flex}
+.lb img{max-width:min(92vw,900px);max-height:78vh;width:auto;height:auto;border-radius:6px;
+  box-shadow:0 30px 90px rgba(0,0,0,.6)}
+.lb .cap{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim)}
+.lb button{position:absolute;background:rgba(240,236,228,.06);border:1px solid var(--line2);color:var(--ink);
+  width:52px;height:52px;border-radius:50%;cursor:pointer;font-size:1.1rem;display:grid;place-items:center;
+  transition:background .2s,border-color .2s}
+.lb button:hover{background:var(--acc);border-color:var(--acc);color:#0a0503}
+.lb .x{top:20px;right:20px}
+.lb .pv{left:16px;top:50%;transform:translateY(-50%)}
+.lb .nx{right:16px;top:50%;transform:translateY(-50%)}
+@media(max-width:620px){.lb .pv{left:8px}.lb .nx{right:8px}.lb button{width:44px;height:44px}}
+
+/* ============ reduced motion ============ */
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;
+    transition-duration:.001s!important}
+  html{scroll-behavior:auto}
+  [data-rv]{opacity:1;transform:none}
+  .hero h1 .row span{transform:none;animation:none}
+  .print{animation:none;opacity:1}
+  .grain{display:none}
+  .mani .scrub .w{opacity:1}
+  .tphoto{display:none}
+}
+</style>
+<noscript><style>.loader{display:none}[data-rv]{opacity:1;transform:none}.mani .scrub .w{opacity:1}</style></noscript>
 </head>
 <body>
-  <a class="skip-link" href="#persona">Skip to content</a>
-  <div class="bg" aria-hidden="true"></div>
-  <div class="gridlines" aria-hidden="true"></div>
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="lg">ZHANG<i>&nbsp;CHENG</i></div>
+  <div class="pct" id="pct">00</div>
+</div>
 
-  <header class="nav-wrap">
-    <nav class="nav">
-      <a class="logo" href="../" aria-label="ZAC Studios — home">ZA<span>C</span></a>
-      <a href="../#projects">Projects</a>
-      <a href="#persona">Persona</a>
-      <a href="#work">The work</a>
-      <a href="#build">How it's built</a>
-      <a href="#gate">Identity gate</a>
-      <a href="#brands">For brands</a>
-      <a href="#disclosure">AI disclosure</a>
-    </nav>
-  </header>
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"><i id="pbar"></i></div>
+<div class="vf" id="vf" aria-hidden="true">
+  <svg viewBox="0 0 26 26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+    <path d="M1 8V4a3 3 0 0 1 3-3h4"/><path d="M18 1h4a3 3 0 0 1 3 3v4"/>
+    <path d="M25 18v4a3 3 0 0 1-3 3h-4"/><path d="M8 25H4a3 3 0 0 1-3-3v-4"/>
+    <circle cx="13" cy="13" r="1.7" fill="currentColor" stroke="none"/>
+  </svg>
+  <span class="rec"></span>
+  <span class="vlabel" id="vlabel">VIEW</span>
+</div>
 
-  <main>
-    <header class="board reveal">
-      <div class="board-top">
-        <span>小贩中心 · Singapore</span>
-        <span class="status"><i></i>In production</span>
-      </div>
-      <h1><span class="zh">一摊一摊吃</span>Every hawker centre in Singapore. One stall at a time.</h1>
-      <p>I'm a real person. Most of the photographs won't be. <b>That isn't a gimmick</b> — it's how one
-         person eats at a stall on Tuesday and still ships thirty posts that month, with the same face
-         in every single frame.</p>
-      <p class="honest mono">STATUS — The pipeline is built and tested. The likeness model isn't trained
-         yet and nothing has been published. Every placeholder below is labelled as one.</p>
-      <div class="cta">
-        <a class="btn btn-primary" href="#build">How it's built</a>
-        <a class="btn btn-ghost" href="#disclosure">Read the AI disclosure</a>
-      </div>
-    </header>
+<nav class="nav" id="nav" aria-label="Main">
+  <a class="logo" href="#top">ZHANG<i>&nbsp;CHENG</i></a>
+  <a class="lnk" href="#work">Campaigns</a>
+  <a class="lnk" href="#taste">Taste</a>
+  <a class="lnk" href="#editorial">Editorial</a>
+  <a class="lnk" href="#diary">Diary</a>
+  <a class="lnk" href="#range">Range</a>
+  <a class="lnk" href="#dreams">Dreams</a>
+  <a class="lnk" href="#why">Why virtual</a>
+  <a class="book" href="#book">Book me</a>
+</nav>
 
-    <!-- ============ PERSONA ============ -->
-    <section id="persona">
-      <div class="sec-head reveal"><span class="sec-index">01</span><h2>The persona</h2></div>
-      <p class="sec-sub reveal">Not an invented character. A likeness model trained on photographs of me,
-         summoned by a trigger token, wearing my own voice. The niche is Singapore hawker food — the
-         densest brand market on this island and the one I actually eat in.</p>
-      <div class="grid reveal">
-        <!-- PLACEHOLDER · replace each .slot with <img src="hero.jpg" alt="…"> at 4:5 -->
-        <figure><div class="slot still"><span class="plate">01</span><span class="kind">Portrait · 4:5</span></div><figcaption>Hero reference — the canonical face</figcaption></figure>
-        <figure><div class="slot still"><span class="plate">02</span><span class="kind">Portrait · 4:5</span></div><figcaption>Reference set — angle range</figcaption></figure>
-        <figure><div class="slot still"><span class="plate">03</span><span class="kind">Portrait · 4:5</span></div><figcaption>Reference set — lighting range</figcaption></figure>
-        <figure><div class="slot still"><span class="plate">04</span><span class="kind">Portrait · 4:5</span></div><figcaption>Reference set — expression range</figcaption></figure>
-      </div>
-    </section>
+<main id="top">
 
-    <!-- ============ WORK ============ -->
-    <section id="work">
-      <div class="sec-head reveal"><span class="sec-index">02</span><h2>The work</h2></div>
-      <p class="sec-sub reveal">Reels, key stills, and short product spots. Shot at real stalls on real
-         visits, then produced at a volume nobody holding a camera can match.</p>
-      <div class="grid reveal">
-        <!-- PLACEHOLDER · reels are 9:16 — swap in <video muted loop playsinline poster="…"> -->
-        <figure><div class="slot"><span class="plate">01</span><span class="kind">Reel · 9:16</span></div><figcaption>Maxwell — chicken rice queue at 11:40</figcaption></figure>
-        <figure><div class="slot"><span class="plate">02</span><span class="kind">Reel · 9:16</span></div><figcaption>Old Airport Road — char kway teow, after dark</figcaption></figure>
-        <figure><div class="slot"><span class="plate">03</span><span class="kind">Reel · 9:16</span></div><figcaption>Tiong Bahru — the 8am regulars</figcaption></figure>
-        <figure><div class="slot"><span class="plate">04</span><span class="kind">Reel · 9:16</span></div><figcaption>Tekka — biryani set</figcaption></figure>
-      </div>
-      <div class="grid reveal" style="margin-top:16px">
-        <!-- PLACEHOLDER · stills 4:5, spot 16:9 -->
-        <figure><div class="slot still"><span class="plate">05</span><span class="kind">Stills · 4:5</span></div><figcaption>Geylang Serai — afternoon light test</figcaption></figure>
-        <figure><div class="slot still"><span class="plate">06</span><span class="kind">Stills · 4:5</span></div><figcaption>Home kitchen — evening tungsten</figcaption></figure>
-        <figure><div class="slot still"><span class="plate">07</span><span class="kind">Spot · 16:9</span></div><figcaption>Brand spot — 12s cutdown</figcaption></figure>
-        <figure><div class="slot still"><span class="plate">08</span><span class="kind">Stills · 4:5</span></div><figcaption>East Coast Park — golden hour</figcaption></figure>
-      </div>
-    </section>
+<!-- ================= HERO / PRINT DECK ================= -->
+<header class="hero" id="hero">
+  <div class="hero-bg"><img src="assets/img/editorial/01-cinematic-night-street.webp" alt="Zhang Cheng standing in a rain-soaked neon city street at night" width="1024" height="1536" fetchpriority="high"></div>
+  <div class="hero-scrim"></div>
+  <div class="deck" id="deck" aria-label="Favourite instant-film prints — drag them around">
+    <figure class="print" style="--i:0" data-lb data-cap="Neon crosswalk" data-vf="DRAG"><img src="assets/img/film/B-04-neon-crosswalk.webp" alt="Instant print — neon crosswalk in the rain" width="971" height="1620" loading="eager" decoding="async"></figure>
+    <figure class="print" style="--i:1" data-lb data-cap="Night food stall" data-vf="DRAG"><img src="assets/img/film/B-15-night-food-stall.webp" alt="Instant print — steaming night food stall" width="969" height="1624" loading="eager" decoding="async"></figure>
+    <figure class="print" style="--i:2" data-lb data-cap="Rainy ramen counter" data-vf="DRAG"><img src="assets/img/film/A-12-rainy-ramen-counter.webp" alt="Instant print — rainy ramen counter with red lantern" width="971" height="1620" loading="eager" decoding="async"></figure>
+    <figure class="print" style="--i:3" data-lb data-cap="Bamboo grove" data-vf="DRAG"><img src="assets/img/film/C-13-bamboo-grove-slow-shutter.webp" alt="Instant print — bamboo grove path" width="981" height="1603" loading="eager" decoding="async"></figure>
+    <figure class="print" style="--i:4" data-lb data-cap="First snow" data-vf="DRAG"><img src="assets/img/film/C-06-snowy-mountain-bridge.webp" alt="Instant print — snowy mountain bridge at dusk" width="984" height="1598" loading="eager" decoding="async"></figure>
+    <figure class="print" style="--i:5" data-lb data-cap="Market, closing time" data-vf="DRAG"><img src="assets/img/film/B-09-traditional-market-closing.webp" alt="Instant print — traditional market with bag of oranges" width="972" height="1619" loading="eager" decoding="async"></figure>
+    <figure class="print" style="--i:6" data-lb data-cap="Coastal local train" data-vf="DRAG"><img src="assets/img/film/C-01-coastal-local-train.webp" alt="Instant print — coastal local train by the sea" width="985" height="1597" loading="eager" decoding="async"></figure>
+    <figure class="print" style="--i:7" data-lb data-cap="Rainy used bookstore" data-vf="DRAG"><img src="assets/img/film/A-04-rainy-used-bookstore.webp" alt="Instant print — rainy used bookstore" width="984" height="1598" loading="eager" decoding="async"></figure>
+    <figure class="print" style="--i:8" data-lb data-cap="Rooftop, old digicam" data-vf="DRAG"><img src="assets/img/editorial/04-late-night-rooftop.webp" alt="Instant print — rooftop at night with compact camera" width="1131" height="1391" loading="eager" decoding="async"></figure>
+    <figure class="print" style="--i:9" data-lb data-cap="Convenience run" data-vf="DRAG"><img src="assets/img/editorial/02-convenience-store.webp" alt="Instant print — convenience store milk run" width="1086" height="1448" loading="eager" decoding="async"></figure>
+  </div>
+  <div class="hero-inner">
+    <span class="status"><i></i>Virtual influencer<em class="xs-hide"> — booking now</em></span>
+    <h1>
+      <span class="row"><span>The face that</span></span>
+      <span class="row"><span class="acc"><span>never misses</span></span></span>
+      <span class="row"><span>a shoot.</span></span>
+    </h1>
+    <div class="tag">
+      <p>I'm Zhang Cheng — an AI-rendered influencer built from a real, licensed likeness. These prints are my favourites. Go ahead — drag them around.</p>
+      <a class="cta fill" href="#work" data-mag>See the work ↓</a>
+      <a class="cta ghost" href="#book" data-mag>Book the face</a>
+    </div>
+  </div>
+  <span class="side">EST. 2026 — RENDERED EVERYWHERE</span>
+  <span class="scrolldn"></span>
+</header>
 
-    <!-- ============ BUILD ============ -->
-    <section id="build">
-      <div class="sec-head reveal"><span class="sec-index">03</span><h2>How it's built</h2></div>
-      <p class="sec-sub reveal">Five stages, and the order matters — every one of them depends on the
-         face holding still.</p>
-      <ol class="pipeline reveal">
-        <li>
-          <span class="num">01</span>
-          <div>
-            <h3>Capture</h3>
-            <p>Thirty to forty photographs of me, all shot inside the same fortnight — same haircut, same
-               weight — across a deliberate spread of angles, lighting and distance. Clothing and background
-               change constantly, otherwise the model learns the shirt as part of my face.</p>
-          </div>
-        </li>
-        <li>
-          <span class="num">02</span>
-          <div>
-            <h3>Train</h3>
-            <p>A Flux LoRA trained on that set, plus a voice clone from a few minutes of clean speech.
-               Trained twice at different step counts and compared — overtraining welds the dataset's own
-               poses into every output and the face stops being able to do anything new.</p>
-          </div>
-        </li>
-        <li>
-          <span class="num">03</span>
-          <div>
-            <h3>Write</h3>
-            <p>Claude plans the week against the content pillars, writes the shot briefs, builds the image
-               prompts, and drafts captions in English and Mandarin — natively, not machine-translated
-               from the English.</p>
-          </div>
-        </li>
-        <li>
-          <span class="num">04</span>
-          <div>
-            <h3>Generate and verify</h3>
-            <p>Every frame is scored against real photographs of me before it goes anywhere. Anything that
-               drifts is discarded and regenerated automatically. Rejects are kept, not deleted — a drifting
-               face is telling you something about the prompt.</p>
-          </div>
-        </li>
-        <li>
-          <span class="num">05</span>
-          <div>
-            <h3>Publish</h3>
-            <p>Scheduled to Instagram, TikTok and YouTube through their official APIs, with each platform's
-               AI-content label set programmatically rather than remembered. Metrics come back nightly and
-               steer the next week's plan.</p>
-          </div>
-        </li>
-      </ol>
-      <p class="reveal" style="margin-top:26px">
-        <span class="chip">Flux LoRA</span><span class="chip">Claude API</span><span class="chip">InsightFace</span><span class="chip">ElevenLabs</span><span class="chip">Python</span><span class="chip">Postgres</span>
-      </p>
-    </section>
+<div class="marq" aria-hidden="true">
+  <div class="track">
+    <span>Any city<i>◆</i></span><span>Any season<i>◆</i></span><span>Any style<i>◆</i></span>
+    <span>Zero reshoots<i>◆</i></span><span>Zero flights<i>◆</i></span><span>Always on-brand<i>◆</i></span>
+    <span>Any city<i>◆</i></span><span>Any season<i>◆</i></span><span>Any style<i>◆</i></span>
+    <span>Zero reshoots<i>◆</i></span><span>Zero flights<i>◆</i></span><span>Always on-brand<i>◆</i></span>
+    <span>Any city<i>◆</i></span><span>Any season<i>◆</i></span><span>Any style<i>◆</i></span>
+    <span>Zero reshoots<i>◆</i></span><span>Zero flights<i>◆</i></span><span>Always on-brand<i>◆</i></span>
+    <span>Any city<i>◆</i></span><span>Any season<i>◆</i></span><span>Any style<i>◆</i></span>
+    <span>Zero reshoots<i>◆</i></span><span>Zero flights<i>◆</i></span><span>Always on-brand<i>◆</i></span>
+  </div>
+</div>
 
-    <!-- ============ GATE ============ -->
-    <section id="gate">
-      <div class="sec-head reveal"><span class="sec-index">04</span><h2>The identity gate</h2></div>
-      <p class="sec-sub reveal">The one piece everything else rests on. Generative models drift: ask for the
-         same person twice and you get cousins. An account dies the moment an audience notices.</p>
-      <div class="gate reveal">
-        <p>Every generated image is embedded and scored against real photographs of me. Below threshold, it
-           never reaches a queue, let alone a feed.</p>
-        <p><b>The threshold isn't guessed.</b> Two genuine photographs of the same person in different light
-           might only score <code>0.55</code> — demand <code>0.75</code> and you reject everything real;
-           settle for <code>0.30</code> and you let strangers through. So the gate calibrates against the
-           reference set itself: how alike are two real photographs of this person, and does the generated
-           one clear that bar?</p>
-        <p>It also refuses to calibrate on a reference set that splits in two. A dataset holding photographs
-           from two different haircuts passes every naive check — each half matches itself perfectly — while
-           quietly producing a gate that means <i>"resembles either version of him"</i> and locks neither.
-           That one surfaced as a failing test before it ever reached a photograph.</p>
+<!-- ================= MANIFESTO ================= -->
+<section class="mani wrap" aria-label="Introduction">
+  <p class="eyebrow" data-rv>The pitch</p>
+  <p class="scrub" id="scrub">
+    Your campaign needs a face in <span class="hl">Tokyo at 3am</span>, on a
+    <span class="hl">Busan rooftop in July</span>, and in your studio by Friday.
+    Human talent needs flights, visas, weather and luck. <span class="hl">I only need a brief.</span>
+  </p>
+  <div class="chip" data-rv>◈ 100% AI-rendered — real, licensed likeness — full commercial rights</div>
+  <div class="stats">
+    <div class="stat" data-rv style="--d:0"><div class="n"><span data-count="168">0</span></div><div class="l">Frames in this portfolio</div></div>
+    <div class="stat" data-rv style="--d:1"><div class="n"><span data-count="40">0</span><b>+</b></div><div class="l">Brand categories covered</div></div>
+    <div class="stat" data-rv style="--d:2"><div class="n"><span data-count="13">0</span></div><div class="l">Art styles on demand</div></div>
+    <div class="stat" data-rv style="--d:3"><div class="n"><span data-count="48">0</span><b>h</b></div><div class="l">Brief to first frames</div></div>
+  </div>
+</section>
+<!-- ================= CAMPAIGNS ================= -->
+<section class="work secpad" id="work" aria-label="Campaign work">
+  <div class="wrap">
+    <div class="whead">
+      <div>
+        <p class="eyebrow" data-rv>Selected work</p>
+        <h2 class="h2" data-rv>Campaigns<br><span class="ghost">ready to run</span></h2>
+        <p class="sub" data-rv>Forty-two concept campaigns, one consistent face. Fashion, beauty, tech, auto, travel, home, services — every frame art-directed, on-palette and ready for your media plan.</p>
       </div>
-      <div class="stats reveal" style="margin-top:22px">
-        <div class="stat"><b>Every</b><span>frame scored before publish</span></div>
-        <div class="stat"><b>13</b><span>tests on the gate</span></div>
-        <div class="stat"><b>2</b><span>languages, written natively</span></div>
-        <div class="stat"><b>0</b><span>humans in the daily loop</span></div>
-      </div>
-    </section>
+      <span class="count-tag" data-rv>[ 42 CAMPAIGNS ]</span>
+    </div>
+    <div class="grid">
+      <figure class="tile" data-rv style="--d:0" data-lb data-cap="Streetwear drop — fashion campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/A-01-streetwear-campaign.webp" alt="Streetwear campaign — Zhang Cheng in urban outfit" width="1023" height="1537"></div><div class="ov"><span class="t">Streetwear drop</span><span class="c">Fashion</span></div></figure>
+      <figure class="tile wide" data-rv style="--d:1" data-lb data-cap="Creator smartphone — tech campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/B-02-smartphone-creator-campaign.webp" alt="Smartphone creator campaign" width="1687" height="932"></div><div class="ov"><span class="t">Creator phone</span><span class="c">Tech</span></div></figure>
+      <figure class="tile" data-rv style="--d:2" data-lb data-cap="Fragrance — beauty campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/54-fragrance-campaign.webp" alt="Fragrance campaign" width="971" height="1619"></div><div class="ov"><span class="t">Fragrance</span><span class="c">Beauty</span></div></figure>
+      <figure class="tile" data-rv style="--d:0" data-lb data-cap="Urban sneaker — fashion campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/A-07-sneaker-urban-campaign.webp" alt="Urban sneaker campaign" width="864" height="1821"></div><div class="ov"><span class="t">Urban sneaker</span><span class="c">Fashion</span></div></figure>
+      <figure class="tile wide" data-rv style="--d:1" data-lb data-cap="Electric sedan — auto lifestyle"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/B-10-modern-electric-car-lifestyle.webp" alt="Electric car lifestyle campaign at a coastal charger" width="1536" height="1024"></div><div class="ov"><span class="t">Electric sedan</span><span class="c">Auto</span></div></figure>
+      <figure class="tile" data-rv style="--d:2" data-lb data-cap="Wireless headphones — commute story"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/B-01-premium-wireless-headphones-commute.webp" alt="Premium wireless headphones campaign on a commute" width="853" height="1844"></div><div class="ov"><span class="t">Headphones</span><span class="c">Tech</span></div></figure>
+      <figure class="tile" data-rv style="--d:0" data-lb data-cap="Grooming line — beauty campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/A-08-hair-grooming-product.webp" alt="Hair grooming product campaign" width="852" height="1847"></div><div class="ov"><span class="t">Grooming line</span><span class="c">Beauty</span></div></figure>
+      <figure class="tile wide" data-rv style="--d:1" data-lb data-cap="Outdoor shell — hiking campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/64-outdoor-shell-hiking.webp" alt="Outdoor shell jacket hiking campaign" width="1536" height="1024"></div><div class="ov"><span class="t">Outdoor shell</span><span class="c">Outdoor</span></div></figure>
+      <figure class="tile" data-rv style="--d:2" data-lb data-cap="Airline lounge — travel campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/67-airline-lounge-travel.webp" alt="Airline lounge travel campaign" width="1023" height="1538"></div><div class="ov"><span class="t">Airline lounge</span><span class="c">Travel</span></div></figure>
+      <figure class="tile wide" data-rv style="--d:0" data-lb data-cap="Coastal eyewear — fashion campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/A-05-eyewear-coastal-campaign.webp" alt="Eyewear campaign on the coast" width="1536" height="1024"></div><div class="ov"><span class="t">Coastal eyewear</span><span class="c">Fashion</span></div></figure>
+      <figure class="tile" data-rv style="--d:1" data-lb data-cap="Minimalist jewelry — editorial"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/A-09-minimalist-jewelry-editorial.webp" alt="Minimalist jewelry editorial" width="1254" height="1254"></div><div class="ov"><span class="t">Jewelry edit</span><span class="c">Editorial</span></div></figure>
+      <figure class="tile" data-rv style="--d:2" data-lb data-cap="Travel mirrorless — tech campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/B-04-mirrorless-camera-travel-creator.webp" alt="Mirrorless camera travel creator campaign" width="852" height="1846"></div><div class="ov"><span class="t">Travel camera</span><span class="c">Tech</span></div></figure>
+      <figure class="tile wide" data-rv style="--d:0" data-lb data-cap="Creator laptop — tech campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/B-03-laptop-creative-professional.webp" alt="Laptop campaign for creative professionals" width="1536" height="1024"></div><div class="ov"><span class="t">Creator laptop</span><span class="c">Tech</span></div></figure>
+      <figure class="tile" data-rv style="--d:1" data-lb data-cap="Designer furniture — home campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/75-designer-furniture-interior.webp" alt="Designer furniture interior campaign" width="1122" height="1402"></div><div class="ov"><span class="t">Furniture</span><span class="c">Home</span></div></figure>
+      <figure class="tile" data-rv style="--d:2" data-lb data-cap="Fitness apparel — active campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/B-07-gym-fitness-apparel.webp" alt="Gym fitness apparel campaign" width="1023" height="1537"></div><div class="ov"><span class="t">Fitness apparel</span><span class="c">Active</span></div></figure>
+      <figure class="tile wide" data-rv style="--d:0" data-lb data-cap="Gaming setup — lifestyle campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/B-05-gaming-setup-lifestyle.webp" alt="Gaming setup lifestyle campaign" width="1672" height="941"></div><div class="ov"><span class="t">Gaming setup</span><span class="c">Tech</span></div></figure>
+      <figure class="tile" data-rv style="--d:1" data-lb data-cap="Smartphone creator II — tech campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/69-smartphone-creator.webp" alt="Smartphone creator campaign, golden hour rooftop" width="941" height="1672"></div><div class="ov"><span class="t">Creator phone II</span><span class="c">Tech</span></div></figure>
+      <figure class="tile wide" data-rv style="--d:2" data-lb data-cap="Smart home — tech campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/74-smart-home-tech.webp" alt="Smart home tech campaign" width="1536" height="1024"></div><div class="ov"><span class="t">Smart home</span><span class="c">Tech</span></div></figure>
+      <figure class="tile" data-rv style="--d:0" data-lb data-cap="Luggage arrival — travel campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/B-09-luggage-boutique-hotel-arrival.webp" alt="Luggage campaign at a boutique hotel arrival" width="852" height="1846"></div><div class="ov"><span class="t">Luggage arrival</span><span class="c">Travel</span></div></figure>
+      <figure class="tile wide" data-rv style="--d:1" data-lb data-cap="Urban cycling gear — active campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/B-08-urban-cycling-gear.webp" alt="Urban cycling gear campaign" width="1537" height="1023"></div><div class="ov"><span class="t">Cycling gear</span><span class="c">Active</span></div></figure>
+      <figure class="tile" data-rv style="--d:2" data-lb data-cap="Pet care — lifestyle campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/86-pet-care-park.webp" alt="Pet care campaign in the park" width="1024" height="1536"></div><div class="ov"><span class="t">Pet care</span><span class="c">Lifestyle</span></div></figure>
+      <figure class="tile wide" data-rv style="--d:0" data-lb data-cap="Streaming — entertainment campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/89-streaming-entertainment.webp" alt="Streaming entertainment campaign" width="1536" height="1024"></div><div class="ov"><span class="t">Streaming night</span><span class="c">Entertainment</span></div></figure>
+      <figure class="tile" data-rv style="--d:1" data-lb data-cap="Premium stationery — lifestyle campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/92-premium-stationery.webp" alt="Premium stationery campaign" width="1122" height="1402"></div><div class="ov"><span class="t">Stationery</span><span class="c">Lifestyle</span></div></figure>
+      <figure class="tile" data-rv style="--d:2" data-lb data-cap="Haircare styling — beauty campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/60-haircare-styling.webp" alt="Haircare styling campaign" width="1122" height="1402"></div><div class="ov"><span class="t">Haircare</span><span class="c">Beauty</span></div></figure>
+      <figure class="tile wide" data-rv style="--d:0" data-lb data-cap="Insurance — services campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/77-insurance-peace-of-mind.webp" alt="Insurance peace of mind campaign" width="1536" height="1024"></div><div class="ov"><span class="t">Peace of mind</span><span class="c">Services</span></div></figure>
+      <figure class="tile" data-rv style="--d:1" data-lb data-cap="Tasting menu — food & beverage"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/C-02-modern-restaurant-tasting.webp" alt="Modern restaurant tasting campaign" width="853" height="1844"></div><div class="ov"><span class="t">Tasting menu</span><span class="c">F&amp;B</span></div></figure>
+      <figure class="tile wide" data-rv style="--d:2" data-lb data-cap="Sparkling beverage — food & beverage"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/C-03-premium-sparkling-beverage.webp" alt="Premium sparkling beverage campaign" width="1535" height="1024"></div><div class="ov"><span class="t">Sparkling</span><span class="c">F&amp;B</span></div></figure>
+      <figure class="tile" data-rv style="--d:0" data-lb data-cap="Designer interior — home campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/C-05-designer-home-interior.webp" alt="Designer home interior campaign" width="853" height="1844"></div><div class="ov"><span class="t">Interior story</span><span class="c">Home</span></div></figure>
+      <figure class="tile wide" data-rv style="--d:1" data-lb data-cap="Language learning — education campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/81-language-learning-tram.webp" alt="Language learning app campaign on a tram" width="1536" height="1024"></div><div class="ov"><span class="t">Language app</span><span class="c">Education</span></div></figure>
+      <figure class="tile" data-rv style="--d:2" data-lb data-cap="Urban gardening — home campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/94-urban-gardening.webp" alt="Urban gardening campaign" width="1023" height="1537"></div><div class="ov"><span class="t">Urban garden</span><span class="c">Home</span></div></figure>
+      <figure class="tile wide" data-rv style="--d:0" data-lb data-cap="Boutique hotel — travel campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/C-04-boutique-hotel-lifestyle.webp" alt="Boutique hotel lifestyle campaign" width="1536" height="1024"></div><div class="ov"><span class="t">Boutique hotel</span><span class="c">Travel</span></div></figure>
+      <figure class="tile" data-rv style="--d:1" data-lb data-cap="Audio lifestyle — tech campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/C-09-music-audio-lifestyle.webp" alt="Music audio lifestyle campaign" width="1007" height="1562"></div><div class="ov"><span class="t">Audio life</span><span class="c">Tech</span></div></figure>
+      <figure class="tile" data-rv style="--d:2" data-lb data-cap="Music festival — partnership campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/98-music-festival-partnership.webp" alt="Music festival partnership campaign" width="1024" height="1536"></div><div class="ov"><span class="t">Festival</span><span class="c">Partnership</span></div></figure>
+      <figure class="tile wide" data-rv style="--d:0" data-lb data-cap="Wellness routine — lifestyle campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/C-06-meditation-wellness-routine.webp" alt="Meditation wellness routine campaign" width="1536" height="1024"></div><div class="ov"><span class="t">Wellness</span><span class="c">Lifestyle</span></div></figure>
+      <figure class="tile" data-rv style="--d:1" data-lb data-cap="Adventure gear — outdoor campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/C-07-outdoor-adventure-gear.webp" alt="Outdoor adventure gear campaign" width="852" height="1847"></div><div class="ov"><span class="t">Adventure gear</span><span class="c">Outdoor</span></div></figure>
+      <figure class="tile wide" data-rv style="--d:2" data-lb data-cap="Home cleaning — home campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/95-home-cleaning.webp" alt="Home cleaning campaign" width="1536" height="1024"></div><div class="ov"><span class="t">Home reset</span><span class="c">Home</span></div></figure>
+      <figure class="tile" data-rv style="--d:0" data-lb data-cap="Laundry care — home campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/96-premium-laundry-care.webp" alt="Premium laundry care campaign" width="1023" height="1537"></div><div class="ov"><span class="t">Laundry care</span><span class="c">Home</span></div></figure>
+      <figure class="tile wide" data-rv style="--d:1" data-lb data-cap="Creator studio — tech campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/C-08-creator-studio.webp" alt="Creator studio campaign" width="1536" height="1024"></div><div class="ov"><span class="t">Creator studio</span><span class="c">Tech</span></div></figure>
+      <figure class="tile wide" data-rv style="--d:2" data-lb data-cap="Travel mirrorless II — tech campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/71-mirrorless-camera-travel.webp" alt="Mirrorless camera travel campaign" width="1536" height="1024"></div><div class="ov"><span class="t">Travel camera II</span><span class="c">Tech</span></div></figure>
+      <figure class="tile" data-rv style="--d:0" data-lb data-cap="Luxury rail — travel campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/99-luxury-rail-travel.webp" alt="Luxury rail travel campaign" width="1530" height="1028"></div><div class="ov"><span class="t">Luxury rail</span><span class="c">Travel</span></div></figure>
+      <figure class="tile wide" data-rv style="--d:1" data-lb data-cap="Coastal eyewear II — fashion campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/57-eyewear-coastal.webp" alt="Coastal eyewear campaign II" width="1536" height="1024"></div><div class="ov"><span class="t">Eyewear II</span><span class="c">Fashion</span></div></figure>
+      <figure class="tile wide" data-rv style="--d:2" data-lb data-cap="Home kitchen — cookware campaign"><div class="ar"><img loading="lazy" decoding="async" src="assets/img/campaigns/C-10-cookware-home-kitchen.webp" alt="Cookware home kitchen campaign" width="1774" height="887"></div><div class="ov"><span class="t">Home kitchen</span><span class="c">Home</span></div></figure>
+    </div>
+  </div>
+</section>
+<!-- ================= POSTER BREAK ================= -->
+<section class="poster" aria-label="Quote">
+  <div class="pbg" data-plx><img loading="lazy" decoding="async" src="assets/img/editorial/02-rooftop-red-hour.webp" alt="Zhang Cheng on a rooftop at red hour" width="941" height="1672"></div>
+  <blockquote>Golden hour is <i>whenever we want it</i> to be.</blockquote>
+  <span class="who">— The advantage of being rendered</span>
+</section>
 
-    <!-- ============ BRANDS ============ -->
-    <section id="brands">
-      <div class="sec-head reveal"><span class="sec-index">05</span><h2>For brands</h2></div>
-      <p class="sec-sub reveal">What you're buying is the thing human creators find hardest to sell —
-         volume and consistency — without giving up a real person behind it.</p>
-      <div class="cards reveal">
-        <div class="card">
-          <h3>Single campaign</h3>
-          <p class="price">On request</p>
-          <ul>
-            <li>One stall visit or product feature</li>
-            <li>1 reel + 4 key stills</li>
-            <li>Two revision rounds</li>
-            <li>Five working days</li>
-          </ul>
+<!-- ================= TASTE MENU ================= -->
+<section class="taste secpad" id="taste" aria-label="Food and beverage campaigns">
+  <div class="wrap">
+    <div class="whead">
+      <div>
+        <p class="eyebrow" data-rv>The menu</p>
+        <h2 class="h2" data-rv>Taste<br><span class="ghost">every frame</span></h2>
+        <p class="sub" data-rv>Thirty-four food &amp; beverage concepts, shot hungry. Hover a line to see the dish — click to open the frame.</p>
+      </div>
+      <span class="count-tag" data-rv>[ 34 F&amp;B CAMPAIGNS ]</span>
+    </div>
+    <div class="mlist" id="mlist">
+      <div class="mrow" data-lb data-cap="Specialty pour-over — coffee campaign"><span class="no">01</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/01-specialty-coffee-pourover.webp" alt="Specialty pour-over coffee campaign" width="1536" height="1024"></span><h3>Specialty pour-over</h3><span class="mtag">Coffee</span></div>
+      <div class="mrow" data-lb data-cap="Artisan croissant — bakery campaign"><span class="no">02</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/03-artisan-bakery-croissant.webp" alt="Artisan bakery croissant campaign" width="1535" height="1024"></span><h3>Artisan croissant</h3><span class="mtag">Bakery</span></div>
+      <div class="mrow" data-lb data-cap="Rainy ramen bar — ramen campaign"><span class="no">03</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/04-rainy-ramen-bar.webp" alt="Rainy ramen bar campaign" width="941" height="1672"></span><h3>Rainy ramen bar</h3><span class="mtag">Ramen</span></div>
+      <div class="mrow" data-lb data-cap="Omakase counter — sushi campaign"><span class="no">04</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/05-sushi-omakase-counter.webp" alt="Sushi omakase counter campaign" width="1628" height="966"></span><h3>Omakase counter</h3><span class="mtag">Sushi</span></div>
+      <div class="mrow" data-lb data-cap="Premium hotpot — gathering campaign"><span class="no">05</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/06-premium-hotpot-gathering.webp" alt="Premium hotpot gathering campaign" width="1536" height="1024"></span><h3>Premium hotpot</h3><span class="mtag">Hotpot</span></div>
+      <div class="mrow" data-lb data-cap="Korean BBQ evening — KBBQ campaign"><span class="no">06</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/07-korean-bbq-evening.webp" alt="Korean BBQ evening campaign" width="1536" height="1024"></span><h3>Korean BBQ evening</h3><span class="mtag">KBBQ</span></div>
+      <div class="mrow" data-lb data-cap="Neapolitan pizza — kitchen campaign"><span class="no">07</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/08-neapolitan-pizza-kitchen.webp" alt="Neapolitan pizza kitchen campaign" width="864" height="1821"></span><h3>Neapolitan pizza</h3><span class="mtag">Pizza</span></div>
+      <div class="mrow" data-lb data-cap="Gourmet burger — campaign"><span class="no">08</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/09-gourmet-burger-campaign.webp" alt="Gourmet burger campaign" width="1535" height="1024"></span><h3>Gourmet burger</h3><span class="mtag">Burger</span></div>
+      <div class="mrow" data-lb data-cap="Street tacos — night market campaign"><span class="no">09</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/10-street-tacos-night-market.webp" alt="Street tacos night market campaign" width="887" height="1774"></span><h3>Street tacos</h3><span class="mtag">Night market</span></div>
+      <div class="mrow" data-lb data-cap="Handmade pasta — kitchen campaign"><span class="no">10</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/11-handmade-pasta-kitchen.webp" alt="Handmade pasta kitchen campaign" width="1536" height="1024"></span><h3>Handmade pasta</h3><span class="mtag">Pasta</span></div>
+      <div class="mrow" data-lb data-cap="Weekend brunch — café campaign"><span class="no">11</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/12-weekend-brunch-cafe.webp" alt="Weekend brunch cafe campaign" width="941" height="1672"></span><h3>Weekend brunch</h3><span class="mtag">Café</span></div>
+      <div class="mrow" data-lb data-cap="Healthy grain bowl — health campaign"><span class="no">12</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/13-healthy-grain-bowl.webp" alt="Healthy grain bowl campaign" width="1536" height="1024"></span><h3>Healthy grain bowl</h3><span class="mtag">Health</span></div>
+      <div class="mrow" data-lb data-cap="Plant-based lunch — vegan campaign"><span class="no">13</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/14-plant-based-lunch.webp" alt="Plant-based lunch campaign" width="864" height="1821"></span><h3>Plant-based lunch</h3><span class="mtag">Vegan</span></div>
+      <div class="mrow" data-lb data-cap="Protein smoothie — fitness campaign"><span class="no">14</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/15-protein-smoothie-fitness.webp" alt="Protein smoothie fitness campaign" width="1536" height="1024"></span><h3>Protein smoothie</h3><span class="mtag">Fitness</span></div>
+      <div class="mrow" data-lb data-cap="Chocolate tasting — dessert campaign"><span class="no">15</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/16-artisan-chocolate-tasting.webp" alt="Artisan chocolate tasting campaign" width="1536" height="1024"></span><h3>Chocolate tasting</h3><span class="mtag">Dessert</span></div>
+      <div class="mrow" data-lb data-cap="Summer gelato — dessert campaign"><span class="no">16</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/17-gelato-summer-campaign.webp" alt="Summer gelato campaign" width="860" height="1829"></span><h3>Summer gelato</h3><span class="mtag">Dessert</span></div>
+      <div class="mrow" data-lb data-cap="Sparkling water — rooftop campaign"><span class="no">17</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/19-sparkling-water-rooftop.webp" alt="Sparkling water rooftop campaign" width="1536" height="1024"></span><h3>Sparkling water</h3><span class="mtag">Beverage</span></div>
+      <div class="mrow" data-lb data-cap="Craft soda — diner campaign"><span class="no">18</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/20-craft-soda-diner.webp" alt="Craft soda diner campaign" width="861" height="1827"></span><h3>Craft soda diner</h3><span class="mtag">Beverage</span></div>
+      <div class="mrow" data-lb data-cap="Cold-pressed juice — campaign"><span class="no">19</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/21-cold-pressed-juice.webp" alt="Cold-pressed juice campaign" width="823" height="1912"></span><h3>Cold-pressed juice</h3><span class="mtag">Beverage</span></div>
+      <div class="mrow" data-lb data-cap="Zero-proof wine — dinner campaign"><span class="no">20</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/22-zero-proof-wine-dinner.webp" alt="Zero-proof wine dinner campaign" width="1536" height="1024"></span><h3>Zero-proof wine</h3><span class="mtag">Beverage</span></div>
+      <div class="mrow" data-lb data-cap="Street food stall — hawker campaign"><span class="no">21</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/23-asian-street-food-stall.webp" alt="Asian street food stall campaign" width="1023" height="1537"></span><h3>Street food stall</h3><span class="mtag">Hawker</span></div>
+      <div class="mrow" data-lb data-cap="Farmers market — fresh produce campaign"><span class="no">22</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/24-farmers-market-produce.webp" alt="Farmers market produce campaign" width="1536" height="1024"></span><h3>Farmers market</h3><span class="mtag">Fresh</span></div>
+      <div class="mrow" data-lb data-cap="Chef collaboration — fine dining campaign"><span class="no">23</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/28-chef-collaboration-pass.webp" alt="Chef collaboration campaign at the pass" width="1536" height="1024"></span><h3>Chef collaboration</h3><span class="mtag">Fine dining</span></div>
+      <div class="mrow" data-lb data-cap="Oat-milk coffee — campaign"><span class="no">24</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/30-oat-milk-coffee.webp" alt="Oat milk coffee campaign" width="1536" height="1024"></span><h3>Oat-milk coffee</h3><span class="mtag">Coffee</span></div>
+      <div class="mrow" data-lb data-cap="Artisan cheese board — gourmet campaign"><span class="no">25</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/31-artisan-cheese-board.webp" alt="Artisan cheese board campaign" width="1536" height="1024"></span><h3>Cheese board</h3><span class="mtag">Gourmet</span></div>
+      <div class="mrow" data-lb data-cap="Roasted nuts — snack campaign"><span class="no">26</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/34-roasted-nuts-snack.webp" alt="Roasted nuts snack campaign" width="1537" height="1023"></span><h3>Roasted nuts</h3><span class="mtag">Snack</span></div>
+      <div class="mrow" data-lb data-cap="Dried fruit — travel snack campaign"><span class="no">27</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/35-dried-fruit-travel-snack.webp" alt="Dried fruit travel snack campaign" width="1023" height="1537"></span><h3>Dried fruit</h3><span class="mtag">Snack</span></div>
+      <div class="mrow" data-lb data-cap="Extra-virgin olive oil — pantry campaign"><span class="no">28</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/40-extra-virgin-olive-oil.webp" alt="Extra virgin olive oil campaign" width="1536" height="1024"></span><h3>Olive oil</h3><span class="mtag">Pantry</span></div>
+      <div class="mrow" data-lb data-cap="Artisan honey toast — brunch campaign"><span class="no">29</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/41-artisan-honey-toast.webp" alt="Artisan honey toast campaign" width="1535" height="1024"></span><h3>Honey toast</h3><span class="mtag">Brunch</span></div>
+      <div class="mrow" data-lb data-cap="Premium rice — home table campaign"><span class="no">30</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/42-premium-rice-home-table.webp" alt="Premium rice home table campaign" width="1024" height="1536"></span><h3>Premium rice</h3><span class="mtag">Pantry</span></div>
+      <div class="mrow" data-lb data-cap="Camping meal — outdoor campaign"><span class="no">31</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/45-camping-meal-outdoors.webp" alt="Camping meal outdoors campaign" width="1536" height="1024"></span><h3>Camping meal</h3><span class="mtag">Outdoor</span></div>
+      <div class="mrow" data-lb data-cap="Hotel breakfast — travel campaign"><span class="no">32</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/46-boutique-hotel-breakfast.webp" alt="Boutique hotel breakfast campaign" width="1536" height="1024"></span><h3>Hotel breakfast</h3><span class="mtag">Travel</span></div>
+      <div class="mrow" data-lb data-cap="Signature mocktail — bar campaign"><span class="no">33</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/49-signature-mocktail-bar.webp" alt="Signature mocktail bar campaign" width="1536" height="1024"></span><h3>Signature mocktail</h3><span class="mtag">Bar</span></div>
+      <div class="mrow" data-lb data-cap="Tasting menu — fine dining campaign"><span class="no">34</span><span class="thumb"><img loading="lazy" decoding="async" src="assets/img/food/50-fine-dining-tasting-menu.webp" alt="Fine dining tasting menu campaign" width="1023" height="1537"></span><h3>Tasting menu</h3><span class="mtag">Fine dining</span></div>
+    </div>
+  </div>
+  <div class="mprev" id="mprev" aria-hidden="true"><img id="mprevimg" src="" alt=""></div>
+</section>
+<!-- ================= EDITORIAL ================= -->
+<section class="secpad" id="editorial" aria-label="Editorial photography">
+  <div class="wrap">
+    <div class="whead">
+      <div>
+        <p class="eyebrow" data-rv>The editorial</p>
+        <h2 class="h2" data-rv>Cover-story<br><span class="ghost">energy</span></h2>
+        <p class="sub" data-rv>Thirty-six cinematic frames — night streets, sunlit ateliers, observatories, lighthouses, red carpets. This is the register your brand borrows when I front your campaign.</p>
+      </div>
+      <span class="count-tag" data-rv>[ 36 FRAMES ]</span>
+    </div>
+    <div class="masonry">
+      <figure data-lb data-cap="Night street, downtown"><img loading="lazy" decoding="async" src="assets/img/editorial/01-cinematic-night-street.webp" alt="Editorial — night street downtown" width="1024" height="1536"><figcaption>Night street, downtown</figcaption></figure>
+      <figure data-lb data-cap="The atelier"><img loading="lazy" decoding="async" src="assets/img/editorial/01-sewing-machine.webp" alt="Editorial — vintage sewing machine atelier at golden hour" width="862" height="1825"><figcaption>The atelier</figcaption></figure>
+      <figure data-lb data-cap="Meteor-shower observatory"><img loading="lazy" decoding="async" src="assets/img/editorial/x-A-18-meteor-shower-observatory.webp" alt="Editorial — meteor shower over an observatory" width="1536" height="1024"><figcaption>Meteor-shower observatory</figcaption></figure>
+      <figure data-lb data-cap="Rainy ramen bar"><img loading="lazy" decoding="async" src="assets/img/editorial/01-rainy-ramen-bar.webp" alt="Editorial — rainy ramen bar" width="971" height="1620"><figcaption>Rainy ramen bar</figcaption></figure>
+      <figure data-lb data-cap="Analog darkroom"><img loading="lazy" decoding="async" src="assets/img/editorial/x-A-16-analog-darkroom-red-light.webp" alt="Editorial — analog darkroom in red light" width="853" height="1844"><figcaption>Analog darkroom</figcaption></figure>
+      <figure data-lb data-cap="Seoul in the rain"><img loading="lazy" decoding="async" src="assets/img/editorial/02-rainy-seoul-street.webp" alt="Editorial — Seoul street in the rain" width="975" height="1613"><figcaption>Seoul in the rain</figcaption></figure>
+      <figure data-lb data-cap="Nordic firelit cabin"><img loading="lazy" decoding="async" src="assets/img/editorial/x-A-19-nordic-firelit-cabin.webp" alt="Editorial — nordic firelit cabin" width="1537" height="1023"><figcaption>Nordic firelit cabin</figcaption></figure>
+      <figure data-lb data-cap="Seaside platform"><img loading="lazy" decoding="async" src="assets/img/editorial/03-seaside-platform.webp" alt="Editorial — seaside train platform" width="1065" height="1477"><figcaption>Seaside platform</figcaption></figure>
+      <figure data-lb data-cap="Glass elevator"><img loading="lazy" decoding="async" src="assets/img/editorial/x-A-12-glass-elevator-above-city.webp" alt="Editorial — glass elevator above the city" width="864" height="1821"><figcaption>Glass elevator</figcaption></figure>
+      <figure data-lb data-cap="Busan summer rooftop"><img loading="lazy" decoding="async" src="assets/img/editorial/04-busan-summer-rooftop.webp" alt="Editorial — Busan summer rooftop" width="985" height="1596"><figcaption>Busan summer rooftop</figcaption></figure>
+      <figure data-lb data-cap="Red carpet, backstage"><img loading="lazy" decoding="async" src="assets/img/editorial/x-A-31-red-carpet-backstage-candid.webp" alt="Editorial — red carpet backstage candid" width="853" height="1844"><figcaption>Red carpet, backstage</figcaption></figure>
+      <figure data-lb data-cap="Golden record shop"><img loading="lazy" decoding="async" src="assets/img/editorial/05-golden-record-shop.webp" alt="Editorial — golden hour record shop" width="986" height="1595"><figcaption>Golden record shop</figcaption></figure>
+      <figure data-lb data-cap="Sea-cliff lighthouse"><img loading="lazy" decoding="async" src="assets/img/editorial/x-A-28-sea-cliff-lighthouse.webp" alt="Editorial — sea cliff lighthouse" width="1023" height="1537"><figcaption>Sea-cliff lighthouse</figcaption></figure>
+      <figure data-lb data-cap="Studio portrait"><img loading="lazy" decoding="async" src="assets/img/editorial/05-raised-knees.webp" alt="Editorial — studio portrait" width="1023" height="1537"><figcaption>Studio portrait</figcaption></figure>
+      <figure data-lb data-cap="Rain-soaked motorbike"><img loading="lazy" decoding="async" src="assets/img/editorial/x-A-32-rain-soaked-motorbike-editorial.webp" alt="Editorial — rain soaked motorbike" width="1536" height="1024"><figcaption>Rain-soaked motorbike</figcaption></figure>
+      <figure data-lb data-cap="Rooftop antenna"><img loading="lazy" decoding="async" src="assets/img/editorial/05-rooftop-antenna.webp" alt="Editorial — rooftop with antenna" width="1024" height="1536"><figcaption>Rooftop antenna</figcaption></figure>
+      <figure data-lb data-cap="Bathhouse steam"><img loading="lazy" decoding="async" src="assets/img/editorial/x-A-17-luxurious-bathhouse-steam.webp" alt="Editorial — luxurious bathhouse in steam" width="852" height="1846"><figcaption>Bathhouse steam</figcaption></figure>
+      <figure data-lb data-cap="Evening train"><img loading="lazy" decoding="async" src="assets/img/editorial/06-evening-train.webp" alt="Editorial — evening train" width="1004" height="1567"><figcaption>Evening train</figcaption></figure>
+      <figure data-lb data-cap="Silent film still"><img loading="lazy" decoding="async" src="assets/img/editorial/x-A-30-silent-film-monochrome-actor.webp" alt="Editorial — silent film monochrome still" width="912" height="1725"><figcaption>Silent film still</figcaption></figure>
+      <figure data-lb data-cap="Rose on the rail"><img loading="lazy" decoding="async" src="assets/img/editorial/06-rose-on-rail.webp" alt="Editorial — rose on the rail" width="852" height="1846"><figcaption>Rose on the rail</figcaption></figure>
+      <figure data-lb data-cap="Clockmaker's workshop"><img loading="lazy" decoding="async" src="assets/img/editorial/x-A-24-antique-clockmaker-workshop.webp" alt="Editorial — antique clockmaker workshop" width="1537" height="1023"><figcaption>Clockmaker's workshop</figcaption></figure>
+      <figure data-lb data-cap="Sunlit sewing room"><img loading="lazy" decoding="async" src="assets/img/editorial/06-sunlit-sewing-room.webp" alt="Editorial — sunlit sewing room" width="853" height="1844"><figcaption>Sunlit sewing room</figcaption></figure>
+      <figure data-lb data-cap="Museum after hours"><img loading="lazy" decoding="async" src="assets/img/editorial/x-A-26-empty-museum-after-hours.webp" alt="Editorial — empty museum after hours" width="887" height="1774"><figcaption>Museum after hours</figcaption></figure>
+      <figure data-lb data-cap="Windswept balcony"><img loading="lazy" decoding="async" src="assets/img/editorial/07-windswept-balcony.webp" alt="Editorial — windswept balcony" width="1054" height="1492"><figcaption>Windswept balcony</figcaption></figure>
+      <figure data-lb data-cap="Desert motel pool"><img loading="lazy" decoding="async" src="assets/img/editorial/x-A-27-desert-motel-pool.webp" alt="Editorial — desert motel pool" width="853" height="1844"><figcaption>Desert motel pool</figcaption></figure>
+      <figure data-lb data-cap="Worktable radio"><img loading="lazy" decoding="async" src="assets/img/editorial/07-worktable-radio.webp" alt="Editorial — worktable with radio" width="852" height="1847"><figcaption>Worktable radio</figcaption></figure>
+      <figure data-lb data-cap="Tropical glasshouse rain"><img loading="lazy" decoding="async" src="assets/img/editorial/x-A-23-tropical-glasshouse-rain.webp" alt="Editorial — tropical glasshouse in rain" width="851" height="1849"><figcaption>Tropical glasshouse</figcaption></figure>
+      <figure data-lb data-cap="Sketchbook"><img loading="lazy" decoding="async" src="assets/img/editorial/09-sketchbook.webp" alt="Editorial — sketchbook" width="875" height="1798"><figcaption>Sketchbook</figcaption></figure>
+      <figure data-lb data-cap="Shipyard dawn"><img loading="lazy" decoding="async" src="assets/img/editorial/x-A-22-industrial-shipyard-dawn.webp" alt="Editorial — industrial shipyard at dawn" width="916" height="1717"><figcaption>Shipyard dawn</figcaption></figure>
+      <figure data-lb data-cap="Terrace walk"><img loading="lazy" decoding="async" src="assets/img/editorial/09-terrace-walk.webp" alt="Editorial — terrace walk" width="853" height="1844"><figcaption>Terrace walk</figcaption></figure>
+      <figure data-lb data-cap="Supermarket after closing"><img loading="lazy" decoding="async" src="assets/img/editorial/x-A-29-retro-supermarket-after-closing.webp" alt="Editorial — retro supermarket after closing" width="1536" height="1024"><figcaption>Supermarket, closed</figcaption></figure>
+      <figure data-lb data-cap="Convenience store, 1AM"><img loading="lazy" decoding="async" src="assets/img/editorial/02-convenience-store.webp" alt="Editorial — convenience store at 1am" width="1086" height="1448"><figcaption>Convenience store, 1AM</figcaption></figure>
+      <figure data-lb data-cap="Dance freeze-frame"><img loading="lazy" decoding="async" src="assets/img/editorial/x-A-34-contemporary-dance-freeze-frame.webp" alt="Editorial — contemporary dance freeze frame" width="1536" height="1024"><figcaption>Dance freeze-frame</figcaption></figure>
+      <figure data-lb data-cap="Desert solar farm"><img loading="lazy" decoding="async" src="assets/img/editorial/x-A-03-desert-solar-farm.webp" alt="Editorial — desert solar farm" width="1536" height="1024"><figcaption>Desert solar farm</figcaption></figure>
+      <figure data-lb data-cap="Late-night rooftop"><img loading="lazy" decoding="async" src="assets/img/editorial/04-late-night-rooftop.webp" alt="Editorial — late night rooftop" width="1131" height="1391"><figcaption>Late-night rooftop</figcaption></figure>
+      <figure data-lb data-cap="Rooftop, red hour"><img loading="lazy" decoding="async" src="assets/img/editorial/02-rooftop-red-hour.webp" alt="Editorial — rooftop at red hour" width="941" height="1672"><figcaption>Rooftop, red hour</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<div class="marq dimmed" aria-hidden="true" style="--spd:44s">
+  <div class="track">
+    <span>Shot on nothing<i>◆</i></span><span>Rendered on everything<i>◆</i></span><span>35mm soul<i>◆</i></span>
+    <span>Shot on nothing<i>◆</i></span><span>Rendered on everything<i>◆</i></span><span>35mm soul<i>◆</i></span>
+    <span>Shot on nothing<i>◆</i></span><span>Rendered on everything<i>◆</i></span><span>35mm soul<i>◆</i></span>
+    <span>Shot on nothing<i>◆</i></span><span>Rendered on everything<i>◆</i></span><span>35mm soul<i>◆</i></span>
+  </div>
+</div>
+<!-- ================= FILM DIARY ================= -->
+<section class="diarywrap" id="diary" aria-label="Instant film diary">
+  <div class="diary-sticky">
+    <div class="diary-head">
+      <p class="eyebrow">The film diary</p>
+      <h2 class="h2" style="font-size:clamp(2.6rem,6vw,4.8rem)">31 instax frames<span class="ghost"> — keep scrolling</span></h2>
+    </div>
+    <div class="dtrack" id="dtrack">
+      <div class="dchap"><span class="no">CH.01 — 13 FRAMES</span><span class="nm">Small<br>hours</span></div>
+      <figure class="dcard" style="--r:-2deg" data-lb data-cap="Vinyl shop, blue hour"><img loading="lazy" decoding="async" src="assets/img/film/A-02-vinyl-shop-blue-hour.webp" alt="Instant film — vinyl shop at blue hour" width="986" height="1595"><figcaption class="dl">Vinyl shop, blue hour</figcaption></figure>
+      <figure class="dcard" style="--r:1.6deg" data-lb data-cap="Midnight laundromat"><img loading="lazy" decoding="async" src="assets/img/film/A-03-midnight-laundromat.webp" alt="Instant film — midnight laundromat" width="978" height="1609"><figcaption class="dl">Midnight laundromat</figcaption></figure>
+      <figure class="dcard" style="--r:-1.2deg" data-lb data-cap="Rainy used bookstore"><img loading="lazy" decoding="async" src="assets/img/film/A-04-rainy-used-bookstore.webp" alt="Instant film — rainy used bookstore" width="984" height="1598"><figcaption class="dl">Rainy used bookstore</figcaption></figure>
+      <figure class="dcard" style="--r:2.2deg" data-lb data-cap="Late-night library"><img loading="lazy" decoding="async" src="assets/img/film/A-05-late-night-library.webp" alt="Instant film — late night library" width="971" height="1620"><figcaption class="dl">Late-night library</figcaption></figure>
+      <figure class="dcard" style="--r:-1.8deg" data-lb data-cap="Photo-booth lobby"><img loading="lazy" decoding="async" src="assets/img/film/A-06-photo-booth-lobby.webp" alt="Instant film — photo booth lobby" width="982" height="1602"><figcaption class="dl">Photo-booth lobby</figcaption></figure>
+      <figure class="dcard" style="--r:1.4deg" data-lb data-cap="Record listening bar"><img loading="lazy" decoding="async" src="assets/img/film/A-09-record-listening-bar.webp" alt="Instant film — record listening bar" width="975" height="1614"><figcaption class="dl">Record listening bar</figcaption></figure>
+      <figure class="dcard" style="--r:-2.4deg" data-lb data-cap="Retro basement arcade"><img loading="lazy" decoding="async" src="assets/img/film/A-10-retro-basement-arcade.webp" alt="Instant film — retro basement arcade" width="986" height="1595"><figcaption class="dl">Retro basement arcade</figcaption></figure>
+      <figure class="dcard" style="--r:1.8deg" data-lb data-cap="Bakery at dawn"><img loading="lazy" decoding="async" src="assets/img/film/A-11-bakery-at-dawn.webp" alt="Instant film — bakery at dawn" width="965" height="1629"><figcaption class="dl">Bakery at dawn</figcaption></figure>
+      <figure class="dcard" style="--r:-1.4deg" data-lb data-cap="Rainy ramen counter"><img loading="lazy" decoding="async" src="assets/img/film/A-12-rainy-ramen-counter.webp" alt="Instant film — rainy ramen counter" width="971" height="1620"><figcaption class="dl">Rainy ramen counter</figcaption></figure>
+      <figure class="dcard" style="--r:2deg" data-lb data-cap="Neighborhood barber shop"><img loading="lazy" decoding="async" src="assets/img/film/A-14-neighborhood-barber-shop.webp" alt="Instant film — neighborhood barber shop" width="995" height="1581"><figcaption class="dl">Neighborhood barber</figcaption></figure>
+      <figure class="dcard" style="--r:-1.6deg" data-lb data-cap="Winter sewing studio"><img loading="lazy" decoding="async" src="assets/img/film/A-15-winter-sewing-studio.webp" alt="Instant film — winter sewing studio" width="971" height="1620"><figcaption class="dl">Winter sewing studio</figcaption></figure>
+      <figure class="dcard" style="--r:1.2deg" data-lb data-cap="Greenhouse café after rain"><img loading="lazy" decoding="async" src="assets/img/film/A-16-greenhouse-cafe-after-rain.webp" alt="Instant film — greenhouse cafe after rain" width="987" height="1593"><figcaption class="dl">Greenhouse café</figcaption></figure>
+      <figure class="dcard" style="--r:-2.2deg" data-lb data-cap="Rain-fogged taxi"><img loading="lazy" decoding="async" src="assets/img/film/A-17-rain-fogged-taxi.webp" alt="Instant film — rain fogged taxi" width="983" height="1600"><figcaption class="dl">Rain-fogged taxi</figcaption></figure>
+      <div class="dchap"><span class="no">CH.02 — 7 FRAMES</span><span class="nm">Night<br>streets</span></div>
+      <figure class="dcard" style="--r:1.6deg" data-lb data-cap="Han River bridge, blue hour"><img loading="lazy" decoding="async" src="assets/img/film/B-01-han-river-bridge-blue-hour.webp" alt="Instant film — Han river bridge at blue hour" width="981" height="1602"><figcaption class="dl">Han River, blue hour</figcaption></figure>
+      <figure class="dcard" style="--r:-1.8deg" data-lb data-cap="Convenience store alley"><img loading="lazy" decoding="async" src="assets/img/film/B-03-convenience-store-alley.webp" alt="Instant film — convenience store alley" width="972" height="1619"><figcaption class="dl">Convenience alley</figcaption></figure>
+      <figure class="dcard" style="--r:2.4deg" data-lb data-cap="Neon crosswalk"><img loading="lazy" decoding="async" src="assets/img/film/B-04-neon-crosswalk.webp" alt="Instant film — neon crosswalk" width="971" height="1620"><figcaption class="dl">Neon crosswalk</figcaption></figure>
+      <figure class="dcard" style="--r:-1.2deg" data-lb data-cap="Rainy bus shelter"><img loading="lazy" decoding="async" src="assets/img/film/B-05-rainy-bus-shelter.webp" alt="Instant film — rainy bus shelter" width="983" height="1600"><figcaption class="dl">Rainy bus shelter</figcaption></figure>
+      <figure class="dcard" style="--r:1.8deg" data-lb data-cap="Traditional market, closing time"><img loading="lazy" decoding="async" src="assets/img/film/B-09-traditional-market-closing.webp" alt="Instant film — traditional market at closing time" width="972" height="1619"><figcaption class="dl">Market, closing time</figcaption></figure>
+      <figure class="dcard" style="--r:-2deg" data-lb data-cap="Night food stall"><img loading="lazy" decoding="async" src="assets/img/film/B-15-night-food-stall.webp" alt="Instant film — night food stall" width="969" height="1624"><figcaption class="dl">Night food stall</figcaption></figure>
+      <figure class="dcard" style="--r:1.4deg" data-lb data-cap="Dawn fish market"><img loading="lazy" decoding="async" src="assets/img/film/B-17-dawn-fish-market.webp" alt="Instant film — dawn fish market" width="978" height="1608"><figcaption class="dl">Dawn fish market</figcaption></figure>
+      <div class="dchap"><span class="no">CH.03 — 11 FRAMES</span><span class="nm">Else-<br>where</span></div>
+      <figure class="dcard" style="--r:-1.6deg" data-lb data-cap="Coastal local train"><img loading="lazy" decoding="async" src="assets/img/film/C-01-coastal-local-train.webp" alt="Instant film — coastal local train" width="985" height="1597"><figcaption class="dl">Coastal local train</figcaption></figure>
+      <figure class="dcard" style="--r:2.2deg" data-lb data-cap="Windswept sea wall"><img loading="lazy" decoding="async" src="assets/img/film/C-02-windswept-sea-wall.webp" alt="Instant film — windswept sea wall" width="983" height="1601"><figcaption class="dl">Windswept sea wall</figcaption></figure>
+      <figure class="dcard" style="--r:-1.4deg" data-lb data-cap="Rainy hydrangea path"><img loading="lazy" decoding="async" src="assets/img/film/C-04-rainy-hydrangea-path.webp" alt="Instant film — rainy hydrangea path" width="987" height="1593"><figcaption class="dl">Hydrangea path</figcaption></figure>
+      <figure class="dcard" style="--r:1.6deg" data-lb data-cap="Cherry blossoms after rain"><img loading="lazy" decoding="async" src="assets/img/film/C-05-cherry-blossoms-after-rain.webp" alt="Instant film — cherry blossoms after rain" width="981" height="1603"><figcaption class="dl">Blossoms after rain</figcaption></figure>
+      <figure class="dcard" style="--r:-2.4deg" data-lb data-cap="Snowy mountain bridge"><img loading="lazy" decoding="async" src="assets/img/film/C-06-snowy-mountain-bridge.webp" alt="Instant film — snowy mountain bridge" width="984" height="1598"><figcaption class="dl">Snowy bridge</figcaption></figure>
+      <figure class="dcard" style="--r:1.2deg" data-lb data-cap="Autumn temple steps"><img loading="lazy" decoding="async" src="assets/img/film/C-08-autumn-temple-steps-double-exposure.webp" alt="Instant film — autumn temple steps double exposure" width="978" height="1608"><figcaption class="dl">Autumn temple steps</figcaption></figure>
+      <figure class="dcard" style="--r:-1.8deg" data-lb data-cap="Island bicycle"><img loading="lazy" decoding="async" src="assets/img/film/C-10-island-bicycle.webp" alt="Instant film — island bicycle" width="986" height="1595"><figcaption class="dl">Island bicycle</figcaption></figure>
+      <figure class="dcard" style="--r:2deg" data-lb data-cap="Foggy tea field"><img loading="lazy" decoding="async" src="assets/img/film/C-12-foggy-tea-field-double-exposure.webp" alt="Instant film — foggy tea field double exposure" width="987" height="1594"><figcaption class="dl">Foggy tea field</figcaption></figure>
+      <figure class="dcard" style="--r:-1.2deg" data-lb data-cap="Bamboo grove, slow shutter"><img loading="lazy" decoding="async" src="assets/img/film/C-13-bamboo-grove-slow-shutter.webp" alt="Instant film — bamboo grove slow shutter" width="981" height="1603"><figcaption class="dl">Bamboo grove</figcaption></figure>
+      <figure class="dcard" style="--r:1.8deg" data-lb data-cap="Summer river fireworks"><img loading="lazy" decoding="async" src="assets/img/film/C-14-summer-river-fireworks.webp" alt="Instant film — summer river fireworks" width="993" height="1584"><figcaption class="dl">River fireworks</figcaption></figure>
+      <figure class="dcard" style="--r:-1.6deg" data-lb data-cap="Quiet lake pier"><img loading="lazy" decoding="async" src="assets/img/film/C-16-quiet-lake-pier.webp" alt="Instant film — quiet lake pier" width="977" height="1610"><figcaption class="dl">Quiet lake pier</figcaption></figure>
+      <div class="dchap"><span class="no">END OF ROLL</span><span class="nm">Your brand<br>fits here</span></div>
+    </div>
+    <div class="dbar"><i id="dprog"></i></div>
+  </div>
+</section>
+
+<!-- ================= RANGE ================= -->
+<section class="range secpad" id="range" aria-label="Art style range">
+  <div class="wrap">
+    <p class="eyebrow" data-rv>The range</p>
+    <h2 class="h2" data-rv>Same face,<br><span class="ghost">any universe</span></h2>
+    <p class="sub" data-rv style="margin-bottom:clamp(40px,5vw,70px)">Human talent is locked to reality. I'm not. Thirteen renders, thirteen completely different mediums — my likeness stays consistent through all of them. Scroll the list, or click a style.</p>
+    <div class="range-grid">
+      <div class="rlist" id="rlist">
+        <div class="ritem act" data-ri="0"><div class="rt"><span class="no">01</span><h3>Underwater ballroom</h3></div><div class="med">Surreal cinematic</div><div class="mimg"><img loading="lazy" decoding="async" src="assets/img/styles/A-02-underwater-ballroom.webp" alt="Style render — underwater ballroom" width="853" height="1844"></div></div>
+        <div class="ritem" data-ri="1"><div class="rt"><span class="no">02</span><h3>Brutalist mono</h3></div><div class="med">B&amp;W architectural</div><div class="mimg"><img loading="lazy" decoding="async" src="assets/img/styles/A-03-brutalist-monochrome.webp" alt="Style render — brutalist monochrome" width="851" height="1847"></div></div>
+        <div class="ritem" data-ri="2"><div class="rt"><span class="no">03</span><h3>Alpine snowstorm</h3></div><div class="med">Expedition cinematic</div><div class="mimg"><img loading="lazy" decoding="async" src="assets/img/styles/A-07-alpine-snowstorm.webp" alt="Style render — alpine snowstorm" width="1536" height="1024"></div></div>
+        <div class="ritem" data-ri="3"><div class="rt"><span class="no">04</span><h3>Charcoal portrait</h3></div><div class="med">Hand-drawn</div><div class="mimg"><img loading="lazy" decoding="async" src="assets/img/styles/B-01-expressive-charcoal-portrait.webp" alt="Style render — expressive charcoal portrait" width="1085" height="1450"></div></div>
+        <div class="ritem" data-ri="4"><div class="rt"><span class="no">05</span><h3>Graphite blueprint</h3></div><div class="med">Technical drawing</div><div class="mimg"><img loading="lazy" decoding="async" src="assets/img/styles/B-01-graphite-technical-drawing.webp" alt="Style render — graphite technical drawing" width="1086" height="1448"></div></div>
+        <div class="ritem" data-ri="5"><div class="rt"><span class="no">06</span><h3>Woodblock inks</h3></div><div class="med">Ukiyo-e print</div><div class="mimg"><img loading="lazy" decoding="async" src="assets/img/styles/B-02-japanese-woodblock-flat-inks.webp" alt="Style render — japanese woodblock flat inks" width="1023" height="1537"></div></div>
+        <div class="ritem" data-ri="6"><div class="rt"><span class="no">07</span><h3>Oil impasto</h3></div><div class="med">Thick-brush painting</div><div class="mimg"><img loading="lazy" decoding="async" src="assets/img/styles/B-03-thick-oil-impasto.webp" alt="Style render — thick oil impasto painting" width="1050" height="1498"></div></div>
+        <div class="ritem" data-ri="7"><div class="rt"><span class="no">08</span><h3>Paper collage</h3></div><div class="med">Hand-cut craft</div><div class="mimg"><img loading="lazy" decoding="async" src="assets/img/styles/B-06-hand-cut-paper-collage.webp" alt="Style render — hand cut paper collage" width="941" height="1672"></div></div>
+        <div class="ritem" data-ri="8"><div class="rt"><span class="no">09</span><h3>Clay character</h3></div><div class="med">Stop-motion</div><div class="mimg"><img loading="lazy" decoding="async" src="assets/img/styles/B-08-stop-motion-clay-character.webp" alt="Style render — stop motion clay character" width="1023" height="1537"></div></div>
+        <div class="ritem" data-ri="9"><div class="rt"><span class="no">10</span><h3>Storybook gouache</h3></div><div class="med">Watercolor illustration</div><div class="mimg"><img loading="lazy" decoding="async" src="assets/img/styles/B-09-watercolor-gouache-storybook.webp" alt="Style render — watercolor gouache storybook" width="1076" height="1461"></div></div>
+        <div class="ritem" data-ri="10"><div class="rt"><span class="no">11</span><h3>'80s anime cel</h3></div><div class="med">Retro animation</div><div class="mimg"><img loading="lazy" decoding="async" src="assets/img/styles/B-27-generic-1980s-anime-cel.webp" alt="Style render — 1980s anime cel" width="1086" height="1448"></div></div>
+        <div class="ritem" data-ri="11"><div class="rt"><span class="no">12</span><h3>Gentle giant</h3></div><div class="med">Miniature city</div><div class="mimg"><img loading="lazy" decoding="async" src="assets/img/styles/C-02-gentle-giant-miniature-city.webp" alt="Style render — gentle giant in miniature city" width="1024" height="1536"></div></div>
+        <div class="ritem" data-ri="12"><div class="rt"><span class="no">13</span><h3>Glass botanist</h3></div><div class="med">Translucent 3D</div><div class="mimg"><img loading="lazy" decoding="async" src="assets/img/styles/C-07-translucent-glass-botanist.webp" alt="Style render — translucent glass botanist" width="853" height="1844"></div></div>
+      </div>
+      <div class="rstage">
+        <div class="rframe" id="rframe">
+          <img class="act" src="assets/img/styles/A-02-underwater-ballroom.webp" alt="" width="853" height="1844" decoding="async">
+          <img data-src="assets/img/styles/A-03-brutalist-monochrome.webp" alt="" width="851" height="1847" decoding="async">
+          <img data-src="assets/img/styles/A-07-alpine-snowstorm.webp" alt="" width="1536" height="1024" decoding="async">
+          <img data-src="assets/img/styles/B-01-expressive-charcoal-portrait.webp" alt="" width="1085" height="1450" decoding="async">
+          <img data-src="assets/img/styles/B-01-graphite-technical-drawing.webp" alt="" width="1086" height="1448" decoding="async">
+          <img data-src="assets/img/styles/B-02-japanese-woodblock-flat-inks.webp" alt="" width="1023" height="1537" decoding="async">
+          <img data-src="assets/img/styles/B-03-thick-oil-impasto.webp" alt="" width="1050" height="1498" decoding="async">
+          <img data-src="assets/img/styles/B-06-hand-cut-paper-collage.webp" alt="" width="941" height="1672" decoding="async">
+          <img data-src="assets/img/styles/B-08-stop-motion-clay-character.webp" alt="" width="1023" height="1537" decoding="async">
+          <img data-src="assets/img/styles/B-09-watercolor-gouache-storybook.webp" alt="" width="1076" height="1461" decoding="async">
+          <img data-src="assets/img/styles/B-27-generic-1980s-anime-cel.webp" alt="" width="1086" height="1448" decoding="async">
+          <img data-src="assets/img/styles/C-02-gentle-giant-miniature-city.webp" alt="" width="1024" height="1536" decoding="async">
+          <img data-src="assets/img/styles/C-07-translucent-glass-botanist.webp" alt="" width="853" height="1844" decoding="async">
+          <span class="rcount" id="rcount">01 / 13</span>
         </div>
-        <div class="card">
-          <h3>Monthly retainer</h3>
-          <p class="price">On request · monthly</p>
-          <ul>
-            <li>4 reels + 16 stills a month</li>
-            <li>48-hour priority turnaround</li>
-            <li>Platform cutdowns included</li>
-            <li>Paid-ad usage rights</li>
-          </ul>
-        </div>
-        <div class="card">
-          <h3>Product spot</h3>
-          <p class="price">On request</p>
-          <ul>
-            <li>12–30 second scripted spot</li>
-            <li>Vertical and 16:9 cutdowns</li>
-            <li>Voiceover, English or Mandarin</li>
-            <li>Six-month usage licence</li>
-          </ul>
-        </div>
       </div>
-      <p class="sec-sub reveal" style="margin-top:24px;margin-bottom:0">Every licence states its scope and
-         duration in writing before anything is produced. Content is delivered rendered — the likeness model
-         itself is never transferred, licensed or shared. Not worked with: tobacco and vaping, gambling,
-         weapons, political campaigns.</p>
-    </section>
-
-    <!-- ============ DISCLOSURE ============ -->
-    <section id="disclosure">
-      <div class="disclosure reveal">
-        <div class="sec-head"><span class="sec-index">06</span><h2>AI disclosure</h2></div>
-        <p><b>The person is real. Most of the imagery is not.</b> The photographs and videos published under
-           this project are generated by an AI likeness model trained exclusively on photographs of me, with
-           my consent.</p>
-        <p>No other real person is depicted, impersonated, or used as training data. The model is not based
-           on any celebrity, public figure or third party, and it is never handed to a client.</p>
-        <p>All published content carries the AI-generated content label required by each platform — Instagram,
-           TikTok and YouTube. Locations, meals and opinions reflect visits that actually happened: nothing is
-           produced for a stall or a product I haven't experienced first-hand. A review of a meal I never ate
-           is a lie about somebody's business, and no amount of automation makes that acceptable.</p>
+    </div>
+  </div>
+</section>
+<!-- ================= DREAMS PILE ================= -->
+<section class="dreams secpad" id="dreams" aria-label="Impossible worlds — draggable gallery">
+  <div class="wrap">
+    <div class="whead">
+      <div>
+        <p class="eyebrow" data-rv>The impossible</p>
+        <h2 class="h2" data-rv>Worlds that<br><span class="ghost">don't exist yet</span></h2>
+        <p class="sub" data-rv>Twelve places no photographer can book. Grab a frame, throw it around — this whole pile is yours to rearrange.</p>
       </div>
-    </section>
-  </main>
+      <span class="count-tag" data-rv>[ 12 DREAMSCAPES — DRAG THEM ]</span>
+    </div>
+    <div class="dstage" id="dstage">
+      <span class="dhint">Drag the<br>impossible</span>
+      <figure class="dpile" data-lb data-cap="Living constellation" data-vf="DRAG"><img loading="lazy" decoding="async" src="assets/img/dreams/C-04-living-human-constellation.webp" alt="Dreamscape — living human constellation" width="853" height="1844"></figure>
+      <figure class="dpile" data-lb data-cap="Train through the bedroom" data-vf="DRAG"><img loading="lazy" decoding="async" src="assets/img/dreams/C-05-train-through-bedroom.webp" alt="Dreamscape — train through the bedroom" width="1023" height="1537"></figure>
+      <figure class="dpile" data-lb data-cap="Staircase from the ocean" data-vf="DRAG"><img loading="lazy" decoding="async" src="assets/img/dreams/C-06-staircase-from-ocean.webp" alt="Dreamscape — staircase rising from the ocean" width="852" height="1846"></figure>
+      <figure class="dpile" data-lb data-cap="Orchard of clocks" data-vf="DRAG"><img loading="lazy" decoding="async" src="assets/img/dreams/C-07-orchard-of-clocks.webp" alt="Dreamscape — orchard of clocks" width="1023" height="1537"></figure>
+      <figure class="dpile" data-lb data-cap="Museum of memories" data-vf="DRAG"><img loading="lazy" decoding="async" src="assets/img/dreams/C-08-museum-of-memories.webp" alt="Dreamscape — museum of memories" width="941" height="1672"></figure>
+      <figure class="dpile" data-lb data-cap="Candlelit cave of stars" data-vf="DRAG"><img loading="lazy" decoding="async" src="assets/img/dreams/C-14-candlelit-cave-of-stars.webp" alt="Dreamscape — candlelit cave of stars" width="853" height="1844"></figure>
+      <figure class="dpile" data-lb data-cap="Library on a celestial whale" data-vf="DRAG"><img loading="lazy" decoding="async" src="assets/img/dreams/C-24-library-on-celestial-whale.webp" alt="Dreamscape — library on a celestial whale" width="1536" height="1024"></figure>
+      <figure class="dpile" data-lb data-cap="Aurora-woven cloak" data-vf="DRAG"><img loading="lazy" decoding="async" src="assets/img/dreams/C-28-aurora-woven-cloak.webp" alt="Dreamscape — aurora woven cloak" width="853" height="1844"></figure>
+      <figure class="dpile" data-lb data-cap="Bridge between two moons" data-vf="DRAG"><img loading="lazy" decoding="async" src="assets/img/dreams/C-30-bridge-between-two-moons.webp" alt="Dreamscape — bridge between two moons" width="1536" height="1024"></figure>
+      <figure class="dpile" data-lb data-cap="Volcanic forge guardian" data-vf="DRAG"><img loading="lazy" decoding="async" src="assets/img/dreams/C-31-volcanic-forge-guardian.webp" alt="Dreamscape — volcanic forge guardian" width="852" height="1846"></figure>
+      <figure class="dpile" data-lb data-cap="Bottling storms" data-vf="DRAG"><img loading="lazy" decoding="async" src="assets/img/dreams/C-32-collector-bottling-storms.webp" alt="Dreamscape — collector bottling storms" width="1023" height="1537"></figure>
+      <figure class="dpile" data-lb data-cap="Museum of lost shadows" data-vf="DRAG"><img loading="lazy" decoding="async" src="assets/img/dreams/C-33-museum-of-lost-shadows.webp" alt="Dreamscape — museum of lost shadows" width="852" height="1846"></figure>
+    </div>
+  </div>
+</section>
 
-  <footer>
-    <p>© <span id="year"></span> Zhang Cheng · A real person, scaled by AI · built by AI agents under my
-       direction · placeholders marked throughout until the model is trained</p>
-  </footer>
+<!-- ================= WHY ================= -->
+<section class="secpad" id="why" aria-label="Why hire a virtual influencer">
+  <div class="wrap">
+    <p class="eyebrow" data-rv>Why virtual</p>
+    <h2 class="h2" data-rv>The math<br><span class="ghost">just works</span></h2>
+    <p class="sub" data-rv>Everything a campaign face should do — none of the overhead that comes with one.</p>
+    <div class="why-grid">
+      <div class="wcard" data-rv style="--d:0"><span class="no">/01</span><h3>Zero logistics</h3><p>No flights, no visas, no weather delays, no permits. A location change is a sentence in the brief, not a line in the budget.</p></div>
+      <div class="wcard" data-rv style="--d:1"><span class="no">/02</span><h3>Zero reshoots</h3><p>Wrong angle? Wrong outfit? Wrong mood? A revision is a re-render, delivered in hours — not a second production day.</p></div>
+      <div class="wcard" data-rv style="--d:2"><span class="no">/03</span><h3>Always on-brand</h3><p>Same face, same energy, every single frame. No off-days, no scandals, no scheduling conflicts with your launch window.</p></div>
+      <div class="wcard" data-rv style="--d:0"><span class="no">/04</span><h3>Clean rights</h3><p>The likeness is real and licensed — mine. You get clear commercial usage terms without model-release roulette. Category exclusivity is available per engagement — while we work together, no competing brand books this face.</p></div>
+      <div class="wcard" data-rv style="--d:1"><span class="no">/05</span><h3>Any medium</h3><p>Photoreal editorial today, woodblock print tomorrow, clay stop-motion for the holiday spot. One face across all of it.</p></div>
+      <div class="wcard" data-rv style="--d:2"><span class="no">/06</span><h3>Built for speed</h3><p>Brief to first frames in 48 hours. Full campaign sets in under a week. Your media plan stops waiting on production.</p></div>
+    </div>
+  </div>
+</section>
 
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-    const io = new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){
-      e.target.classList.add('visible');io.unobserve(e.target);}})},
-      {threshold:.08,rootMargin:'0px 0px 120px 0px'});
-    document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-  </script>
+<!-- ================= PROCESS ================= -->
+<section class="proc secpad" aria-label="Process">
+  <div class="wrap">
+    <p class="eyebrow" data-rv>How we ship</p>
+    <h2 class="h2" data-rv>Brief to launch<br><span class="ghost">in five steps</span></h2>
+    <div class="steps">
+      <div class="step" data-rv style="--d:0"><span class="no">STEP 01</span><h3>Brief</h3><p>Product, mood, references, formats. One call or one doc.</p></div>
+      <div class="step" data-rv style="--d:1"><span class="no">STEP 02</span><h3>Boards</h3><p>Scene boards and looks within 24h. You pick directions.</p></div>
+      <div class="step" data-rv style="--d:2"><span class="no">STEP 03</span><h3>Render</h3><p>First frames in 48h. Identity-checked against the real likeness.</p></div>
+      <div class="step" data-rv style="--d:3"><span class="no">STEP 04</span><h3>Refine</h3><p>Two revision rounds included. Tweaks land in hours.</p></div>
+      <div class="step" data-rv style="--d:4"><span class="no">STEP 05</span><h3>Deliver</h3><p>Full-res files, crops per placement, usage terms in writing.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CTA ================= -->
+<section class="ctasec" id="book" aria-label="Book Zhang Cheng">
+  <div class="glow"></div>
+  <div class="trailwrap" id="trailwrap" aria-hidden="true"></div>
+  <div class="wrap">
+    <p class="eyebrow" style="justify-content:center" data-rv>Booking now</p>
+    <h2 class="big" data-rv>
+      <span class="ghost">Your brand.</span>
+      <span class="solid">My face. <i>Let's ship.</i></span>
+    </h2>
+    <p data-rv>Tell me the product and the mood — scene boards land in your inbox within 24 hours, free. You only pay if we go to render.</p>
+    <span class="magnet" data-rv><a class="cta fill" href="mailto:zhangcheng1997@gmail.com?subject=Campaign%20brief%20for%20Zhang%20Cheng&amp;body=Product%3A%20%0A%0AMood%20%2B%20references%3A%20%0A%0AFormats%20%2B%20placements%3A%20%0A%0ADeadline%3A%20" data-mag>Book the face →</a></span>
+    <p class="mail" data-rv>or write directly: <a href="mailto:zhangcheng1997@gmail.com">zhangcheng1997@gmail.com</a></p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <span>© 2026 Zhang Cheng — virtual influencer</span>
+  <span>AI-rendered · real licensed likeness · site built by Claude Fable</span>
+  <a href="../">← more experiments</a>
+</footer>
+
+<!-- ================= LIGHTBOX ================= -->
+<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Image viewer">
+  <button class="x" id="lbx" aria-label="Close">✕</button>
+  <button class="pv" id="lbp" aria-label="Previous">←</button>
+  <button class="nx" id="lbn" aria-label="Next">→</button>
+  <img id="lbimg" src="" alt="">
+  <div class="cap" id="lbcap" aria-live="polite"></div>
+</div>
+<script>
+(function(){
+"use strict";
+var RM=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+var FINE=window.matchMedia("(pointer:fine)").matches;
+
+/* ---------- preloader: tied to hero image, min 350ms, cap 1.5s ---------- */
+var loader=document.getElementById("loader"),pct=document.getElementById("pct");
+var seen=false;try{seen=sessionStorage.getItem("zc-seen")==="1";sessionStorage.setItem("zc-seen","1")}catch(e){}
+if(RM||seen){loader.classList.add("off")}
+else{
+  var himg=document.querySelector(".hero-bg img");
+  var p=0,t=setInterval(function(){
+    p=Math.min(99,p+Math.ceil(Math.random()*14));
+    pct.textContent=(p<10?"0":"")+p;
+  },55);
+  var offed=false,t0=Date.now();
+  function off(){
+    if(offed)return;offed=true;clearInterval(t);pct.textContent="100";
+    setTimeout(function(){loader.classList.add("off")},Math.max(0,350-(Date.now()-t0)));
+  }
+  if(himg&&!himg.complete){himg.addEventListener("load",off);himg.addEventListener("error",off)}
+  else{off()}
+  setTimeout(off,1500);
+}
+
+/* ---------- nav + progress ---------- */
+var nav=document.getElementById("nav"),pbar=document.getElementById("pbar");
+function onScroll(){
+  var y=window.scrollY,h=document.documentElement.scrollHeight-window.innerHeight;
+  nav.classList.toggle("solid",y>40);
+  pbar.style.transform="scaleX("+(h>0?y/h:0)+")";
+}
+window.addEventListener("scroll",onScroll,{passive:true});onScroll();
+
+/* ---------- reveal ---------- */
+var hasIO="IntersectionObserver" in window;
+if(hasIO){
+  var io=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("on");io.unobserve(e.target)}});
+  },{threshold:.12,rootMargin:"0px 0px -6% 0px"});
+  document.querySelectorAll("[data-rv]").forEach(function(el){io.observe(el)});
+  document.querySelectorAll(".masonry figure").forEach(function(el,i){
+    el.setAttribute("data-rv","");el.style.setProperty("--d",i%3);io.observe(el);
+  });
+}else{
+  document.querySelectorAll("[data-rv]").forEach(function(el){el.classList.add("on")});
+}
+
+/* ---------- counters ---------- */
+if(hasIO){
+  var cio=new IntersectionObserver(function(es){
+    es.forEach(function(e){
+      if(!e.isIntersecting)return;cio.unobserve(e.target);
+      var el=e.target,end=+el.getAttribute("data-count"),c0=null;
+      if(RM){el.textContent=end;return}
+      function step(ts){
+        if(!c0)c0=ts;var k=Math.min(1,(ts-c0)/1300);k=1-Math.pow(1-k,3);
+        el.textContent=Math.round(end*k);
+        if(k<1)requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    });
+  },{threshold:.6});
+  document.querySelectorAll("[data-count]").forEach(function(el){cio.observe(el)});
+}else{
+  document.querySelectorAll("[data-count]").forEach(function(el){el.textContent=el.getAttribute("data-count")});
+}
+
+/* ---------- manifesto word scrub ---------- */
+var scrub=document.getElementById("scrub");
+(function(){
+  var nodes=Array.prototype.slice.call(scrub.childNodes),frag=document.createDocumentFragment();
+  function words(text,cls,into){
+    text.split(/(\s+)/).forEach(function(w){
+      if(!w.trim()){into.appendChild(document.createTextNode(" "));return}
+      var s=document.createElement("span");s.className=cls;s.textContent=w;into.appendChild(s);
+    });
+  }
+  nodes.forEach(function(n){
+    if(n.nodeType===3)words(n.textContent,"w",frag);
+    else if(n.nodeType===1)words(n.textContent,"w hl",frag);
+  });
+  scrub.textContent="";scrub.appendChild(frag);
+})();
+var wEls=scrub.querySelectorAll(".w");
+function scrubTick(){
+  var r=scrub.getBoundingClientRect(),vh=window.innerHeight;
+  var prog=(vh*.82-r.top)/(r.height+vh*.4);
+  prog=Math.max(0,Math.min(1,prog));
+  var lit=Math.floor(prog*wEls.length);
+  wEls.forEach(function(w,i){w.classList.toggle("lit",i<=lit)});
+}
+if(!RM){window.addEventListener("scroll",scrubTick,{passive:true});scrubTick()}
+
+/* ---------- poster parallax ---------- */
+var plx=document.querySelector("[data-plx]");
+if(plx&&!RM){
+  window.addEventListener("scroll",function(){
+    var r=plx.parentElement.getBoundingClientRect(),vh=window.innerHeight;
+    if(r.bottom<0||r.top>vh)return;
+    var k=(r.top+r.height/2-vh/2)/(vh/2+r.height/2);
+    plx.style.transform="translateY("+(k*-7)+"%)";
+  },{passive:true});
+}
+
+/* ---------- horizontal diary ---------- */
+var dwrap=document.querySelector(".diarywrap"),track=document.getElementById("dtrack"),
+    dprog=document.getElementById("dprog"),dsticky=document.querySelector(".diary-sticky");
+function diaryTick(){
+  var r=dwrap.getBoundingClientRect();
+  var total=dwrap.offsetHeight-dsticky.offsetHeight;
+  var prog=total>0?Math.max(0,Math.min(1,-r.top/total)):0;
+  var extra=track.scrollWidth-window.innerWidth;
+  track.style.transform="translateX("+(-prog*extra)+"px)";
+  dprog.style.transform="scaleX("+prog+")";
+}
+function sizeDiary(){
+  var extra=track.scrollWidth-window.innerWidth;
+  dwrap.style.height=(extra*.8+dsticky.offsetHeight*1.25)+"px";
+  diaryTick();
+}
+sizeDiary();
+window.addEventListener("resize",sizeDiary);
+window.addEventListener("load",sizeDiary);
+window.addEventListener("scroll",diaryTick,{passive:true});
+track.addEventListener("focusin",function(e){
+  var card=e.target.closest(".dcard");if(!card)return;
+  var extra=track.scrollWidth-window.innerWidth;
+  var total=dwrap.offsetHeight-dsticky.offsetHeight;
+  if(extra<=0||total<=0)return;
+  var center=card.offsetLeft+card.offsetWidth/2-window.innerWidth/2;
+  var prog=Math.max(0,Math.min(1,center/extra));
+  var wrapTop=dwrap.getBoundingClientRect().top+window.scrollY;
+  window.scrollTo({top:wrapTop+prog*total,behavior:RM?"auto":"smooth"});
+});
+
+/* ---------- range switcher ---------- */
+var rimgs=document.querySelectorAll("#rframe img"),rcount=document.getElementById("rcount"),
+    ritems=document.querySelectorAll(".ritem"),RN=rimgs.length;
+function hydR(el){if(el&&el.dataset.src){el.src=el.dataset.src;delete el.dataset.src}}
+function setR(i){
+  hydR(rimgs[i]);hydR(rimgs[i-1]);hydR(rimgs[i+1]);
+  ritems.forEach(function(el,k){el.classList.toggle("act",k===i)});
+  rimgs.forEach(function(el,k){el.classList.toggle("act",k===i)});
+  rcount.textContent=(i<9?"0":"")+(i+1)+" / "+RN;
+}
+if(hasIO){
+  var rio=new IntersectionObserver(function(es){
+    es.forEach(function(e){if(e.isIntersecting)setR(+e.target.getAttribute("data-ri"))});
+  },{rootMargin:"-42% 0px -42% 0px",threshold:0});
+  ritems.forEach(function(el){
+    rio.observe(el);
+    el.addEventListener("click",function(){el.scrollIntoView({behavior:RM?"auto":"smooth",block:"center"})});
+  });
+}
+
+/* ---------- lightbox ---------- */
+var lbEls=Array.prototype.slice.call(document.querySelectorAll("[data-lb]")),
+    lb=document.getElementById("lb"),lbimg=document.getElementById("lbimg"),
+    lbcap=document.getElementById("lbcap"),cur=0,
+    lbx=document.getElementById("lbx"),lbp=document.getElementById("lbp"),
+    lbn=document.getElementById("lbn"),lbPrevFocus=null;
+function openLB(i){
+  var wasOpen=lb.classList.contains("open");
+  cur=(i+lbEls.length)%lbEls.length;
+  var img=lbEls[cur].querySelector("img");
+  lbimg.src=img.currentSrc||img.src;lbimg.alt=img.alt;
+  lbcap.textContent=(lbEls[cur].getAttribute("data-cap")||"")+"  ·  "+(cur+1)+"/"+lbEls.length;
+  if(!wasOpen){
+    lbPrevFocus=document.activeElement;
+    lb.classList.add("open");document.body.style.overflow="hidden";
+    lbx.focus();
+  }
+}
+function closeLB(){
+  lb.classList.remove("open");document.body.style.overflow="";
+  if(lbPrevFocus&&lbPrevFocus.focus){lbPrevFocus.focus()}
+  lbPrevFocus=null;
+}
+lbEls.forEach(function(el,i){
+  el.setAttribute("role","button");
+  el.setAttribute("aria-label","View larger: "+(el.getAttribute("data-cap")||"image"));
+  if(!el.hasAttribute("tabindex"))el.setAttribute("tabindex","0");
+  el.addEventListener("click",function(){
+    if(el.__sup){el.__sup=false;return}
+    openLB(i);
+  });
+  el.addEventListener("keydown",function(e){
+    if(e.key==="Enter"||e.key===" "){e.preventDefault();openLB(i)}
+  });
+});
+lbx.addEventListener("click",closeLB);
+lbp.addEventListener("click",function(){openLB(cur-1)});
+lbn.addEventListener("click",function(){openLB(cur+1)});
+lb.addEventListener("click",function(e){if(e.target===lb)closeLB()});
+document.addEventListener("keydown",function(e){
+  if(!lb.classList.contains("open"))return;
+  if(e.key==="Escape")closeLB();
+  else if(e.key==="ArrowLeft")openLB(cur-1);
+  else if(e.key==="ArrowRight")openLB(cur+1);
+  else if(e.key==="Tab"){
+    var f=[lbx,lbp,lbn],idx=f.indexOf(document.activeElement);
+    e.preventDefault();
+    if(e.shiftKey)f[(idx-1+f.length)%f.length].focus();
+    else f[(idx+1)%f.length].focus();
+  }
+});
+
+/* ---------- shared draggable-with-inertia ---------- */
+function draggable(els,bounds){
+  els.forEach(function(el){
+    var vx=0,vy=0,lx=0,ly=0,raf=null,pid=null,sx=0,sy=0,moved=false;
+    function pos(){
+      return {x:parseFloat(el.style.left)||0,y:parseFloat(el.style.top)||0};
+    }
+    function toPx(){
+      var r=el.getBoundingClientRect(),b=bounds.getBoundingClientRect();
+      el.style.left=(r.left+r.width/2-b.left)+"px";
+      el.style.top=(r.top+r.height/2-b.top)+"px";
+    }
+    el.addEventListener("pointerdown",function(e){
+      if(e.button&&e.button!==0)return;
+      pid=e.pointerId;el.setPointerCapture(pid);
+      if(raf){cancelAnimationFrame(raf);raf=null}
+      el.style.animation="none";
+      toPx();el.classList.add("drag");
+      sx=e.clientX;sy=e.clientY;lx=e.clientX;ly=e.clientY;vx=0;vy=0;moved=false;
+      e.preventDefault();
+    });
+    el.addEventListener("pointermove",function(e){
+      if(pid===null||e.pointerId!==pid)return;
+      var p=pos();
+      vx=e.clientX-lx;vy=e.clientY-ly;
+      el.style.left=(p.x+vx)+"px";el.style.top=(p.y+vy)+"px";
+      lx=e.clientX;ly=e.clientY;
+      if(Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy)>6)moved=true;
+    });
+    function release(){
+      if(pid===null)return;
+      pid=null;el.classList.remove("drag");
+      if(moved)el.__sup=true;
+      if(RM||(!moved))return;
+      function glide(){
+        var p=pos(),b=bounds.getBoundingClientRect(),pad=40;
+        var nx=p.x+vx,ny=p.y+vy;
+        if(nx<pad){nx=pad;vx=-vx*.55}
+        if(nx>b.width-pad){nx=b.width-pad;vx=-vx*.55}
+        if(ny<pad){ny=pad;vy=-vy*.55}
+        if(ny>b.height-pad){ny=b.height-pad;vy=-vy*.55}
+        el.style.left=nx+"px";el.style.top=ny+"px";
+        vx*=.93;vy*=.93;
+        if(Math.abs(vx)+Math.abs(vy)>.2)raf=requestAnimationFrame(glide);
+        else raf=null;
+      }
+      raf=requestAnimationFrame(glide);
+    }
+    el.addEventListener("pointerup",release);
+    el.addEventListener("pointercancel",release);
+  });
+}
+var deck=document.getElementById("deck");
+if(deck)draggable(Array.prototype.slice.call(deck.querySelectorAll(".print")),deck);
+var dstage=document.getElementById("dstage");
+if(dstage)draggable(Array.prototype.slice.call(dstage.querySelectorAll(".dpile")),dstage);
+
+/* ---------- deck parallax ---------- */
+var hero=document.getElementById("hero");
+if(hero&&FINE&&!RM){
+  var prints=deck.querySelectorAll(".print");
+  hero.addEventListener("mousemove",function(e){
+    var kx=(e.clientX/window.innerWidth-.5),ky=(e.clientY/window.innerHeight-.5);
+    prints.forEach(function(p){
+      var d=parseFloat(getComputedStyle(p).getPropertyValue("--dp"))||1;
+      p.style.setProperty("--px",(kx*-18*d)+"px");
+      p.style.setProperty("--py",(ky*-12*d)+"px");
+    });
+  });
+}
+
+/* ---------- viewfinder cursor + hearts ---------- */
+var vf=document.getElementById("vf"),vlabel=document.getElementById("vlabel");
+var mprev=document.getElementById("mprev"),mprevimg=document.getElementById("mprevimg");
+var mx=0,my=0,vfx=0,vfy=0,mpx=0,mpy=0,mprevOn=false;
+if(FINE&&!RM){
+  document.addEventListener("mousemove",function(e){
+    mx=e.clientX;my=e.clientY;
+    document.body.classList.add("mouse-live");
+  });
+  (function loop(){
+    vfx+=(mx-vfx)*.22;vfy+=(my-vfy)*.22;
+    vf.style.left=vfx+"px";vf.style.top=vfy+"px";
+    if(mprevOn){
+      mpx+=(mx-mpx)*.12;mpy+=(my-mpy)*.12;
+      mprev.style.left=(mpx+30)+"px";mprev.style.top=(mpy-140)+"px";
+      mprev.style.setProperty("--pr",Math.max(-8,Math.min(8,(mx-mpx)*.25))+"deg");
+    }
+    requestAnimationFrame(loop);
+  })();
+  document.addEventListener("mouseover",function(e){
+    var t=e.target.closest("[data-vf],[data-lb],a,button,.mrow,.ritem");
+    vf.classList.remove("big","link");
+    if(!t)return;
+    if(t.hasAttribute&&t.hasAttribute("data-vf")){vlabel.textContent=t.getAttribute("data-vf");vf.classList.add("big")}
+    else if(t.hasAttribute&&t.hasAttribute("data-lb")){vlabel.textContent="VIEW";vf.classList.add("big")}
+    else vf.classList.add("link");
+  });
+}
+function hearts(x,y){
+  if(RM)return;
+  var colors=["#ff4b2e","#ff7a5c","#ffb247","#ff4b8b"];
+  var n=4+Math.floor(Math.random()*3);
+  for(var i=0;i<n;i++){
+    var h=document.createElement("span");
+    h.className="heart";h.textContent="♥";
+    h.style.setProperty("--hx",x+"px");
+    h.style.setProperty("--hy",y+"px");
+    h.style.setProperty("--hs",(13+Math.random()*12)+"px");
+    h.style.setProperty("--hdx",((Math.random()-.5)*90)+"px");
+    h.style.setProperty("--hr",((Math.random()-.5)*40)+"deg");
+    h.style.setProperty("--hc",colors[Math.floor(Math.random()*colors.length)]);
+    h.style.animationDelay=(Math.random()*.12)+"s";
+    document.body.appendChild(h);
+    h.addEventListener("animationend",function(){this.remove()});
+  }
+  if(FINE){
+    vf.classList.add("snap");
+    setTimeout(function(){vf.classList.remove("snap")},160);
+  }
+}
+document.addEventListener("click",function(e){
+  if(e.target.closest(".lb button,.nav"))return;
+  var g=e.target.closest("[data-lb]");
+  if(g&&g.__supHeart){g.__supHeart=false;return}
+  hearts(e.clientX,e.clientY);
+});
+
+/* ---------- taste hover preview ---------- */
+var mlist=document.getElementById("mlist");
+if(mlist&&FINE&&!RM){
+  mlist.addEventListener("mouseover",function(e){
+    var row=e.target.closest(".mrow");if(!row)return;
+    var src=row.querySelector(".thumb img").getAttribute("src");
+    if(mprevimg.getAttribute("src")!==src)mprevimg.src=src;
+    if(!mprevOn){mpx=mx;mpy=my;mprevOn=true}
+    mprev.classList.add("show");
+  });
+  mlist.addEventListener("mouseleave",function(){
+    mprevOn=false;mprev.classList.remove("show");
+  });
+}
+
+/* ---------- magnetic buttons ---------- */
+if(FINE&&!RM){
+  document.querySelectorAll("[data-mag]").forEach(function(b){
+    b.addEventListener("mousemove",function(e){
+      var r=b.getBoundingClientRect();
+      var dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2;
+      b.style.transform="translate("+dx*.18+"px,"+dy*.22+"px)";
+    });
+    b.addEventListener("mouseleave",function(){b.style.transform=""});
+  });
+}
+
+/* ---------- CTA photo trail ---------- */
+var ctasec=document.getElementById("book"),trailwrap=document.getElementById("trailwrap");
+if(ctasec&&!RM){
+  var POOL=[
+    "assets/img/film/B-04-neon-crosswalk.webp","assets/img/food/07-korean-bbq-evening.webp",
+    "assets/img/editorial/01-cinematic-night-street.webp","assets/img/dreams/C-24-library-on-celestial-whale.webp",
+    "assets/img/campaigns/A-01-streetwear-campaign.webp","assets/img/film/C-05-cherry-blossoms-after-rain.webp",
+    "assets/img/food/17-gelato-summer-campaign.webp","assets/img/styles/B-02-japanese-woodblock-flat-inks.webp",
+    "assets/img/editorial/02-rooftop-red-hour.webp","assets/img/dreams/C-30-bridge-between-two-moons.webp",
+    "assets/img/campaigns/98-music-festival-partnership.webp","assets/img/film/A-11-bakery-at-dawn.webp",
+    "assets/img/food/10-street-tacos-night-market.webp","assets/img/styles/B-27-generic-1980s-anime-cel.webp",
+    "assets/img/editorial/x-A-18-meteor-shower-observatory.webp","assets/img/dreams/C-28-aurora-woven-cloak.webp",
+    "assets/img/campaigns/86-pet-care-park.webp","assets/img/film/B-15-night-food-stall.webp",
+    "assets/img/food/49-signature-mocktail-bar.webp","assets/img/editorial/x-A-27-desert-motel-pool.webp"
+  ];
+  var ti=0,lastX=null,lastY=null,acc=0;
+  ctasec.addEventListener("pointermove",function(e){
+    if(lastX!==null){acc+=Math.abs(e.clientX-lastX)+Math.abs(e.clientY-lastY)}
+    lastX=e.clientX;lastY=e.clientY;
+    if(acc<90)return;
+    acc=0;
+    var r=ctasec.getBoundingClientRect();
+    var d=document.createElement("figure");
+    d.className="tphoto";
+    d.style.left=(e.clientX-r.left)+"px";
+    d.style.top=(e.clientY-r.top)+"px";
+    d.style.setProperty("--tr",((Math.random()-.5)*22)+"deg");
+    var img=document.createElement("img");
+    img.src=POOL[ti++%POOL.length];img.alt="";
+    d.appendChild(img);
+    trailwrap.appendChild(d);
+    while(trailwrap.children.length>14)trailwrap.firstChild.remove();
+    d.addEventListener("animationend",function(){d.remove()});
+  });
+}
+})();
+</script>
 </body>
 </html>
