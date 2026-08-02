@@ -66,6 +66,11 @@ body.mouse-live .mrow,body.mouse-live .ritem{cursor:none}
   border-bottom-color:var(--line);padding-block:11px}
 .nav .logo{font-family:var(--disp);font-size:1.5rem;letter-spacing:.1em;text-decoration:none;margin-right:auto;line-height:1}
 .nav .logo i{font-style:normal;color:var(--acc)}
+.nav .home{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;
+  text-decoration:none;color:var(--dim);border:1px solid var(--line2);padding:8px 14px;
+  border-radius:99px;transition:color .2s,border-color .2s;white-space:nowrap}
+.nav .home:hover{color:var(--ink);border-color:var(--acc)}
+@media(max-width:480px){.nav .home{padding:8px 11px;font-size:.64rem}}
 .nav a.lnk{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-decoration:none;
   color:var(--dim);text-transform:uppercase;transition:color .2s}
 .nav a.lnk:hover{color:var(--ink)}
@@ -515,6 +520,7 @@ footer a:hover{color:var(--acc)}
 </div>
 
 <nav class="nav" id="nav" aria-label="Main">
+  <a class="home" href="../" aria-label="Back to main site">← Main site</a>
   <a class="logo" href="#top">ZHANG<i>&nbsp;CHENG</i></a>
   <a class="lnk" href="#work">Campaigns</a>
   <a class="lnk" href="#taste">Taste</a>
