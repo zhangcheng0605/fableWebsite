@@ -352,6 +352,28 @@ section{position:relative}
   .ritem .med{opacity:1;color:var(--amber)}
 }
 
+/* ============ the lab (shader cards) ============ */
+.lab{background:var(--panel)}
+.lab-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(24px,3.5vw,60px);
+  margin-top:clamp(40px,5vw,70px);align-items:start}
+@media(max-width:900px){.lab-grid{grid-template-columns:1fr;max-width:420px;margin-inline:auto}}
+.labcard{background:#f4f1ea;border-radius:5px;padding:12px;box-shadow:0 24px 60px rgba(0,0,0,.5);
+  transition:transform .35s var(--e),box-shadow .35s var(--e);position:relative;user-select:none}
+.labcard:hover{transform:translateY(-8px) rotate(-.6deg);box-shadow:0 36px 80px rgba(0,0,0,.65)}
+.labcard:nth-child(2):hover{transform:translateY(-8px) rotate(.5deg)}
+.labcard .lm{position:relative;aspect-ratio:3/4;overflow:hidden;background:#101013}
+.labcard .lm img,.labcard .lm canvas{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.labcard .lm canvas{transition:opacity .5s var(--e)}
+.labcard.clean .lm canvas{opacity:0}
+.labcard .ltag{position:absolute;top:10px;left:10px;z-index:3;font-family:var(--mono);
+  font-size:.6rem;letter-spacing:.14em;font-weight:600;padding:3px 8px;border-radius:3px;
+  background:rgba(16,16,19,.7);color:#9dff70}
+.labcard.clean .ltag{background:rgba(244,241,234,.88);color:#141414}
+.labcard .lfoot{padding:14px 4px 6px;font-family:var(--mono);font-size:.63rem;
+  letter-spacing:.13em;color:#3a362e;text-transform:uppercase;display:flex;
+  justify-content:space-between;gap:8px}
+.labcard .lfoot b{font-weight:600;color:#8a2c17}
+
 /* ============ dreams pile ============ */
 .dreams{background:radial-gradient(70% 90% at 75% 10%,rgba(110,70,255,.09),transparent 60%),
   radial-gradient(60% 80% at 15% 90%,rgba(255,75,46,.06),transparent 60%),var(--bg)}
@@ -833,6 +855,46 @@ footer a:hover{color:var(--acc)}
     </div>
   </div>
 </section>
+<!-- ================= THE LAB (shader cards) ================= -->
+<section class="lab secpad" id="lab" aria-label="Interactive shader cards — click a card to switch treatments">
+  <div class="wrap">
+    <div class="whead">
+      <div>
+        <p class="eyebrow" data-rv>The lab</p>
+        <h2 class="h2" data-rv>Three frames,<br><span class="ghost">three signals</span></h2>
+        <p class="sub" data-rv>Same face, three live treatments. Click a card to flip it between the raw frame and the render.</p>
+      </div>
+      <span class="count-tag" data-rv>[ CLICK A CARD ]</span>
+    </div>
+    <div class="lab-grid">
+      <div class="labcard clean" id="lab-ascii" data-rv style="--d:0" role="button" tabindex="0" aria-pressed="false" data-vf="CLICK" aria-label="Studio portrait — toggle ASCII decode">
+        <div class="lm">
+          <img src="assets/img/editorial/05-raised-knees.webp" alt="Studio portrait of Zhang Cheng" width="1023" height="1537" loading="lazy" decoding="async" crossorigin="anonymous">
+          <canvas aria-hidden="true"></canvas>
+        </div>
+        <span class="ltag">PORTRAIT.RAW</span>
+        <div class="lfoot"><span>01 · Studio portrait</span><b>click to decode</b></div>
+      </div>
+      <div class="labcard" id="lab-crt" data-rv style="--d:1" role="button" tabindex="0" aria-pressed="true" data-vf="CLICK" aria-label="Night signal — toggle CRT glitch">
+        <div class="lm">
+          <img src="assets/img/editorial/01-cinematic-night-street.webp" alt="Zhang Cheng in a neon night street" width="1024" height="1536" loading="lazy" decoding="async" crossorigin="anonymous">
+          <canvas aria-hidden="true"></canvas>
+        </div>
+        <span class="ltag">CH 03</span>
+        <div class="lfoot"><span>02 · Night signal</span><b>click to power off</b></div>
+      </div>
+      <div class="labcard" id="lab-half" data-rv style="--d:2" role="button" tabindex="0" aria-pressed="true" data-vf="CLICK" aria-label="Brutalist portrait — toggle halftone print">
+        <div class="lm">
+          <img src="assets/img/styles/A-03-brutalist-monochrome.webp" alt="Brutalist monochrome portrait of Zhang Cheng" width="851" height="1847" loading="lazy" decoding="async" crossorigin="anonymous">
+          <canvas aria-hidden="true"></canvas>
+        </div>
+        <span class="ltag">PRINT.OBJ</span>
+        <div class="lfoot"><span>03 · Brutalist mono</span><b>click for the photo</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ================= DREAMS PILE ================= -->
 <section class="dreams secpad" id="dreams" aria-label="Impossible worlds — draggable gallery">
   <div class="wrap">
@@ -1289,6 +1351,169 @@ if(FINE&&!RM){
     b.addEventListener("mouseleave",function(){b.style.transform=""});
   });
 }
+
+/* ---------- the lab: shader cards ---------- */
+(function(){
+  function lum(d,i){return (d[i]*.299+d[i+1]*.587+d[i+2]*.114)/255}
+  function baseOf(img,w){
+    var c=document.createElement("canvas"),k=w/img.naturalWidth;
+    c.width=w;c.height=Math.round(img.naturalHeight*k);
+    c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+    return c;
+  }
+  function whenImg(img,cb){
+    if(img.complete&&img.naturalWidth)cb();
+    else{img.addEventListener("load",cb,{once:true});img.addEventListener("error",function(){},{once:true})}
+  }
+  var labVis=false,labSec=document.getElementById("lab");
+  if(!labSec)return;
+  if(hasIO){
+    new IntersectionObserver(function(es){es.forEach(function(e){labVis=e.isIntersecting})},
+      {rootMargin:"120px"}).observe(labSec);
+  }else{labVis=true}
+
+  /* ASCII decode */
+  (function(){
+    var card=document.getElementById("lab-ascii"),img=card.querySelector("img"),
+        cv=card.querySelector("canvas"),ramp=" .':-;=+xo*#%@",built=false,data=null,
+        COLS=64,cw,ch,rows;
+    function build(){
+      try{
+        var b=baseOf(img,COLS*4),bx=b.getContext("2d");
+        var s=document.createElement("canvas");
+        s.width=COLS;s.height=Math.round(b.height/b.width*COLS*.55);
+        s.getContext("2d").drawImage(b,0,0,s.width,s.height);
+        data=s.getContext("2d").getImageData(0,0,s.width,s.height);
+        rows=s.height;
+        cv.width=COLS*10;cv.height=rows*18;
+        cw=10;ch=18;built=true;
+      }catch(e){built=false}
+    }
+    function render(p){
+      if(!built)return;
+      var x=cv.getContext("2d");
+      x.fillStyle="#0b0b0d";x.fillRect(0,0,cv.width,cv.height);
+      x.font="700 15px 'IBM Plex Mono',monospace";x.textBaseline="top";
+      var d=data.data;
+      for(var r=0;r<rows;r++)for(var c0=0;c0<COLS;c0++){
+        var L=lum(d,(r*COLS+c0)*4);
+        var ch2=(p<1&&Math.random()>p)?ramp[1+Math.floor(Math.random()*(ramp.length-1))]
+              :ramp[Math.round(L*(ramp.length-1))];
+        if(ch2===" ")continue;
+        x.fillStyle=L>.72?"#f0ece4":L>.4?"#b9b4a9":"#6f6a60";
+        x.fillText(ch2,c0*cw,r*ch);
+      }
+    }
+    function decode(){
+      if(RM){render(1);return}
+      var t0=null;
+      (function anim(ts){
+        if(!t0)t0=ts;var p=Math.min(1,(ts-t0)/650);
+        render(p);
+        if(p<1)requestAnimationFrame(anim);
+      })(performance.now());
+    }
+    whenImg(img,function(){build();render(1)});
+    card.__toggle=function(styled){if(styled)decode()};
+    card.__tag=["PORTRAIT.RAW","PORTRAIT.TXT"];
+    card.__foot=["click to decode","click for the photo"];
+  })();
+
+  /* CRT power-on */
+  (function(){
+    var card=document.getElementById("lab-crt"),img=card.querySelector("img"),
+        cv=card.querySelector("canvas"),base=null,scan=null,raf=null;
+    function build(){
+      try{
+        base=baseOf(img,420);
+        cv.width=base.width;cv.height=base.height;
+        scan=document.createElement("canvas");scan.width=4;scan.height=4;
+        var sx=scan.getContext("2d");
+        sx.fillStyle="rgba(0,0,0,.28)";sx.fillRect(0,2,4,2);
+      }catch(e){base=null}
+    }
+    function frame(t){
+      if(!base)return;
+      var x=cv.getContext("2d"),w=cv.width,h=cv.height;
+      x.clearRect(0,0,w,h);
+      var tear=(Math.sin(t*.0011)>.96)?(t*.35%h):-100;
+      for(var y=0;y<h;y+=2){
+        var dx=Math.sin(y*.05+t*.0024)*w*.014;
+        if(Math.abs(y-tear)<16)dx+=w*.05;
+        x.drawImage(base,0,y,w,2,dx,y,w,2);
+      }
+      x.globalCompositeOperation="screen";x.globalAlpha=.3;
+      x.filter="hue-rotate(120deg) saturate(2.4)";x.drawImage(cv,-3,0);
+      x.filter="hue-rotate(-120deg) saturate(2.4)";x.drawImage(cv,3,0);
+      x.filter="none";x.globalAlpha=1;
+      x.globalCompositeOperation="overlay";
+      x.fillStyle="rgba(46,140,255,.2)";x.fillRect(0,0,w,h);
+      x.globalCompositeOperation="source-over";
+      x.fillStyle=x.createPattern(scan,"repeat");x.fillRect(0,0,w,h);
+      x.globalAlpha=.06+.04*Math.sin(t*.02);
+      x.fillStyle="#fff";x.fillRect(0,0,w,h);
+      x.globalAlpha=1;
+    }
+    function loop(t){
+      raf=null;
+      if(!card.classList.contains("clean")&&labVis&&base){
+        frame(t);raf=requestAnimationFrame(loop);
+      }
+    }
+    function ensure(){if(!raf&&!RM)raf=requestAnimationFrame(loop);if(RM&&base)frame(1200)}
+    whenImg(img,function(){build();ensure()});
+    if(hasIO){new IntersectionObserver(function(es){
+      es.forEach(function(e){if(e.isIntersecting)ensure()});
+    },{rootMargin:"120px"}).observe(card)}
+    card.__toggle=function(styled){if(styled)ensure()};
+    card.__tag=["SIGNAL.RAW","CH 03"];
+    card.__foot=["click to power on","click to power off"];
+  })();
+
+  /* Halftone print */
+  (function(){
+    var card=document.getElementById("lab-half"),img=card.querySelector("img"),
+        cv=card.querySelector("canvas");
+    function build(){
+      try{
+        var b=baseOf(img,560),cell=5;
+        var d=b.getContext("2d").getImageData(0,0,b.width,b.height).data;
+        cv.width=b.width*2;cv.height=b.height*2;
+        var x=cv.getContext("2d");
+        x.fillStyle="#f1ede4";x.fillRect(0,0,cv.width,cv.height);
+        x.fillStyle="#17140f";
+        for(var y=0;y<b.height;y+=cell)for(var c0=0;c0<b.width;c0+=cell){
+          var L=lum(d,(y*b.width+c0)*4);
+          var r=Math.pow(1-L,1.15)*cell*1.18;
+          if(r<.5)continue;
+          x.beginPath();
+          x.arc(c0*2+cell,y*2+cell,r,0,6.2832);
+          x.fill();
+        }
+      }catch(e){}
+    }
+    whenImg(img,build);
+    card.__toggle=function(){};
+    card.__tag=["BRUTAL.RAW","PRINT.OBJ"];
+    card.__foot=["click for the print","click for the photo"];
+  })();
+
+  document.querySelectorAll(".labcard").forEach(function(card){
+    function setState(styled){
+      card.classList.toggle("clean",!styled);
+      card.setAttribute("aria-pressed",styled?"true":"false");
+      card.querySelector(".ltag").textContent=card.__tag[styled?1:0];
+      card.querySelector(".lfoot b").textContent=card.__foot[styled?1:0];
+      if(card.__toggle)card.__toggle(styled);
+    }
+    function flip(){setState(card.classList.contains("clean"))}
+    card.addEventListener("click",flip);
+    card.addEventListener("keydown",function(e){
+      if(e.key==="Enter"||e.key===" "){e.preventDefault();flip()}
+    });
+    setState(!card.classList.contains("clean"));
+  });
+})();
 
 /* ---------- CTA photo trail ---------- */
 var ctasec=document.getElementById("book"),trailwrap=document.getElementById("trailwrap");
