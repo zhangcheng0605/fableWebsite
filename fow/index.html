@@ -884,6 +884,112 @@ body:not([data-theme="dark"]) .joined-card {
 .ins-panel:hover .ins-go { text-decoration: underline; }
 @media (max-width: 860px) { .ins-grid { grid-template-columns: 1fr; } }
 
+/* ============================== Studio view — the no-cards paradigm */
+#canvas.studio { display: flex; flex-direction: column; gap: 40px; padding: 22px 30px 60px; }
+.st-sec { animation: cardIn 560ms calc(var(--i, 0) * 90ms) cubic-bezier(.2,.9,.25,1) both; min-width: 0; }
+.st-head { display: flex; align-items: baseline; gap: 14px; border-bottom: 1px solid var(--hairline); padding-bottom: 10px; margin-bottom: 18px; }
+.st-num { font-size: 30px; font-weight: 780; letter-spacing: -0.03em; color: var(--acc); opacity: 0.35; font-variant-numeric: tabular-nums; line-height: 1; }
+.st-label { font-size: 17px; font-weight: 730; letter-spacing: -0.015em; }
+.st-sub { font-size: 11.5px; color: var(--ink-3); margin-top: 1px; }
+.st-head .autopilot { margin-left: auto; align-self: center; }
+
+/* marquee */
+.st-marquee { display: flex; gap: 40px; align-items: center; padding: 8px 4px 0; }
+.mq-left { flex: 1; min-width: 0; }
+.mq-kicker { margin-top: 14px; font-size: 10.5px; font-weight: 790; letter-spacing: 0.2em; text-transform: uppercase; color: var(--acc-ink); }
+.mq-title { margin: 4px 0 0; font-size: clamp(30px, 3.4vw, 46px); font-weight: 780; letter-spacing: -0.032em; line-height: 1.05;
+  background: linear-gradient(100deg, var(--ink) 40%, var(--acc-ink)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.mq-lede { margin-top: 10px; font-size: 15.5px; font-weight: 560; color: var(--ink); max-width: 62ch; line-height: 1.5; text-wrap: balance; }
+.mq-sub { margin-top: 5px; font-size: 12.5px; color: var(--ink-2); max-width: 66ch; }
+.mq-chain { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+.mq-signer { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--hairline); background: var(--card); border-radius: 999px; padding: 5px 12px 5px 6px; font-size: 11px; }
+.mq-signer b { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--acc-soft); color: var(--acc-ink); font-size: 9.5px; font-weight: 760; }
+.mq-signer-t { display: flex; flex-direction: column; line-height: 1.2; }
+.mq-signer-t i { font-style: normal; font-weight: 650; }
+.mq-signer-t em { font-style: normal; color: var(--ink-3); font-size: 9.5px; }
+.mq-check { font-weight: 800; color: var(--ink-3); }
+.mq-signer.done .mq-check { color: var(--good-ink); }
+.mq-signer:not(.done) { border-color: var(--acc-line); box-shadow: 0 0 0 3px var(--acc-soft); }
+.mq-acts { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+.mq-acts .hstat.primary { border-radius: 999px; padding: 11px 20px; font-size: 13px; font-weight: 650; }
+.mq-right { flex: none; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.mq-ring { position: relative; width: 150px; height: 150px; }
+.mq-ring svg { width: 100%; height: 100%; }
+.mq-ring-in { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+.mq-ring-in b { font-size: 23px; font-weight: 760; letter-spacing: -0.02em; }
+.mq-ring-in span { font-size: 10px; color: var(--ink-3); }
+.mq-count { text-align: center; }
+.mq-count b { display: block; font-family: var(--font-mono); font-size: 27px; font-weight: 700; color: var(--acc-ink); font-variant-numeric: tabular-nums; letter-spacing: 0.02em; }
+.mq-count span { font-size: 10.5px; color: var(--ink-3); }
+
+/* naked stat strip */
+.st-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+#canvas.studio .st-stat { background: none; border: 0; box-shadow: none; border-radius: 0; padding: 4px 26px 4px 0; border-right: 1px solid var(--hairline); }
+#canvas.studio .st-stat:last-child { border-right: 0; }
+#canvas.studio .st-stat:not(:first-child) { padding-left: 26px; }
+#canvas.studio .st-stat .kpi-value { font-size: 34px; }
+#canvas.studio .st-stat:hover { transform: none; }
+
+/* rhythm line */
+.st-rhythm { position: relative; height: 108px; margin: 6px 8px 0; }
+.st-line { position: absolute; left: 0; right: 0; top: 54px; height: 2px; background: var(--hairline); border-radius: 1px; }
+.st-tick { position: absolute; top: 58px; transform: translateX(-50%); }
+.st-tick i { font-style: normal; font-family: var(--font-mono); font-size: 9px; color: var(--ink-3); }
+.st-node { position: absolute; top: 0; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 4px; width: 96px; cursor: pointer; }
+.st-node b { width: 12px; height: 12px; border-radius: 50%; background: var(--card); border: 3px solid var(--acc); margin-top: 42px; order: 2; transition: transform 150ms; }
+.st-node span { order: 1; font-size: 10px; font-weight: 620; color: var(--ink-2); text-align: center; line-height: 1.25; }
+.st-node:hover b { transform: scale(1.35); }
+.st-milestone { position: absolute; top: 70px; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.st-milestone b { color: var(--acc-ink); font-size: 12px; }
+.st-milestone span { font-size: 9px; font-weight: 780; letter-spacing: 0.1em; color: var(--acc-ink); }
+.st-milestone.big b { font-size: 15px; }
+.st-now { position: absolute; top: 30px; bottom: 12px; transform: translateX(-50%); pointer-events: none; }
+.st-now i { display: block; width: 2px; height: 100%; background: var(--crit); border-radius: 1px; box-shadow: 0 0 8px rgba(208,59,59,0.5); }
+.st-now em { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); font-style: normal; font-size: 8.5px; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: var(--crit); }
+
+/* studio sections reuse */
+#canvas.studio .joined-card { background: none; border: 0; box-shadow: none; }
+.st-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 34px; }
+.st-3col { display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 34px; }
+.st-col { min-width: 0; }
+
+/* the approval deck */
+.st-deck-wrap { position: relative; min-height: 240px; }
+.st-deck { position: relative; height: 230px; }
+.st-deck-card {
+  position: absolute; inset: 0 auto auto 0; width: min(430px, 100%);
+  background: var(--card); border: 1px solid var(--hairline); border-radius: 18px;
+  box-shadow: var(--shadow-card); padding: 16px 18px; display: flex; gap: 12px;
+  transform: translateY(calc(var(--d) * 12px)) scale(calc(1 - var(--d) * 0.045));
+  z-index: calc(10 - var(--d));
+  opacity: calc(1 - var(--d) * 0.22);
+  transition: transform 350ms cubic-bezier(.2,.8,.3,1.1), opacity 300ms;
+  flex-direction: column;
+}
+.st-deck-card .ap-urg { position: absolute; left: 0; top: 14px; bottom: 14px; width: 4px; border-radius: 0 3px 3px 0; }
+.st-deck-card.fly { transform: translateX(120%) rotate(9deg) !important; opacity: 0 !important; }
+.st-deck-type { font-size: 10.5px; font-weight: 780; letter-spacing: 0.1em; text-transform: uppercase; color: var(--acc-ink); }
+.st-deck-title { font-size: 16.5px; font-weight: 700; letter-spacing: -0.015em; margin-top: 5px; line-height: 1.35; }
+.st-deck-meta { font-size: 11.5px; color: var(--ink-3); margin-top: 4px; }
+.st-deck-acts { display: flex; gap: 9px; margin-top: 14px; }
+.st-deck-acts .lb-enter { padding: 8px 18px; font-size: 12.5px; }
+.st-deck-acts .lb-play { padding: 8px 15px; font-size: 12px; }
+.st-deck-empty { display: grid; place-content: center; text-align: center; gap: 4px; min-height: 200px; color: var(--ink-3); }
+.st-deck-empty b { font-size: 17px; color: var(--ink-2); }
+.st-ins { display: flex; flex-direction: column; gap: 12px; }
+
+/* wired-into strip */
+.st-wired-row { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; border-top: 1px solid var(--hairline); padding-top: 16px; }
+.st-wired-row .rail-more { margin: 0 0 0 auto; padding: 6px 14px; border-radius: 999px; }
+@media (max-width: 1100px) {
+  .st-marquee { flex-direction: column; align-items: flex-start; }
+  .st-strip { grid-template-columns: 1fr 1fr; }
+  #canvas.studio .st-stat { border-right: 0; padding-left: 0 !important; }
+  .st-2col, .st-3col { grid-template-columns: 1fr; }
+  .st-rhythm { display: none; }
+  .st-rhythm-sec .st-head { margin-bottom: 0; }
+}
+
 /* ============================== fx — the motion identity */
 #fxlayer { position: fixed; inset: 0; z-index: 140; pointer-events: none; }
 .fx-p { position: fixed; line-height: 1; will-change: transform, opacity; }
@@ -3222,6 +3328,358 @@ function card(span, o) {
   return c;
 }
 
+/* ---------------- Studio view (marketing pilot) ---------------- */
+const STUDIO = { timer: null };
+
+function stHead(parent, index, label, sub) {
+  const h = el("div", "st-head");
+  h.appendChild(el("span", "st-num", index));
+  const t = el("div", "st-head-t");
+  t.appendChild(el("div", "st-label", label));
+  if (sub) t.appendChild(el("div", "st-sub", sub));
+  h.appendChild(t);
+  parent.appendChild(h);
+  return h;
+}
+function stMinutesNow() { const d = new Date(); return d.getHours() * 60 + d.getMinutes(); }
+
+function renderStudio(p, cv) {
+  clearCharts();
+  state.cardIndex = 0;
+  cv.textContent = "";
+  clearInterval(STUDIO.timer);
+  let sec = 0;
+  const sect = (cls) => { const s = el("section", "st-sec " + (cls || "")); s.style.setProperty("--i", sec++); cv.appendChild(s); return s; };
+
+  /* ---- the Marquee: today's protagonist ---- */
+  const mq = sect("st-marquee");
+  const mqL = el("div", "mq-left");
+  const hi = el("div", "hero-hi");
+  hi.appendChild(el("span", "dot"));
+  hi.appendChild(el("span", "", greeting() + ", " + p.user.name.split(" ")[0] + " — Friday, August 8 · " + p.user.location));
+  mqL.appendChild(hi);
+  mqL.appendChild(el("div", "mq-kicker", "today's protagonist"));
+  mqL.appendChild(el("h2", "mq-title", "National Day hero film"));
+  mqL.appendChild(el("div", "mq-lede", p.focus.headline));
+  mqL.appendChild(el("div", "mq-sub", p.focus.sub));
+  /* sign-off chain */
+  const chain = el("div", "mq-chain");
+  [["Farah Rahman", "shortlist", true], ["Jason Ng", "master upload", true], ["Grace Yeo", "final sign-off · 16:30", false]].forEach(([name, step, done]) => {
+    const c = el("span", "mq-signer" + (done ? " done" : ""));
+    c.appendChild(el("b", "", name.split(" ")[0][0] + name.split(" ")[1][0]));
+    const tx = el("span", "mq-signer-t");
+    tx.appendChild(el("i", "", name));
+    tx.appendChild(el("em", "", step));
+    c.appendChild(tx);
+    c.appendChild(el("span", "mq-check", done ? "✓" : "…"));
+    chain.appendChild(c);
+  });
+  mqL.appendChild(chain);
+  const acts = el("div", "mq-acts");
+  const runBtn = el("button", "lb-enter", "▶ Run the teaser workflow");
+  runBtn.addEventListener("click", () => { if (p.chains && p.chains[0]) { addUserMsg("Run cross-app workflow: " + p.chains[0].name); runChain(p.chains[0]); } });
+  const recapBtn = el("button", "lb-play hstat primary st-recap", "✦ Draft my week recap");
+  recapBtn.addEventListener("click", () => sendMessage("Draft my end-of-week recap"));
+  const askBtn = el("button", "lb-play", "Ask about the lock");
+  askBtn.addEventListener("click", () => { attachChip({ type: "hero", label: "National Day hero film — 16:30 lock", data: {} }); sendMessage("What's left before the 16:30 lock?"); });
+  acts.append(runBtn, recapBtn, askBtn);
+  mqL.appendChild(acts);
+  mq.appendChild(mqL);
+
+  /* countdown + asset ring */
+  const mqR = el("div", "mq-right");
+  const ring = el("div", "mq-ring");
+  const shipped = 31, total = 42;
+  const R = 62, C = 2 * Math.PI * R;
+  ring.innerHTML =
+    '<svg viewBox="0 0 150 150"><circle cx="75" cy="75" r="' + R + '" fill="none" stroke="var(--hairline)" stroke-width="9"/>' +
+    '<circle cx="75" cy="75" r="' + R + '" fill="none" stroke="var(--acc)" stroke-width="9" stroke-linecap="round" transform="rotate(-90 75 75)" stroke-dasharray="' + C + '" stroke-dashoffset="' + (C * (1 - shipped / total)) + '" style="transition: stroke-dashoffset 1.2s cubic-bezier(.2,.8,.2,1)"/></svg>';
+  const ringIn = el("div", "mq-ring-in");
+  ringIn.appendChild(el("b", "", shipped + "/" + total));
+  ringIn.appendChild(el("span", "", "assets shipped"));
+  ring.appendChild(ringIn);
+  mqR.appendChild(ring);
+  const cd = el("div", "mq-count");
+  const cdV = el("b", "", "–:––:––");
+  cd.appendChild(cdV);
+  cd.appendChild(el("span", "", "to the 16:30 lock"));
+  mqR.appendChild(cd);
+  mq.appendChild(mqR);
+
+  /* ---- naked stat strip (keeps .card.kpi hooks for the tour + drag) ---- */
+  const strip = sect("st-strip");
+  p.kpis.forEach(k => {
+    const s = el("article", "card kpi st-stat");
+    const lb = el("div", "kpi-label");
+    lb.appendChild(srvGlyph(k.source, 15));
+    lb.appendChild(el("span", "", k.label));
+    s.appendChild(lb);
+    const row = el("div", "kpi-row");
+    const val = el("span", "kpi-value");
+    countUp(val, k.value);
+    row.appendChild(val);
+    row.appendChild(el("span", "kpi-delta " + (k.deltaGood ? "good" : "bad"), (k.deltaDir === "up" ? "▲ " : "▼ ") + k.delta));
+    s.appendChild(row);
+    const sp = el("div", "kpi-spark");
+    s.appendChild(sp);
+    registerChart(sp, () => renderSpark(sp, k.spark));
+    makeDraggable(s, { type: "kpi", label: k.label + " · " + k.value, data: k });
+    strip.appendChild(s);
+  });
+
+  /* ---- the rhythm: her day as a line ---- */
+  const ry = sect("st-rhythm-sec");
+  stHead(ry, "—", "The rhythm", "your day, 08:00 → 19:00 · live");
+  const track = el("div", "st-rhythm");
+  const line = el("div", "st-line");
+  track.appendChild(line);
+  const DAY0 = 8 * 60, DAY1 = 19 * 60;
+  const pct = m => Math.max(0, Math.min(100, ((m - DAY0) / (DAY1 - DAY0)) * 100));
+  for (let h = 8; h <= 19; h++) {
+    const tick = el("span", "st-tick");
+    tick.style.left = pct(h * 60) + "%";
+    tick.appendChild(el("i", "", h > 12 ? (h - 12) + "p" : h + "a"));
+    track.appendChild(tick);
+  }
+  p.meetings.forEach(mt => {
+    const [hh, mm] = mt.time.split(":").map(Number);
+    const node = el("button", "st-node");
+    node.style.left = pct(hh * 60 + mm) + "%";
+    node.title = mt.time + " · " + mt.title + " (" + mt.dur + ")";
+    node.appendChild(el("b"));
+    node.appendChild(el("span", "", mt.title.length > 22 ? mt.title.slice(0, 21) + "…" : mt.title));
+    node.addEventListener("click", () => { attachChip({ type: "meeting", label: mt.time + " · " + mt.title, data: mt }); sendMessage("Prep me for this meeting"); });
+    makeDraggable(node, { type: "meeting", label: mt.time + " · " + mt.title, data: mt });
+    track.appendChild(node);
+  });
+  [["16:30", "FILM LOCK", true], ["18:00", "mewatch premiere", false]].forEach(([t, label, big]) => {
+    const [hh, mm] = t.split(":").map(Number);
+    const ms = el("span", "st-milestone" + (big ? " big" : ""));
+    ms.style.left = pct(hh * 60 + mm) + "%";
+    ms.title = t + " · " + label;
+    ms.appendChild(el("b", "", "◆"));
+    ms.appendChild(el("span", "", label));
+    track.appendChild(ms);
+  });
+  const nowCur = el("span", "st-now");
+  nowCur.appendChild(el("i"));
+  nowCur.appendChild(el("em", "", "now"));
+  track.appendChild(nowCur);
+  ry.appendChild(track);
+
+  /* live tickers: countdown + now cursor */
+  const tickFn = () => {
+    if (!document.contains(cd)) { clearInterval(STUDIO.timer); return; }
+    const now = new Date();
+    const target = new Date(now); target.setHours(16, 30, 0, 0);
+    const diff = target - now;
+    if (diff > 0) {
+      const hh2 = Math.floor(diff / 3.6e6), mm2 = Math.floor((diff % 3.6e6) / 6e4), ss = Math.floor((diff % 6e4) / 1000);
+      cdV.textContent = String(hh2).padStart(2, "0") + ":" + String(mm2).padStart(2, "0") + ":" + String(ss).padStart(2, "0");
+    } else cdV.textContent = "locked ✓";
+    nowCur.style.left = pct(stMinutesNow()) + "%";
+  };
+  tickFn();
+  STUDIO.timer = setInterval(tickFn, 1000);
+
+  /* ---- 01 · the join (full bleed) ---- */
+  if (p.joined) {
+    const s1 = sect("joined-card st-join");
+    stHead(s1, "01", "What the systems see together", p.joined.subtitle);
+    const body = el("div", "joined-body");
+    const ch = el("div", "joined-chart");
+    const aside = el("aside", "joined-aside");
+    aside.appendChild(buildInsight(p.joined.insight));
+    body.append(ch, aside);
+    s1.appendChild(body);
+    registerChart(ch, () => renderJoined(ch, p.joined));
+  }
+
+  /* ---- 02 · make ---- */
+  const s2 = sect("st-make");
+  stHead(s2, "02", "Make", "creative work in motion — chains, batches, delegations");
+  const makeGrid = el("div", "st-2col");
+  const chainsCol = el("div", "chn-card st-col");
+  (p.chains || []).forEach(c => {
+    const it = el("div", "chn-item");
+    const top = el("div", "chn-top");
+    const bd = el("div"); bd.style.cssText = "flex:1;min-width:0";
+    bd.appendChild(el("div", "chn-name", c.name));
+    bd.appendChild(el("div", "chn-desc", c.desc));
+    top.appendChild(bd);
+    const run = el("button", "dg-btn", "▶ Run");
+    run.addEventListener("click", () => { addUserMsg("Run cross-app workflow: " + c.name); runChain(c); });
+    top.appendChild(run);
+    it.appendChild(top);
+    const path = el("div", "chn-path");
+    c.steps.forEach((st, i) => { if (i) path.appendChild(el("span", "hop", "➜")); path.appendChild(srvGlyph(st.server, 20)); });
+    it.appendChild(path);
+    makeDraggable(it, { type: "chain", label: "Workflow: " + c.name, data: c });
+    chainsCol.appendChild(it);
+  });
+  makeGrid.appendChild(chainsCol);
+  const dgCol = el("div", "dg-card st-col");
+  (p.delegations || []).forEach(d => {
+    const doneAlready = (state.delegated[state.personaId] || {})[d.id];
+    const it = el("div", "dg-item");
+    const orb = askmeAv(26); orb.classList.add("dg-orb");
+    it.appendChild(orb);
+    const bd = el("div", "dg-body");
+    bd.appendChild(el("div", "dg-label", d.label));
+    const sub = el("div", "dg-sub", doneAlready ? d.result : d.detail);
+    bd.appendChild(sub);
+    const prog = el("div", "dg-prog"); prog.hidden = true;
+    const fill = el("i"); prog.appendChild(fill);
+    bd.appendChild(prog);
+    it.appendChild(bd);
+    const stateBox = el("span", "dg-state");
+    if (doneAlready) stateBox.appendChild(el("span", "dg-pill done", "done"));
+    else {
+      const btn = el("button", "dg-btn", "▶ Delegate");
+      btn.addEventListener("click", () => runDelegation(d, { orb, sub, prog, fill, stateBox, btn, bd }));
+      stateBox.appendChild(btn);
+    }
+    it.appendChild(stateBox);
+    dgCol.appendChild(it);
+  });
+  makeGrid.appendChild(dgCol);
+  s2.appendChild(makeGrid);
+
+  /* ---- 03 · decide: the approval deck ---- */
+  const s3 = sect("ap-card st-decide");
+  const h3 = stHead(s3, "03", "Decide", "flick through what needs you — askMElah pre-reads each one");
+  const auto = el("button", "autopilot" + (state.autopilot[state.personaId] ? " on" : ""));
+  auto.title = "When on, askMElah auto-clears low-risk approvals within policy";
+  auto.append(el("span", "", "Autopilot"), el("span", "sw"));
+  auto.addEventListener("click", () => {
+    const on = !state.autopilot[state.personaId];
+    state.autopilot[state.personaId] = on;
+    auto.classList.toggle("on", on);
+    if (!on) { toast("Autopilot off — everything waits for you again", "info"); return; }
+    const low = FOW.pendingApprovals().filter(a => a.urgency === "low");
+    low.forEach((a, i) => setTimeout(() => { FOW.approve(a.id, i === low.length - 1); buildDeck(); }, 600 + i * 450));
+    toast(low.length ? "Autopilot clearing " + low.length + " low-risk item" + (low.length > 1 ? "s" : "") : "Autopilot on — nothing low-risk right now", "info");
+  });
+  h3.appendChild(auto);
+  const decideGrid = el("div", "st-2col");
+  const deckWrap = el("div", "st-deck-wrap");
+  const deck = el("div", "st-deck");
+  deckWrap.appendChild(deck);
+  const deckEmpty = el("div", "st-deck-empty");
+  deckEmpty.appendChild(el("b", "", "All clear ✦"));
+  deckEmpty.appendChild(el("span", "", "Nothing needs your signature. Go make something."));
+  deckWrap.appendChild(deckEmpty);
+  function buildDeck() {
+    const pending = FOW.pendingApprovals();
+    deck.textContent = "";
+    deckEmpty.style.display = pending.length ? "none" : "grid";
+    pending.slice(0, 4).forEach((a, i) => {
+      const c = el("div", "st-deck-card");
+      c.dataset.approval = a.id;
+      c.style.setProperty("--d", i);
+      c.appendChild(el("span", "ap-urg " + a.urgency));
+      const bd = el("div", "st-deck-bd");
+      bd.appendChild(el("div", "st-deck-type", a.type + (a.amount ? " · " + a.amount : "")));
+      bd.appendChild(el("div", "st-deck-title", a.title));
+      bd.appendChild(el("div", "st-deck-meta", a.requester + " · " + a.meta));
+      c.appendChild(bd);
+      if (i === 0) {
+        const btns = el("div", "st-deck-acts");
+        const ok = el("button", "lb-enter", "Approve ✓");
+        ok.addEventListener("click", e => {
+          c.classList.add("fly");
+          sparkleAt(e.clientX, e.clientY, { n: 8, d: 30 });
+          setTimeout(() => { FOW.approve(a.id, true); toast("Approved — " + a.requester + " notified"); buildDeck(); }, 380);
+        });
+        const ask = el("button", "lb-play", "Ask askMElah");
+        ask.addEventListener("click", () => { attachChip({ type: "approval", label: a.type + ": " + a.title, data: a }); sendMessage("Should I approve this?"); });
+        btns.append(ok, ask);
+        c.appendChild(btns);
+      }
+      makeDraggable(c, { type: "approval", label: a.type + ": " + a.title, data: a });
+      deck.appendChild(c);
+    });
+  }
+  buildDeck();
+  decideGrid.appendChild(deckWrap);
+  const insCol = el("div", "st-col st-ins");
+  (p.chains || []).filter(c => c.insight).forEach(c => {
+    const panel = el("button", "ins-panel");
+    const top = el("div", "ins-top");
+    (c.insight.sources || []).forEach((sv, i) => { if (i) top.appendChild(el("span", "plus", "+")); top.appendChild(srvGlyph(sv, 17)); });
+    top.appendChild(el("span", "ins-tag", "⚡ joined insight"));
+    panel.appendChild(top);
+    panel.appendChild(el("div", "ins-h", c.insight.headline));
+    panel.appendChild(el("div", "ins-go", "Explore in chat →"));
+    panel.addEventListener("click", () => {
+      addUserMsg("Explore this cross-system insight");
+      agentReply({ thinkMs: 650, tools: (c.insight.sources || []).slice(0, 3).map((sv, i) => ({ server: sv, tool: SERVERS[sv] ? SERVERS[sv].tools[0] : "read", args: "period=Q3 FY26", result: i === 0 ? "baseline pulled" : "joined on shared keys", ms: 360 + i * 150 })), text: "Only visible in the join:", insight: c.insight });
+    });
+    insCol.appendChild(panel);
+  });
+  decideGrid.appendChild(insCol);
+  s3.appendChild(decideGrid);
+
+  /* ---- 04 · know ---- */
+  const s4 = sect("wk-card st-know");
+  stHead(s4, "04", "Know", "the numbers, the newsroom, the queue");
+  const knowGrid = el("div", "st-3col");
+  if (p.week) {
+    const wkCol = el("div", "st-col");
+    const wk = p.week;
+    const grid = el("div", "wk-stats");
+    [["Meeting hours", wk.meetingHours + "h"], ["Focus hours", wk.focusHours + "h"], ["Meeting cost", wk.meetingCost], ["Deep blocks", String(wk.deepBlocks)]].forEach(([l, v]) => {
+      const t = el("div", "wk");
+      t.appendChild(el("div", "l", l));
+      const vd = el("div", "v"); countUp(vd, v);
+      t.appendChild(vd);
+      grid.appendChild(t);
+    });
+    wkCol.appendChild(grid);
+    const chw = el("div");
+    wkCol.appendChild(chw);
+    registerChart(chw, () => renderBars(chw, { title: "wk", unit: "h", categories: wk.days, series: [{ name: "Meetings", values: wk.meetings }, { name: "Focus", values: wk.focus }] }, { mini: true, h: 118 }));
+    knowGrid.appendChild(wkCol);
+  }
+  if (window.FOW_NEWS && FOW_NEWS.stories) {
+    const nCol = el("div", "st-col news-card");
+    FOW_NEWS.stories.slice(0, 5).forEach((st, i) => {
+      const it = el("div", "nws-item");
+      it.appendChild(el("span", "cna-cat", st.cat));
+      it.appendChild(el("span", "nws-head2", st.headline));
+      it.appendChild(el("span", "nws-time", st.time));
+      it.addEventListener("click", () => { attachChip({ type: "news", label: st.headline, data: st }); sendMessage("Give me the 20-second version"); });
+      makeDraggable(it, { type: "news", label: st.headline, data: st });
+      nCol.appendChild(it);
+    });
+    knowGrid.appendChild(nCol);
+  }
+  const tCol = el("div", "st-col");
+  p.tasks.forEach(t => {
+    const it = el("div", "task-item");
+    it.appendChild(el("span", "task-key", t.id));
+    it.appendChild(el("span", "task-title", t.title));
+    it.appendChild(el("span", "task-status " + t.status, t.status === "inprogress" ? "in progress" : t.status));
+    makeDraggable(it, { type: "task", label: t.id + " " + t.title, data: t });
+    tCol.appendChild(it);
+  });
+  knowGrid.appendChild(tCol);
+  s4.appendChild(knowGrid);
+
+  /* ---- wired-into footer strip ---- */
+  const foot = sect("st-wired");
+  const fl = el("div", "st-wired-row");
+  fl.appendChild(el("span", "st-sub", "wired into"));
+  (p.connections || []).forEach(cid => fl.appendChild(srvGlyph(cid, 26)));
+  const more = el("button", "rail-more", "MCP console →");
+  more.style.width = "auto";
+  more.addEventListener("click", mcpOpen);
+  fl.appendChild(more);
+  foot.appendChild(fl);
+
+  updateBadges();
+}
+
 /* ---------------- canvas ---------------- */
 function greeting() {
   const h = new Date().getHours();
@@ -3230,6 +3688,9 @@ function greeting() {
 function renderCanvas() {
   const p = FOW.data();
   const cv = $("#canvas");
+  const studio = !!(p && p.personaId === "marketing");
+  cv.classList.toggle("studio", studio);
+  if (studio) { renderStudio(p, cv); return; }
   clearCharts();
   state.cardIndex = 0;
   cv.textContent = "";
