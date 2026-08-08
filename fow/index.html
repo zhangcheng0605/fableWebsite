@@ -3663,6 +3663,7 @@ function selectPersona(id, first) {
 /* ---------------- onboarding ---------------- */
 function renderOnboarding() {
   const grid = $("#obGrid");
+  grid.textContent = "";
   PERSONAS.forEach((p, i) => {
     const b = el("button", "ob-card");
     b.style.setProperty("--i", i);
@@ -3861,7 +3862,16 @@ function init() {
   $("#cdCollapse").addEventListener("click", () => { $("#frame").classList.add("chat-hidden"); $("#chatFab").hidden = false; });
   $("#chatFab").addEventListener("click", () => { $("#frame").classList.remove("chat-hidden"); $("#chatFab").hidden = true; });
   $("#bellBtn").addEventListener("click", () => sendMessage("What needs my attention right now?"));
-  $("#brandBtn").addEventListener("click", () => { $("#canvas").scrollTop = 0; });
+  /* brand click -> back to the sign-in screen (all 7 seats) */
+  $("#brandBtn").addEventListener("click", () => {
+    if (PRESENT.on) prStop();
+    ckClose(); mcpClose();
+    const ob = $("#onboard");
+    renderOnboarding();            /* rebuild so the entrance animation replays */
+    ob.style.display = "";
+    void ob.offsetWidth;
+    ob.classList.remove("gone");
+  });
 
   $("#cmdkBtn").addEventListener("click", ckOpen);
   $(".ck-back").addEventListener("click", ckClose);
