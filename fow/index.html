@@ -167,6 +167,69 @@ body[data-theme="dark"] #onboard { background: radial-gradient(ellipse 100% 90% 
   animation: obIn 700ms 60ms cubic-bezier(.2,.9,.25,1) both;
 }
 .ob-sub { margin: 0 0 34px; color: var(--ink-2); font-size: 15px; animation: obIn 700ms 120ms cubic-bezier(.2,.9,.25,1) both; }
+/* ---------- the Lobby: choose-your-seat stage ---------- */
+.lb-wrap { text-align: center; padding: 28px 24px; max-width: 1080px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 0; }
+.lb-stage { display: flex; align-items: center; gap: 18px; width: 100%; justify-content: center; margin-top: 8px; }
+.lb-center { display: flex; flex-direction: column; align-items: center; min-width: 0; max-width: 640px; }
+.lb-center.pop { animation: lbPop 420ms cubic-bezier(.2,.9,.3,1.15) both; }
+@keyframes lbPop { from { opacity: 0.35; transform: translateY(6px) scale(0.985); } to { opacity: 1; transform: none; } }
+.lb-avatar { position: relative; width: min(228px, 24vh); aspect-ratio: 1; margin-bottom: 14px; }
+.lb-avatar::before {
+  content: ""; position: absolute; inset: -14%; border-radius: 50%; z-index: -1;
+  background: radial-gradient(closest-side, var(--acc-soft), transparent 74%);
+  transition: background 600ms ease;
+}
+.lb-avatar svg, .lb-avatar .p-avatar { width: 100%; height: 100%; display: block; border-radius: 50%; }
+.lb-avatar .p-avatar { box-shadow: 0 18px 44px -18px color-mix(in oklab, var(--acc) 55%, transparent); border-radius: 50%; }
+.lb-avatar.swap svg { animation: lbSwap 460ms cubic-bezier(.2,.9,.3,1.1) both; }
+@keyframes lbSwap { from { opacity: 0; transform: translateX(26px) scale(0.94); } to { opacity: 1; transform: none; } }
+.lb-kicker { font-size: 10.5px; font-weight: 780; letter-spacing: 0.16em; text-transform: uppercase; color: var(--acc-ink); transition: color 400ms; }
+.lb-name { margin: 4px 0 0; font-size: clamp(30px, 4vw, 44px); font-weight: 760; letter-spacing: -0.03em; color: var(--ink); line-height: 1.1; }
+.lb-role { margin-top: 4px; font-size: 14.5px; color: var(--ink-2); }
+.lb-teaser { margin-top: 10px; font-size: 13px; color: var(--ink-3); font-style: italic; max-width: 56ch; line-height: 1.5; min-height: 2.9em; text-wrap: balance; }
+.lb-stats { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; justify-content: center; }
+.lb-stat {
+  display: inline-flex; align-items: baseline; gap: 6px; font-size: 11.5px; color: var(--ink-3);
+  border: 1px solid var(--hairline); background: var(--card); border-radius: 999px; padding: 5px 12px;
+}
+.lb-stat b { font-size: 13px; color: var(--ink); font-weight: 700; }
+.lb-actions { display: flex; gap: 10px; margin-top: 16px; }
+.lb-enter {
+  font-size: 14px; font-weight: 680; color: #fff; background: var(--acc);
+  border-radius: 999px; padding: 11px 26px; transition: transform 160ms, box-shadow 160ms, background 400ms;
+  box-shadow: 0 10px 26px -10px var(--acc);
+}
+.lb-enter:hover { transform: translateY(-2px); box-shadow: 0 14px 34px -10px var(--acc); }
+.lb-play {
+  font-size: 13px; font-weight: 640; color: var(--acc-ink); border: 1.5px solid var(--acc-line);
+  border-radius: 999px; padding: 11px 20px; background: var(--card); transition: all 160ms;
+}
+.lb-play:hover { background: var(--acc-soft); transform: translateY(-2px); }
+.lb-arrow {
+  flex: none; width: 46px; height: 46px; border-radius: 50%; font-size: 26px; line-height: 1;
+  color: var(--ink-3); border: 1px solid var(--hairline); background: var(--card);
+  transition: all 160ms; padding-bottom: 4px;
+}
+.lb-arrow:hover { color: var(--acc-ink); border-color: var(--acc-line); transform: scale(1.08); }
+.lb-rail { display: flex; gap: 10px; margin-top: 22px; justify-content: center; flex-wrap: wrap; }
+.lb-face {
+  width: 52px; height: 52px; border-radius: 50%; padding: 0; position: relative;
+  opacity: 0.55; filter: saturate(0.6); transition: all 220ms cubic-bezier(.2,.8,.3,1.2);
+}
+.lb-face .p-avatar, .lb-face svg { width: 100%; height: 100%; display: block; border-radius: 50%; }
+.lb-face .ob-ava { width: 100%; height: 100%; border-radius: 50%; display: grid; place-items: center; }
+.lb-face:hover { opacity: 1; filter: none; transform: translateY(-3px); }
+.lb-face.cur { opacity: 1; filter: none; transform: scale(1.18); box-shadow: 0 0 0 3px var(--card), 0 0 0 5.5px var(--pa); }
+@media (max-height: 760px) { .lb-avatar { width: 158px; } .lb-teaser { display: none; } }
+@media (max-width: 760px) { .lb-arrow { display: none; } .lb-name { font-size: 30px; } }
+
+/* avatar container used across the app */
+.p-avatar { display: inline-grid; flex: none; }
+.p-avatar svg { width: 100%; height: 100%; display: block; border-radius: inherit; }
+.pp-avatar.has-av, .tb-avatar.has-av { background: none; overflow: hidden; }
+.pp-avatar.has-av svg, .tb-avatar.has-av svg { width: 100%; height: 100%; display: block; }
+.pm-item .p-avatar { width: 30px; height: 30px; border-radius: 50%; overflow: hidden; }
+
 .ob-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .ob-card {
   --pa: var(--acc);
@@ -1122,13 +1185,27 @@ body.presenting #toasts { bottom: 90px; }
   <div class="dotgrid"></div>
 </div>
 
-<div id="onboard" role="dialog" aria-label="Choose your role">
-  <div class="ob-inner">
+<div id="onboard" role="dialog" aria-label="Choose your seat">
+  <div class="lb-wrap">
     <div class="ob-brand"><span class="ob-logo" id="obLogo"></span><span class="mc-word ob-word">mediacorp</span><em>FoW · Future of Work workspace</em></div>
-    <h1 class="ob-title">Who's signing in today?</h1>
-    <p class="ob-sub">One workspace, shaped around your work. Pick a seat — or press ▶ on anyone to watch their story play itself.</p>
-    <div class="ob-grid" id="obGrid"></div>
-    <p class="ob-foot">Proof of concept · demo data · every card on the canvas can be dragged into the chat</p>
+    <div class="lb-stage">
+      <button class="lb-arrow" id="lbPrev" aria-label="Previous person">‹</button>
+      <div class="lb-center" id="lbCenter">
+        <div class="lb-avatar" id="lbAvatar"></div>
+        <div class="lb-kicker" id="lbKicker"></div>
+        <h1 class="lb-name" id="lbName"></h1>
+        <div class="lb-role" id="lbRole"></div>
+        <div class="lb-teaser" id="lbTeaser"></div>
+        <div class="lb-stats" id="lbStats"></div>
+        <div class="lb-actions">
+          <button class="lb-enter" id="lbEnter">Step in →</button>
+          <button class="lb-play" id="lbPlay">▶ Watch the story</button>
+        </div>
+      </div>
+      <button class="lb-arrow" id="lbNext" aria-label="Next person">›</button>
+    </div>
+    <div class="lb-rail" id="lbRail"></div>
+    <p class="ob-foot">Proof of concept · demo data · ‹ › or scroll to meet the team</p>
   </div>
 </div>
 
@@ -1289,6 +1366,17 @@ Object.assign(BRAND_LOGOS, {
   workday: '<svg viewBox="0 0 24 24"><g fill="#F68D2E"><rect x="10.9" y="2.2" width="2.2" height="6" rx="1.1"/><rect x="10.9" y="2.2" width="2.2" height="6" rx="1.1" transform="rotate(-38 12 15)"/><rect x="10.9" y="2.2" width="2.2" height="6" rx="1.1" transform="rotate(38 12 15)"/><rect x="10.9" y="2.2" width="2.2" height="6" rx="1.1" transform="rotate(-72 12 15)" opacity="0.75"/><rect x="10.9" y="2.2" width="2.2" height="6" rx="1.1" transform="rotate(72 12 15)" opacity="0.75"/></g><path d="M4.5 15.5a7.5 7.5 0 0 0 15 0" fill="none" stroke="#005CB9" stroke-width="2.6" stroke-linecap="round"/></svg>',
   servicenow: '<svg viewBox="0 0 24 24"><rect x="2.5" y="2.5" width="19" height="19" rx="5.2" fill="#62D84E"/><text x="12" y="15.4" text-anchor="middle" font-family="-apple-system,Segoe UI,Roboto,sans-serif" font-weight="800" font-size="7.6" fill="#ffffff">now</text></svg>',
 });
+
+/* flat-illustration persona avatars — one consistent set */
+var AVATARS = {
+  hr: '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="c-hr"><circle cx="60" cy="60" r="56"/></clipPath></defs><circle cx="60" cy="60" r="56" fill="#fbe4ee"/><g clip-path="url(#c-hr)"><path d="M37.8 67.5C36 53 36.8 38.6 45 32.4C52 27.2 68 27.2 75 32.4C83.2 38.6 84 53 82.2 67.5Q81.6 71.8 76.6 71L43.4 71Q38.4 71.8 37.8 67.5Z" fill="#23252e"/><path d="M54 64h12v24H54z" fill="#F2C9A2"/><ellipse cx="60" cy="73" rx="6" ry="3.8" fill="#d9a87c" opacity=".28"/><path d="M24 120v-16q0-17 17-17h38q17 0 17 17v16z" fill="#d6336c"/><path d="M76 87h3q17 0 17 17v16H76z" fill="#141b2b" opacity=".12"/><path d="M51 87l9 14 9 -14z" fill="#f6ead8"/><path d="M51 87l9 14m9 -14l-9 14" stroke="#b02456" stroke-width="2.4" fill="none" stroke-linecap="round"/><ellipse cx="41.6" cy="54" rx="3.1" ry="4.4" fill="#F2C9A2"/><ellipse cx="78.4" cy="54" rx="3.1" ry="4.4" fill="#F2C9A2"/><ellipse cx="60" cy="52" rx="19" ry="21" fill="#F2C9A2"/><path d="M49 46.9Q52.6 44.9 56.2 46.1" fill="none" stroke="#2b2d38" stroke-width="1.5" stroke-linecap="round"/><path d="M63.8 46.1Q67.4 44.9 71 46.9" fill="none" stroke="#2b2d38" stroke-width="1.5" stroke-linecap="round"/><rect x="51.2" y="50.6" width="2.6" height="4.6" rx="1.3" fill="#2A3142"/><rect x="66.2" y="50.6" width="2.6" height="4.6" rx="1.3" fill="#2A3142"/><path d="M59 57.8q1 1.1 2 0" fill="none" stroke="#d9a87c" stroke-width="1" stroke-linecap="round" opacity=".5"/><path d="M55.6 62.3q4.4 3.4 8.8 0" fill="none" stroke="#2A3142" stroke-width="1.5" stroke-linecap="round" opacity=".72"/><ellipse cx="47.8" cy="58.8" rx="3.5" ry="2" fill="#e2766b" opacity="0.3"/><ellipse cx="72.2" cy="58.8" rx="3.5" ry="2" fill="#e2766b" opacity="0.3"/><path d="M40.9 70.8C39.3 56 39.2 40.6 47.6 33.6C52.4 29.7 67.6 29.7 72.4 33.6C77.8 38 79.9 44.2 79.4 50.3Q79.1 53.2 76.2 52.5C76.9 45.4 73.5 41.5 66 39.9C56.9 38 49.8 40.6 47.1 45.9C45.2 49.8 45.3 57.5 45.6 64.5C45.7 66.8 45.5 68.4 45.3 69.6Q44.3 72 40.9 70.8Z" fill="#23252e"/><circle cx="41.8" cy="72.8" r="2.2" fill="none" stroke="#d9a441" stroke-width="1.5"/><circle cx="78.2" cy="72.8" r="2.2" fill="none" stroke="#d9a441" stroke-width="1.5"/></g></svg>',
+  finance: '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="c-fin"><circle cx="60" cy="60" r="56"/></clipPath></defs><circle cx="60" cy="60" r="56" fill="#dff3ea"/><g clip-path="url(#c-fin)"><path d="M54 64h12v24H54z" fill="#8D5A3B"/><ellipse cx="60" cy="73" rx="6" ry="3.8" fill="#6f4429" opacity=".28"/><path d="M24 120v-16q0-17 17-17h38q17 0 17 17v16z" fill="#0e9f6e"/><path d="M76 87h3q17 0 17 17v16H76z" fill="#141b2b" opacity=".12"/><path d="M51 87l9 14 9 -14z" fill="#fcfcfa"/><path d="M51 87l9 14m9 -14l-9 14" stroke="#0a7d57" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M52.8 87l7.2 6.6-4.1 3.6z" fill="#e9edf2"/><path d="M67.2 87L60 93.6l4.1 3.6z" fill="#e9edf2"/><path d="M58.6 94.4l1.4-1.1 1.4 1.1 1.3 8.7-2.7 3.5-2.7-3.5z" fill="#25304a"/><path d="M58.1 90.6h3.8l.7 3-2.6 1.9-2.6-1.9z" fill="#2b3752"/><ellipse cx="41.6" cy="54" rx="3.1" ry="4.4" fill="#8D5A3B"/><ellipse cx="78.4" cy="54" rx="3.1" ry="4.4" fill="#8D5A3B"/><ellipse cx="60" cy="52" rx="19" ry="21" fill="#8D5A3B"/><path d="M49 46.9Q52.6 44.9 56.2 46.1" fill="none" stroke="#191d24" stroke-width="1.5" stroke-linecap="round"/><path d="M63.8 46.1Q67.4 44.9 71 46.9" fill="none" stroke="#191d24" stroke-width="1.5" stroke-linecap="round"/><rect x="51.2" y="50.6" width="2.6" height="4.6" rx="1.3" fill="#2A3142"/><rect x="66.2" y="50.6" width="2.6" height="4.6" rx="1.3" fill="#2A3142"/><path d="M59 57.8q1 1.1 2 0" fill="none" stroke="#6f4429" stroke-width="1" stroke-linecap="round" opacity=".5"/><path d="M55.6 62.3q4.4 3.4 8.8 0" fill="none" stroke="#2A3142" stroke-width="1.5" stroke-linecap="round" opacity=".72"/><ellipse cx="47.8" cy="58.8" rx="3.5" ry="2" fill="#c96a57" opacity="0.26"/><ellipse cx="72.2" cy="58.8" rx="3.5" ry="2" fill="#c96a57" opacity="0.26"/><path d="M42.7 49.5C42.1 36.3 49.2 30.4 60 30.4C70.8 30.4 77.9 36.3 77.3 49.5L75.1 49.5C75.6 41 69 38.7 60 38.7C51 38.7 44.4 41 44.9 49.5Z" fill="#191d24"/><path d="M41.9 51C42.7 64 50.1 75.4 60 75.4C69.9 75.4 77.3 64 78.1 51L75.8 51C75.1 61.8 68.8 70 60 70C51.2 70 44.9 61.8 44.2 51Z" fill="#191d24"/></g></svg>',
+  procurement: '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="c-pro"><circle cx="60" cy="60" r="56"/></clipPath></defs><circle cx="60" cy="60" r="56" fill="#fbeedb"/><g clip-path="url(#c-pro)"><path d="M38.8 41C41.6 30.8 78.4 30.8 81.2 41C83.8 50.4 83.4 62.6 83 73.6C82.7 82.3 83.4 89 84.5 97H34.7C35.8 89 36.5 82.3 36.2 73.6C35.8 62.6 35.4 50.4 38.8 41Z" fill="#2a2331"/><path d="M54 64h12v24H54z" fill="#C68642"/><ellipse cx="60" cy="73" rx="6" ry="3.8" fill="#a56a2e" opacity=".28"/><path d="M24 120v-16q0-17 17-17h38q17 0 17 17v16z" fill="#d97706"/><path d="M76 87h3q17 0 17 17v16H76z" fill="#141b2b" opacity=".12"/><path d="M51 87l9 14 9 -14z" fill="#f7f1e3"/><path d="M51 87l9 14m9 -14l-9 14" stroke="#b25f04" stroke-width="2.4" fill="none" stroke-linecap="round"/><ellipse cx="78.4" cy="54" rx="3.1" ry="4.4" fill="#C68642"/><ellipse cx="60" cy="52" rx="19" ry="21" fill="#C68642"/><path d="M49 46.9Q52.6 44.9 56.2 46.1" fill="none" stroke="#2a2331" stroke-width="1.5" stroke-linecap="round"/><path d="M63.8 46.1Q67.4 44.9 71 46.9" fill="none" stroke="#2a2331" stroke-width="1.5" stroke-linecap="round"/><rect x="51.2" y="50.6" width="2.6" height="4.6" rx="1.3" fill="#2A3142"/><rect x="66.2" y="50.6" width="2.6" height="4.6" rx="1.3" fill="#2A3142"/><path d="M59 57.8q1 1.1 2 0" fill="none" stroke="#a56a2e" stroke-width="1" stroke-linecap="round" opacity=".5"/><path d="M55.6 62.3q4.4 3.4 8.8 0" fill="none" stroke="#2A3142" stroke-width="1.5" stroke-linecap="round" opacity=".72"/><ellipse cx="47.8" cy="58.8" rx="3.5" ry="2" fill="#b3574a" opacity="0.32"/><ellipse cx="72.2" cy="58.8" rx="3.5" ry="2" fill="#b3574a" opacity="0.32"/><path d="M41.5 58C39.6 43.7 43.1 32.6 54.4 30.7C58 30.1 62 30.1 65.6 30.7C76.9 32.6 80.4 43.7 78.7 56.2L75.4 56.2C76.3 47.6 74.5 40.9 68.4 38C64.2 36 60.6 35.5 60 35.5C59.4 35.5 55.8 36 51.6 38C45.5 40.9 43.7 47.6 44.6 58Z" fill="#2a2331"/><path d="M41.8 47C40.6 57.5 39.3 68 37.3 76.5C35.7 83.3 34.6 90.5 35 98.5C35.3 103.5 38 105.5 42.6 105.5L50.5 105.5C54.5 105.5 55.7 102.5 54.9 98.5C53.3 90.5 51 83.5 49.7 76C48.5 68.5 47.9 58 48.2 50.5Z" fill="#2a2331"/><circle cx="63.4" cy="57.4" r=".9" fill="#f2cf68"/></g></svg>',
+  it: '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="c-it"><circle cx="60" cy="60" r="56"/></clipPath></defs><circle cx="60" cy="60" r="56" fill="#def2f7"/><g clip-path="url(#c-it)"><path d="M54 64h12v24H54z" fill="#6F4530"/><ellipse cx="60" cy="73" rx="6" ry="3.8" fill="#573421" opacity=".28"/><path d="M24 120v-16q0-17 17-17h38q17 0 17 17v16z" fill="#0891b2"/><path d="M76 87h3q17 0 17 17v16H76z" fill="#141b2b" opacity=".12"/><path d="M51.5 87q8.5 7.2 17 0l2.2 6H49.3z" fill="#212a37"/><path d="M60 93.5v26.5" stroke="#056b83" stroke-width="1.8"/><rect x="59" y="96" width="2" height="3.6" rx="1" fill="#04566a"/><ellipse cx="41.6" cy="54" rx="3.1" ry="4.4" fill="#6F4530"/><ellipse cx="78.4" cy="54" rx="3.1" ry="4.4" fill="#6F4530"/><ellipse cx="60" cy="52" rx="19" ry="21" fill="#6F4530"/><path d="M49 46.9Q52.6 44.9 56.2 46.1" fill="none" stroke="#171a21" stroke-width="1.5" stroke-linecap="round"/><path d="M63.8 46.1Q67.4 44.9 71 46.9" fill="none" stroke="#171a21" stroke-width="1.5" stroke-linecap="round"/><rect x="51.2" y="50.6" width="2.6" height="4.6" rx="1.3" fill="#2A3142"/><rect x="66.2" y="50.6" width="2.6" height="4.6" rx="1.3" fill="#2A3142"/><path d="M59 57.8q1 1.1 2 0" fill="none" stroke="#573421" stroke-width="1" stroke-linecap="round" opacity=".5"/><path d="M55.6 62.3q4.4 3.4 8.8 0" fill="none" stroke="#2A3142" stroke-width="1.5" stroke-linecap="round" opacity=".72"/><ellipse cx="47.8" cy="58.8" rx="3.5" ry="2" fill="#c96a57" opacity="0.22"/><ellipse cx="72.2" cy="58.8" rx="3.5" ry="2" fill="#c96a57" opacity="0.22"/><path d="M43 46.8C42.5 34.2 50.1 30 60 30C69.9 30 77.5 34.2 77 46.8L74.9 46.8C75.3 38.6 68.3 37.5 60 37.5C51.7 37.5 44.7 38.6 45.1 46.8Z" fill="#171a21"/><g fill="none" stroke="#232936" stroke-width="1.7"><rect x="46.9" y="48" width="11.2" height="9.6" rx="3.4"/><rect x="61.9" y="48" width="11.2" height="9.6" rx="3.4"/><path d="M58.1 52.2h3.8M46.9 52 42.3 51.2M73.1 52 77.7 51.2"/></g></g></svg>',
+  legal: '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="c-leg"><circle cx="60" cy="60" r="56"/></clipPath></defs><circle cx="60" cy="60" r="56" fill="#ece4fb"/><g clip-path="url(#c-leg)"><circle cx="78.8" cy="67" r="7" fill="#4a3226"/><path d="M54 64h12v24H54z" fill="#D9A05F"/><ellipse cx="60" cy="73" rx="6" ry="3.8" fill="#b67f42" opacity=".28"/><path d="M24 120v-16q0-17 17-17h38q17 0 17 17v16z" fill="#7c3aed"/><path d="M76 87h3q17 0 17 17v16H76z" fill="#141b2b" opacity=".12"/><path d="M51 87l9 14 9 -14z" fill="#fdfdfb"/><path d="M51 87l9 14m9 -14l-9 14" stroke="#6429c8" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M52.8 87l7.2 6.6-4.1 3.6z" fill="#eceef4"/><path d="M67.2 87L60 93.6l4.1 3.6z" fill="#eceef4"/><ellipse cx="41.6" cy="54" rx="3.1" ry="4.4" fill="#D9A05F"/><ellipse cx="78.4" cy="54" rx="3.1" ry="4.4" fill="#D9A05F"/><ellipse cx="60" cy="52" rx="19" ry="21" fill="#D9A05F"/><path d="M49 46.9Q52.6 44.9 56.2 46.1" fill="none" stroke="#4a3226" stroke-width="1.5" stroke-linecap="round"/><path d="M63.8 46.1Q67.4 44.9 71 46.9" fill="none" stroke="#4a3226" stroke-width="1.5" stroke-linecap="round"/><rect x="51.2" y="50.6" width="2.6" height="4.6" rx="1.3" fill="#2A3142"/><rect x="66.2" y="50.6" width="2.6" height="4.6" rx="1.3" fill="#2A3142"/><path d="M59 57.8q1 1.1 2 0" fill="none" stroke="#b67f42" stroke-width="1" stroke-linecap="round" opacity=".5"/><path d="M55.6 62.3q4.4 3.4 8.8 0" fill="none" stroke="#2A3142" stroke-width="1.5" stroke-linecap="round" opacity=".72"/><ellipse cx="47.8" cy="58.8" rx="3.5" ry="2" fill="#c25f4e" opacity="0.3"/><ellipse cx="72.2" cy="58.8" rx="3.5" ry="2" fill="#c25f4e" opacity="0.3"/><path d="M41.4 58.5C39.3 43.5 44 32.2 56.5 30.5C69.5 28.8 79.7 36.5 79.6 49C79.6 51.8 79.4 54.4 78.9 56.8Q76.5 58 75.9 55.6C76.5 48.9 76 42.7 69.9 39.9C62.9 36.8 51.6 38.9 45.4 45.8C44.4 50 44.6 54 45 58.5Z" fill="#4a3226"/><circle cx="41" cy="58.6" r="1.4" fill="#f2ede2"/><circle cx="79" cy="58.6" r="1.4" fill="#f2ede2"/></g></svg>',
+  sales: '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="c-sal"><circle cx="60" cy="60" r="56"/></clipPath></defs><circle cx="60" cy="60" r="56" fill="#e1ebfc"/><g clip-path="url(#c-sal)"><path d="M54 64h12v24H54z" fill="#F4D2B0"/><ellipse cx="60" cy="73" rx="6" ry="3.8" fill="#dcb188" opacity=".28"/><path d="M24 120v-16q0-17 17-17h38q17 0 17 17v16z" fill="#2563eb"/><path d="M76 87h3q17 0 17 17v16H76z" fill="#141b2b" opacity=".12"/><path d="M51 87l9 14 9 -14z" fill="#d9e8fb"/><path d="M51 87l9 14m9 -14l-9 14" stroke="#1d4fc4" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M52.8 87l7.2 6.6-4.1 3.6z" fill="#c6dbf5"/><path d="M67.2 87L60 93.6l4.1 3.6z" fill="#c6dbf5"/><ellipse cx="41.6" cy="54" rx="3.1" ry="4.4" fill="#F4D2B0"/><ellipse cx="78.4" cy="54" rx="3.1" ry="4.4" fill="#F4D2B0"/><ellipse cx="60" cy="52" rx="19" ry="21" fill="#F4D2B0"/><path d="M49 46.9Q52.6 44.9 56.2 46.1" fill="none" stroke="#b8894a" stroke-width="1.5" stroke-linecap="round"/><path d="M63.8 46.1Q67.4 44.9 71 46.9" fill="none" stroke="#b8894a" stroke-width="1.5" stroke-linecap="round"/><rect x="51.2" y="50.6" width="2.6" height="4.6" rx="1.3" fill="#2A3142"/><rect x="66.2" y="50.6" width="2.6" height="4.6" rx="1.3" fill="#2A3142"/><path d="M59 57.8q1 1.1 2 0" fill="none" stroke="#dcb188" stroke-width="1" stroke-linecap="round" opacity=".5"/><path d="M55.6 62.3q4.4 3.4 8.8 0" fill="none" stroke="#2A3142" stroke-width="1.5" stroke-linecap="round" opacity=".72"/><ellipse cx="47.8" cy="58.8" rx="3.5" ry="2" fill="#e2766b" opacity="0.3"/><ellipse cx="72.2" cy="58.8" rx="3.5" ry="2" fill="#e2766b" opacity="0.3"/><path d="M43.3 54C44.1 64.3 50.7 74 60 74C69.3 74 75.9 64.3 76.7 54L74.6 54C73.9 62.4 68.2 69.8 60 69.8C51.8 69.8 46.1 62.4 45.4 54Z" fill="#b98d54" opacity=".4"/><path d="M42.6 50C40.9 36 46.7 29.2 58.2 28.8C70.4 28.4 78.8 33.6 78.2 48.8L75.9 48.8C76 40.6 70.4 36.9 62.3 36.7C54.6 36.5 47.5 38.7 45.1 45.6C44.6 47.1 44.5 48.6 44.6 50Z" fill="#dfb257"/><path d="M51.5 33.4C55.5 31.6 60.5 31.2 65.5 32.2M48.8 36.6C51.8 34.8 55 34 58.4 33.9" stroke="#c2963e" stroke-width="1.1" fill="none" stroke-linecap="round" opacity=".8"/></g></svg>',
+  marketing: '<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="c-mkt"><circle cx="60" cy="60" r="56"/></clipPath></defs><circle cx="60" cy="60" r="56" fill="#f8e2fb"/><g clip-path="url(#c-mkt)"><path d="M54 64h12v24H54z" fill="#F0C6A0"/><ellipse cx="60" cy="73" rx="6" ry="3.8" fill="#d6a578" opacity=".28"/><path d="M24 120v-16q0-17 17-17h38q17 0 17 17v16z" fill="#c026d3"/><path d="M76 87h3q17 0 17 17v16H76z" fill="#141b2b" opacity=".12"/><path d="M49.5 87l10.5 11.5 10.5 -11.5z" fill="#1d2029"/><path d="M49.5 87l10.5 11.5m10.5 -11.5l-10.5 11.5" stroke="#9c1fae" stroke-width="2.4" fill="none" stroke-linecap="round"/><ellipse cx="41.6" cy="54" rx="3.1" ry="4.4" fill="#F0C6A0"/><ellipse cx="78.4" cy="54" rx="3.1" ry="4.4" fill="#F0C6A0"/><ellipse cx="60" cy="52" rx="19" ry="21" fill="#F0C6A0"/><path d="M49 46.9Q52.6 44.9 56.2 46.1" fill="none" stroke="#20222c" stroke-width="1.5" stroke-linecap="round"/><path d="M63.8 46.1Q67.4 44.9 71 46.9" fill="none" stroke="#20222c" stroke-width="1.5" stroke-linecap="round"/><rect x="51.2" y="50.6" width="2.6" height="4.6" rx="1.3" fill="#2A3142"/><rect x="66.2" y="50.6" width="2.6" height="4.6" rx="1.3" fill="#2A3142"/><path d="M59 57.8q1 1.1 2 0" fill="none" stroke="#d6a578" stroke-width="1" stroke-linecap="round" opacity=".5"/><path d="M55.6 62.3q4.4 3.4 8.8 0" fill="none" stroke="#2A3142" stroke-width="1.5" stroke-linecap="round" opacity=".72"/><ellipse cx="47.8" cy="58.8" rx="3.5" ry="2" fill="#e2766b" opacity="0.3"/><ellipse cx="72.2" cy="58.8" rx="3.5" ry="2" fill="#e2766b" opacity="0.3"/><path d="M36.9 102.6C35.9 82 36.3 56 38.7 43.5C41.2 31.2 52.2 28.2 60 28.2C67.8 28.2 78.8 31.2 81.3 43.5C83.7 56 84.1 82 83.1 102.6Q82.9 105.4 79.7 105.4L75.6 105.4Q72.7 105.4 72.7 102.4C72.9 89 72.5 73 73 60C73.3 52.5 73 46.5 71.7 42.9C66 44.4 54 44.4 48.3 42.9C47 46.5 46.7 52.5 47 60C47.5 73 47.1 89 47.3 102.4Q47.3 105.4 44.4 105.4L40.3 105.4Q37.1 105.4 36.9 102.6Z" fill="#20222c"/><path d="M36.8 93.5C39.5 96 44.5 96.3 47.3 94.2L47.3 102.4Q47.3 105.4 44.4 105.4L40.3 105.4Q37.1 105.4 36.9 102.6Z" fill="#e46ae6"/><path d="M72.7 94.2C75.5 96.3 80.5 96 83.2 93.5L83.1 102.6Q82.9 105.4 79.7 105.4L75.6 105.4Q72.7 105.4 72.7 102.4Z" fill="#e46ae6"/><path d="M74.6 71.5h4l-2 4.6z" fill="#f0bd4f"/></g></svg>'
+};
 
 /* ============================================================
    FoW · registry — MCP server catalog, personas, icons, utils
@@ -3811,14 +3899,23 @@ function selectPersona(id, first) {
   state.personaId = id;
   const meta = PERSONAS.find(x => x.id === id);
   document.body.dataset.persona = id;
+  /* persona avatars in the topbar */
+  const pill = $("#ppAvatar"), tbav = $("#tbAvatar");
+  let hasAv = false;
+  try { hasAv = typeof AVATARS !== "undefined" && !!AVATARS[id]; } catch (_) { }
+  if (hasAv) {
+    pill.innerHTML = AVATARS[id]; pill.classList.add("has-av");
+    tbav.innerHTML = AVATARS[id]; tbav.classList.add("has-av");
+  } else {
+    pill.classList.remove("has-av"); pill.textContent = meta.initials;
+    tbav.classList.remove("has-av"); tbav.textContent = meta.initials;
+  }
   /* seed the MCP call feed with this persona's recent history */
   MCPLOG.length = 0;
   const pk = FOW.data();
   if (pk) (pk.chatFlows || []).flatMap(f => f.toolCalls || []).slice(0, 6).reverse().forEach(c => mcpLog(c.server, c.tool, c.ms));
-  $("#ppAvatar").textContent = meta.initials;
   $("#ppName").textContent = meta.name;
   $("#ppRole").textContent = meta.role + " · " + meta.dept;
-  $("#tbAvatar").textContent = meta.initials;
   $("#cdStatus").textContent = "online · " + ((FOW.data() || {}).connections || []).length + " tools connected · " + (((FOW.data() || {}).skills) || []).length + " skills";
   renderCanvas();
   renderTicker();
@@ -3829,42 +3926,114 @@ function selectPersona(id, first) {
   petWelcome(id);
 }
 
-/* ---------------- onboarding ---------------- */
+/* ---------------- avatars ---------------- */
+function avatarEl(id, sz) {
+  const meta = PERSONAS.find(x => x.id === id);
+  let src = null;
+  try { src = typeof AVATARS !== "undefined" && AVATARS[id]; } catch (_) { }
+  if (src) {
+    const s = el("span", "p-avatar");
+    s.innerHTML = src;
+    if (sz) { s.style.width = sz + "px"; s.style.height = sz + "px"; }
+    return s;
+  }
+  const f = el("span", "ob-ava", meta ? meta.initials : "?");
+  if (meta) f.style.setProperty("--pa", meta.accent);
+  if (sz) { f.style.width = sz + "px"; f.style.height = sz + "px"; }
+  return f;
+}
+
+/* ---------------- the Lobby — choose your seat ---------------- */
+const LOBBY = { idx: 0, auto: null, touched: false, wired: false };
+
+function lobbyFocus(which, instant) {
+  const idx = typeof which === "number" ? which : Math.max(0, PERSONAS.findIndex(p => p.id === which));
+  LOBBY.idx = (idx + PERSONAS.length) % PERSONAS.length;
+  const p = PERSONAS[LOBBY.idx];
+  const pack = (window.FOW_DATA || {})[p.id];
+  document.body.dataset.persona = p.id; /* ambient accent follows the focused person */
+
+  const av = $("#lbAvatar");
+  const swap = () => { av.textContent = ""; av.appendChild(avatarEl(p.id)); };
+  if (instant) swap();
+  else {
+    av.classList.remove("swap"); void av.offsetWidth; av.classList.add("swap");
+    setTimeout(swap, 120);
+  }
+  $("#lbKicker").textContent = p.dept + " · " + p.loc;
+  $("#lbName").textContent = p.name;
+  $("#lbRole").textContent = p.role + " — " + p.tag;
+  $("#lbTeaser").textContent = pack ? "“" + pack.focus.headline + "”" : "";
+  const stats = $("#lbStats");
+  stats.textContent = "";
+  if (pack) {
+    [[String(pack.meetings.length), "meetings"], [String(pack.approvals.length), "approvals"], [String(pack.inbox.filter(i => i.unread).length), "unread"], [String((pack.chains || []).length), "workflows"]].forEach(([n, l]) => {
+      const c = el("span", "lb-stat");
+      c.appendChild(el("b", "", n));
+      c.appendChild(el("span", "", l));
+      stats.appendChild(c);
+    });
+  }
+  $$("#lbRail .lb-face").forEach((f, i) => f.classList.toggle("cur", i === LOBBY.idx));
+  const center = $("#lbCenter");
+  if (!instant) { center.classList.remove("pop"); void center.offsetWidth; center.classList.add("pop"); }
+}
+function lobbyStep(d) { LOBBY.touched = true; lobbyFocus(LOBBY.idx + d); }
+function lobbyTouch() { LOBBY.touched = true; }
+
 function renderOnboarding() {
-  const grid = $("#obGrid");
-  grid.textContent = "";
+  const rail = $("#lbRail");
+  rail.textContent = "";
   PERSONAS.forEach((p, i) => {
-    const b = el("button", "ob-card");
-    b.style.setProperty("--i", i);
+    const b = el("button", "lb-face");
+    b.title = p.name + " — " + p.role;
     b.style.setProperty("--pa", p.accent);
-    const ava = el("span", "ob-ava", p.initials);
-    b.appendChild(ava);
-    b.appendChild(el("div", "ob-name", p.name));
-    b.appendChild(el("div", "ob-role", p.role + " · " + p.dept));
-    b.appendChild(el("div", "ob-tag", p.tag));
-    b.appendChild(el("span", "ob-enter", "enter ↵"));
-    const play = el("span", "ob-play");
-    play.setAttribute("role", "button");
-    play.tabIndex = 0;
-    play.textContent = "▶ play " + p.name.split(" ")[0] + "'s story";
-    play.addEventListener("click", e => { e.stopPropagation(); startPresent(p.id); });
-    b.appendChild(play);
-    b.addEventListener("click", () => {
+    b.appendChild(avatarEl(p.id, 52));
+    b.addEventListener("click", () => { lobbyTouch(); lobbyFocus(i); });
+    rail.appendChild(b);
+  });
+  if (!LOBBY.wired) {
+    LOBBY.wired = true;
+    $("#lbPrev").addEventListener("click", () => lobbyStep(-1));
+    $("#lbNext").addEventListener("click", () => lobbyStep(1));
+    $("#lbEnter").addEventListener("click", () => {
+      lobbyTouch();
+      const p = PERSONAS[LOBBY.idx];
       $("#onboard").classList.add("gone");
       setTimeout(() => { $("#onboard").style.display = "none"; }, 520);
       selectPersona(p.id, true);
     });
-    grid.appendChild(b);
-  });
+    $("#lbPlay").addEventListener("click", () => { lobbyTouch(); startPresent(PERSONAS[LOBBY.idx].id); });
+    document.addEventListener("keydown", e => {
+      const ob = $("#onboard");
+      if (!ob || ob.classList.contains("gone") || getComputedStyle(ob).display === "none") return;
+      if (PRESENT.on) return;
+      if (e.key === "ArrowLeft") { e.preventDefault(); lobbyStep(-1); }
+      else if (e.key === "ArrowRight") { e.preventDefault(); lobbyStep(1); }
+      else if (e.key === "Enter" && !e.target.closest("button")) { $("#lbEnter").click(); }
+    });
+    let wheelAt = 0;
+    $("#onboard").addEventListener("wheel", e => {
+      const now = Date.now();
+      if (now - wheelAt < 450) return;
+      wheelAt = now;
+      lobbyStep(e.deltaY > 0 || e.deltaX > 0 ? 1 : -1);
+    }, { passive: true });
+    /* gentle auto-rotate until the user touches anything */
+    LOBBY.auto = setInterval(() => {
+      const ob = $("#onboard");
+      if (LOBBY.touched || !ob || ob.classList.contains("gone") || getComputedStyle(ob).display === "none" || PRESENT.on) return;
+      lobbyFocus(LOBBY.idx + 1);
+    }, 5200);
+  }
+  lobbyFocus(state.personaId || 0, true);
 }
 function renderPersonaMenu() {
   const menu = $("#personaMenu");
   menu.textContent = "";
   PERSONAS.forEach(p => {
     const it = el("button", "pm-item" + (p.id === state.personaId ? " cur" : ""));
-    const ava = el("span", "ob-ava", p.initials);
-    ava.style.setProperty("--pa", p.accent);
-    it.appendChild(ava);
+    it.appendChild(avatarEl(p.id, 30));
     const bd = el("div");
     bd.appendChild(el("div", "pm-name", p.name));
     bd.appendChild(el("div", "pm-role", p.role + " · " + p.dept));
@@ -4397,9 +4566,12 @@ function prScript() {
     const onboardEl = $("#onboard");
     const onboardOpen = onboardEl && getComputedStyle(onboardEl).display !== "none" && !onboardEl.classList.contains("gone");
     if (onboardOpen) {
-      const target = $$(".ob-card").find(c => c.textContent.includes(meta.name.split(" ")[0]));
-      if (target) await prClick(target);
-      else { onboardEl.classList.add("gone"); setTimeout(() => { onboardEl.style.display = "none"; }, 400); selectPersona(PRESENT.pid, true); }
+      if (typeof lobbyFocus === "function" && $("#lbEnter")) {
+        lobbyFocus(PRESENT.pid, true);
+        LOBBY.touched = true;
+        await psleep(800);
+        await prClick($("#lbEnter"));
+      } else { onboardEl.classList.add("gone"); setTimeout(() => { onboardEl.style.display = "none"; }, 400); selectPersona(PRESENT.pid, true); }
     } else if (state.personaId !== PRESENT.pid) {
       selectPersona(PRESENT.pid);
     }
