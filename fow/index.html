@@ -1244,6 +1244,7 @@ body[data-theme="dark"] { --pr-dim: rgba(0, 0, 0, 0.66); }
   border-top: 3px solid var(--acc);
 }
 .pr-caption.pop { animation: prCapIn 450ms cubic-bezier(.2,.9,.3,1.2) both; }
+.pr-caption.up { bottom: auto; top: 76px; }
 .pr-caption.paused { outline: 2px dashed var(--acc-line); outline-offset: 3px; }
 @keyframes prCapIn { from { opacity: 0; transform: translateX(-50%) translateY(14px); } to { opacity: 1; transform: translateX(-50%); } }
 .pr-kicker { font-size: 10px; font-weight: 770; letter-spacing: 0.14em; text-transform: uppercase; color: var(--acc-ink); }
@@ -8063,21 +8064,50 @@ function showBeat(key) {
   prCaption(KICKERS[key] || "FoW", (authored && authored.title) || f.title || "", (authored && authored.text) || f.text || "");
 }
 
+function prSpotRect(l, t, w, h) {
+  const spot = $("#prSpot");
+  spot.classList.remove("off");
+  spot.style.left = l + "px";
+  spot.style.top = t + "px";
+  spot.style.width = w + "px";
+  spot.style.height = h + "px";
+  /* keep the caption out of the glow — hop to the top when the subject sits low */
+  const cap = $("#prCap");
+  if (cap) cap.classList.toggle("up", t + h > innerHeight - 235 && t > 300);
+}
 function prSpotlight(target, pad) {
   const spot = $("#prSpot");
-  if (!target) { spot.classList.add("off"); return; }
-  const r = target.getBoundingClientRect();
+  if (!target) {
+    PRESENT.spotFn = null;
+    spot.classList.add("off");
+    const cap = $("#prCap"); if (cap) cap.classList.remove("up");
+    return;
+  }
   const p = pad == null ? 10 : pad;
-  spot.classList.remove("off");
-  spot.style.left = (r.left - p) + "px";
-  spot.style.top = (r.top - p) + "px";
-  spot.style.width = (r.width + p * 2) + "px";
-  spot.style.height = (r.height + p * 2) + "px";
+  /* live-tracked: re-measured on a timer so scroll drift and reflows never strand the glow */
+  PRESENT.spotFn = () => {
+    if (!document.contains(target)) return;
+    const r = target.getBoundingClientRect();
+    prSpotRect(r.left - p, r.top - p, r.width + p * 2, r.height + p * 2);
+  };
+  PRESENT.spotFn();
 }
 async function prScrollTo(target) {
   if (!target) return;
   target.scrollIntoView({ behavior: "smooth", block: "center" });
-  await psleep(650);
+  /* wait until the smooth scroll genuinely settles — rects are read right after,
+     and the settle time is physical, so it is deliberately not speed-scaled */
+  let last = Infinity, still = 0, guard = 50;
+  while (guard-- > 0) {
+    if (PRESENT.abort) throw { aborted: true };
+    if (PRESENT.skip) return;
+    await new Promise(r => setTimeout(r, 90));
+    const t = target.getBoundingClientRect().top;
+    if (Math.abs(t - last) < 0.75) { if (++still >= 3) break; }
+    else still = 0;
+    last = t;
+  }
+  await psleep(150);
 }
 async function prCursorTo(target, dx, dy) {
   const c = $("#prCursor");
@@ -8165,16 +8195,16 @@ function prScript() {
     const kpis = $$(".card.kpi");
     if (kpis.length) {
       await prScrollTo(kpis[0]);
-      const all = kpis.map(k => k.getBoundingClientRect());
-      const rs = all.filter(r => r.top < all[0].top + 320);
-      const L = Math.min(...rs.map(r => r.left)), T = Math.min(...rs.map(r => r.top));
-      const R = Math.max(...rs.map(r => r.right)), B = Math.max(...rs.map(r => r.bottom));
-      const spot = $("#prSpot");
-      spot.classList.remove("off");
-      spot.style.left = (L - 10) + "px";
-      spot.style.top = (T - 10) + "px";
-      spot.style.width = (R - L + 20) + "px";
-      spot.style.height = (B - T + 20) + "px";
+      PRESENT.spotFn = () => {
+        const ks = $$(".card.kpi");
+        if (!ks.length) return;
+        const all = ks.map(k => k.getBoundingClientRect());
+        const rs = all.filter(r => r.top < all[0].top + 320);
+        const L = Math.min(...rs.map(r => r.left)), T = Math.min(...rs.map(r => r.top));
+        const R = Math.max(...rs.map(r => r.right)), B = Math.max(...rs.map(r => r.bottom));
+        prSpotRect(L - 10, T - 10, R - L + 20, B - T + 20);
+      };
+      PRESENT.spotFn();
     }
     showBeat("kpis");
     await psleep(5800);
@@ -8361,6 +8391,11 @@ async function startPresent(personaId) {
   if (PRESENT.on) return;
   PRESENT.on = true; PRESENT.abort = false; PRESENT.paused = false; PRESENT.step = 0; PRESENT.skip = false;
   PRESENT.allowCrew = false;
+  PRESENT.spotFn = null;
+  clearInterval(PRESENT.track);
+  PRESENT.track = setInterval(() => {
+    try { if (PRESENT.on && !PRESENT.paused && PRESENT.spotFn) PRESENT.spotFn(); } catch (_) { }
+  }, 240);
   PRESENT.pid = personaId || state.personaId || "finance";
   prBuild();
   PRESENT.steps = prScript();
@@ -8384,6 +8419,8 @@ function prStop() {
   if (!PRESENT.on) return;
   PRESENT.on = false; PRESENT.abort = true;
   PRESENT.allowCrew = false;
+  PRESENT.spotFn = null;
+  clearInterval(PRESENT.track);
   try { if (typeof crewClose === "function") crewClose(); } catch (_) { }
   const root = prEl();
   if (root) { root.classList.add("out"); setTimeout(() => root.remove(), 350); }
