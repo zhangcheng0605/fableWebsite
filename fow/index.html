@@ -1283,6 +1283,328 @@ body.presenting #toasts { bottom: 90px; }
 .msg .askme-av { width: 26px; height: 26px; margin-top: 2px; }
 
 
+/* == crew.css == */
+/* ============================== The Crew — tiny animated office
+   Namespaced under #crew. Keyframes prefixed cw. Auto-included by build.py. */
+
+#crew { position: fixed; inset: 0; z-index: 76; }
+#crew[hidden] { display: none; }
+
+#crew .cw-back {
+  position: absolute; inset: 0;
+  background: var(--backdrop);
+  backdrop-filter: blur(3px);
+}
+
+/* -------- panel (matches MCP console scale) */
+#crew .cw-panel {
+  position: relative; width: min(1100px, calc(100vw - 40px)); height: min(80vh, 780px);
+  margin: 6.5vh auto 0; background: var(--card); border: 1px solid var(--hairline);
+  border-radius: 20px; box-shadow: var(--shadow-pop);
+  display: flex; flex-direction: column; overflow: hidden;
+  animation: cwPanelIn 220ms cubic-bezier(.2,.9,.3,1.2) both;
+}
+@keyframes cwPanelIn { from { opacity: 0; transform: translateY(-10px) scale(0.98); } to { opacity: 1; transform: none; } }
+
+/* -------- head */
+#crew .cw-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px; border-bottom: 1px solid var(--hairline-soft); flex: none;
+}
+#crew .ch-ico {
+  width: 30px; height: 30px; border-radius: 9px; flex: none;
+  display: grid; place-items: center;
+  background: var(--acc-soft); color: var(--acc-ink, var(--acc));
+  font-size: 14px;
+}
+#crew .ch-ico svg { width: 18px; height: 18px; display: block; }
+#crew .ch-title { min-width: 0; }
+#crew .ch-title .t { font-size: 14px; font-weight: 700; letter-spacing: -0.012em; color: var(--ink); }
+#crew .ch-title .s { font-size: 11px; color: var(--ink-3); margin-top: 1px; }
+#crew .cw-count {
+  margin-left: auto; flex: none;
+  font-family: var(--font-mono); font-size: 11px; color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+#crew .ch-act {
+  width: 28px; height: 28px; flex: none; border-radius: 9px;
+  display: grid; place-items: center; font-size: 13px;
+  color: var(--ink-2); background: none; border: 0; cursor: pointer;
+  transition: background 140ms, color 140ms;
+}
+#crew .ch-act:hover { background: var(--hov); color: var(--ink); }
+
+/* -------- body */
+#crew .cw-body { flex: 1; display: flex; min-height: 0; }
+
+/* -------- the office floor */
+#crew .cw-stage {
+  flex: 1; position: relative; min-height: 480px; min-width: 0; overflow: hidden;
+  background:
+    radial-gradient(120% 90% at 50% 30%, transparent 55%, color-mix(in oklab, var(--ink) 4%, transparent) 100%),
+    radial-gradient(color-mix(in oklab, var(--ink) 9%, transparent) 1px, transparent 1.2px),
+    var(--card);
+  background-size: auto, 26px 26px, auto;
+  background-position: center, 13px 13px, center;
+}
+
+/* -------- hub: the askMElah brain, upper-middle */
+#crew .cw-hub {
+  position: absolute; left: 50%; top: 30%;
+  transform: translate(-50%, -50%);
+  width: 74px; height: 74px;
+  display: grid; place-items: center;
+}
+#crew .cw-hub svg { width: 46px; height: 46px; display: block; position: relative; z-index: 1; }
+#crew .cw-hub::before {
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  border: 1.5px solid var(--acc-line, var(--acc));
+  background: radial-gradient(closest-side, var(--acc-soft), transparent 78%);
+  animation: cwHubPulse 3.2s ease-in-out infinite;
+}
+#crew .cw-hub::after {
+  content: ""; position: absolute; inset: -12px; border-radius: 50%;
+  border: 1px solid color-mix(in oklab, var(--acc) 22%, transparent);
+  animation: cwHubRing 3.2s ease-in-out infinite;
+}
+#crew .cw-hub.busy::before { animation: cwHubPulse 1s ease-in-out infinite; border-color: var(--acc); box-shadow: 0 0 24px -4px color-mix(in oklab, var(--acc) 55%, transparent); }
+#crew .cw-hub.busy::after { animation: cwHubRing 1s ease-in-out infinite; }
+@keyframes cwHubPulse { 50% { transform: scale(1.06); opacity: 0.82; } }
+@keyframes cwHubRing { 0% { transform: scale(0.94); opacity: 0.7; } 70% { transform: scale(1.18); opacity: 0; } 100% { transform: scale(1.18); opacity: 0; } }
+
+/* -------- desk: the human, front bottom-center */
+#crew .cw-desk {
+  position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  padding: 10px 18px 8px;
+  background: color-mix(in oklab, var(--soft) 80%, var(--card));
+  border: 1px solid var(--hairline); border-radius: 16px 16px 12px 12px;
+  box-shadow: 0 8px 22px -14px rgba(20, 28, 55, 0.35);
+  transition: border-color 300ms, box-shadow 300ms;
+}
+#crew .cw-desk .p-avatar { width: 42px; height: 42px; border-radius: 50%; overflow: hidden; }
+#crew .cw-desk-name {
+  font-size: 10px; font-weight: 680; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink-2); font-family: var(--font-mono);
+}
+#crew .cw-desk.receiving {
+  border-color: var(--acc-line, var(--acc));
+  box-shadow: 0 0 0 5px var(--acc-soft), 0 8px 22px -14px rgba(20, 28, 55, 0.35);
+  animation: cwReceive 700ms cubic-bezier(.2,.9,.3,1.25) both;
+}
+@keyframes cwReceive { 30% { transform: translateX(-50%) scale(1.05); } 100% { transform: translateX(-50%); } }
+
+/* -------- agents */
+#crew .cw-agent {
+  position: absolute; width: 64px; margin: -32px 0 0 -32px; /* left/top set inline by engine */
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  transition: left 1s ease-in-out, top 1s ease-in-out;
+  --ca: var(--acc);
+}
+#crew .cw-agent[data-agent="hr"]          { --ca: #d6336c; }
+#crew .cw-agent[data-agent="finance"]     { --ca: #0e9f6e; }
+#crew .cw-agent[data-agent="procurement"] { --ca: #d97706; }
+#crew .cw-agent[data-agent="it"]          { --ca: #0891b2; }
+#crew .cw-agent[data-agent="legal"]       { --ca: #7c3aed; }
+#crew .cw-agent[data-agent="sales"]       { --ca: #2563eb; }
+#crew .cw-agent[data-agent="marketing"]   { --ca: #c026d3; }
+
+#crew .cw-sprite { width: 44px; height: 44px; position: relative; will-change: transform; }
+#crew .cw-sprite svg { width: 100%; height: 100%; display: block; overflow: visible; }
+#crew .cw-sprite { filter: drop-shadow(0 6px 8px color-mix(in oklab, var(--ca) 18%, rgba(20, 28, 55, 0.12))); }
+/* face the direction of travel (engine toggles .flip when walking left) */
+#crew .cw-agent.flip .cw-sprite svg { transform: scaleX(-1); }
+
+#crew .cw-name {
+  font-size: 9px; font-weight: 700; letter-spacing: 0.05em;
+  font-family: var(--font-mono); color: var(--ca);
+  background: color-mix(in oklab, var(--ca) 8%, var(--card));
+  border: 1px solid color-mix(in oklab, var(--ca) 26%, transparent);
+  border-radius: 999px; padding: 1px 7px; white-space: nowrap; max-width: 130px;
+  overflow: hidden; text-overflow: ellipsis;
+}
+
+/* -------- idle personalities (transform-only, subtle 2-4s loops) */
+#crew .cw-sprite.idle-bob    { animation: cwBob 2.8s ease-in-out infinite; }
+#crew .cw-sprite.idle-tick   { animation: cwTick 2.4s steps(1, end) infinite; }
+#crew .cw-sprite.idle-scan   { animation: cwScan 4s ease-in-out infinite; }
+#crew .cw-sprite.idle-jitter { animation: cwJitter 3.2s linear infinite; }
+#crew .cw-sprite.idle-bow    { animation: cwBow 3.6s ease-in-out infinite; transform-origin: 50% 88%; }
+#crew .cw-sprite.idle-bounce { animation: cwBounce 2.2s cubic-bezier(.35,.1,.3,1) infinite; transform-origin: 50% 100%; }
+#crew .cw-sprite.idle-spin   { animation: cwSpin 6s ease-in-out infinite; }
+
+@keyframes cwBob { 50% { transform: translateY(-3.5px); } }
+@keyframes cwTick {
+  0%, 100% { transform: rotate(3deg); }
+  50%      { transform: rotate(-3deg); }
+}
+@keyframes cwScan {
+  0%, 18%, 100% { transform: translateX(0) skewX(0deg); }
+  32%, 46%      { transform: translateX(-2.5px) skewX(4deg); }
+  62%, 80%      { transform: translateX(2.5px) skewX(-4deg); }
+}
+@keyframes cwJitter {
+  0%, 86%, 100% { transform: translate(0, 0); }
+  88% { transform: translate(-1.2px, 0.6px); }
+  90% { transform: translate(1.2px, -0.6px); }
+  92% { transform: translate(-1px, -0.5px); }
+  94% { transform: translate(1px, 0.5px); }
+  96% { transform: translate(-0.6px, 0); }
+  98% { transform: translate(0.6px, 0); }
+}
+@keyframes cwBow {
+  0%, 62%, 100% { transform: rotate(0deg); }
+  74%, 84%      { transform: rotate(8deg); }
+}
+@keyframes cwBounce {
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  38%      { transform: translateY(-5px) scale(0.97, 1.04); }
+  70%      { transform: translateY(0) scale(1.05, 0.94); }
+  84%      { transform: translateY(-1.5px) scale(1, 1); }
+}
+@keyframes cwSpin {
+  0%, 72%, 100% { transform: rotate(0deg); }
+  92%           { transform: rotate(360deg); }
+}
+
+/* -------- activity states (override idle) */
+#crew .cw-sprite.walking { animation: cwGait 350ms ease-in-out infinite; }
+@keyframes cwGait { 50% { transform: translateY(-3px) rotate(1.5deg); } }
+
+#crew .cw-sprite.working .crew-arm-l,
+#crew .cw-sprite.working .crew-arm-r {
+  transform-box: fill-box; transform-origin: top center;
+}
+#crew .cw-sprite.working .crew-arm-l { animation: cwArmL 480ms ease-in-out infinite; }
+#crew .cw-sprite.working .crew-arm-r { animation: cwArmR 480ms ease-in-out infinite; }
+@keyframes cwArmL { 0%, 100% { transform: rotate(14deg); } 50% { transform: rotate(-10deg); } }
+@keyframes cwArmR { 0%, 100% { transform: rotate(-14deg); } 50% { transform: rotate(10deg); } }
+
+#crew .cw-sprite.cheer { animation: cwCheerHop 900ms cubic-bezier(.3,.9,.3,1.2) both; }
+#crew .cw-sprite.cheer .crew-arm-r {
+  transform-box: fill-box; transform-origin: top center;
+  animation: cwWave 900ms ease-in-out both;
+}
+@keyframes cwCheerHop { 0% { transform: translateY(0); } 28% { transform: translateY(-6px); } 55% { transform: translateY(0); } 72% { transform: translateY(-3px); } 100% { transform: translateY(0); } }
+@keyframes cwWave {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-155deg); }
+  45% { transform: rotate(-125deg); }
+  65% { transform: rotate(-160deg); }
+  85% { transform: rotate(-130deg); }
+}
+
+/* IT mascot LED + pupil blink hooks */
+#crew .crew-led { animation: cwLed 1.6s steps(1, end) infinite; }
+@keyframes cwLed { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+#crew .cw-sprite.blink .crew-pupil { animation: cwBlink 180ms ease-in-out both; }
+@keyframes cwBlink { 50% { opacity: 0; } }
+
+/* -------- speech bubble */
+#crew .cw-bubble {
+  position: absolute; bottom: calc(100% + 9px); left: 50%; transform: translateX(-50%);
+  width: max-content; min-width: 60px; max-width: 168px; z-index: 3;
+  background: var(--card); color: var(--ink);
+  border: 1px solid var(--hairline); border-top: 2.5px solid var(--ca);
+  border-radius: 11px; padding: 6px 9px;
+  font-size: 10.5px; line-height: 1.4; text-align: center;
+  box-shadow: 0 10px 26px -14px rgba(20, 28, 55, 0.35);
+  pointer-events: none;
+}
+#crew .cw-bubble[hidden] { display: none; }
+#crew .cw-bubble::after {
+  content: ""; position: absolute; top: 100%; left: 50%; margin-left: -5px;
+  border: 5px solid transparent; border-top-color: var(--card);
+  filter: drop-shadow(0 1.5px 0 var(--hairline));
+}
+#crew .cw-bubble.pop { animation: cwBubbleIn 260ms cubic-bezier(.2,.9,.3,1.25) both; }
+@keyframes cwBubbleIn { from { opacity: 0; transform: translateX(-50%) translateY(7px) scale(0.9); } to { opacity: 1; transform: translateX(-50%); } }
+
+/* agent bubbles sit inside .cw-agent so they inherit --ca */
+#crew .cw-agent .cw-bubble { bottom: calc(100% - 8px); }
+
+/* -------- traveling payload chip */
+#crew .cw-chip {
+  position: absolute; z-index: 4; transform: translate(-50%, -50%);
+  font-family: var(--font-mono); font-size: 10px; font-weight: 650;
+  color: var(--acc-ink, var(--acc));
+  background: var(--acc-soft);
+  border: 1px dashed var(--acc-line, var(--acc));
+  border-radius: 999px; padding: 2.5px 9px; white-space: nowrap;
+  pointer-events: none;
+  transition: left 700ms cubic-bezier(.35,.75,.25,1), top 700ms cubic-bezier(.35,.75,.25,1);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ca, var(--acc)) 10%, transparent),
+              0 0 16px -3px color-mix(in oklab, var(--ca, var(--acc)) 55%, transparent);
+}
+#crew .cw-chip[hidden] { display: none; }
+#crew .cw-chip.hop {
+  transition: left 900ms cubic-bezier(.35,.75,.25,1), top 900ms cubic-bezier(.35,.75,.25,1);
+  animation: cwChipHop 900ms ease-in-out;
+}
+@keyframes cwChipHop { 50% { transform: translate(-50%, -50%) translateY(-14px) scale(1.06); } }
+
+/* -------- huddle dots near the hub */
+#crew .cw-huddle {
+  position: absolute; left: 50%; top: calc(30% + 52px); transform: translateX(-50%);
+  display: flex; gap: 5px; z-index: 2;
+}
+#crew .cw-huddle[hidden] { display: none; }
+#crew .cw-huddle i {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--acc);
+  animation: cwHuddle 900ms ease-in-out infinite;
+}
+#crew .cw-huddle i:nth-child(2) { animation-delay: 150ms; }
+#crew .cw-huddle i:nth-child(3) { animation-delay: 300ms; }
+@keyframes cwHuddle { 50% { transform: translateY(-4px); opacity: 0.45; } }
+
+/* -------- right rail: crew log */
+#crew .cw-log {
+  width: 300px; flex: none; min-height: 0;
+  border-left: 1px solid var(--hairline-soft);
+  background: var(--soft); overflow-y: auto; padding: 10px 12px;
+}
+#crew .cw-log .dw-sect {
+  font-size: 10px; font-weight: 730; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-3); margin: 8px 4px 5px;
+}
+#crew .cw-log-item {
+  display: flex; align-items: center; gap: 7px;
+  padding: 6px 4px; border-bottom: 1px solid var(--hairline-soft);
+  font-family: var(--font-mono); font-size: 10px; color: var(--ink-2);
+  min-width: 0;
+}
+#crew .cw-log-item > span { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+#crew .cw-log-item .cw-log-dots { display: flex; gap: 3px; flex: none; overflow: visible; }
+#crew .cw-log-item i {
+  width: 7px; height: 7px; border-radius: 50%; flex: none;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  /* engine sets inline background: the from/to accent colors */
+}
+#crew .cw-log-item .cw-ms { margin-left: auto; flex: none; color: var(--ink-3); font-size: 9.5px; font-variant-numeric: tabular-nums; }
+#crew .cw-log-item.pop { animation: cwLogIn 300ms cubic-bezier(.2,.9,.3,1) both; }
+@keyframes cwLogIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+@media (max-width: 900px) {
+  #crew .cw-log { display: none; }
+}
+
+/* -------- reduced motion: kill idle/gait loops, keep functional transitions snappy */
+@media (prefers-reduced-motion: reduce) {
+  #crew .cw-sprite.idle-bob, #crew .cw-sprite.idle-tick, #crew .cw-sprite.idle-scan,
+  #crew .cw-sprite.idle-jitter, #crew .cw-sprite.idle-bow, #crew .cw-sprite.idle-bounce,
+  #crew .cw-sprite.idle-spin, #crew .cw-sprite.walking, #crew .cw-sprite.cheer,
+  #crew .cw-sprite.working .crew-arm-l, #crew .cw-sprite.working .crew-arm-r,
+  #crew .cw-sprite.cheer .crew-arm-r,
+  #crew .crew-led, #crew .cw-huddle i,
+  #crew .cw-hub::before, #crew .cw-hub::after {
+    animation: none;
+  }
+  #crew .cw-agent { transition: left 200ms linear, top 200ms linear; }
+  #crew .cw-chip.hop { transition-duration: 200ms; animation: none; }
+  #crew .cw-panel, #crew .cw-bubble.pop, #crew .cw-log-item.pop, #crew .cw-desk.receiving { animation: none; }
+}
+
+
 /* == studio-finance.css == */
 /* ============================================================
    FoW · studio-finance — THE LEDGER
@@ -4098,6 +4420,7 @@ body.presenting #toasts { bottom: 90px; }
       <svg viewBox="0 0 16 16" width="14" height="14"><circle cx="7" cy="7" r="4.4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m10.6 10.6 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       <span>Ask or jump to…</span><kbd>⌘K</kbd>
     </button>
+    <button class="tb-btn tb-ico" id="crewBtn" title="The Crew — your agents at work"><svg viewBox="0 0 16 16" width="14" height="14"><circle cx="5.5" cy="5.5" r="2.2" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="10.8" cy="6.5" r="1.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2.2 13.2a3.4 3.4 0 0 1 6.6 0M8.9 12.6a2.9 2.9 0 0 1 5 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
     <button class="tb-btn tb-ico" id="mcpBtn" title="MCP Console — connected servers &amp; tools">
       <svg viewBox="0 0 16 16" width="14" height="14"><path d="M5.5 2v3.4M10.5 2v3.4M4 5.4h8v2.2a4 4 0 0 1-8 0Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 11.6V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
     </button>
@@ -5319,6 +5642,7 @@ function runChain(chain) {
     const p = el("p"); p.className = "rich";
     renderInline(p, "On it — running **" + chain.name + "** across " + new Set(chain.steps.map(s => s.server)).size + " systems:");
     body.appendChild(p);
+    if (typeof crewMission === "function") crewMission({ owner: state.personaId, steps: chain.steps, result: chain.outcome, label: chain.name });
 
     const flow = el("div", "chain-flow");
     const track = el("div", "cf-track");
@@ -6295,6 +6619,14 @@ function renderStudio(p, cv) {
     bd.appendChild(el("div", "dg-label", d.label));
     const sub = el("div", "dg-sub", doneAlready ? d.result : d.detail);
     bd.appendChild(sub);
+    if (typeof crewCollab === "function") {
+      const cc = crewCollab(d.steps);
+      if (cc) {
+        const cd = el("div", "dg-crew", "runs with " + cc);
+        cd.style.cssText = "font-size:10px;color:var(--acc-ink);margin-top:2px;font-weight:640";
+        bd.appendChild(cd);
+      }
+    }
     const prog = el("div", "dg-prog"); prog.hidden = true;
     const fill = el("i"); prog.appendChild(fill);
     bd.appendChild(prog);
@@ -6996,6 +7328,7 @@ function srvFor(p, wanted) { return (p.connections || []).find(c => wanted.inclu
 /* ---------------- delegation runner ---------------- */
 const wait = ms => new Promise(r => setTimeout(r, ms));
 async function runDelegation(d, ui) {
+  if (typeof crewMission === "function") crewMission({ owner: state.personaId, steps: d.steps, result: d.result, label: d.label });
   const set = state.delegated[state.personaId] || (state.delegated[state.personaId] = {});
   ui.btn.remove();
   const pill = el("span", "dg-pill queued", "queued");
@@ -7334,6 +7667,7 @@ function ckBuild(query) {
   const curName = state.personaId ? PERSONAS.find(x => x.id === state.personaId).name.split(" ")[0] : "this workspace";
   items.push({ sect: "Workspace", label: "Play highlights — " + curName + "'s story", icon: "▶", sub: "tour", run: () => startPresent(state.personaId) });
   items.push({ sect: "Workspace", label: "Open the MCP console", icon: "⌁", sub: "servers", run: () => mcpOpen() });
+  items.push({ sect: "Workspace", label: "Meet the Crew — your agents at work", icon: "☻", sub: "agents", run: () => { if (typeof crewOpen === "function") crewOpen(); } });
   if (p) (p.chains || []).forEach(c => items.push({ sect: "Cross-app workflows", label: "Run: " + c.name, icon: "➜", sub: c.steps.length + " hops", run: () => { addUserMsg("Run cross-app workflow: " + c.name); runChain(c); } }));
   if (p) (p.suggestions || []).forEach(s => items.push({ sect: "Ask askMElah", label: s, icon: "✦", sub: "chat", run: () => sendMessage(s) }));
   PERSONAS.forEach(pp => { if (pp.id !== state.personaId) items.push({ sect: "Switch persona", label: pp.name + " — " + pp.role, icon: pp.initials, sub: pp.dept, run: () => selectPersona(pp.id) }); });
@@ -7406,6 +7740,7 @@ function init() {
   const fabAv = $("#fabAv"); if (fabAv) fabAv.innerHTML = LOGO_ASKME;
   $("#presentBtn").addEventListener("click", () => { if (PRESENT.on) prStop(); else startPresent(state.personaId); });
   $("#mcpBtn").addEventListener("click", mcpOpen);
+  $("#crewBtn").addEventListener("click", () => { if (typeof crewOpen === "function") crewOpen(); });
   $("#mcpClose").addEventListener("click", mcpClose);
   $("#mcpBack").addEventListener("click", mcpClose);
   document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#mcp").hidden) mcpClose(); });
@@ -8169,6 +8504,490 @@ function fxSend() {
   setTimeout(() => btn.classList.remove("fly"), 620);
   const r = btn.getBoundingClientRect();
   sparkleAt(r.left + r.width / 2, r.top + r.height / 2, { n: 4, d: 20, ring: false });
+}
+
+/* the Crew — 7 agent mascots, one family */
+var CREW_SVGS = {
+  hr: '<svg viewBox="0 0 64 76" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g-hr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e75d8f"/><stop offset="1" stop-color="#d6336c"/></linearGradient></defs><path d="M25 50V68M39 50V68" fill="none" stroke="#9f1c4e" stroke-width="5" stroke-linecap="round"/><ellipse cx="24.4" cy="72" rx="5.6" ry="3.3" fill="#9f1c4e"/><ellipse cx="39.6" cy="72" rx="5.6" ry="3.3" fill="#9f1c4e"/><path d="M16.5 53 10.5 61 24 56.5Z" fill="#d6336c"/><g class="crew-arm-l" style="transform-origin:14px 44px"><path d="M14 44Q8.5 47 7 53.5" fill="none" stroke="#d6336c" stroke-width="4" stroke-linecap="round"/></g><g class="crew-arm-r" style="transform-origin:50px 44px"><path d="M50 44Q55.5 47 57 53.5" fill="none" stroke="#d6336c" stroke-width="4" stroke-linecap="round"/></g><rect x="12" y="16" width="40" height="40" rx="13" fill="url(#g-hr)"/><rect x="15.5" y="19" width="33" height="12.5" rx="6.2" fill="#ffffff" opacity="0.25"/><g class="crew-eyes"><ellipse cx="24" cy="34" rx="4" ry="4.6" fill="#ffffff"/><circle class="crew-pupil" cx="24" cy="34.6" r="2" fill="#1b2540"/><ellipse cx="40" cy="34" rx="4" ry="4.6" fill="#ffffff"/><circle class="crew-pupil" cx="40" cy="34.6" r="2" fill="#1b2540"/></g><path class="crew-smile" d="M27.6 42.6q4.4 3.4 8.8 0" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/><path d="M32 16V9.5" fill="none" stroke="#9f1c4e" stroke-width="2.4" stroke-linecap="round"/><path d="M32 10.6c-2.5-2-5.1-3.4-5.1-5.7a2.8 2.8 0 0 1 5.1-1.6 2.8 2.8 0 0 1 5.1 1.6c0 2.3-2.6 3.7-5.1 5.7Z" fill="#d6336c"/><circle cx="30.4" cy="4" r="0.9" fill="#ffffff" opacity="0.55"/></svg>',
+  finance: '<svg viewBox="0 0 64 76" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g-fin" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2cbd8b"/><stop offset="1" stop-color="#0e9f6e"/></linearGradient></defs><path d="M25 50V68M39 50V68" fill="none" stroke="#08694a" stroke-width="5" stroke-linecap="round"/><ellipse cx="24.4" cy="72" rx="5.6" ry="3.3" fill="#08694a"/><ellipse cx="39.6" cy="72" rx="5.6" ry="3.3" fill="#08694a"/><path d="M16.5 53 10.5 61 24 56.5Z" fill="#0e9f6e"/><g class="crew-arm-l" style="transform-origin:14px 44px"><path d="M14 44Q8.5 47 7 53.5" fill="none" stroke="#0e9f6e" stroke-width="4" stroke-linecap="round"/></g><g class="crew-arm-r" style="transform-origin:50px 44px"><path d="M50 44Q55.5 47 57 53.5" fill="none" stroke="#0e9f6e" stroke-width="4" stroke-linecap="round"/></g><rect x="12" y="16" width="40" height="40" rx="13" fill="url(#g-fin)"/><rect x="15.5" y="19" width="33" height="12.5" rx="6.2" fill="#ffffff" opacity="0.25"/><g class="crew-eyes"><ellipse cx="24" cy="34" rx="4" ry="4.6" fill="#ffffff"/><circle class="crew-pupil" cx="24" cy="34.6" r="2" fill="#1b2540"/><ellipse cx="40" cy="34" rx="4" ry="4.6" fill="#ffffff"/><circle class="crew-pupil" cx="40" cy="34.6" r="2" fill="#1b2540"/></g><path class="crew-smile" d="M27.6 42.6q4.4 3.4 8.8 0" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/><path d="M16 21.8Q32 10 48 21.8l-2.9 3.7Q32 17.4 18.9 25.5Z" fill="#065f46"/><path d="M17.8 20.3Q32 11 46.2 20.3" fill="none" stroke="#34d399" stroke-width="1.3" opacity="0.9"/><circle cx="24" cy="34" r="5.7" fill="none" stroke="#1b2540" stroke-width="1.6"/><circle cx="40" cy="34" r="5.7" fill="none" stroke="#1b2540" stroke-width="1.6"/><path d="M29.6 32.8q2.4-2.2 4.8 0" fill="none" stroke="#1b2540" stroke-width="1.6"/><path d="M18.3 33.2 14 32.4M45.7 33.2l4.3-.8" stroke="#1b2540" stroke-width="1.4" stroke-linecap="round"/></svg>',
+  procurement: '<svg viewBox="0 0 64 76" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g-pro" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f59e0b"/><stop offset="1" stop-color="#d97706"/></linearGradient></defs><path d="M25 50V68M39 50V68" fill="none" stroke="#92400e" stroke-width="5" stroke-linecap="round"/><ellipse cx="24.4" cy="72" rx="5.6" ry="3.3" fill="#92400e"/><ellipse cx="39.6" cy="72" rx="5.6" ry="3.3" fill="#92400e"/><path d="M16.5 53 10.5 61 24 56.5Z" fill="#d97706"/><g class="crew-arm-l" style="transform-origin:14px 44px"><path d="M14 44Q8.5 47 7 53.5" fill="none" stroke="#d97706" stroke-width="4" stroke-linecap="round"/></g><g class="crew-arm-r" style="transform-origin:50px 44px"><path d="M50 44Q55.5 47 57 53.5" fill="none" stroke="#d97706" stroke-width="4" stroke-linecap="round"/></g><rect x="12" y="16" width="40" height="40" rx="13" fill="url(#g-pro)"/><rect x="15.5" y="19" width="33" height="12.5" rx="6.2" fill="#ffffff" opacity="0.25"/><g class="crew-eyes"><ellipse cx="24" cy="34" rx="4" ry="4.6" fill="#ffffff"/><circle class="crew-pupil" cx="24" cy="34.6" r="2" fill="#1b2540"/><ellipse cx="40" cy="34" rx="4" ry="4.6" fill="#ffffff"/><circle class="crew-pupil" cx="40" cy="34.6" r="2" fill="#1b2540"/></g><path class="crew-smile" d="M27.6 42.6q4.4 3.4 8.8 0" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/><g transform="rotate(-20 38 8)"><path d="M37 16.5V11.5" stroke="#92400e" stroke-width="2.6" stroke-linecap="round"/><path d="M30 8a8 8 0 0 0 16 0Z" fill="#92400e"/><path d="M33.2 8a4.8 4.8 0 0 0 9.6 0Z" fill="#f59e0b"/><path d="M38 7.6V3.4" stroke="#92400e" stroke-width="1.8" stroke-linecap="round"/><circle cx="38" cy="2.4" r="1.8" fill="#fbbf24"/></g></svg>',
+  it: '<svg viewBox="0 0 64 76" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g-it" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#10b5d8"/><stop offset="1" stop-color="#0891b2"/></linearGradient></defs><path d="M25 50V68M39 50V68" fill="none" stroke="#155e75" stroke-width="5" stroke-linecap="round"/><ellipse cx="24.4" cy="72" rx="5.6" ry="3.3" fill="#155e75"/><ellipse cx="39.6" cy="72" rx="5.6" ry="3.3" fill="#155e75"/><path d="M16.5 53 10.5 61 24 56.5Z" fill="#0891b2"/><g class="crew-arm-l" style="transform-origin:14px 44px"><path d="M14 44Q8.5 47 7 53.5" fill="none" stroke="#0891b2" stroke-width="4" stroke-linecap="round"/></g><g class="crew-arm-r" style="transform-origin:50px 44px"><path d="M50 44Q55.5 47 57 53.5" fill="none" stroke="#0891b2" stroke-width="4" stroke-linecap="round"/></g><rect x="12" y="16" width="40" height="40" rx="13" fill="url(#g-it)"/><rect x="15.5" y="19" width="33" height="12.5" rx="6.2" fill="#ffffff" opacity="0.25"/><g class="crew-eyes"><ellipse cx="24" cy="34" rx="4" ry="4.6" fill="#ffffff"/><circle class="crew-pupil" cx="24" cy="34.6" r="2" fill="#1b2540"/><ellipse cx="40" cy="34" rx="4" ry="4.6" fill="#ffffff"/><circle class="crew-pupil" cx="40" cy="34.6" r="2" fill="#1b2540"/></g><path class="crew-smile" d="M27.6 42.6q4.4 3.4 8.8 0" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/><path d="M32 16V8.4" fill="none" stroke="#155e75" stroke-width="2.4" stroke-linecap="round"/><circle cx="32" cy="5.6" r="3.4" fill="#155e75" opacity="0.35"/><circle class="crew-led" cx="32" cy="5.6" r="2.6" fill="#fbbf24"/><g transform="rotate(38 46.5 22)"><rect x="40" y="19.3" width="13" height="5.4" rx="2.7" fill="#f6cf9d"/><rect x="44.6" y="20.6" width="3.8" height="2.8" rx="1.4" fill="#dfa563"/><circle cx="42.4" cy="22" r="0.55" fill="#dfa563"/><circle cx="50.6" cy="22" r="0.55" fill="#dfa563"/></g></svg>',
+  legal: '<svg viewBox="0 0 64 76" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g-leg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9b66f3"/><stop offset="1" stop-color="#7c3aed"/></linearGradient></defs><path d="M25 50V68M39 50V68" fill="none" stroke="#5b21b6" stroke-width="5" stroke-linecap="round"/><ellipse cx="24.4" cy="72" rx="5.6" ry="3.3" fill="#5b21b6"/><ellipse cx="39.6" cy="72" rx="5.6" ry="3.3" fill="#5b21b6"/><path d="M16.5 53 10.5 61 24 56.5Z" fill="#7c3aed"/><g class="crew-arm-l" style="transform-origin:14px 44px"><path d="M14 44Q8.5 47 7 53.5" fill="none" stroke="#7c3aed" stroke-width="4" stroke-linecap="round"/></g><g class="crew-arm-r" style="transform-origin:50px 44px"><path d="M50 44Q55.5 47 57 53.5" fill="none" stroke="#7c3aed" stroke-width="4" stroke-linecap="round"/></g><rect x="12" y="16" width="40" height="40" rx="13" fill="url(#g-leg)"/><rect x="15.5" y="19" width="33" height="12.5" rx="6.2" fill="#ffffff" opacity="0.25"/><g class="crew-eyes"><ellipse cx="24" cy="34" rx="4" ry="4.6" fill="#ffffff"/><circle class="crew-pupil" cx="24" cy="34.6" r="2" fill="#1b2540"/><ellipse cx="40" cy="34" rx="4" ry="4.6" fill="#ffffff"/><circle class="crew-pupil" cx="40" cy="34.6" r="2" fill="#1b2540"/></g><path class="crew-smile" d="M27.6 42.6q4.4 3.4 8.8 0" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/><rect x="26.5" y="14.8" width="5" height="10" rx="2.5" fill="#f8fafc" transform="rotate(7 29 15)"/><rect x="32.5" y="14.8" width="5" height="10" rx="2.5" fill="#f8fafc" transform="rotate(-7 35 15)"/><path d="M28.2 15.2h7.6" stroke="#cbd5e1" stroke-width="1.1" stroke-linecap="round"/><circle cx="47" cy="21.5" r="4.1" fill="#fbbf24"/><circle cx="47" cy="21.5" r="2.1" fill="none" stroke="#b45309" stroke-width="1.2"/></svg>',
+  sales: '<svg viewBox="0 0 64 76" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g-sal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3f87f5"/><stop offset="1" stop-color="#2563eb"/></linearGradient></defs><path d="M25 50V68M39 50V68" fill="none" stroke="#1e40af" stroke-width="5" stroke-linecap="round"/><ellipse cx="24.4" cy="72" rx="5.6" ry="3.3" fill="#1e40af"/><ellipse cx="39.6" cy="72" rx="5.6" ry="3.3" fill="#1e40af"/><path d="M16.5 53 10.5 61 24 56.5Z" fill="#2563eb"/><g class="crew-arm-l" style="transform-origin:14px 44px"><path d="M14 44Q8.5 47 7 53.5" fill="none" stroke="#2563eb" stroke-width="4" stroke-linecap="round"/></g><g class="crew-arm-r" style="transform-origin:50px 44px"><path d="M50 44Q55.5 47 57 53.5" fill="none" stroke="#2563eb" stroke-width="4" stroke-linecap="round"/></g><rect x="12" y="16" width="40" height="40" rx="13" fill="url(#g-sal)"/><rect x="15.5" y="19" width="33" height="12.5" rx="6.2" fill="#ffffff" opacity="0.25"/><g class="crew-eyes"><ellipse cx="24" cy="34" rx="4" ry="4.6" fill="#ffffff"/><circle class="crew-pupil" cx="24" cy="34.6" r="2" fill="#1b2540"/><ellipse cx="40" cy="34" rx="4" ry="4.6" fill="#ffffff"/><circle class="crew-pupil" cx="40" cy="34.6" r="2" fill="#1b2540"/></g><path class="crew-smile" d="M27.6 42.6q4.4 3.4 8.8 0" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/><path d="M14.5 27C15.2 16 22 10 32 10s16.8 6 17.5 17" fill="none" stroke="#1e40af" stroke-width="3.4"/><rect x="10.4" y="24" width="5.2" height="9.6" rx="2.6" fill="#1e40af"/><rect x="48.4" y="24" width="5.2" height="9.6" rx="2.6" fill="#1e40af"/><path d="M13.4 33.5q-.6 8.8 7.6 10.4" fill="none" stroke="#1e40af" stroke-width="1.9"/><circle cx="23" cy="44.4" r="2.1" fill="#1e40af"/></svg>',
+  marketing: '<svg viewBox="0 0 64 76" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g-mkt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d946ef"/><stop offset="1" stop-color="#c026d3"/></linearGradient></defs><path d="M25 50V68M39 50V68" fill="none" stroke="#86198f" stroke-width="5" stroke-linecap="round"/><ellipse cx="24.4" cy="72" rx="5.6" ry="3.3" fill="#86198f"/><ellipse cx="39.6" cy="72" rx="5.6" ry="3.3" fill="#86198f"/><path d="M16.5 53 10.5 61 24 56.5Z" fill="#c026d3"/><g class="crew-arm-l" style="transform-origin:14px 44px"><path d="M14 44Q8.5 47 7 53.5" fill="none" stroke="#c026d3" stroke-width="4" stroke-linecap="round"/></g><g class="crew-arm-r" style="transform-origin:50px 44px"><path d="M50 44Q55.5 47 57 53.5" fill="none" stroke="#c026d3" stroke-width="4" stroke-linecap="round"/></g><rect x="12" y="16" width="40" height="40" rx="13" fill="url(#g-mkt)"/><rect x="15.5" y="19" width="33" height="12.5" rx="6.2" fill="#ffffff" opacity="0.25"/><g class="crew-eyes"><ellipse cx="24" cy="34" rx="4" ry="4.6" fill="#ffffff"/><circle class="crew-pupil" cx="24" cy="34.6" r="2" fill="#1b2540"/><ellipse cx="40" cy="34" rx="4" ry="4.6" fill="#ffffff"/><circle class="crew-pupil" cx="40" cy="34.6" r="2" fill="#1b2540"/></g><path class="crew-smile" d="M27.6 42.6q4.4 3.4 8.8 0" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/><path d="M41.5 16.5 43.4 11" fill="none" stroke="#86198f" stroke-width="2.4" stroke-linecap="round"/><path d="M41.8 11.6 45.2 3l2.4 8.7a3.4 3.4 0 0 1-5.8-.1Z" fill="#e879f9"/><circle cx="45.3" cy="3.2" r="2.5" fill="#fde047"/><g transform="rotate(-12 26 13)"><ellipse cx="26" cy="13.2" rx="11.6" ry="5" fill="#86198f"/><path d="M15.4 14.6q10.6 3.4 21.2 0" fill="none" stroke="#6d1275" stroke-width="1.3" opacity="0.7"/><circle cx="26" cy="7.6" r="1.7" fill="#86198f"/></g></svg>',
+};
+
+/* the Crew — identities, voices, and how they work together */
+var CREW_META = {
+  agents: {
+    hr: {
+      name: "Mei",
+      vibe: "warm & unhurried",
+      idle: "bob",
+      hello: "On it, dear — leave it with me ah.",
+      done: "All settled, no drama:",
+      motto: "People first, paperwork second — but both done."
+    },
+    finance: {
+      name: "Tally",
+      vibe: "precise, dry wit",
+      idle: "tick",
+      hello: "Numbers don't lie. Give me a minute.",
+      done: "Reconciled to the cent:",
+      motto: "Every cent accounted for. Yes, that one too."
+    },
+    procurement: {
+      name: "Hawk",
+      vibe: "always scanning",
+      idle: "scan",
+      hello: "Eyes on it. Nothing slips past me.",
+      done: "Spotted, priced, sorted:",
+      motto: "Vendors behave when they know Hawk is watching."
+    },
+    it: {
+      name: "Patch",
+      vibe: "twitchy, caffeinated",
+      idle: "jitter",
+      hello: "Okok on it — already halfway done lah!",
+      done: "Fixed. Also fixed two other things:",
+      motto: "Have you tried letting me handle it?"
+    },
+    legal: {
+      name: "Clause",
+      vibe: "formal, exact",
+      idle: "bow",
+      hello: "Duly noted. I shall review the terms.",
+      done: "Reviewed and executed, per policy:",
+      motto: "Read the fine print, so you never have to."
+    },
+    sales: {
+      name: "Bolt",
+      vibe: "high energy",
+      idle: "bounce",
+      hello: "Let's go, let's go — deal incoming!",
+      done: "Boom, another one closed:",
+      motto: "Always be closing. Politely. But always."
+    },
+    marketing: {
+      name: "Neon",
+      vibe: "playful, artistic",
+      idle: "spin",
+      hello: "Ooh fun one — gimme a sec, inspiration loading!",
+      done: "Ta-da, fresh off the canvas:",
+      motto: "Make it pop, make it land, make it Mediacorp."
+    }
+  },
+  domain: {
+    sap: "finance",
+    netsuite: "finance",
+    excel: "finance",
+    servicenow: "it",
+    jira: "it",
+    github: "it",
+    workday: "hr",
+    greenhouse: "hr",
+    docusign: "legal",
+    confluence: "legal",
+    ariba: "procurement",
+    salesforce: "sales",
+    gcal: "sales",
+    gmail: "sales",
+    monday: "marketing",
+    higgsfield: "marketing",
+    adobe: "marketing",
+    cna: "marketing",
+    outlook: null,
+    teams: null,
+    sharepoint: null,
+    gdrive: null,
+    slack: null,
+    zoom: null
+  },
+  ambient: [
+    { from: "finance", to: "procurement", payload: "PO-77812 · $214,380", line: "Tally → Hawk: Dell invoice matched to PO-77812" },
+    { from: "procurement", to: "finance", payload: "$8,790 overcharge", line: "Hawk → Tally: Dell overcharge proven, credit due Aug 15" },
+    { from: "it", to: "procurement", payload: "REQ0048213", line: "Patch → Hawk: hardware order REQ0048213 beats the cutoff" },
+    { from: "hr", to: "it", payload: "WD-PH-20260914 · 12", line: "Mei → Patch: 12 new starts need day-one access" },
+    { from: "legal", to: "sales", payload: "ENV-88214 · $290,000", line: "Clause → Bolt: ENV-88214 fully executed at 07:12" },
+    { from: "sales", to: "finance", payload: "OPP-4738 Closed Won", line: "Bolt → Tally: OPP-4738 booked, Q3 attainment 52.5%" },
+    { from: "marketing", to: "sales", payload: "8.6M reach · 96%", line: "Neon → Bolt: EPL reach 8.6M, 96% of target" },
+    { from: "marketing", to: "finance", payload: "S$26K top-up", line: "Neon → Tally: recommend S$26K top-up, not S$48K" },
+    { from: "procurement", to: "legal", payload: "SOW S$126,500", line: "Hawk → Clause: Wunderfolk SOW slipped, remedy clause please" },
+    { from: "legal", to: "procurement", payload: "DS-5203 · PO-78240", line: "Clause → Hawk: envelope DS-5203 signed, PO-78240 cleared" },
+    { from: "hr", to: "legal", payload: "ENV-58217", line: "Mei → Clause: offer ENV-58217 expires Monday 18:00" },
+    { from: "finance", to: "it", payload: "CC 4210 · +$862K", line: "Tally → Patch: AWS true-up $862K needs bridge note" }
+  ],
+  banter: [
+    { who: "it", say: "Run #413 queued. I'm bored already." },
+    { who: "finance", say: "Off by one cent. Unacceptable." },
+    { who: "procurement", say: "Three vendors renewing. Watching all three." },
+    { who: "marketing", say: "Batch #1293 still slaps, honestly." },
+    { who: "sales", say: "52.5% attainment and it's only August!" },
+    { who: "legal", say: "Per my previous bubble." },
+    { who: "hr", say: "Twelve new joiners, twelve buddy matches." },
+    { who: "it", say: "214 endpoints patched. You're welcome." }
+  ]
+};
+
+/* ============================================================
+   FoW · the Crew — choreography engine
+   Seven agent mascots (askMElah's children) in a shared office:
+   they idle in character, walk to each other, huddle at the hub,
+   pass real payloads hand to hand, and report back to their
+   human at the desk. Delegations and chains dispatch missions
+   here automatically.
+   ============================================================ */
+"use strict";
+
+const CW = {
+  root: null, open: false, busy: false,
+  queue: Promise.resolve(),
+  ambientTimer: null, blinkTimer: null, banterTimer: null,
+  agents: {}, chip: null, huddle: null, hub: null, desk: null, log: null,
+};
+
+/* station layout (percent of stage) */
+const CW_STATIONS = {
+  hr: [9, 62], finance: [22, 70], procurement: [36, 62], it: [50, 70],
+  legal: [64, 62], sales: [78, 70], marketing: [91, 62],
+};
+const CW_HUB = [50, 26];
+const CW_DESK = [50, 88];
+
+function cwMeta(id) {
+  const fallbackNames = { hr: "Mei", finance: "Tally", procurement: "Hawk", it: "Patch", legal: "Clause", sales: "Bolt", marketing: "Neon" };
+  let m = null;
+  try { m = CREW_META.agents[id]; } catch (_) { }
+  return m || { name: fallbackNames[id] || "Agent", idle: "bob", hello: "On it!", done: "Done —", motto: "askMElah crew" };
+}
+function cwDomainOf(server) {
+  try { return CREW_META.domain[server] || null; } catch (_) { return null; }
+}
+function cwSprite(id) {
+  const wrap = el("span", "cw-sprite idle-" + cwMeta(id).idle);
+  let svg = null;
+  try { svg = CREW_SVGS[id]; } catch (_) { }
+  wrap.innerHTML = svg || LOGO_ASKME;
+  return wrap;
+}
+
+/* which crewmates a set of steps pulls in (excluding the owner) */
+function crewCollab(steps) {
+  const owner = state.personaId;
+  const ids = [];
+  (steps || []).forEach(s => {
+    const d = cwDomainOf(s.server);
+    if (d && d !== owner && !ids.includes(d)) ids.push(d);
+  });
+  return ids.slice(0, 3).map(i => cwMeta(i).name).join(" + ") || null;
+}
+
+/* ---------------- scene construction ---------------- */
+function crewBuild() {
+  if (CW.root) return;
+  const root = el("div");
+  root.id = "crew";
+  root.hidden = true;
+  const back = el("div", "cw-back");
+  back.addEventListener("click", crewClose);
+  const panel = el("div", "cw-panel");
+
+  const head = el("div", "cw-head");
+  const hIco = el("span", "ch-ico");
+  hIco.appendChild(ico("person"));
+  const hT = el("div", "ch-title");
+  hT.appendChild(el("div", "t", "The Crew"));
+  hT.appendChild(el("div", "s", "seven agents, one office — they work across each other's systems while you watch"));
+  const count = el("span", "cw-count", "7 agents · idle");
+  const close = el("button", "ch-act", "✕");
+  close.id = "crewClose";
+  close.addEventListener("click", crewClose);
+  head.append(hIco, hT, count, close);
+  CW.count = count;
+
+  const body = el("div", "cw-body");
+  const stage = el("div", "cw-stage");
+
+  const hub = el("div", "cw-hub");
+  hub.innerHTML = LOGO_ASKME;
+  hub.title = "askMElah — the mother agent";
+  stage.appendChild(hub);
+  CW.hub = hub;
+
+  const desk = el("div", "cw-desk");
+  stage.appendChild(desk);
+  CW.desk = desk;
+
+  PERSONAS.forEach(p => {
+    const a = el("div", "cw-agent");
+    a.dataset.agent = p.id;
+    const [l, t] = CW_STATIONS[p.id] || [50, 65];
+    a.style.left = l + "%"; a.style.top = t + "%";
+    a.appendChild(cwSprite(p.id));
+    const meta = cwMeta(p.id);
+    a.appendChild(el("span", "cw-name", meta.name + " · " + p.name.split(" ")[0]));
+    const bubble = el("span", "cw-bubble");
+    bubble.hidden = true;
+    a.appendChild(bubble);
+    a.title = meta.motto;
+    a.addEventListener("click", () => cwSay(p.id, meta.motto, 2600));
+    stage.appendChild(a);
+    CW.agents[p.id] = a;
+  });
+
+  const chip = el("span", "cw-chip");
+  chip.hidden = true;
+  stage.appendChild(chip);
+  CW.chip = chip;
+
+  const huddle = el("span", "cw-huddle");
+  huddle.hidden = true;
+  huddle.append(el("i"), el("i"), el("i"));
+  const [hx, hy] = CW_HUB;
+  huddle.style.left = hx + "%"; huddle.style.top = (hy + 13) + "%";
+  stage.appendChild(huddle);
+  CW.huddle = huddle;
+
+  const log = el("aside", "cw-log");
+  log.appendChild(el("div", "dw-sect", "crew log · live"));
+  const items = el("div");
+  log.appendChild(items);
+  CW.log = items;
+
+  body.append(stage, log);
+  panel.append(head, body);
+  root.append(back, panel);
+  document.body.appendChild(root);
+  CW.root = root;
+
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !root.hidden) crewClose(); });
+}
+
+/* ---------------- primitives ---------------- */
+const cwWait = ms => new Promise(r => setTimeout(r, ms));
+const cwRM = () => { try { return matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (_) { return false; } };
+const cwMs = ms => cwRM() ? Math.min(ms, 200) : ms;
+
+function cwRefreshDesk() {
+  if (!CW.desk) return;
+  CW.desk.textContent = "";
+  const id = state.personaId || "finance";
+  CW.desk.appendChild(avatarEl(id, 56));
+  const meta = PERSONAS.find(x => x.id === id);
+  CW.desk.appendChild(el("span", "cw-desk-name", meta ? meta.name.split(" ")[0] : "you"));
+}
+function cwAgentPos(id) {
+  const a = CW.agents[id];
+  return [parseFloat(a.style.left), parseFloat(a.style.top)];
+}
+async function cwWalk(id, l, t, ms) {
+  const a = CW.agents[id];
+  if (!a) return;
+  ms = cwMs(ms || 1000);
+  const [cl] = cwAgentPos(id);
+  a.classList.toggle("flip", l < cl);
+  const spr = $(".cw-sprite", a);
+  spr.classList.add("walking");
+  a.style.transitionDuration = ms + "ms";
+  a.style.left = l + "%"; a.style.top = t + "%";
+  await cwWait(ms + 60);
+  spr.classList.remove("walking");
+  a.classList.remove("flip");
+}
+function cwHome(id, ms) {
+  const [l, t] = CW_STATIONS[id];
+  return cwWalk(id, l, t, ms || 900);
+}
+function cwSay(id, text, ms) {
+  const a = CW.agents[id];
+  if (!a || !text) return;
+  const b = $(".cw-bubble", a);
+  b.textContent = text;
+  b.hidden = false;
+  b.classList.remove("pop"); void b.offsetWidth; b.classList.add("pop");
+  clearTimeout(b._t);
+  b._t = setTimeout(() => { b.hidden = true; }, ms || 3200);
+}
+function cwWork(id, on) {
+  const a = CW.agents[id];
+  if (a) $(".cw-sprite", a).classList.toggle("working", !!on);
+}
+function cwCheer(id) {
+  const a = CW.agents[id];
+  if (!a) return;
+  const spr = $(".cw-sprite", a);
+  spr.classList.add("cheer");
+  setTimeout(() => spr.classList.remove("cheer"), 1400);
+}
+function cwChipTo(l, t, label, ms) {
+  const c = CW.chip;
+  ms = cwMs(ms || 700);
+  c.hidden = false;
+  if (label) c.textContent = label.length > 26 ? label.slice(0, 25) + "…" : label;
+  c.classList.remove("hop");
+  if (ms >= 400) { void c.offsetWidth; c.classList.add("hop"); }
+  c.style.transitionDuration = ms + "ms";
+  c.style.left = l + "%"; c.style.top = (t - 9) + "%";
+  return cwWait(ms + 40);
+}
+function cwLog(fromId, toId, text) {
+  if (!CW.log) return;
+  const it = el("div", "cw-log-item pop");
+  const dots = el("span", "cw-log-dots");
+  const mk = pid => { const d = el("i"); d.style.background = (PERSONAS.find(x => x.id === pid) || {}).accent || "var(--acc)"; return d; };
+  dots.append(mk(fromId), mk(toId || fromId));
+  it.appendChild(dots);
+  it.appendChild(el("span", "", text));
+  CW.log.insertBefore(it, CW.log.firstChild);
+  while (CW.log.children.length > 22) CW.log.lastChild.remove();
+}
+
+/* ---------------- open / close / ambient ---------------- */
+function crewOpen() {
+  crewBuild();
+  cwRefreshDesk();
+  CW.root.hidden = false;
+  CW.open = true;
+  if (!CW.blinkTimer) CW.blinkTimer = setInterval(() => {
+    const ids = Object.keys(CW.agents);
+    const a = CW.agents[ids[Math.floor(Math.random() * ids.length)]];
+    if (!a) return;
+    const spr = $(".cw-sprite", a);
+    spr.classList.add("blink");
+    setTimeout(() => spr.classList.remove("blink"), 180);
+  }, 1400);
+  cwScheduleAmbient(2200);
+  if (!CW.banterTimer) CW.banterTimer = setInterval(() => {
+    if (!CW.open || CW.busy) return;
+    try {
+      const b = CREW_META.banter[Math.floor(Math.random() * CREW_META.banter.length)];
+      if (b) cwSay(b.who, b.say, 2600);
+    } catch (_) { }
+  }, 12000);
+}
+function crewClose() {
+  if (!CW.root) return;
+  CW.root.hidden = true;
+  CW.open = false;
+  clearTimeout(CW.ambientTimer);
+}
+function cwScheduleAmbient(delay) {
+  clearTimeout(CW.ambientTimer);
+  CW.ambientTimer = setTimeout(cwAmbient, delay || (4800 + Math.random() * 3600));
+}
+async function cwAmbient() {
+  if (!CW.open || CW.busy) { cwScheduleAmbient(); return; }
+  let ex = null;
+  try { ex = CREW_META.ambient[Math.floor(Math.random() * CREW_META.ambient.length)]; } catch (_) { }
+  if (!ex || !CW.agents[ex.from] || !CW.agents[ex.to]) { cwScheduleAmbient(); return; }
+  const [tl, tt] = cwAgentPos(ex.to);
+  const [fl, ft] = cwAgentPos(ex.from);
+  const meetL = tl + (fl < tl ? -7 : 7);
+  await cwWalk(ex.from, meetL, tt, 1200);
+  cwWork(ex.from, true); cwWork(ex.to, true);
+  await cwChipTo(fl > tl ? meetL - 2 : meetL + 2, tt, ex.payload, 60);
+  await cwWait(250);
+  await cwChipTo(tl, tt, ex.payload, 600);
+  cwLog(ex.from, ex.to, ex.line);
+  await cwWait(700);
+  CW.chip.hidden = true;
+  cwWork(ex.from, false); cwWork(ex.to, false);
+  cwSay(ex.to, "got it ✓", 1500);
+  await cwHome(ex.from, 1100);
+  cwScheduleAmbient();
+}
+
+/* ---------------- missions: delegations & chains ---------------- */
+function crewMission(m) {
+  crewBuild();
+  if (!CW.open) crewOpen();
+  CW.queue = CW.queue.then(() => cwRunMission(m)).catch(() => { });
+  return CW.queue;
+}
+async function cwRunMission(m) {
+  CW.busy = true;
+  clearTimeout(CW.ambientTimer);
+  const owner = m.owner && CW.agents[m.owner] ? m.owner : (state.personaId || "finance");
+  const meta = cwMeta(owner);
+  cwRefreshDesk();
+  CW.hub.classList.add("busy");
+  CW.count.textContent = "mission · " + (m.label || "delegated task");
+
+  /* collaborators from the steps' systems */
+  const collabs = [];
+  (m.steps || []).forEach(s => {
+    const d = cwDomainOf(s.server);
+    if (d && d !== owner && CW.agents[d] && !collabs.includes(d)) collabs.push(d);
+  });
+  const crew = collabs.slice(0, 3);
+
+  cwSay(owner, meta.hello, 2400);
+  cwLog(owner, owner, meta.name + " takes: " + (m.label || "a task"));
+  await cwWait(600);
+
+  /* owner to the hub */
+  const [hx, hy] = CW_HUB;
+  await cwWalk(owner, hx - 9, hy + 12, 1100);
+
+  /* crew walks in around the hub */
+  const spots = [[hx + 9, hy + 12], [hx - 18, hy + 16], [hx + 18, hy + 16]];
+  await Promise.all(crew.map((id, i) => cwWalk(id, spots[i][0], spots[i][1], 1200 + i * 150)));
+  if (crew.length) CW.huddle.hidden = false;
+
+  /* pass the payload along the steps */
+  let at = owner;
+  const hops = (m.steps || []).slice(0, 4);
+  let [al, atop] = cwAgentPos(owner);
+  await cwChipTo(al, atop, hops[0] ? (hops[0].carry || hops[0].tool) : (m.label || "payload"), 60);
+  for (const s of hops) {
+    const d = cwDomainOf(s.server);
+    const target = d && crew.includes(d) ? d : owner;
+    const [tl, tt] = cwAgentPos(target);
+    cwWork(at, true);
+    await cwWait(420);
+    cwWork(at, false);
+    if (target === at) {
+      /* own-domain step: the tool call rides up to askMElah, the result comes back */
+      await cwChipTo(hx, hy + 8, s.server + " · " + s.tool, 650);
+      await cwWait(220);
+      await cwChipTo(tl, tt, s.carry || s.result || s.tool, 650);
+      cwLog(at, target, cwMeta(at).name + " ⇄ askMElah: " + (s.result || s.tool));
+    } else {
+      await cwChipTo(tl, tt, s.carry || s.result || s.tool, 750);
+      cwLog(at, target, cwMeta(at).name + " → " + cwMeta(target).name + ": " + (s.result || s.tool));
+    }
+    cwWork(target, true);
+    try { const r = CW.agents[target].getBoundingClientRect(); sparkleAt(r.left + r.width / 2, r.top + 10, { n: 4, d: 18, ring: false }); } catch (_) { }
+    await cwWait(500);
+    cwWork(target, false);
+    at = target;
+  }
+  CW.huddle.hidden = true;
+
+  /* crew heads home with a nod */
+  crew.forEach((id, i) => { cwSay(id, "✓ " + cwMeta(id).name + " done", 1600); setTimeout(() => cwHome(id, 1100), i * 180); });
+
+  /* the report: walk to the human's desk */
+  const [dl, dt] = CW_DESK;
+  await cwChipTo(dl, dt, "report", 900);
+  await cwWalk(owner, dl - 8, dt - 10, 1000);
+  CW.desk.classList.add("receiving");
+  const lastHop = hops.length ? hops[hops.length - 1] : null;
+  const result = (m.result || (lastHop && lastHop.result) || "done.").split(";")[0];
+  cwSay(owner, meta.done + " " + (result.length > 64 ? result.slice(0, 63) + "…" : result), 5200);
+  cwCheer(owner);
+  cwLog(owner, state.personaId, meta.name + " reports to " + ((PERSONAS.find(x => x.id === state.personaId) || {}).name || "you").split(" ")[0]);
+  try { petHop(); } catch (_) { }
+  await cwWait(2600);
+  CW.desk.classList.remove("receiving");
+  CW.chip.hidden = true;
+
+  /* home */
+  await cwHome(owner, 1100);
+  CW.hub.classList.remove("busy");
+  CW.count.textContent = "7 agents · idle";
+  CW.busy = false;
+  cwScheduleAmbient(5000);
 }
 
 /* ============================================================
