@@ -21,4 +21,17 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
-          exclude_assets: '.github'
+          # Keep the deploy lean: the film frame sequences (assets/film/*/,
+          # ~84 MB) are kept in the repo for an easy revert of the old dark
+          # design but no page loads them — only the three still-*.jpg files
+          # in assets/film/ are referenced. The unminified three.js sources
+          # are the provenance of the .min.js builds every page actually uses.
+          exclude_assets: >-
+            .github,
+            assets/film/city,
+            assets/film/city-sm,
+            assets/film/gate,
+            assets/film/gate-sm,
+            assets/film/vanguard,
+            assets/film/vanguard-sm,
+            assets/fonts/build-subset.py
