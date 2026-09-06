@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#fdf4ff">
-  <title>SEEN — Chapter 2: After Hours (scrolling edition) · Zhang Cheng</title>
+  <title>SEEN — Chapter 2: After Hours (scrolling edition) · ZAC Studios</title>
   <meta name="description" content="SEEN — an AI-drawn office manga. Chapter 2: After Hours, as one long scroll. The counter was never counting what they say. It is counting what they are planning.">
   <link rel="canonical" href="./">
   <meta property="og:title" content="SEEN — Chapter 2: After Hours">
@@ -250,7 +250,7 @@
       var d = DIMS[file], size = d ? ' width="' + d[0] + '" height="' + d[1] + '"' : "";
       reader.insertAdjacentHTML("beforeend",
         '<figure class="page">' +
-          '<div class="frame"><img src="' + file + '.jpg" alt="Panel ' + (i + 1) + ' — ' + alt + '"' + size + ' loading="lazy"></div>' +
+          '<div class="frame"><img src="' + file + '.jpg" alt="Panel ' + (i + 1) + ' — ' + alt + '"' + size + ' loading="' + (i < 2 ? 'eager' : 'lazy') + '" decoding="async"></div>' +
           '<figcaption class="cap">' +
             '<span class="cap-top"><span class="tag">' + tag + '</span><span class="rule"></span>' +
             '<span class="pageno">' + n + ' / ' + PANELS.length + '</span></span>' +
@@ -280,8 +280,8 @@
     var lerp = function (a, b, t) { return a + (b - a) * t; };
     var clamp = function (v, lo, hi) { return Math.min(Math.max(v, lo), hi); };
 
-    var FINAL = 1203;
-    var fmt = function (p) { return p > 0.992 ? "149,071" : Math.round(FINAL * p).toLocaleString("en-US"); };
+    // Marcus's count: 148,663 at the start of the night, 149,071 by the garage (same run as the book)
+    var fmt = function (p) { return Math.round(148663 + 408 * p).toLocaleString("en-US"); };
 
     if (reduceMotion) {
       document.body.classList.add("no-smooth");

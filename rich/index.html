@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Born Rich — a one-shot · Zhang Cheng</title>
+  <title>Born Rich — a one-shot · ZAC Studios</title>
   <meta name="description" content="Born Rich — an AI-generated manga one-shot. What if I'd been born stupid rich? From the school gate to the chairman's office.">
   <meta property="og:title" content="Born Rich — a manga one-shot">
   <meta property="og:description" content="What if I'd been born stupid rich? Ten pages, one other timeline. Written and drawn with AI.">
@@ -239,7 +239,7 @@
       const n = String(i + 1).padStart(2, "0");
       reader.insertAdjacentHTML("beforeend", `
         <figure class="page">
-          <div class="frame"><img src="page${n}.jpg" alt="Page ${i + 1} — ${line}" width="1024" height="1536"></div>
+          <div class="frame"><img src="page${n}.jpg" alt="Page ${i + 1} — ${line}" width="1024" height="1536" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy" decoding="async"'}></div>
           <figcaption class="cap">
             <span class="age">${age}</span>
             <span class="line">${line}</span>

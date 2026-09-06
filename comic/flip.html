@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html><head>
+<html lang="en"><head>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
@@ -7,6 +7,14 @@
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Witch of the Vending Machines — Ch.1, the book · ZAC Studios</title>
+<style>
+/* Standalone-only way back to the chapter page; hidden when comic/index.html embeds this book in its iframe. */
+.site-back{position:fixed;top:14px;left:14px;z-index:60;display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 16px;border-radius:999px;border:2px solid rgba(139,61,255,0.30);background:rgba(255,255,255,0.85);color:#6428d8;font:600 12px/1 'Cormorant Garamond',Georgia,serif;letter-spacing:0.18em;text-transform:uppercase;text-decoration:none;pointer-events:auto;transition:background .25s,border-color .25s}
+.site-back:hover{background:rgba(139,61,255,0.12);border-color:rgba(220,140,180,0.7);color:#6428d8}
+.site-back[hidden]{display:none}
+@media (max-width:700px){.site-back{width:38px;padding:0;justify-content:center}.site-back span{display:none}.masthead{left:56px!important;right:56px!important}}
+</style>
 <script src="flip-app.js"></script>
 
 
@@ -20,9 +28,11 @@
 
 </head>
 <body>
+<a class="site-back" href="./" aria-label="Back to the chapter page">&larr;<span>Back</span></a>
+<script>if(window.self!==window.top){document.querySelector('.site-back').hidden=true}</script>
 <x-dc>
 <helmet>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
 html,body{margin:0;padding:0;background:#f7ecff;overflow:hidden;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
@@ -33,9 +43,9 @@ img{-webkit-user-drag:none}
 @keyframes hintFade{0%,70%{opacity:.85}100%{opacity:0}}
 </style>
 </helmet>
-<div style="position:fixed;inset:0;background:radial-gradient(130% 110% at 50% 30%, #ffffff 0%, #f7ecff 42%, #ecdcfb 100%);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond', Georgia, serif;user-select:none;touch-action:none">
+<div style="position:fixed;inset:0;background:radial-gradient(130% 110% at 50% 30%, #ffffff 0%, #f7ecff 42%, #ecdcfb 100%);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond', Georgia, serif;user-select:none">
   <div style="position:absolute;inset:0;background:radial-gradient(60% 40% at 50% 100%, rgba(255,63,174,0.12), rgba(255,255,255,0) 70%);pointer-events:none"></div>
-  <div style="position:absolute;top:26px;left:0;right:0;text-align:center;font-size:11px;letter-spacing:0.5em;text-transform:uppercase;color:#8b6fae;font-weight:600;pointer-events:none">Nightfall Comics &nbsp;·&nbsp; No. 1 &nbsp;·&nbsp; Apr 1994</div>
+  <div class="masthead" style="position:absolute;top:26px;left:0;right:0;text-align:center;font-size:11px;letter-spacing:0.5em;text-transform:uppercase;color:#8b6fae;font-weight:600;pointer-events:none">Nightfall Comics &nbsp;·&nbsp; No. 1 &nbsp;·&nbsp; Apr 1994</div>
 
   <div style="{{ stageStyle }}" sc-camel-on-pointer-down="{{ onDown }}" sc-camel-on-pointer-move="{{ onMove }}" sc-camel-on-pointer-up="{{ onUp }}" sc-camel-on-pointer-cancel="{{ onUp }}" sc-camel-on-pointer-leave="{{ onLeave }}">
     <div style="{{ shadowStyle }}"></div>
@@ -47,7 +57,7 @@ img{-webkit-user-drag:none}
 
           <div style="{{ sheet.faceFront }}">
             <sc-if value="{{ sheet.frontIsImage }}" hint-placeholder-val="{{ true }}">
-              <img src="{{ sheet.frontSrc }}" alt="{{ sheet.frontAlt }}" draggable="false" style="width:100%;height:100%;object-fit:cover;display:block">
+              <img sc-camel-src="{{ sheet.frontSrc }}" alt="{{ sheet.frontAlt }}" draggable="false" style="width:100%;height:100%;object-fit:cover;display:block">
             </sc-if>
             <sc-if value="{{ sheet.frontIsText }}" hint-placeholder-val="{{ false }}">
               <div style="position:absolute;inset:0;background:linear-gradient(160deg,#f7f2e6 0%,#efe7d6 55%,#e7ddc9 100%);padding:58px 52px 46px 46px;box-sizing:border-box;display:flex;flex-direction:column;color:#2c2620">
@@ -77,7 +87,7 @@ img{-webkit-user-drag:none}
 
           <div style="{{ sheet.faceBack }}">
             <sc-if value="{{ sheet.hasBackImg }}" hint-placeholder-val="{{ true }}">
-              <img src="{{ sheet.backSrc }}" alt="{{ sheet.backAlt }}" draggable="false" style="width:100%;height:100%;object-fit:cover;display:block">
+              <img sc-camel-src="{{ sheet.backSrc }}" alt="{{ sheet.backAlt }}" draggable="false" style="width:100%;height:100%;object-fit:cover;display:block">
             </sc-if>
             <sc-if value="{{ sheet.isEndpaper }}" hint-placeholder-val="{{ false }}">
               <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:linear-gradient(200deg,#f7f2e6,#e9dfcb);text-align:center;padding:48px;box-sizing:border-box">
@@ -117,6 +127,10 @@ class Component extends DCLogic {
   state = { flipped: 0, target: 0, scale: 0.8, single: false, everFlipped: false };
   PW = 460; PH = 690;
   _nodes = {}; _live = null; _grabT = 0.9; _tiltSign = 1;
+  // Sheets whose faces carry an <img src>. Only the reader's neighbourhood is
+  // warmed, so opening the chapter costs the cover and its neighbours rather
+  // than all twelve pages; warm() widens the window as the reader moves.
+  _warm = new Set([0, 1, 2]);
 
   // comic/ already holds all 12 pages at 1024x1536. The export shipped 9 of
   // them downscaled to 1000x1500 — so read the originals instead: better art,
@@ -175,7 +189,6 @@ class Component extends DCLogic {
     };
     window.addEventListener('keydown', this.onKey);
     this._canHover = window.matchMedia && window.matchMedia('(hover:hover)').matches;
-    this.pages.forEach(src => { const im = new Image(); im.src = src; });
   }
   componentWillUnmount() {
     window.removeEventListener('resize', this.measure);
@@ -323,6 +336,10 @@ class Component extends DCLogic {
     this._hoverP = 0; this._hoverTgt = 0;
   }
 
+  warm(t) {
+    const n = this.n();
+    for (let i = Math.max(0, t - 2); i <= Math.min(n - 1, t + 2); i++) this._warm.add(i);
+  }
   go(dir) {
     if (this._busy || this._drag) return;
     const n = this.n();
@@ -330,6 +347,7 @@ class Component extends DCLogic {
     if (t < 0 || t > n) return;
     const idx = dir > 0 ? this.state.target : t;
     this.cancelHover();
+    this.warm(t);
     this._busy = true; this._tiltSign = dir; this._grabT = 0.9;
     this.playFlip(1);
     this.setState({ target: t, everFlipped: true });
@@ -340,7 +358,7 @@ class Component extends DCLogic {
 
   /* ---------- pointer ---------- */
   onDown = (e) => {
-    if (this._busy) return;
+    if (this._busy || e.isPrimary === false) return;   // a second finger never starts a drag
     const host = e.currentTarget;
     const r = host.getBoundingClientRect();
     const single = this.state.single;
@@ -367,6 +385,7 @@ class Component extends DCLogic {
     try { host.setPointerCapture(e.pointerId); } catch (err) {}
   };
   onMove = (e) => {
+    if (e.isPrimary === false) return;
     const d = this._drag;
     if (!d) {
       if (!this._canHover || this._busy) return;
@@ -403,6 +422,7 @@ class Component extends DCLogic {
   };
   onLeave = () => { if (!this._drag) { this._hoverTgt = 0; if (this._hoverP && !this._hraf) this.cancelHover(); } };
   onUp = (e) => {
+    if (e.isPrimary === false) return;
     const d = this._drag; if (!d) return;
     this._drag = null;
     e.currentTarget.style.cursor = 'grab';
@@ -417,6 +437,7 @@ class Component extends DCLogic {
     const commit = d.dir > 0 ? pProj > 0.3 : pProj < 0.7;
     const to = commit ? (d.dir > 0 ? 1 : 0) : (d.dir > 0 ? 0 : 1);
     const t = commit ? this.state.target + d.dir : this.state.target;
+    this.warm(t);
     const span = Math.abs(to - p);
     const rate = Math.max(Math.abs(dpdt), 1 / (this.speed() * 1000));
     const dur = Math.max(150, Math.min(this.speed() * 1050, span / rate));
@@ -463,12 +484,12 @@ class Component extends DCLogic {
         setRef: (node) => { this._nodes[idx] = node; },
         faceFront: Object.assign({}, face, { borderRadius: '3px 7px 7px 3px', visibility: showBack ? 'hidden' : 'visible' }),
         faceBack: Object.assign({}, face, { borderRadius: '7px 3px 3px 7px', transform: 'rotateY(180deg)', visibility: showBack ? 'visible' : 'hidden' }),
-        frontIsImage: frontIdx >= 0, frontIsText: !!tx,
+        frontIsImage: frontIdx >= 0 && this._warm.has(i), frontIsText: !!tx,
         frontSrc: frontIdx >= 0 ? (this.pages[frontIdx] || '') : '',
         frontAlt: i === 0 ? 'Cover' : 'Page ' + (frontIdx + 1),
         tx: tx ? { folio: tx.folio, title: tx.title, drop: tx.drop, first: tx.first, second: tx.second, hasSecond: !!tx.second, pull: tx.pull }
                : { folio: '', title: '', drop: '', first: '', second: '', hasSecond: false, pull: '' },
-        hasBackImg: !!back, isEndpaper: !back,
+        hasBackImg: !!back && this._warm.has(i), isEndpaper: !back,
         backSrc: back || '', backAlt: 'Page ' + (i + 2),
         shadeFront: { position: 'absolute', inset: 0, pointerEvents: 'none',
           background: 'linear-gradient(to left, rgba(0,0,0,0.5), rgba(0,0,0,0.1) 42%, rgba(0,0,0,0) 75%)',

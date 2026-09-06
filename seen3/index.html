@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#fdf4ff">
-  <title>SEEN — Chapter 3: Deeper · Zhang Cheng</title>
+  <title>SEEN — Chapter 3: Deeper · ZAC Studios</title>
   <meta name="description" content="SEEN — an AI-drawn office manga. Chapter 3: Deeper. The power has layers, every one of them costs him a piece of his own memory, and Marcus has had it longer.">
   <meta property="og:title" content="SEEN — Chapter 3: Deeper">
   <meta property="og:description" content="Every layer he unlocks burns a hole in his own memory. And there is one man in the building he cannot read at all.">
@@ -333,7 +333,7 @@
       var size = d ? ' width="' + d[0] + '" height="' + d[1] + '"' : '';
       reader.insertAdjacentHTML("beforeend",
         '<figure class="page">' +
-          '<div class="frame"><img src="' + file + '.jpg"' + size + ' alt="Panel ' + (i + 1) + ' — ' + alt + '" loading="lazy"></div>' +
+          '<div class="frame"><img src="' + file + '.jpg"' + size + ' alt="Panel ' + (i + 1) + ' — ' + alt + '" loading="' + (i < 2 ? 'eager' : 'lazy') + '" decoding="async"></div>' +
           '<figcaption class="cap">' +
             '<span class="cap-top"><span class="tag">' + tag + '</span><span class="rule"></span>' +
             '<span class="pageno">' + n + ' / ' + PANELS.length + '</span></span>' +
@@ -363,7 +363,6 @@
     var lerp = function (a, b, t) { return a + (b - a) * t; };
     var clamp = function (v, lo, hi) { return Math.min(Math.max(v, lo), hi); };
 
-    var FINAL = 1203;
     var fmt = function (p) { return "LAYER " + Math.min(4, Math.floor(p * 4) + 1); };
 
     if (reduceMotion) {

@@ -184,10 +184,29 @@
     background:linear-gradient(95deg,#ef1f96,#7a2df0 46%,#0f9fe0);
     transition:transform .5s cubic-bezier(.4,.05,.2,1)}
 
+  /* ---- way back, only when the book is opened on its own (hidden inside the chapter page's iframe) */
+  .site-back{position:fixed;top:8px;left:18px;z-index:60;pointer-events:auto;
+    display:inline-flex;align-items:center;padding:5px 12px;border-radius:99px;
+    border:2px solid rgba(139,61,255,.24);background:rgba(255,255,255,.75);color:#6428d8;
+    font-family:'JetBrains Mono',monospace;font-size:10px;line-height:14px;letter-spacing:.2em;
+    text-transform:uppercase;text-decoration:none;white-space:nowrap;
+    transition:background .25s,border-color .25s}
+  .site-back::before{content:"";position:absolute;inset:-8px}   /* 44px tap target */
+  .site-back:hover{background:rgba(139,61,255,.12);border-color:rgba(220,140,180,.7)}
+  .site-back[hidden]{display:none}
+  .site-back:not([hidden])~.room .head{padding-left:124px}
+
   @media (max-width:640px){
-    .head{font-size:8.5px;letter-spacing:.22em;padding:0 14px}
-    .label{min-width:130px;font-size:9px;letter-spacing:.2em}
+    .head{font-size:12px;letter-spacing:.1em;padding:0 14px}
+    .head span:last-child{white-space:nowrap}
+    .label{min-width:130px;font-size:12px;letter-spacing:.1em}
     .snd{right:10px}
+    .site-back{top:6px;left:8px;font-size:12px;line-height:16px;letter-spacing:.1em;padding:5px 10px}
+    .site-back:not([hidden])~.room .head{padding-left:14px;top:42px}   /* own row under the link on phones */
+  }
+  @media (pointer:coarse){
+    .hud button,.snd{width:44px;height:44px}
+    .hud,.snd{bottom:12px}
   }
   @media (prefers-reduced-motion:reduce){
     .corner{animation:none;opacity:.75}
@@ -196,6 +215,8 @@
 </style>
 </head>
 <body>
+<a class="site-back" href="./" aria-label="Back to the chapter page">&larr; Back</a>
+<script>if(window.self!==window.top){document.querySelector('.site-back').hidden=true}</script>
 <div class="room" id="room">
   <div class="head">
     <span>SEEN &middot; Chapter Two</span>

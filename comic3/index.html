@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#fdf4ff">
-  <title>Witch of the Vending Machines — Ch.3 · Zhang Cheng</title>
+  <title>Witch of the Vending Machines — Ch.3 · ZAC Studios</title>
   <meta name="description" content="Witch of the Vending Machines — an AI-generated anime comic. Chapter 2: Exact Change.">
   <meta property="og:title" content="Witch of the Vending Machines — Chapter 3: No Refunds">
   <meta property="og:description" content="Exact change does not buy you out. It buys you in. Written and drawn with AI.">
@@ -161,6 +161,12 @@
     @media (max-width:600px){
       .reader{gap:11svh;padding-top:11svh}
       .cap{flex-wrap:wrap;gap:10px}
+      /* the fixed chrome sits on the cover art's baked-in masthead on phones —
+         frost the back link and the meter so both stay legible over it */
+      .back,.meter{background:rgba(253,244,255,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+        box-shadow:0 2px 12px rgba(56,35,92,.10)}
+      .back{margin:0;padding:8px 14px;border-radius:999px}
+      .meter{padding:6px 12px 7px;border-radius:14px}
     }
     @media (prefers-reduced-motion:reduce){
       .mask>span,.fade-in{transition:none;transform:none;opacity:1}

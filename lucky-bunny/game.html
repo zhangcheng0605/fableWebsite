@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html><head>
+<html lang="en"><head>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caprasimo&family=Figtree:wght@400;500;600;700;800&family=Gaegu:wght@400;700&display=swap" rel="stylesheet">
@@ -7,10 +7,20 @@
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lucky Bunny Fortunes · ZAC Studios</title>
+<style>
+/* Standalone-only way back to the game page; hidden when lucky-bunny/index.html embeds this game in its iframe. */
+.site-back{position:fixed;top:12px;left:12px;z-index:25;display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 16px;border-radius:999px;border:2px solid #f2a8c2;background:#fff;color:#b34e73;font:600 14px/1 'Figtree',sans-serif;text-decoration:none;box-shadow:0 4px 0 #f2c4d6;pointer-events:auto}
+.site-back:hover{background:#fff0f6;color:#b34e73}
+.site-back[hidden]{display:none}
+@media (max-width:700px){.site-back{width:38px;padding:0;justify-content:center}.site-back span{display:none}#dc-root header{padding-top:22px}}
+</style>
 <script src="app.js"></script>
 
 </head>
 <body>
+<a class="site-back" href="./" aria-label="Back to the game page">&larr;<span>Back</span></a>
+<script>if(window.self!==window.top){document.querySelector('.site-back').hidden=true}</script>
 <x-dc>
 <helmet>
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -75,7 +85,7 @@
             </g>
             <ellipse cx="34" cy="80" rx="7" ry="4.5" fill="#ffc2d4"></ellipse>
             <ellipse cx="86" cy="80" rx="7" ry="4.5" fill="#ffc2d4"></ellipse>
-            <path d="{{ mouthD }}" fill="none" stroke="#4a3038" stroke-width="2.4" stroke-linecap="round"></path>
+            <path sc-camel-d="{{ mouthD }}" fill="none" stroke="#4a3038" stroke-width="2.4" stroke-linecap="round"></path>
             <ellipse cx="60" cy="74" rx="3.4" ry="2.4" fill="#f29ab5"></ellipse>
           </svg>
         </sc-if>
@@ -98,7 +108,7 @@
             <ellipse cx="86" cy="78" rx="7" ry="4.5" fill="#f7b8c0"></ellipse>
             <ellipse cx="60" cy="78" rx="13" ry="10" fill="#ffe9c8"></ellipse>
             <ellipse cx="60" cy="74" rx="4" ry="3" fill="#4a3222"></ellipse>
-            <path d="{{ mouthD }}" fill="none" stroke="#4a3222" stroke-width="2.4" stroke-linecap="round"></path>
+            <path sc-camel-d="{{ mouthD }}" fill="none" stroke="#4a3222" stroke-width="2.4" stroke-linecap="round"></path>
           </svg>
         </sc-if>
       </div>

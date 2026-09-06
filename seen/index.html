@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#fdf4ff">
-  <title>SEEN — Chapter 1: Good Morning, Everyone · Zhang Cheng</title>
+  <title>SEEN — Chapter 1: Good Morning, Everyone · ZAC Studios</title>
   <meta name="description" content="SEEN — an AI-drawn office manga. Chapter 1: Good Morning, Everyone. He can hear every thought in the building, and above every head floats a number.">
   <meta property="og:title" content="SEEN — Chapter 1: Good Morning, Everyone">
   <meta property="og:description" content="Everyone likes Ethan Cole. This morning he found out exactly how much. A limited-time manga.">
@@ -169,7 +169,11 @@
 
     @media (max-width:600px){
       .reader{gap:9svh;padding-top:10svh}
-      .ltd{font-size:.52rem;letter-spacing:.16em;padding:5px 10px;top:56px}
+      .ltd{font-size:max(.75rem,12px);letter-spacing:.12em;padding:5px 10px;top:56px}
+      /* 12px floor for the small mono labels on phones — trim the tracking, not the type */
+      .tag,.pageno,.meter .lbl,.kicker,.endcard .fin{font-size:max(.75rem,12px)}
+      .tag{letter-spacing:.14em}.pageno{letter-spacing:.12em}.meter .lbl{letter-spacing:.2em}
+      .kicker,.endcard .fin{letter-spacing:.22em}
     }
     @media (prefers-reduced-motion:reduce){
       .mask>span,.fade-in{transition:none;transform:none;opacity:1}
@@ -287,7 +291,7 @@
       var d = DIMS[file], size = d ? ' width="' + d[0] + '" height="' + d[1] + '"' : "";
       reader.insertAdjacentHTML("beforeend",
         '<figure class="page">' +
-          '<div class="frame"><img src="' + file + '.jpg" alt="Panel ' + (i + 1) + ' — ' + alt + '"' + size + ' loading="lazy"></div>' +
+          '<div class="frame"><img src="' + file + '.jpg" alt="Panel ' + (i + 1) + ' — ' + alt + '"' + size + ' loading="' + (i < 2 ? 'eager' : 'lazy') + '" decoding="async"></div>' +
           '<figcaption class="cap">' +
             '<span class="cap-top"><span class="tag">' + tag + '</span><span class="rule"></span>' +
             '<span class="pageno">' + n + ' / ' + PANELS.length + '</span></span>' +

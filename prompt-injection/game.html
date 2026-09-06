@@ -1,3 +1,4 @@
+<html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PROMPT INJECTION</title>
@@ -28,7 +29,35 @@
     cursor: none;
     image-rendering: auto;
   }
+  /* Standalone-only way back to the game page; hidden when prompt-injection/index.html
+     embeds this game in its iframe (see the script under the link). */
+  .site-back {
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 10;
+    padding: 8px 14px;
+    border: 1px solid #c9a8ef;
+    border-radius: 6px;
+    background: rgba(255, 250, 253, 0.9);
+    color: #38235c;
+    font: 500 13px/1 "JetBrains Mono", "Fira Code", ui-monospace, monospace;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .site-back:hover { color: #7a2df0; border-color: #7a2df0; }
+  .site-back[hidden] { display: none; }
 </style>
+<a class="site-back" href="./" aria-label="Back to the game page">&larr; Back</a>
+<script>
+  (function () {
+    var back = document.querySelector('.site-back');
+    if (window.self !== window.top) back.hidden = true;
+    // the game swallows Enter at window level; keep the link's keyboard activation
+    back.addEventListener('keydown', function (e) { if (e.key === 'Enter') e.stopPropagation(); });
+  })();
+</script>
 <canvas id="game"></canvas>
 <script>
 (function () {
