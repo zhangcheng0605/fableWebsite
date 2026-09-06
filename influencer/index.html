@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ZHANG CHENG — Virtual Influencer</title>
+<title>ZHANG CHENG — Virtual Influencer · ZAC Studios</title>
 <meta name="description" content="Zhang Cheng is a virtual influencer rendered from a real, licensed likeness. Editorial-grade campaign imagery for fashion, tech, food and lifestyle brands — any city, any season, any style, zero reshoots.">
-<meta property="og:title" content="ZHANG CHENG — Virtual Influencer">
+<meta property="og:title" content="ZHANG CHENG — Virtual Influencer · ZAC Studios">
 <meta property="og:description" content="One face. Your campaign. AI-rendered from a real licensed likeness — editorial imagery for brands that move fast.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://zhangcheng0605.github.io/fableWebsite/influencer/assets/img/editorial/01-cinematic-night-street.webp">
@@ -28,7 +28,7 @@
   --e:cubic-bezier(.22,.8,.24,1);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:80px}
+html{scroll-behavior:smooth;scroll-padding-top:80px;overflow-x:clip}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);line-height:1.6;
   -webkit-font-smoothing:antialiased;overflow-x:clip}
 img{display:block;max-width:100%;height:auto}
@@ -70,7 +70,8 @@ body.mouse-live .mrow,body.mouse-live .ritem{cursor:none}
   text-decoration:none;color:var(--dim);border:1px solid var(--line2);padding:8px 14px;
   border-radius:99px;transition:color .2s,border-color .2s;white-space:nowrap}
 .nav .home:hover{color:var(--ink);border-color:var(--acc)}
-@media(max-width:480px){.nav .home{padding:8px 11px;font-size:.64rem}}
+@media(max-width:480px){.nav{gap:10px;padding-inline:16px}.nav .logo{font-size:1.1rem;letter-spacing:.06em}
+  .nav .home{padding:8px 10px}.nav .home .xs-hide{display:none}.nav .book{padding:9px 12px}}
 .nav a.lnk{font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-decoration:none;
   color:var(--dim);text-transform:uppercase;transition:color .2s}
 .nav a.lnk:hover{color:var(--ink)}
@@ -132,7 +133,7 @@ section{position:relative}
   linear-gradient(180deg,rgba(8,8,10,.72),rgba(8,8,10,.28) 34%,rgba(8,8,10,.34) 58%,rgba(8,8,10,.96) 92%),
   radial-gradient(120% 60% at 50% 108%,rgba(8,8,10,.9),transparent 60%)}
 .deck{position:absolute;inset:0;z-index:2}
-.print{position:absolute;left:var(--x);top:var(--y);width:var(--w,15vw);touch-action:none;
+.print{position:absolute;left:var(--x);top:var(--y);width:var(--w,15vw);touch-action:pan-y;
   transform:translate(calc(-50% + var(--px,0px)),calc(-50% + var(--py,0px))) rotate(var(--r,0deg));
   filter:drop-shadow(0 16px 28px rgba(0,0,0,.55));will-change:transform;
   animation:deal .9s var(--e) both;animation-delay:calc(.45s + var(--i,0)*110ms)}
@@ -273,6 +274,7 @@ section{position:relative}
 .mrow .thumb{display:none;width:58px;border-radius:4px;overflow:hidden;flex:0 0 auto}
 .mrow .thumb img{width:100%;height:58px;object-fit:cover}
 @media(max-width:900px),(hover:none){.mrow .thumb{display:block}}
+@media(max-width:620px){.mrow{flex-wrap:wrap}.mrow h3{min-width:0;flex:1 1 12ch;overflow-wrap:anywhere}}
 .mprev{position:fixed;z-index:240;width:min(300px,24vw);aspect-ratio:3/4;border-radius:8px;
   overflow:hidden;pointer-events:none;opacity:0;transform:scale(.88) rotate(var(--pr,0deg));
   transition:opacity .25s var(--e),transform .3s var(--e);box-shadow:0 30px 80px rgba(0,0,0,.65);
@@ -388,7 +390,7 @@ section{position:relative}
   font-size:clamp(2.2rem,6vw,5rem);letter-spacing:.06em;color:transparent;
   -webkit-text-stroke:1px rgba(240,236,228,.16);text-transform:uppercase;pointer-events:none;
   text-align:center;padding:0 20px}
-.dpile{position:absolute;left:var(--x);top:var(--y);width:clamp(150px,16vw,230px);touch-action:none;
+.dpile{position:absolute;left:var(--x);top:var(--y);width:clamp(150px,16vw,230px);touch-action:pan-y;
   transform:translate(-50%,-50%) rotate(var(--r,0deg));will-change:left,top;
   filter:drop-shadow(0 18px 40px rgba(0,0,0,.6))}
 .dpile img{width:100%;border-radius:6px;pointer-events:none}
@@ -486,6 +488,16 @@ footer a:hover{color:var(--acc)}
 .lb .nx{right:16px;top:50%;transform:translateY(-50%)}
 @media(max-width:620px){.lb .pv{left:8px}.lb .nx{right:8px}.lb button{width:44px;height:44px}}
 
+/* ============ phones: 12px floor for labels ============ */
+/* mono captions/tags/numbers were 9.6–11.5px at 390px; lift them to 12px and ease the tracking instead */
+@media(max-width:700px){
+  .nav .home,.nav .book,.eyebrow,.count-tag,.hero .status,.chip,.stat .l,.tile .ov .c,.mrow .no,.mrow .mtag,
+  .poster .who,.masonry figcaption,.dcard .dl,.dchap .no,.ritem .no,.ritem .med,.rcount,.labcard .ltag,
+  .labcard .lfoot,.wcard .no,.step .no,footer,.lb .cap{font-size:max(.75rem,12px)}
+  .nav .home,.nav .book,.eyebrow,.count-tag,.hero .status,.chip,.stat .l,.tile .ov .c,.mrow .mtag,.poster .who,
+  .masonry figcaption,.dchap .no,.ritem .med,.rcount,.wcard .no,.step .no,.lb .cap{letter-spacing:.1em}
+}
+
 /* ============ reduced motion ============ */
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;
@@ -520,7 +532,7 @@ footer a:hover{color:var(--acc)}
 </div>
 
 <nav class="nav" id="nav" aria-label="Main">
-  <a class="home" href="../" aria-label="Back to main site">← Main site</a>
+  <a class="home" href="../" aria-label="ZAC Studios — home">← ZAC<span class="xs-hide"> Studios</span></a>
   <a class="logo" href="#top">ZHANG<i>&nbsp;CHENG</i></a>
   <a class="lnk" href="#work">Campaigns</a>
   <a class="lnk" href="#taste">Taste</a>
@@ -1206,7 +1218,7 @@ document.addEventListener("keydown",function(e){
 /* ---------- shared draggable-with-inertia ---------- */
 function draggable(els,bounds){
   els.forEach(function(el){
-    var vx=0,vy=0,lx=0,ly=0,raf=null,pid=null,sx=0,sy=0,moved=false;
+    var vx=0,vy=0,lx=0,ly=0,raf=null,pid=null,sx=0,sy=0,moved=false,hold=null,armed=false;
     function pos(){
       return {x:parseFloat(el.style.left)||0,y:parseFloat(el.style.top)||0};
     }
@@ -1215,17 +1227,39 @@ function draggable(els,bounds){
       el.style.left=(r.left+r.width/2-b.left)+"px";
       el.style.top=(r.top+r.height/2-b.top)+"px";
     }
-    el.addEventListener("pointerdown",function(e){
-      if(e.button&&e.button!==0)return;
-      pid=e.pointerId;el.setPointerCapture(pid);
+    function arm(){
+      /* actually pick it up: capture the pointer, freeze the deal-in animation, switch to px coords */
+      if(hold){clearTimeout(hold);hold=null}
+      if(pid===null||armed)return;
+      armed=true;
+      try{el.setPointerCapture(pid)}catch(err){}
       if(raf){cancelAnimationFrame(raf);raf=null}
       el.style.animation="none";
       toPx();el.classList.add("drag");
+    }
+    function cancel(){
+      /* the browser took the gesture (vertical pan) or the pointer was lost: let go, no glide */
+      if(hold){clearTimeout(hold);hold=null}
+      if(pid===null)return;
+      pid=null;armed=false;el.classList.remove("drag");
+    }
+    el.addEventListener("pointerdown",function(e){
+      if(e.button&&e.button!==0)return;
+      pid=e.pointerId;armed=false;
       sx=e.clientX;sy=e.clientY;lx=e.clientX;ly=e.clientY;vx=0;vy=0;moved=false;
       e.preventDefault();
+      /* touch: a swipe that starts on a print must still scroll the page (touch-action:pan-y), so only
+         pick it up after a short hold or a clearly sideways move — mouse/pen drag straight away */
+      if(e.pointerType==="touch"){hold=setTimeout(arm,200);return}
+      arm();
     });
     el.addEventListener("pointermove",function(e){
       if(pid===null||e.pointerId!==pid)return;
+      if(!armed){
+        var dx=Math.abs(e.clientX-sx),dy=Math.abs(e.clientY-sy);
+        if(dy>6&&dy>=dx){cancel();return}
+        if(dx>6)arm();else return;
+      }
       var p=pos();
       vx=e.clientX-lx;vy=e.clientY-ly;
       el.style.left=(p.x+vx)+"px";el.style.top=(p.y+vy)+"px";
@@ -1233,8 +1267,11 @@ function draggable(els,bounds){
       if(Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy)>6)moved=true;
     });
     function release(){
+      if(hold){clearTimeout(hold);hold=null}
       if(pid===null)return;
-      pid=null;el.classList.remove("drag");
+      var picked=armed;
+      pid=null;armed=false;el.classList.remove("drag");
+      if(!picked)return;
       if(moved)el.__sup=true;
       if(RM||(!moved))return;
       function glide(){
@@ -1252,7 +1289,7 @@ function draggable(els,bounds){
       raf=requestAnimationFrame(glide);
     }
     el.addEventListener("pointerup",release);
-    el.addEventListener("pointercancel",release);
+    el.addEventListener("pointercancel",cancel);
   });
 }
 var deck=document.getElementById("deck");

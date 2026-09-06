@@ -113,12 +113,23 @@
       box-shadow:var(--shadow-pink);font-weight:800}
     .nav-cta:hover{filter:brightness(1.08)}
     @media(max-width:880px){
-      .nav{gap:16px;overflow-x:auto;scrollbar-width:none;padding:6px 16px}
+      /* the row scrolls sideways, and two things say so: a fade on its right
+         edge and snap points, so a swipe lands on a whole link, not half of
+         one. The Contact pill is lifted out of the row and pinned to the
+         right — .nav is not positioned, so the fixed bar is its containing
+         block and the scroller neither moves nor clips it. The row's end
+         padding matches the fade, so the last link can park fully clear. */
+      .nav{gap:16px;overflow-x:auto;scrollbar-width:none;padding:6px 150px 6px 16px;
+        scroll-snap-type:x proximity;scroll-padding:0 150px 0 16px}
       .nav::-webkit-scrollbar{display:none}
+      .nav a{scroll-snap-align:start}
+      .nav-wrap::after{content:"";position:absolute;top:0;bottom:0;right:0;width:150px;pointer-events:none;
+        background:linear-gradient(90deg,rgba(255,255,255,0),#fff 44px)}
       /* 44px-tall tap targets on touch */
       .nav a{font-size:.85rem;padding:13px 2px}
       .nav .spacer{display:none}
-      .nav-cta{padding:11px 14px!important}
+      .nav a.nav-cta{position:absolute;right:12px;top:50%;transform:translateY(-50%);z-index:1;
+        padding:11px 14px!important}
     }
 
     /* fx.css ships lantern-gold hover glows for the dark pages —
@@ -212,7 +223,11 @@
     .ink-array:not(.is-live):not(.is-still) .ink-moves{display:none}
     @media(max-width:700px){
       .ink-canvas{height:clamp(132px,20vh,190px)}
-      .ink-move{padding:5px 10px;font-size:.74rem}
+      .ink-move{padding:5px 10px;font-size:.76rem} /* .74rem computed to 11.8px */
+    }
+    /* a fingertip needs 44px; the desktop chip stays the slim 26px pill */
+    @media(pointer:coarse){
+      .ink-move{min-height:44px;padding:0 14px}
     }
     @media (prefers-reduced-motion:reduce){
       .ink-canvas{transition:none}
@@ -247,7 +262,7 @@
       .hero-stats{display:grid;grid-template-columns:1fr 1fr;width:100%;max-width:400px;gap:10px;margin-top:34px}
       .hstat{padding:11px 14px}
       .hstat .v{font-size:1.05rem}
-      .hstat .k{font-size:.68rem} /* .54rem computed to 8.6px — unreadable */
+      .hstat .k{font-size:.75rem} /* .6rem computed to 9.6px — unreadable; 12px is the floor */
       .scroll-hint{display:none}
     }
 
@@ -406,6 +421,15 @@
     footer{text-align:center;font-size:.88rem;padding:44px 20px 54px}
     footer a{font-weight:700;color:var(--violet)}
 
+    /* nothing on a phone below 12px — the mono labels, tags and captions
+       computed 10.9–11.7px at 390px. Tracking comes down instead of the size,
+       so the pills keep their width. */
+    @media(max-width:700px){
+      .badge,.meta b,.meta .n,.meta .new,.tile .tag,.tile .metric,.role .when,
+      .mini .item .yr,.cat,.quote footer{font-size:.75rem}
+      .badge,.meta b,.tile .tag,.cat{letter-spacing:.08em}
+    }
+
     /* ===== springy reveals ===== */
     .reveal{opacity:0;transform:translateY(34px) scale(.96) rotate(-.6deg);
       transition:opacity .7s cubic-bezier(.34,1.45,.5,1),transform .7s cubic-bezier(.34,1.45,.5,1)}
@@ -431,12 +455,10 @@
     <nav class="nav" aria-label="Site">
       <a class="logo" href="#top" aria-label="ZAC Studios — home">ZA<span>C</span></a>
       <a href="#manga">Manga</a>
-      <a href="prompt-injection/">Games</a>
-      <a href="trading/" class="nav-live">Trading <i></i></a>
+      <a href="#projects">Projects</a>
       <a href="#three-d">3D Projects</a>
+      <a href="trading/" class="nav-live">Trading <i></i></a>
       <a href="#experience">Experience</a>
-      <a href="influencer/">Influencer</a>
-      <a href="fow/">FoW</a>
       <span class="spacer"></span>
       <a href="#contact" class="nav-cta">Contact</a>
     </nav>
@@ -540,15 +562,15 @@
           </div>
           <div class="thumbs">
             <a class="chapter" href="seen/">
-              <span class="thumb wide"><img src="seen/p01_01.jpg" alt="SEEN chapter 1, opening panel" loading="lazy" width="1024" height="576"></span>
+              <span class="thumb wide"><img src="assets/thumbs/seen-ch1.jpg" alt="SEEN chapter 1, opening panel" loading="lazy" width="800" height="450"></span>
               <span class="meta"><b>CH.1</b><span class="t">Good Morning, Everyone</span><span class="n">41 panels</span></span>
             </a>
             <a class="chapter" href="seen2/">
-              <span class="thumb wide"><img src="seen2/c2_p01_01.jpg" alt="SEEN chapter 2, opening panel" loading="lazy" width="1300" height="732"></span>
+              <span class="thumb wide"><img src="assets/thumbs/seen-ch2.jpg" alt="SEEN chapter 2, opening panel" loading="lazy" width="800" height="450"></span>
               <span class="meta"><b>CH.2</b><span class="t">After Hours</span><span class="n">69 panels</span></span>
             </a>
             <a class="chapter" href="seen3/">
-              <span class="thumb wide"><img src="seen3/c3_p01_01.jpg" alt="SEEN chapter 3, opening panel" loading="lazy" width="1254" height="1254"></span>
+              <span class="thumb wide"><img src="assets/thumbs/seen-ch3.jpg" alt="SEEN chapter 3, opening panel" loading="lazy" width="800" height="800"></span>
               <span class="meta"><b>CH.3</b><span class="t">Deeper</span><span class="n">81 panels</span><span class="new">NEW</span></span>
             </a>
           </div>
@@ -567,15 +589,15 @@
           </div>
           <div class="thumbs">
             <a class="chapter" href="comic/">
-              <span class="thumb tall"><img src="comic/page01.jpg" alt="Witch of the Vending Machines chapter 1, first page" loading="lazy" width="1024" height="1536"></span>
+              <span class="thumb tall"><img src="assets/thumbs/comic-ch1.jpg" alt="Witch of the Vending Machines chapter 1, first page" loading="lazy" width="533" height="800"></span>
               <span class="meta"><b>CH.1</b><span class="t">Where It Begins</span><span class="n">12 pages</span></span>
             </a>
             <a class="chapter" href="comic2/">
-              <span class="thumb tall"><img src="comic2/page01.jpg" alt="Witch of the Vending Machines chapter 2, first page" loading="lazy" width="1400" height="2100"></span>
+              <span class="thumb tall"><img src="assets/thumbs/comic-ch2.jpg" alt="Witch of the Vending Machines chapter 2, first page" loading="lazy" width="533" height="800"></span>
               <span class="meta"><b>CH.2</b><span class="t">Exact Change</span><span class="n">14 pages</span></span>
             </a>
             <a class="chapter" href="comic3/">
-              <span class="thumb tall"><img src="comic3/page01.jpg" alt="Witch of the Vending Machines chapter 3, first page" loading="lazy" width="1400" height="2100"></span>
+              <span class="thumb tall"><img src="assets/thumbs/comic-ch3.jpg" alt="Witch of the Vending Machines chapter 3, first page" loading="lazy" width="533" height="800"></span>
               <span class="meta"><b>CH.3</b><span class="t">No Refunds</span><span class="n">14 pages</span><span class="new">NEW</span></span>
             </a>
           </div>
@@ -593,7 +615,7 @@
           </div>
           <div class="thumbs">
             <a class="chapter" href="rich/">
-              <span class="thumb tall"><img src="rich/page01.jpg" alt="Born Rich, first page" loading="lazy" width="1024" height="1536"></span>
+              <span class="thumb tall"><img src="assets/thumbs/rich-ch1.jpg" alt="Born Rich, first page" loading="lazy" width="533" height="800"></span>
               <span class="meta"><b>ONE-SHOT</b><span class="t">Born Rich</span><span class="n">10 pages</span></span>
             </a>
           </div>
@@ -607,8 +629,8 @@
       <span class="deco deco-lg" style="left:1.5%;bottom:160px;animation-delay:2s" aria-hidden="true">&#10024;</span>
       <div class="band-inner">
         <div class="sec-head reveal"><span class="sec-index">02</span><h2>Projects</h2></div>
-        <p class="sec-sub reveal">Five things you can open right now — two games, a live trading desk, a
-          spreadsheet engine, and a virtual influencer built on my own face. The two 3D worlds have a
+        <p class="sec-sub reveal">Six things you can open right now — two games, a live trading desk, a
+          spreadsheet engine, a future-of-work demo, and a virtual influencer built on my own face. The two 3D worlds have a
           category of their own, <a href="#three-d"><b>just below</b></a>.
           <b>All of them were built by AI agents under my direction.</b>
           Click any card.</p>
@@ -633,7 +655,7 @@
 
           <a class="tile reveal" href="lucky-bunny/" aria-label="Play the game — Lucky Bunny Fortunes">
             <div class="tile-thumb">
-              <img src="assets/thumbs/lucky-bunny.jpg" width="1280" height="720" loading="lazy"
+              <img src="assets/thumbs/lucky-bunny-800.jpg" width="800" height="450" loading="lazy"
                    alt="Lucky Bunny Fortunes: a scratched-open card reading &quot;tomorrow smells like fresh bread and good luck&quot;, with a bunny watching from above">
             </div>
             <div class="tile-body">
@@ -650,7 +672,7 @@
 
           <a class="tile reveal" href="prompt-injection/" aria-label="Play the game — Prompt Injection">
             <div class="tile-thumb">
-              <img src="assets/thumbs/game.jpg" width="1280" height="720" loading="lazy"
+              <img src="assets/thumbs/game-800.jpg" width="800" height="450" loading="lazy"
                    alt="Prompt Injection in play: hostile prompt words descending through code rain toward the player's context window">
             </div>
             <div class="tile-body">
@@ -667,7 +689,7 @@
 
           <a class="tile reveal" href="trading/" aria-label="Open the desk — the live autonomous trading desk">
             <div class="tile-thumb">
-              <img src="assets/thumbs/trading.jpg" width="1280" height="720" loading="lazy"
+              <img src="assets/thumbs/trading-800.jpg" width="800" height="450" loading="lazy"
                    alt="The trading desk's money page: both paper accounts with day P&amp;L, biggest winner and loser, cash reserve and drawdown">
             </div>
             <div class="tile-body">
@@ -685,7 +707,7 @@
 
         <a class="tile tile-wide reveal" href="onesheet/" aria-label="Open the sheet — OneSheet">
           <div class="tile-thumb">
-            <img src="assets/thumbs/onesheet.jpg" width="1280" height="720" loading="lazy"
+            <img src="assets/thumbs/onesheet-800.jpg" width="800" height="450" loading="lazy"
                  alt="OneSheet open on a loan calculator: formulas, sparklines, a live chart and draggable inputs">
           </div>
           <div class="tile-body">
@@ -697,6 +719,24 @@
             <p class="metric">~45 functions · 260 KB · 0 frameworks</p>
             <div class="foot"><span class="chip">Formula engine</span><span class="chip">Dependency graph</span><span class="chip">Vanilla JS</span></div>
             <span class="tile-cta">Open the sheet <i aria-hidden="true">&rarr;</i></span>
+          </div>
+        </a>
+
+        <a class="tile tile-wide reveal" href="fow/" aria-label="Open the demo — FoW, a Future of Work workspace with an AI copilot">
+          <div class="tile-thumb">
+            <img src="assets/thumbs/fow.svg" width="1280" height="720" loading="lazy"
+                 alt="FoW workspace: a seat picker of seven roles beside a queue of approvals pre-read by the copilot, one already stamped approved">
+          </div>
+          <div class="tile-body">
+            <p class="tag">Demo · one offline HTML file</p>
+            <h3>FoW &middot; Future of Work</h3>
+            <p class="desc">Pick a seat — HR, FP&amp;A, procurement, IT ops, legal, sales or creative — and step
+              into that person's workday with an AI copilot already in it: approvals pre-read and risk-scored,
+              drafts waiting, the low-risk items stamped on Autopilot. Every response is simulated; nothing
+              leaves the browser.</p>
+            <p class="metric">7 seats · 1 copilot · 0 servers</p>
+            <div class="foot"><span class="chip">Agentic workflows</span><span class="chip">Simulated copilot</span><span class="chip">Vanilla JS</span></div>
+            <span class="tile-cta">Step in <i aria-hidden="true">&rarr;</i></span>
           </div>
         </a>
       </div>
@@ -716,7 +756,7 @@
         <div class="tiles">
           <a class="tile reveal" href="campus/" aria-label="Build the campus — the 3D media campus">
             <div class="tile-thumb">
-              <img src="assets/thumbs/campus.jpg" width="1280" height="720" loading="lazy"
+              <img src="assets/thumbs/campus-800.jpg" width="800" height="450" loading="lazy"
                    alt="The finished 3D campus: a curved glass hull over a green-glass podium, theatre drums, lawns and trees">
             </div>
             <div class="tile-body">
@@ -750,7 +790,7 @@
 
           <a class="tile reveal" href="mech/" aria-label="Assemble SENTINEL-9 — the same exo-frame built twice as you scroll, first as a 2D blueprint, then in 3D">
             <div class="tile-thumb">
-              <img src="assets/thumbs/mech.jpg" width="1280" height="720" loading="lazy"
+              <img src="assets/thumbs/mech-800.jpg" width="800" height="450" loading="lazy"
                    alt="SENTINEL-9: a crimson and gold heavy exo-frame standing on a launch pad, armour plates still closing around it">
             </div>
             <div class="tile-body">

@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AI Trading Desk — Zhang Cheng</title>
+  <title>AI Trading Desk · ZAC Studios</title>
   <meta name="description" content="Three autonomous AI trading bots running on Alpaca paper accounts — strategies, schedules, risk engine, and the honest P&L. Built and operated by AI agents.">
-  <meta property="og:title" content="AI Trading Desk — Zhang Cheng">
+  <meta property="og:title" content="AI Trading Desk · ZAC Studios">
   <meta property="og:description" content="Three AI bots, two paper accounts, zero humans on the hourly loop. Real strategies, fake dollars, honest numbers.">
   <meta property="og:type" content="website">
   <meta name="theme-color" content="#fdf4ff">
@@ -69,7 +69,31 @@
     .nav a:hover{color:var(--text)}
     .logo{font-family:"Playfair Display",serif;font-weight:700;font-size:1.05rem;color:var(--text)!important}
     .logo span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-    @media(max-width:560px){.nav{gap:16px;padding:4px 16px}.nav a{font-size:.82rem}}
+    .nav a[aria-current]{color:var(--text)}
+    .nav .sep{width:1px;height:18px;background:var(--edge);flex:none;margin:0 -8px}
+    .nav-live{display:inline-flex;align-items:center;gap:7px}
+    .nav-live i{width:6px;height:6px;border-radius:50%;background:var(--up);animation:livedot 1.8s ease-out infinite}
+    @keyframes livedot{0%{box-shadow:0 0 0 0 rgba(13,150,104,.55)}70%{box-shadow:0 0 0 9px rgba(13,150,104,0)}100%{box-shadow:0 0 0 0 rgba(13,150,104,0)}}
+    .nav-cta{background:var(--grad);color:#fff!important;border-radius:99px;padding:8px 16px!important;font-weight:600;
+      box-shadow:0 6px 18px rgba(255,63,174,.28)}
+    .nav-cta:hover{filter:brightness(1.06)}
+    @media(max-width:1180px){.nav{gap:18px;padding:4px 18px}.nav a{font-size:.86rem}}
+    /* ≤1000px: the pill scrolls sideways. A fade on the hidden end says "more here"; the script at the
+       bottom swaps .scrolled/.at-end so the fade never sits on an end that is already fully visible */
+    @media(max-width:1000px){
+      .nav{max-width:calc(100vw - 32px);overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+           scroll-snap-type:x proximity;scroll-padding-inline:18px;overscroll-behavior-x:contain;
+           -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 36px),transparent);
+           mask-image:linear-gradient(90deg,#000 calc(100% - 36px),transparent)}
+      .nav::-webkit-scrollbar{display:none}
+      .nav a{scroll-snap-align:start;min-height:44px;display:inline-flex;align-items:center}
+      .nav.at-end{-webkit-mask-image:none;mask-image:none}
+      .nav.scrolled{-webkit-mask-image:linear-gradient(90deg,transparent,#000 36px);
+                    mask-image:linear-gradient(90deg,transparent,#000 36px)}
+      .nav.scrolled:not(.at-end){-webkit-mask-image:linear-gradient(90deg,transparent,#000 36px,#000 calc(100% - 36px),transparent);
+                    mask-image:linear-gradient(90deg,transparent,#000 36px,#000 calc(100% - 36px),transparent)}
+    }
+    @media(max-width:560px){.nav{gap:16px;padding:4px 16px;scroll-padding-inline:16px;max-width:calc(100vw - 24px)}.nav a{font-size:.82rem}}
 
     /* hero */
     .hero{min-height:92svh;display:flex;flex-direction:column;justify-content:center;align-items:center;
@@ -300,6 +324,14 @@
     .verdict p:last-child{margin-bottom:0}
     .verdict b{color:var(--text)}
     @media(max-width:640px){.finding{padding:22px 20px}.verdict{padding:24px 22px}}
+    /* phones: no label below 12px (chips/tags/mono labels were 9–11.5px) — ease the tracking, not the size */
+    @media(max-width:700px){
+      .chip,.tile .k,.asof,.bot .tag,.rt .cron,.rt .when,.acct .name,.bar-dollar,.bench .zero em,table.data th,
+      .term-bar span,.risk-card .state,.sev,.inc-tag,.finding .evidence span{font-size:max(.75rem,12px)}
+      .finding code{font-size:max(.82em,12px)}
+      .tile .k,.acct .name,table.data th,.bot .tag{letter-spacing:.08em}
+      .bot svg text{font-size:13px}
+    }
   </style>
   <link rel="stylesheet" href="../assets/fx.css">
   <link rel="stylesheet" href="../assets/bunny.css">
@@ -311,18 +343,24 @@
   <div class="tooltip" id="tooltip" role="tooltip"></div>
 
   <header class="nav-wrap">
-    <nav class="nav">
+    <nav class="nav" aria-label="Site">
       <a class="logo" href="../" aria-label="ZAC Studios — home">ZA<span>C</span></a>
+      <a href="../#manga">Manga</a>
       <a href="../#projects">Projects</a>
+      <a href="../#three-d">3D Projects</a>
+      <a href="#top" class="nav-live" aria-current="page">Trading <i></i></a>
+      <a href="../#experience">Experience</a>
+      <span class="sep" aria-hidden="true"></span>
       <a href="#bots">Bots</a>
       <a href="#routines">Routines</a>
       <a href="#money">P&amp;L</a>
       <a href="#risk">Risk</a>
       <a href="#postmortem">Postmortem</a>
+      <a href="../#contact" class="nav-cta">Contact</a>
     </nav>
   </header>
 
-  <main>
+  <main id="top">
     <!-- HERO -->
     <section class="hero" style="max-width:none;padding-left:0;padding-right:0">
       <canvas id="candles" aria-hidden="true"></canvas>
@@ -937,6 +975,17 @@
     }
     const lio=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){lio.disconnect();addLine();}})},{threshold:.3});
     lio.observe(logEl);
+
+    /* nav pill: on narrow screens it scrolls sideways — mark which ends are hidden so the CSS fade
+       only shows where there is actually more to scroll to */
+    const navEl=document.querySelector('.nav');
+    function navFade(){
+      const max=navEl.scrollWidth-navEl.clientWidth;
+      navEl.classList.toggle('scrolled',navEl.scrollLeft>4);
+      navEl.classList.toggle('at-end',navEl.scrollLeft>=max-4);
+    }
+    navEl.addEventListener('scroll',navFade,{passive:true});
+    addEventListener('resize',navFade);navFade();
   </script>
   <script src="../assets/fx.js" defer></script>
   <script src="../assets/bunny.js" defer></script>

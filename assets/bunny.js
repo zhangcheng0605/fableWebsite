@@ -84,11 +84,25 @@
     'input[type=checkbox],input[type=radio],input[type=submit],input[type=button]';
 
   var bn = null;
+  // The handlers live up here, not inside the try, so teardown() can unbind
+  // them: a listener left behind after the bunny is gone throws on every
+  // mouse move (the first tap on a touchscreen laptop used to do exactly that).
+  var onMove = null, onLeave = null, onEnter = null, whack = null, onChange = null;
+  var mq = null, whackT = 0;
 
   function teardown() {
     document.documentElement.classList.remove('bunny-on');
     if (bn && bn.parentNode) bn.parentNode.removeChild(bn);
     bn = null;
+    clearTimeout(whackT);
+    if (onMove) removeEventListener('pointermove', onMove);
+    if (whack) removeEventListener('mousedown', whack, true);
+    if (onLeave) document.removeEventListener('pointerleave', onLeave);
+    if (onEnter) document.removeEventListener('pointerenter', onEnter);
+    if (mq && onChange) {
+      if (mq.removeEventListener) mq.removeEventListener('change', onChange);
+      else if (mq.removeListener) mq.removeListener(onChange);
+    }
   }
 
   try {
@@ -102,11 +116,13 @@
 
     function paint() {
       queued = false;
+      if (!bn) return; // a frame queued just before teardown ran
       bn.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0)';
       if (!shown) { shown = true; bn.classList.add('ready'); }
     }
 
-    addEventListener('pointermove', function (e) {
+    onMove = function (e) {
+      if (!bn) return;
       // A real touch or pen mid-session means this was never the right idea.
       if (e.pointerType && e.pointerType !== 'mouse') { teardown(); return; }
       x = e.clientX; y = e.clientY;
@@ -121,10 +137,11 @@
         // perking the ears puts an affordance back.
         bn.classList.toggle('perk', !!t.closest(CLICKY));
       }
-    }, { passive: true });
+    };
+    addEventListener('pointermove', onMove, { passive: true });
 
-    var whackT = 0;
-    function whack() {
+    whack = function () {
+      if (!bn) return;
       bn.classList.remove('whack');
       // Restarting by reading offsetWidth forces a synchronous layout of the
       // whole document on every click; cancelling the animations does the same
@@ -139,8 +156,8 @@
       // stuck .whack would leave the bunny permanently flattened. This is the
       // backstop.
       clearTimeout(whackT);
-      whackT = setTimeout(function () { bn.classList.remove('whack'); }, 700);
-    }
+      whackT = setTimeout(function () { if (bn) bn.classList.remove('whack'); }, 700);
+    };
 
     // Capture phase, so nothing downstream can swallow it. Never
     // preventDefault: right-click must still open the context menu, and the
@@ -154,12 +171,14 @@
       }
     });
 
-    document.addEventListener('pointerleave', function () { bn.classList.remove('ready'); });
-    document.addEventListener('pointerenter', function () { if (shown) bn.classList.add('ready'); });
+    onLeave = function () { if (bn) bn.classList.remove('ready'); };
+    onEnter = function () { if (bn && shown) bn.classList.add('ready'); };
+    document.addEventListener('pointerleave', onLeave);
+    document.addEventListener('pointerenter', onEnter);
 
     // Pointer type can change on a convertible or when a mouse is unplugged.
-    var mq = matchMedia(FINE);
-    var onChange = function () { if (!mq.matches) teardown(); };
+    mq = matchMedia(FINE);
+    onChange = function () { if (!mq.matches) teardown(); };
     if (mq.addEventListener) mq.addEventListener('change', onChange);
     else if (mq.addListener) mq.addListener(onChange);
   } catch (err) {
