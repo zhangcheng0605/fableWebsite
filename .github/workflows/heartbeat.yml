@@ -1,0 +1,61 @@
+# Desk heartbeat — once a night, ask both Alpaca paper accounts how they are
+# doing and append one line to trading/data/ledger.jsonl.  trading/index.html
+# renders its scoreboard from the newest line and shows a green / amber / red
+# badge by its age, so the page is honest whether the bots are alive or dead.
+#
+# Safe to merge today: without the four repository secrets
+#   ALPACA_STOCK_KEY, ALPACA_STOCK_SECRET, ALPACA_CRYPTO_KEY, ALPACA_CRYPTO_SECRET
+# trading/heartbeat.py prints "no credentials — skipping" and exits 0, nothing
+# is committed, and the page keeps showing its last report as Stale/Archived.
+# The same goes for a night Alpaca is unreachable — the job stays green.
+name: Desk heartbeat
+
+on:
+  schedule:
+    - cron: "30 21 * * *"   # 21:30 UTC nightly — after the US close and the desk's own 21:20 report
+  workflow_dispatch:
+
+permissions:
+  contents: write   # push the ledger line
+  actions: write    # re-run the Pages deploy so the live page can read it
+
+concurrency:
+  group: heartbeat
+  cancel-in-progress: false
+
+jobs:
+  heartbeat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Ask both paper accounts how they are doing
+        env:
+          ALPACA_STOCK_KEY: ${{ secrets.ALPACA_STOCK_KEY }}
+          ALPACA_STOCK_SECRET: ${{ secrets.ALPACA_STOCK_SECRET }}
+          ALPACA_CRYPTO_KEY: ${{ secrets.ALPACA_CRYPTO_KEY }}
+          ALPACA_CRYPTO_SECRET: ${{ secrets.ALPACA_CRYPTO_SECRET }}
+        run: python3 trading/heartbeat.py
+
+      - name: Commit the new ledger line (only if one was written)
+        id: commit
+        run: |
+          if git diff --quiet -- trading/data/ledger.jsonl; then
+            echo "ledger unchanged — nothing to commit"
+            exit 0
+          fi
+          git config user.name "desk-heartbeat"
+          git config user.email "actions@github.com"
+          git add trading/data/ledger.jsonl
+          git commit -m "trading: heartbeat $(date -u +%Y-%m-%d)"
+          git push origin "HEAD:${{ github.ref_name }}"
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      # A push made with GITHUB_TOKEN does not fire other workflows' `on: push`,
+      # so kick the Pages deploy ourselves; otherwise the new line would sit in
+      # git until the next human push.
+      - name: Redeploy the site so the page can read the new line
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy-pages.yml --ref "${{ github.ref_name }}"

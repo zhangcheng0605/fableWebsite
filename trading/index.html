@@ -167,6 +167,14 @@
     .tile .d.up{color:var(--up)} .tile .d.down{color:var(--down)} .tile .d.flat{color:var(--muted)}
     .asof{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--muted);margin-top:16px}
     .asof b{color:#8a5b00;font-weight:500}
+    /* desk heartbeat — built by the script from data/ledger.jsonl; absent when the ledger can't load */
+    .heartbeat{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;margin:0 0 24px}
+    .hb{display:inline-flex;align-items:center;gap:8px;padding:5px 13px;border-radius:99px;border:1px solid;font-weight:500}
+    .hb i{width:7px;height:7px;border-radius:50%;background:currentColor;flex:none}
+    .hb.live{color:var(--up);border-color:rgba(13,150,104,.45)} .hb.live i{animation:livedot 1.8s ease-out infinite}
+    .hb.stale{color:#8a5b00;border-color:rgba(138,91,0,.45)}
+    .hb.dead{color:var(--down);border-color:rgba(220,38,70,.45)}
+    .heartbeat a{display:inline-flex;align-items:center;min-height:28px;padding:0 2px;color:var(--cyan);text-decoration:underline;text-underline-offset:3px}
 
     /* bots */
     .bots{display:grid;gap:20px}
@@ -357,6 +365,7 @@
       <a href="../#three-d">3D Projects</a>
       <a href="#top" class="nav-live" aria-current="page">Trading <i></i></a>
       <a href="../#experience">Experience</a>
+      <a href="../direction/">Direction</a>
       <span class="sep" aria-hidden="true"></span>
       <a href="#bots">Bots</a>
       <a href="#routines">Routines</a>
@@ -393,26 +402,26 @@
       <div class="board reveal">
         <div class="tile">
           <div class="k">Stock account</div>
-          <div class="v">$<span class="count" data-to="97924">0</span></div>
+          <div class="v">$<span class="count" data-to="97924" data-key="stock_equity">0</span></div>
           <div class="d down">▼ −$2,076 · −2.08% since start</div>
         </div>
         <div class="tile">
           <div class="k">Crypto account</div>
-          <div class="v">$<span class="count" data-to="1007016">0</span></div>
+          <div class="v">$<span class="count" data-to="1007016" data-key="crypto_equity">0</span></div>
           <div class="d up">▲ +$7,016 · +0.70% since start</div>
         </div>
         <div class="tile">
           <div class="k">Combined P&amp;L</div>
-          <div class="v" style="color:var(--up)">+$<span class="count" data-to="4940">0</span></div>
+          <div class="v" style="color:var(--up)">+$<span class="count" data-to="4940" data-key="net_pl">0</span></div>
           <div class="d flat">across $1.1M paper capital</div>
         </div>
         <div class="tile">
           <div class="k">Open positions</div>
-          <div class="v"><span class="count" data-to="48">0</span></div>
+          <div class="v"><span class="count" data-to="48" data-key="open_positions">0</span></div>
           <div class="d flat">25 stocks · 23 crypto</div>
         </div>
       </div>
-      <p class="asof reveal">as of 2026-07-17 21:20 UTC · <b>paper trading</b> — no real money is at risk, which is exactly why the numbers can be this honest</p>
+      <p class="asof reveal">as of <span id="asof-ts">2026-07-17 21:20 UTC</span> · <b>paper trading</b> — no real money is at risk, which is exactly why the numbers can be this honest</p>
       <p class="asof reveal snapshot-note"><b>Snapshot.</b> Every number on this page is frozen at 17 Jul 2026, three days after launch; the desk does not update this page.</p>
     </section>
 
@@ -888,7 +897,7 @@
 
   <footer>
     <p>© <span id="year"></span> Zhang Cheng · Autonomous paper trading, honestly reported ·
-       built &amp; operated by AI agents · numbers as of 2026-07-17</p>
+       built &amp; operated by AI agents · numbers as of <span id="asof-date">2026-07-17</span></p>
   </footer>
 
   <script>
@@ -901,12 +910,73 @@
     /* count-up tiles */
     const cio = new IntersectionObserver((es)=>{es.forEach(e=>{
       if(!e.isIntersecting) return; cio.unobserve(e.target);
-      const el=e.target, to=+el.dataset.to, t0=performance.now(), dur=1400;
-      const step=(t)=>{const p=Math.min((t-t0)/dur,1), v=Math.round(to*(1-Math.pow(1-p,3)));
+      const el=e.target, t0=performance.now(), dur=1400; el.dataset.ran='1';
+      /* re-read data-to each frame so a ledger line that lands mid-count retargets it (see heartbeat below) */
+      const step=(t)=>{const p=Math.min((t-t0)/dur,1), v=Math.round(+el.dataset.to*(1-Math.pow(1-p,3)));
         el.textContent=v.toLocaleString('en-US'); if(p<1) requestAnimationFrame(step);};
       requestAnimationFrame(step);
     })},{threshold:.4});
     document.querySelectorAll('.count').forEach(el=>cio.observe(el));
+
+    /* desk heartbeat — the scoreboard renders from the newest line of data/ledger.jsonl, which
+       .github/workflows/heartbeat.yml appends nightly via heartbeat.py. If the fetch fails (file://
+       preview, offline) the hard-coded numbers stay and nothing new is shown. */
+    const START={stock:100000,crypto:1000000}, LAUNCH=Date.UTC(2026,6,14), DAY=864e5,
+          MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const usd=(n)=>Math.round(Math.abs(n)).toLocaleString('en-US');
+    function setCount(key,val){
+      const el=document.querySelector('.count[data-key="'+key+'"]'); if(!el||!isFinite(val)) return null;
+      el.dataset.to=Math.round(val); if(el.dataset.ran) el.textContent=(+el.dataset.to).toLocaleString('en-US'); return el;
+    }
+    function sinceStart(key,eq,start){
+      const el=setCount(key,eq); if(!el) return;
+      const d=el.closest('.tile').querySelector('.d'), pl=eq-start;
+      d.className='d '+(pl>0?'up':pl<0?'down':'flat');
+      d.textContent=(pl<0?'▼ −$':'▲ +$')+usd(pl)+' · '+(pl<0?'−':'+')+Math.abs(pl/start*100).toFixed(2)+'% since start';
+    }
+    function applyLedger(rec,nLines){
+      const ts=Date.parse(rec.ts); if(!isFinite(ts)) return;
+      const stock=+rec.stock_equity, crypto=+rec.crypto_equity;
+      if(isFinite(stock)) sinceStart('stock_equity',stock,START.stock);
+      if(isFinite(crypto)) sinceStart('crypto_equity',crypto,START.crypto);
+      if(isFinite(stock)&&isFinite(crypto)){
+        const net=stock+crypto-START.stock-START.crypto, el=setCount('net_pl',Math.abs(net));
+        if(el){el.previousSibling.nodeValue=net<0?'−$':'+$';el.parentNode.style.color=net<0?'var(--down)':'var(--up)';}
+      }
+      const pos=Array.isArray(rec.positions)?rec.positions:null,
+            pel=setCount('open_positions',typeof rec.open_positions==='number'?rec.open_positions:pos?pos.length:NaN);
+      if(pel&&pos&&pos.length){const st=pos.filter(p=>p&&p.acct==='stock').length;
+        pel.closest('.tile').querySelector('.d').textContent=st+(st===1?' stock · ':' stocks · ')+(pos.length-st)+' crypto';}
+      /* as-of line, badge, snapshot note and the nav dot all read the same clock, so they can't disagree */
+      const d=new Date(ts), iso=d.toISOString(), when=iso.slice(0,10)+' '+iso.slice(11,16)+' UTC',
+            day=d.getUTCDate()+' '+MON[d.getUTCMonth()]+' '+d.getUTCFullYear(),
+            age=Date.now()-ts, hrs=age/36e5, days=Math.floor(age/DAY);
+      document.getElementById('asof-ts').textContent=when;
+      document.getElementById('asof-date').textContent=iso.slice(0,10);
+      let cls,label,note;
+      if(hrs<=36){cls='live';
+        const m=Math.round(age/6e4), h=Math.round(hrs);
+        label='Reported '+(m<1?'just now':m<60?m+' min ago':h<=1?'1 hour ago':h+' hours ago');
+        note='<b>Live.</b> A nightly heartbeat reads both Alpaca paper accounts and appends a line to the ledger; the scoreboard is the newest line, written '+when+'.';
+      }else if(days<=14){cls='stale';
+        label='Stale — last report '+(days<=1?'1 day':days+' days')+' ago';
+        note='<b>Stale.</b> The nightly heartbeat has not written a line since '+day+'; every number on this page is that last report, not today\u2019s.';
+      }else{cls='dead';
+        label='Archived — the desk stopped reporting on '+day+'. Numbers below are the last report.';
+        note='<b>Archived.</b> The desk stopped reporting on '+day+', '+Math.max(0,Math.floor((ts-LAUNCH)/DAY))+' days after launch; every number on this page is frozen at that last report.';
+      }
+      const hb=document.createElement('p'); hb.className='asof heartbeat reveal'; hb.id='heartbeat';
+      hb.innerHTML='<span class="hb '+cls+'"><i aria-hidden="true"></i>'+label+'</span>'+
+        '<a href="data/ledger.jsonl">Ledger</a><span>'+nLines+(nLines===1?' line':' lines')+'</span>';
+      document.querySelector('#scoreboard .board').before(hb); io.observe(hb);
+      document.querySelector('.snapshot-note').innerHTML=note;
+      const dot=document.querySelector('.nav-live i');
+      if(dot&&cls!=='live'){dot.style.animation='none';dot.style.background=cls==='stale'?'#8a5b00':'var(--down)';}
+    }
+    fetch('data/ledger.jsonl',{cache:'no-cache'}).then(r=>r.ok?r.text():Promise.reject(r.status)).then(txt=>{
+      const rows=txt.split('\n').map(x=>x.trim()).filter(Boolean);
+      if(rows.length) applyLedger(JSON.parse(rows[rows.length-1]),rows.length);
+    }).catch(()=>{});
 
     /* ticker tape (day moves from the Jul 17 report) */
     const ticks=[["TSLA",379.85,-2.87],["NVDA",202.64,-2.30],["SPY",743.21,-1.00],["BTC/USD",64098,0.89],
