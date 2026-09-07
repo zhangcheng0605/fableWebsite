@@ -26,17 +26,7 @@ jobs:
           # design but no page loads them — only the three still-*.jpg files
           # in assets/film/ are referenced. The unminified three.js sources
           # are the provenance of the .min.js builds every page actually uses.
-          exclude_assets: >-
-            .github,
-            assets/film/city,
-            assets/film/city-sm,
-            assets/film/gate,
-            assets/film/gate-sm,
-            assets/film/vanguard,
-            assets/film/vanguard-sm,
-            assets/fonts/build-subset.py,
-            campus/vendor/three/three.module.js,
-            campus/vendor/three/three.core.js,
-            campus/vendor/three/OrbitControls.js,
-            campus/vendor/three/OBJExporter.js,
-            campus/vendor/three/GLTFExporter.js
+          # One line, no spaces after the commas: peaceiris splits this string on
+          # "," and does not trim, so a folded block scalar (>-) silently turns
+          # every entry after the first into " assets/…", which matches nothing.
+          exclude_assets: '.github,assets/film/city,assets/film/city-sm,assets/film/gate,assets/film/gate-sm,assets/film/vanguard,assets/film/vanguard-sm,assets/fonts/build-subset.py,campus/vendor/three/three.module.js,campus/vendor/three/three.core.js,campus/vendor/three/OrbitControls.js,campus/vendor/three/OBJExporter.js,campus/vendor/three/GLTFExporter.js'
