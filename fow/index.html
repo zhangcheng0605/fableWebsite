@@ -4409,6 +4409,9 @@ body.presenting #toasts { bottom: 90px; }
   #canvas.studio-sales .flr-req { display: none; }
 }
 
+/* embed=1: the landing page's preview iframe — no site chrome, no way to navigate away by accident */
+.embed .site-home, .embed .ob-foot a { display: none !important; }
+.embed .ob-foot { pointer-events: none; }
 </style>
 </head>
 <body>
@@ -4438,7 +4441,7 @@ body.presenting #toasts { bottom: 90px; }
       <button class="lb-arrow" id="lbNext" aria-label="Next person">›</button>
     </div>
     <div class="lb-rail" id="lbRail"></div>
-    <p class="ob-foot"><a href="../" aria-label="Back to ZAC Studios">← ZAC Studios</a> · Proof of concept · demo data · ‹ › or scroll to meet the team</p>
+    <p class="ob-foot"><a href="../" aria-label="Back to ZAC Studios">← ZAC Studios</a> · A personal concept demo, not a Mediacorp product · <a href="../direction/#fow">Director's cut</a> · demo data · ‹ › or scroll to meet the team</p>
   </div>
 </div>
 
@@ -7866,7 +7869,19 @@ function init() {
   $("#cdDrawer").hidden = true;
   petBuild();
 }
-document.addEventListener("DOMContentLoaded", init);
+/* Deep links. ?persona=finance opens that seat straight from the lobby; &story=1 plays its
+   walkthrough (the landing page's flagship card embeds ?persona=finance&story=1&embed=1);
+   &embed=1 hides the site chrome so the page reads as a preview inside an iframe. */
+function applyDeepLink() {
+  let q; try { q = new URLSearchParams(location.search); } catch (_) { return; }
+  if (q.get("embed") === "1") document.documentElement.classList.add("embed");
+  const pid = q.get("persona");
+  if (!pid || !PERSONAS.some(p => p.id === pid)) return;
+  LOBBY.touched = true;
+  if (q.get("story") === "1" || q.get("tour") === "1") { setTimeout(() => startPresent(pid), 500); return; }
+  setTimeout(() => { lobbyFocus(pid, true); const b = $("#lbEnter"); if (b) b.click(); }, 300);
+}
+document.addEventListener("DOMContentLoaded", () => { init(); applyDeepLink(); });
 
 /* ============================================================
    FoW · Emmi — the Mediacorp M, alive

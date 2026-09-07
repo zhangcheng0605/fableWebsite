@@ -527,6 +527,32 @@ kbd{
 #modal .note{font-size:11px;color:var(--muted);margin-top:8px;line-height:1.5}
 .pickbtn{width:34px;height:32px;flex:0 0 auto}
 
+/* ---- the gate: 40 engine checks in a modal (see const Gate) ---- */
+#modal:has(.gate){width:min(760px,94vw);max-height:92vh;overflow:auto}
+.gate-head{font-size:13px;font-weight:650;margin:2px 0 6px;color:var(--green)}
+.gate-head.bad{color:var(--red)}
+.gate-fix{font-size:11px;color:var(--muted);line-height:1.5;margin-bottom:10px}
+.gate-table{max-height:min(50vh,440px);overflow:auto;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--canvas)}
+.gate-t{border-collapse:collapse;width:100%;min-width:560px;table-layout:fixed;font-size:12px}
+.gate-t th,.gate-t td{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.gate-t td.f,.gate-t td.v{white-space:pre-wrap;overflow-wrap:anywhere}
+.gate-t td.i,.gate-t td.s,.gate-t td.ms{white-space:nowrap}
+.gate-t th{position:sticky;top:0;z-index:1;background:var(--panel-2);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+.gate-t td.i,.gate-t td.ms{color:var(--muted);font-family:var(--mono)}
+.gate-t td.ms{text-align:right}
+.gate-t td.f,.gate-t td.v{font-family:var(--mono)}
+.gate-t td.s{font-weight:700}
+.gate-t tr.ok td.s{color:var(--green)}
+.gate-t tr.bad td.s{color:var(--red)}
+.gate-t tr.bad td{background:rgba(220,38,38,.08)}
+.gate-t tr.known td{background:rgba(245,158,11,.12)}
+.gate-t tr.known td.s{color:var(--amber)}
+.gate-t tr.skip td.s{color:var(--muted)}
+.gate-note{font-family:var(--font);font-size:10.5px;color:var(--muted);white-space:normal;margin-top:2px;line-height:1.4}
+[data-theme="win97"] .gate-table{border:0;border-radius:0;box-shadow:var(--bevel-in);background:#fff}
+[data-theme="win97"] .gate-t th{background:#c0c0c0;color:#000;box-shadow:var(--bevel-out);text-transform:none;letter-spacing:0;font-size:11px}
+[data-theme="win97"] .gate-t tr.known td{background:#ffffc0}
+
 #chartLayer{position:fixed;inset:0;z-index:90;pointer-events:none}
 .chartcard{
   position:absolute;pointer-events:auto;background:var(--panel);border:1px solid var(--line-2);
@@ -671,6 +697,8 @@ kbd{
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1.5 12.5h11"/><rect x="2.5" y="7" width="2.4" height="4.2"/><rect x="6" y="4" width="2.4" height="7.2"/><rect x="9.5" y="1.8" width="2.4" height="9.4"/></svg>
       <span class="lbl">Chart</span>
     </button>
+    <div class="tb-sep"></div>
+    <button class="tb mono" id="btnGate" title="Run the gates — 40 engine checks, in this tab">⚙<span class="lbl">Gate</span></button>
     <div class="spacer"></div>
     <button class="tb" id="btn97" title="Party like it's 1997 (Ctrl+Shift+9)"><svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4"><rect x="1.2" y="2.6" width="11.6" height="9.4" rx="1"/><path d="M1.2 5.2h11.6M3.6 2.6V1.2M10.4 2.6V1.2"/><circle cx="7" cy="8.6" r="1.6"/></svg><span class="lbl">1997</span></button>
     <button class="tb" id="btnTheme" title="Toggle dark mode">◐</button>
@@ -4874,6 +4902,7 @@ const Actions = (() => {
   A("chart", "Instant chart from selection", "Analyse", () => Charts.add(), "F9", "▤");
   ["bar", "line", "pie", "scatter"].forEach(t => A("chart-" + t, "Chart selection as " + t, "Analyse", () => Charts.add(null, t), null, "▤"));
   A("chart-clear", "Close all charts", "Analyse", () => { Charts.clearAll(); toast("Charts closed"); }, null, "✕");
+  A("gate", "Run the gates (40 engine checks)", "Analyse", () => Gate.open(), null, "⚙");
   A("spark", "Insert sparkline for selection", "Analyse", () => {
     const q = selRect();
     const target = q.c2 + 1 <= MAXCOL ? K(q.r1, q.c2 + 1) : K(q.r1, q.c2);
@@ -5064,7 +5093,7 @@ const Retro = (() => {
     ["View", [["Time Travel", "timetravel"], ["Formula X-Ray", "xray"], null, ["Close all charts", "chart-clear"], ["Sounds", "sounds"], null, ["Exit 1997", "retro"]]],
     ["Insert", [["Chart", "chart"], ["Sparkline", "spark"], null, ["Slider", "widget-slider"], ["Check Box", "widget-checkbox"], ["Star Rating", "widget-rating"]]],
     ["Format", [["Bold", "bold"], ["Italic", "italic"], null, ["Align Left", "align-left"], ["Align Center", "align-center"], ["Align Right", "align-right"], null, ["Number", "fmt-0.00"], ["Currency", "fmt-$#,##0.00"], ["Percent", "fmt-0%"], ["Date", "fmt-date"], null, ["Autofit column", "autofit"]]],
-    ["Tools", [["Goal Seek…", "goalseek"], ["Shake volatiles", "shake"], null, ["AI settings…", "ai-settings"], ["Clear AI cache", "ai-clear"]]],
+    ["Tools", [["Goal Seek…", "goalseek"], ["Shake volatiles", "shake"], ["Run the gates…", "gate"], null, ["AI settings…", "ai-settings"], ["Clear AI cache", "ai-clear"]]],
     ["Data", [["Import…", "import"], ["Instant chart", "chart"], ["Sparkline", "spark"]]],
     ["Help", [["About OneSheet", "about"], null, ["Summon Clippy", "clippy"], ["Banish Clippy", "clippy-off"]]],
   ];
@@ -5234,6 +5263,7 @@ const Boot = (() => {
     $("#btnXray").onclick = () => Actions.run("xray");
     $("#btnTime").onclick = () => Actions.run("timetravel");
     $("#btnChart").onclick = () => Actions.run("chart");
+    $("#btnGate").onclick = () => Actions.run("gate");
     $("#btn97").onclick = () => Actions.run("retro");
     $("#btnTheme").onclick = () => Actions.run("theme");
     $("#btnPalette").onclick = () => Palette.open();
@@ -5354,6 +5384,7 @@ const Boot = (() => {
       run: id => Actions.run(id),
       parse: parseFormula,
       selfTest: SelfTest.run,
+      gate: () => Gate.open(),
     };
     console.log("%cOneSheet v" + VERSION, "font:600 14px system-ui;color:#4f46e5",
       "\n→ OneSheet.engine.set(\"A1\",\"=SUM(B1:B3)\")\n→ OneSheet.selfTest()\n→ " + Object.keys(FN).length + " functions, " + MAXROW + "×" + MAXCOL + " grid");
@@ -5590,6 +5621,164 @@ const SelfTest = (() => {
     return window.__ONESHEET_TEST__;
   }
   return { run };
+})();
+
+/* ============================================================ *
+ * ===== THE GATE ==============================================
+ * "I don't trust the agent, I trust the gate." gate.json is a
+ * table of 40 formulas, each with the answer a correct
+ * spreadsheet gives — not the answer this engine gives. The
+ * runner writes a small fixture into ZX:ZZ (the far right edge
+ * of the grid), evaluates every case through the live engine,
+ * then puts the scratch cells back exactly as it found them.
+ * It talks to the engine directly, below the command layer, so
+ * nothing lands in the undo log. One row is honestly marked
+ * known-failing; the panel says why.
+ * ============================================================ */
+const Gate = (() => {
+  const DC = colIndex("ZX") - 1;                       // A→ZX, B→ZY, C→ZZ
+  const FIXTURE = [
+    ["A1", "10"], ["A2", "20"], ["A3", "30"], ["A4", "40"], ["A5", "50"],
+    ["B1", "hello"], ["B2", "  wide   open  "], ["B3", "World"],
+    ["C1", "'42"],
+    ["A11", "apple"], ["B11", "1.25"], ["A12", "banana"], ["B12", "0.5"],
+    ["A13", "cherry"], ["B13", "3"], ["A14", "durian"], ["B14", "7"],
+    ["C31", "=C30"],                                   // the other half of the cycle case
+  ];
+  const PROBE = "C30";                                 // every case is written here in turn
+  const TOL = 1e-9;
+  let cases = null;
+
+  /** Move every reference — $-pinned ones included — into the scratch columns. */
+  function relocate(raw) {
+    if (raw[0] !== "=") return raw;
+    const ast = mapRefs(parseFormula(raw.slice(1)), n => ({ r: n.r, c: n.c + DC, ar: n.ar, ac: n.ac, oob: !inBounds(n.r, n.c + DC) }));
+    return "=" + stringifyAst(ast);
+  }
+  const scratch = a1 => { const p = parseA1(a1); return K(p.r, p.c + DC); };
+  const fmtv = v => v instanceof Err ? v.code : v == null ? "(blank)" : typeof v === "boolean" ? (v ? "TRUE" : "FALSE")
+    : typeof v === "string" ? (ERRCODES.includes(v) ? v : JSON.stringify(v)) : String(v);
+  const same = (got, want) => typeof want === "number" ? (typeof got === "number" && Math.abs(got - want) <= TOL)
+    : got instanceof Err ? got.code === want : got === want;
+  /** Sorted, so Map insertion order can't fake a difference. */
+  const fingerprint = () => Engine.snapshot().map(x => JSON.stringify(x)).sort().join("\n");
+  function build() {
+    const d = new Date(document.lastModified);
+    return isNaN(d) ? "v" + VERSION : d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+
+  async function load() {
+    if (cases) return cases;
+    const res = await fetch("gate.json", { cache: "no-store" });
+    if (!res.ok) throw new Error("gate.json → HTTP " + res.status);
+    const list = await res.json();
+    if (!Array.isArray(list) || !list.length) throw new Error("gate.json is not a list of cases");
+    return (cases = list);
+  }
+
+  /** Synchronous on purpose: nothing (autosave, a scrub, a slider drag) can interleave with the scratch cells. */
+  function run(list) {
+    const keys = FIXTURE.map(([a1]) => scratch(a1)).concat([scratch(PROBE)]);
+    const before = keys.map(k => [k, Engine.exactCell(k)]);      // whatever lived there, exactly
+    const undoBefore = Commands.log.length + ":" + Commands.cursor;
+    const sheetBefore = fingerprint();
+    const liveAI = AIRuntime.hasKey();
+    const probe = scratch(PROBE);
+    const rows = [];
+    const t0 = performance.now();
+    try {
+      Engine.setMany(FIXTURE.map(([a1, raw]) => [scratch(a1), relocate(raw)]));
+      for (const c of list) {
+        const row = { c, got: undefined, ms: 0, state: "bad", why: "" };
+        if (c.status === "skip") { row.state = "skip"; row.why = c.note; rows.push(row); continue; }
+        if (liveAI && /\bAI\s*\(/i.test(c.formula)) { row.state = "skip"; row.why = "an API key is set, so =AI() would go live and stop being deterministic"; rows.push(row); continue; }
+        const t1 = performance.now();
+        try {
+          if (c.shift) row.got = shiftFormula(c.formula, c.shift[0], c.shift[1]);
+          else { Engine.set(probe, relocate(c.formula)); row.got = Engine.value(probe); }
+        } catch (e) { row.got = "threw: " + String((e && e.message) || e); }
+        row.ms = performance.now() - t1;
+        const pass = same(row.got, c.expected);
+        row.state = pass ? "ok" : c.status === "known-failing" ? "known" : "bad";
+        if (pass && c.status === "known-failing") row.why = "marked known-failing, but it passes now — time to drop the mark";
+        else if (!pass) row.why = c.note || "";
+        rows.push(row);
+      }
+    } finally {
+      for (const [k, spec] of before) Engine.putCell(k, spec);
+      Engine.recalc(keys);
+    }
+    const count = st => rows.filter(r => r.state === st).length;
+    return {
+      rows, ms: performance.now() - t0, build: build(), total: rows.length,
+      passed: count("ok"), known: count("known"), skipped: count("skip"), failed: count("bad"),
+      undoClean: undoBefore === Commands.log.length + ":" + Commands.cursor,
+      sheetClean: sheetBefore === fingerprint(),
+      cells: Engine.size,
+    };
+  }
+
+  function table(r) {
+    const t = el("table", "gate-t"), thead = el("thead"), th = el("tr"), tb = el("tbody");
+    [["#", "5%"], ["formula", "36%"], ["expected", "20%"], ["got", "20%"], ["", "10%"], ["ms", "9%"]].forEach(([h, w]) => { const c = el("th", null, h); c.style.width = w; th.append(c); });
+    thead.append(th);
+    r.rows.forEach((row, i) => {
+      const tr = el("tr", row.state);
+      tr.append(el("td", "i", String(i + 1)));
+      const f = el("td", "f");
+      f.append(el("div", null, row.c.formula + (row.c.shift ? "   → fill " + row.c.shift[0] + " down, " + row.c.shift[1] + " right" : "")));
+      f.title = row.c.note || "";
+      if (row.why) f.append(el("div", "gate-note", row.why));
+      tr.append(f, el("td", "v", fmtv(row.c.expected)), el("td", "v", row.state === "skip" ? "—" : fmtv(row.got)));
+      tr.append(el("td", "s", row.state === "ok" ? "✓" : row.state === "bad" ? "✗" : row.state));
+      tr.append(el("td", "ms", row.state === "skip" ? "" : row.ms.toFixed(2)));
+      tb.append(tr);
+    });
+    t.append(thead, tb);
+    return t;
+  }
+
+  function open() {
+    const body = el("div", "gate");
+    const head = el("div", "gate-head mono", "Fetching gate.json…");
+    const fix = el("div", "gate-fix", "Fixture, written to ZX1:ZZ31 and restored afterwards — A1:A5 = 10 20 30 40 50 · B1 = hello · " +
+      "B2 = \"  wide   open  \" · B3 = World · C1 = '42 (text) · A11:B14 = apple 1.25 · banana 0.5 · cherry 3 · durian 7 · C31 = =C30. Each formula is evaluated in C30.");
+    const host = el("div", "gate-table");
+    const foot = el("div", "note gate-foot");
+    body.append(head, fix, host, foot);
+    let busy = false;
+    async function go() {
+      if (busy) return;
+      busy = true;
+      head.className = "gate-head mono";
+      head.textContent = "Running…";
+      try {
+        const r = run(await load());
+        head.textContent = r.passed + "/" + r.total + " passed · " + r.ms.toFixed(1) + " ms · engine build " + r.build +
+          (r.known ? " · " + r.known + " known-failing" : "") + (r.skipped ? " · " + r.skipped + " skipped" : "") + (r.failed ? " · " + r.failed + " FAILED" : "");
+        if (r.failed || !r.sheetClean || !r.undoClean) head.classList.add("bad");
+        host.innerHTML = "";
+        host.append(table(r));
+        foot.textContent = (r.sheetClean ? "Your sheet is exactly what it was (" + r.cells + " cells)" : "WARNING: the sheet changed during the run") +
+          " · " + (r.undoClean ? "undo history untouched — the gate runs below the command log" : "WARNING: the undo log moved") +
+          " · numbers compare to 1e-9, text and errors exactly.";
+        window.__ONESHEET_GATE__ = {
+          total: r.total, passed: r.passed, known: r.known, skipped: r.skipped, failed: r.failed, ms: r.ms, build: r.build,
+          sheetClean: r.sheetClean, undoClean: r.undoClean, rows: r.rows.map(x => ({ id: x.c.id, state: x.state, got: fmtv(x.got), ms: x.ms })),
+        };
+      } catch (e) {
+        head.classList.add("bad");
+        head.textContent = "Couldn't run the gate — " + String((e && e.message) || e);
+        host.innerHTML = "";
+        foot.textContent = "gate.json has to be served next to this file (fetch fails on file://). The engine was not touched.";
+      }
+      busy = false;
+    }
+    Modal.open("Run the gates", "40 formulas, each with the answer a correct spreadsheet gives, checked against the live engine in this tab.", [body],
+      [{ label: "Run again", onClick: () => go() }, { label: "Close", primary: true, onClick: c => c() }]);
+    go();
+  }
+  return { open, run, load, relocate, FIXTURE };
 })();
 
 Boot.start();

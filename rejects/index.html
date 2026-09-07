@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Reject Pile · ZAC Studios</title>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:url" content="https://zhangcheng0605.github.io/fableWebsite/rejects/">
+  <link rel="canonical" href="https://zhangcheng0605.github.io/fableWebsite/rejects/">
+  <meta property="og:image" content="https://zhangcheng0605.github.io/fableWebsite/assets/thumbs/campus.jpg">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="720">
+  <meta name="description" content="Rejected AI output beside what replaced it, with the direction that changed it. Every entry is quoted from this site's git history — nothing invented.">
+  <meta property="og:title" content="The Reject Pile — what the director said no to">
+  <meta property="og:description" content="Real rejected outputs from building ZAC Studios, each beside what shipped and the commit that explains why. Quoted verbatim from git history.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#fdf4ff">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128465;</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Quicksand:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Quicksand:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
+  <style>
+    /* Site tokens — candy-neon, matching the homepage */
+    :root{
+      --background:#fdf4ff; --background-2:#ffffff;
+      --foreground:#38235c;
+      --card:#ffffff;
+      --muted-foreground:#38235c;
+      --border:rgba(139,61,255,.20);
+      --primary:#8b3dff; --pink:#ff3fae; --pink-ink:#c9106f; --violet:#6428d8;
+      --accent:#25c4ff; --cyan-ink:#0779a8; --jade:#12b981; --jade-ink:#0a7a55;
+      --radius:18px;
+      --grad:linear-gradient(95deg,#ef1f96,#7a2df0 46%,#0f9fe0);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      background:var(--background);
+      color:var(--foreground);
+      font-family:Quicksand,system-ui,-apple-system,sans-serif;font-weight:500;
+      -webkit-font-smoothing:antialiased;
+      line-height:1.6;overflow-x:hidden;
+    }
+    a{color:inherit}
+    h1,h2,h3{text-wrap:balance;font-family:"Baloo 2",Quicksand,sans-serif}
+    .skip-link{
+      position:absolute;left:-9999px;top:0;padding:.6rem 1rem;background:var(--pink);
+      color:#fff;border-radius:0 0 8px 0;z-index:100;font-weight:600
+    }
+    .skip-link:focus{left:0}
+    :focus-visible{outline:2px solid var(--primary);outline-offset:3px}
+    .mono{font-family:"JetBrains Mono",monospace}
+
+    .bg{position:fixed;inset:0;z-index:-2;pointer-events:none;background:
+        radial-gradient(62vw 52vh at 12% 6%,rgba(255,183,226,.5),transparent 65%),
+        radial-gradient(56vw 46vh at 88% 16%,rgba(178,140,255,.4),transparent 65%),
+        radial-gradient(72vw 60vh at 50% 108%,rgba(126,216,255,.45),transparent 70%),
+        linear-gradient(180deg,#fff4fd,#f4e9ff 45%,#eaf6ff)}
+
+    /* nav — the site's floating pill, light glass (as on campus/) */
+    .nav-wrap{position:fixed;top:18px;left:0;right:0;z-index:50;display:flex;justify-content:center;padding:0 20px}
+    .nav{display:flex;align-items:center;gap:24px;padding:4px 20px;border-radius:99px;
+         background:rgba(255,255,255,.88);border:2px solid var(--border);
+         backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+         box-shadow:0 10px 34px rgba(139,61,255,.14)}
+    .nav a{font-size:.92rem;color:var(--foreground);font-weight:600;transition:color .2s;padding:8px 2px;white-space:nowrap;text-decoration:none}
+    .nav a:hover,.nav a[aria-current]{color:var(--pink)}
+    .logo{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.1rem;color:var(--foreground)!important}
+    .logo span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+    @media(max-width:880px){
+      /* the pill scrolls sideways: snap to the links, 44px-tall tap targets */
+      .nav{gap:14px;padding:2px 14px;max-width:calc(100vw - 32px);overflow-x:auto;scrollbar-width:none;
+           scroll-snap-type:x proximity;scroll-padding:0 14px}
+      .nav::-webkit-scrollbar{display:none}
+      .nav a{font-size:.82rem;padding:12px 2px;scroll-snap-align:start}
+      /* right-edge fade while there is more to the right — the inline script
+         at the foot of the page toggles .nav-more, so the last link is never
+         ghosted once you have scrolled to the end */
+      .nav.nav-more{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 40px),transparent);
+           mask-image:linear-gradient(90deg,#000 calc(100% - 40px),transparent)}
+    }
+
+    /* ===== page ===== */
+    .wrap{max-width:1080px;margin:0 auto;padding:110px clamp(1rem,4vw,2rem) 4rem}
+    .eyebrow{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--pink-ink);margin:0 0 .6rem}
+    h1{margin:0 0 1rem;font-weight:800;font-size:clamp(2rem,5.5vw,3.4rem);line-height:1.05;letter-spacing:.01em}
+    h1 .grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .intro{max-width:70ch;font-size:clamp(1rem,1.6vw,1.12rem);margin:0 0 1.6rem}
+    .intro p{margin:0 0 .8rem}
+
+    .legend{display:flex;flex-wrap:wrap;gap:.5rem .9rem;margin:0 0 2.6rem;padding:0;list-style:none;font-size:.86rem}
+    .legend li{display:flex;align-items:center;gap:.5rem}
+    .kind{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;
+          padding:.22rem .6rem;border-radius:999px;border:1px solid var(--border);background:#fff;white-space:nowrap}
+    .kind-kill{color:var(--pink-ink);border-color:rgba(201,16,111,.35)}
+    .kind-constraint{color:var(--cyan-ink);border-color:rgba(7,121,168,.35)}
+    .kind-sendback{color:var(--violet);border-color:rgba(100,40,216,.35)}
+    .kind-rework{color:#8a5b00;border-color:rgba(153,111,16,.4)}
+
+    .entry{margin:0 0 3rem;padding-top:1.4rem;border-top:2px solid var(--border)}
+    .entry-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:.5rem .9rem;margin:0 0 1rem}
+    .entry-head h2{margin:0;font-size:clamp(1.25rem,2.6vw,1.6rem);font-weight:800}
+    .entry-head .num{font-family:"JetBrains Mono",monospace;font-size:.78rem;color:var(--pink-ink);letter-spacing:.06em}
+    .entry-head .date{font-family:"JetBrains Mono",monospace;font-size:.74rem;color:var(--muted-foreground);opacity:.85}
+    .entry-head .kinds{display:flex;flex-wrap:wrap;gap:.35rem;margin-left:auto}
+
+    .pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+    .side{min-width:0;background:var(--card);border:2px solid var(--border);border-radius:var(--radius);padding:.9rem 1rem 1rem}
+    .side h3{margin:0 0 .6rem;font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+    .side.rejected h3{color:var(--pink-ink)}
+    .side.kept h3{color:var(--jade-ink)}
+    .side.rejected{border-color:rgba(201,16,111,.28)}
+    .side.kept{border-color:rgba(18,185,129,.35)}
+    .side img{display:block;width:100%;height:auto;border-radius:10px;border:1px solid var(--border);background:#f3e9ff}
+    .side .small{max-width:220px}
+    .side p{margin:.6rem 0 0;font-size:.88rem}
+    .side p.cap{font-family:"JetBrains Mono",monospace;font-size:.72rem;line-height:1.5;color:var(--muted-foreground);opacity:.9}
+    .side .none{font-size:.9rem;padding:1rem;border:1px dashed rgba(201,16,111,.4);border-radius:10px;background:#fff6fb;margin:0}
+    .stills{display:grid;grid-template-columns:1fr;gap:6px}
+    .stills img{aspect-ratio:1600/654}
+    code,pre{font-family:"JetBrains Mono",monospace}
+    code{font-size:.82em;background:#f3e9ff;border:1px solid var(--border);border-radius:5px;padding:.05rem .32rem;overflow-wrap:anywhere}
+    pre{margin:0;padding:.75rem .9rem;background:#2a1747;color:#f6ecff;border-radius:10px;font-size:.72rem;line-height:1.5;
+        overflow-x:auto;max-width:100%;tab-size:2}
+    pre code{background:none;border:0;padding:0;font-size:inherit;color:inherit;overflow-wrap:normal}
+    pre .del{color:#ff8fc8}
+    pre .add{color:#7ef0c1}
+    .side ul{margin:.2rem 0 0;padding-left:1.1rem;font-size:.9rem}
+    .side li{margin:.25rem 0}
+    .links{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0 0}
+    .btn{
+      text-decoration:none;font-size:.84rem;font-weight:600;
+      padding:.5rem 1rem;border-radius:999px;border:1px solid var(--border);background:#fff;
+      transition:border-color .2s,color .2s;display:inline-flex;align-items:center;min-height:38px
+    }
+    .btn:hover{border-color:var(--pink);color:var(--pink)}
+    .btn-primary{background:var(--grad);color:#fff;border-color:transparent;font-weight:700;box-shadow:0 10px 30px rgba(255,63,174,.28)}
+    .btn-primary:hover{color:#fff;filter:brightness(1.06)}
+
+    /* the direction: verbatim commit text, with its citation */
+    .direction{margin:14px 0 0;padding:.9rem 1.1rem;background:rgba(255,255,255,.7);border-left:3px solid var(--violet);border-radius:0 12px 12px 0}
+    .direction .lab{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--violet);margin:0 0 .4rem}
+    .direction figure{margin:0 0 .7rem}
+    .direction figure:last-child{margin-bottom:0}
+    .direction blockquote{margin:0;font-size:.95rem;overflow-wrap:anywhere}
+    .direction blockquote::before{content:"\201C";color:var(--violet);margin-right:.05em}
+    .direction blockquote::after{content:"\201D";color:var(--violet);margin-left:.05em}
+    q{quotes:"\201C" "\201D"}
+    .direction figcaption,.direction p.note{font-family:"JetBrains Mono",monospace;font-size:.72rem;margin:.3rem 0 0;color:var(--muted-foreground);opacity:.9;overflow-wrap:anywhere}
+    .direction figcaption a,.direction p.note a{color:var(--cyan-ink);display:inline-block;padding:.35rem 0}
+    .direction .arrow{color:var(--pink-ink)}
+
+    .schema{margin:3rem 0 0;padding-top:1.4rem;border-top:2px solid var(--border)}
+    .schema h2{margin:0 0 .5rem;font-size:clamp(1.25rem,2.6vw,1.6rem)}
+    .schema p{margin:.6rem 0 0;max-width:70ch}
+    .foot{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:2rem}
+    footer.colophon{font-family:"JetBrains Mono",monospace;font-size:.7rem;opacity:.75;margin-top:2.4rem}
+
+    @media (max-width:720px){
+      .pair{grid-template-columns:1fr}
+      .entry-head .kinds{margin-left:0}
+      .wrap{padding-top:96px}
+    }
+    @media (prefers-reduced-motion:reduce){
+      *{transition:none!important;animation:none!important}
+      html{scroll-behavior:auto}
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#pile">Skip to the pile</a>
+  <div class="bg" aria-hidden="true"></div>
+
+  <header class="nav-wrap">
+    <nav class="nav" aria-label="Site">
+      <a class="logo" href="../" aria-label="ZAC Studios — home">ZA<span>C</span></a>
+      <a href="../#manga">Manga</a>
+      <a href="../#projects">Projects</a>
+      <a href="../#three-d">3D Projects</a>
+      <a href="../trading/">Trading</a>
+      <a href="../#experience">Experience</a>
+      <a href="#pile" aria-current="page">Rejects</a>
+      <a href="../#contact">Contact</a>
+    </nav>
+  </header>
+
+  <main class="wrap" id="top">
+    <p class="eyebrow">Directed by a human, built by AI</p>
+    <h1>The <span class="grad">Reject Pile</span></h1>
+    <div class="intro">
+      <p>This page shows work the AI produced for this site that was thrown out, next to what replaced it, with the direction that changed it. Every entry is taken from the repository's git history: the dates, the wording of each direction and the session links are quoted from the commits themselves, and nothing here is paraphrased into a quote or estimated after the fact. The per-frame identity-gate scores for the virtual influencer were not kept, so no entry below carries a score. From here on, rejects are recorded as they happen in the schema at the bottom of the page.</p>
+    </div>
+
+    <ul class="legend" aria-label="Kinds of direction">
+      <li><span class="kind kind-kill">kill</span> removed outright</li>
+      <li><span class="kind kind-constraint">constraint</span> a number or a rule changed</li>
+      <li><span class="kind kind-sendback">send-back</span> returned to be done properly</li>
+      <li><span class="kind kind-rework">rework</span> replaced with a different approach</li>
+    </ul>
+
+    <div id="pile">
+
+    <!-- 1 ─────────────────────────────────────────────────────────── -->
+    <article class="entry" id="ink-and-lantern">
+      <div class="entry-head">
+        <span class="num">01</span>
+        <h2>The Ink &amp; Lantern theme</h2>
+        <span class="date">25–26 Jul 2026</span>
+        <span class="kinds"><span class="kind kind-kill">kill</span></span>
+      </div>
+      <div class="pair">
+        <div class="side rejected">
+          <h3>Rejected</h3>
+          <div class="stills">
+            <img src="../assets/thumbs/reject-still-city.jpg" width="800" height="327" alt="Ink & Lantern hero still: a figure with a paper umbrella above a lantern-lit city at night">
+            <img src="../assets/thumbs/reject-still-gate.jpg" width="800" height="327" alt="Ink & Lantern interlude still: the golden gate film band" loading="lazy">
+            <img src="../assets/thumbs/reject-still-vanguard.jpg" width="800" height="327" alt="Ink & Lantern contact still: the vanguard film band" loading="lazy">
+          </div>
+          <p class="cap">The hero stills of the dark theme — <code>assets/film/still-city.jpg</code>, <code>still-gate.jpg</code>, <code>still-vanguard.jpg</code> as committed in 07740b5 (1600×654, shown at 800px). They fronted three scroll-scrubbed film bands on a jade-and-gold landing page.</p>
+        </div>
+        <div class="side kept">
+          <h3>Kept</h3>
+          <img src="../assets/thumbs/reject-landing-now.jpg" width="1280" height="720" alt="The current ZAC Studios landing hero: candy-neon stamps spelling ZAC over a pastel aurora">
+          <p class="cap">The landing hero as it ships now — 1280×720 capture of <a href="../">the front page</a>, 7 Sep 2026.</p>
+        </div>
+      </div>
+      <div class="direction">
+        <p class="lab">Direction</p>
+        <figure>
+          <blockquote class="q">Site overhaul: Ink &amp; Lantern theme, cinematic scroll-film bands, recruiter-focused homepage</blockquote>
+          <figcaption>— commit subject, <a href="https://github.com/zhangcheng0605/fableWebsite/commit/07740b56ac65f3102e7ad801362f371129ad0a92" rel="noopener">07740b5</a>, 25 Jul 2026 · <a href="https://claude.ai/code/session_016iqP1cjAaZ4SHqYp99SfR5" rel="noopener">session</a></figcaption>
+        </figure>
+        <figure>
+          <blockquote class="q">The landing page went bright; the subpages were still three different dark brands (Ink &amp; Lantern, neon-noir, gold-noir).</blockquote>
+          <figcaption>— <span class="arrow">killed the next day:</span> <a href="https://github.com/zhangcheng0605/fableWebsite/commit/d07703ee2ec292e5edc37902b1263e703cecd17a" rel="noopener">d07703e</a> <q class="q">Reskin every subpage to the candy-neon theme</q>, 26 Jul 2026 · <a href="https://claude.ai/code/session_01N6y6RV4dr9jnyYE4sbctVD" rel="noopener">session</a></figcaption>
+        </figure>
+      </div>
+    </article>
+
+    <!-- 2 ─────────────────────────────────────────────────────────── -->
+    <article class="entry" id="influencer-placeholders">
+      <div class="entry-head">
+        <span class="num">02</span>
+        <h2>The influencer page, with placeholders in it</h2>
+        <span class="date">28 Jul – 2 Aug 2026</span>
+        <span class="kinds"><span class="kind kind-sendback">send-back</span><span class="kind kind-rework">rework</span></span>
+      </div>
+      <div class="pair">
+        <div class="side rejected">
+          <h3>Rejected</h3>
+          <img src="../assets/thumbs/influencer.svg" width="1280" height="720" alt="The hawker-food concept's card: a purple signboard reading ONE STALL AT A TIME, marked IN PRODUCTION" loading="lazy">
+          <p class="cap"><code>assets/thumbs/influencer.svg</code> — the card thumbnail of the hawker-food concept, committed with the page in e2f8011. The page behind it shipped with empty media slots and <code>[RATE]</code> where prices should be.</p>
+        </div>
+        <div class="side kept">
+          <h3>Kept</h3>
+          <img src="../assets/thumbs/influencer.jpg" width="1280" height="720" alt="The current influencer card: a photographic campaign still" loading="lazy">
+          <p class="cap"><code>assets/thumbs/influencer.jpg</code> — the card the landing page ships now, for the <a href="../influencer/">campaign-portfolio page</a> that replaced the concept.</p>
+        </div>
+      </div>
+      <div class="direction">
+        <p class="lab">Direction</p>
+        <figure>
+          <blockquote class="q">Media are placeholder slots, each labelled with the aspect ratio it expects, and the hero carries a status note saying so. Prices in the brands section are still [RATE].</blockquote>
+          <figcaption>— <a href="https://github.com/zhangcheng0605/fableWebsite/commit/e2f80115d2f07445fbb90f9ac52c03c07d200002" rel="noopener">e2f8011</a> <q class="q">Add the virtual influencer section</q>, 28 Jul 2026</figcaption>
+        </figure>
+        <figure>
+          <blockquote class="q">Say 'On request' rather than a bare placeholder on the rate card</blockquote>
+          <figcaption>— <span class="arrow">sent back the same morning:</span> commit subject, <a href="https://github.com/zhangcheng0605/fableWebsite/commit/90f638039954855e15774a8d3f96b9e8dbeb3069" rel="noopener">90f6380</a>, 28 Jul 2026</figcaption>
+        </figure>
+        <figure>
+          <blockquote class="q">Revamp influencer page: cinematic dark theme, 168 images, interactive print deck</blockquote>
+          <figcaption>— <span class="arrow">then reworked:</span> commit subject, <a href="https://github.com/zhangcheng0605/fableWebsite/commit/6aac562018e307c6e3cf234adcc2037d5a67a6d8" rel="noopener">6aac562</a>, 2 Aug 2026</figcaption>
+        </figure>
+        <p class="note">None of these three commits carries a Claude-Session trailer, so there is no session link.</p>
+      </div>
+    </article>
+
+    <!-- 3 ─────────────────────────────────────────────────────────── -->
+    <article class="entry" id="card-glow">
+      <div class="entry-head">
+        <span class="num">03</span>
+        <h2>The cursor-tracked card glow</h2>
+        <span class="date">8 Aug 2026</span>
+        <span class="kinds"><span class="kind kind-kill">kill</span></span>
+      </div>
+      <div class="pair">
+        <div class="side rejected">
+          <h3>Rejected</h3>
+          <p class="cap" style="margin-top:0">What 1a5d9c6 deleted from <code>fow/index.html</code> — 1 file changed, 25 deletions(-). Only the removed lines are shown; the indented <code>.card::before</code> line sat inside the reduced-motion media query, which stayed:</p>
+<pre><code>/* cursor-tracked card glow */
+.card::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  background: radial-gradient(320px circle at var(--mx, 50%) var(--my, -30%), var(--acc-soft), transparent 72%);
+  opacity: 0; transition: opacity 350ms ease;
+}
+.card:hover::before { opacity: 0.9; }
+.hero::before { display: none; }
+  .card::before { display: none; }
+
+/* ---------------- cursor-tracked card glow ---------------- */
+(function cardGlow() {
+  let raf = null;
+  document.addEventListener("pointermove", e =&gt; {
+    if (raf) return;
+    raf = requestAnimationFrame(() =&gt; {
+      raf = null;
+      const c = e.target.closest ? e.target.closest(".card") : null;
+      if (!c) return;
+      const r = c.getBoundingClientRect();
+      c.style.setProperty("--mx", (e.clientX - r.left) + "px");
+      c.style.setProperty("--my", (e.clientY - r.top) + "px");
+    });
+  }, { passive: true });
+})();</code></pre>
+        </div>
+        <div class="side kept">
+          <h3>Kept</h3>
+          <p style="margin-top:0">The flat card. Nothing was added in its place: the commit is deletions only, and the cards in the Future of Work demo now sit still under the pointer.</p>
+          <div class="links"><a class="btn" href="../fow/">Open Future of Work</a></div>
+        </div>
+      </div>
+      <div class="direction">
+        <p class="lab">Direction</p>
+        <figure>
+          <blockquote class="q">FoW: remove cursor-tracked card glow</blockquote>
+          <figcaption>— commit subject, <a href="https://github.com/zhangcheng0605/fableWebsite/commit/1a5d9c6d49a06fdf82a5ae9a501c54c529bf6a58" rel="noopener">1a5d9c6</a>, 8 Aug 2026 · <a href="https://claude.ai/code/session_01CEdozRzbkm98Rkd7qgtez7" rel="noopener">session</a></figcaption>
+        </figure>
+      </div>
+    </article>
+
+    <!-- 4 ─────────────────────────────────────────────────────────── -->
+    <article class="entry" id="play-the-build">
+      <div class="entry-head">
+        <span class="num">04</span>
+        <h2>The campus <q>Play the build</q> button</h2>
+        <span class="date">26 Jul 2026</span>
+        <span class="kinds"><span class="kind kind-sendback">send-back</span><span class="kind kind-constraint">constraint</span></span>
+      </div>
+      <div class="pair">
+        <div class="side rejected">
+          <h3>Rejected</h3>
+          <p style="margin-top:0">Twice. First the button handed the scroll to the browser and the whole assembly went past in about a second. Then the 75-second playback that replaced it.</p>
+          <p class="cap">The one-line change in <code>campus/campus.js</code>, dfbf736:</p>
+<pre><code><span class="del">-const PLAY_SECONDS = 75;  // start to finish, at a constant pace</span>
+<span class="add">+const PLAY_SECONDS = 38;  // start to finish, at a constant pace</span></code></pre>
+        </div>
+        <div class="side kept">
+          <h3>Kept</h3>
+          <p style="margin-top:0">A 38-second sweep driven on a rAF loop, with the same trapezoidal speed profile and every cancel path unchanged.</p>
+          <div class="links"><a class="btn" href="../campus/">Open the campus</a></div>
+        </div>
+      </div>
+      <div class="direction">
+        <p class="lab">Direction</p>
+        <figure>
+          <blockquote class="q">"Play the build" handed the whole five-viewport span to the browser's own smooth scroll, which crosses it in about a second: the parts blurred past before a single one could be seen landing.</blockquote>
+          <figcaption>— <a href="https://github.com/zhangcheng0605/fableWebsite/commit/4a5a321b740c4e93fe5b17730c3b0336d4f794a2" rel="noopener">4a5a321</a> <q class="q">Play the build slowly — a real 75-second playback, not a smooth-scroll jump</q>, 26 Jul 2026 15:58 · <a href="https://claude.ai/code/session_01N6y6RV4dr9jnyYE4sbctVD" rel="noopener">session</a></figcaption>
+        </figure>
+        <figure>
+          <blockquote class="q">75s read as slow rather than deliberate.</blockquote>
+          <figcaption>— <span class="arrow">six minutes later:</span> <a href="https://github.com/zhangcheng0605/fableWebsite/commit/dfbf736df61ab985899aaad8d0cb139a264c4acb" rel="noopener">dfbf736</a> <q class="q">Halve the build playback to 38 seconds</q>, 26 Jul 2026 16:04 · <a href="https://claude.ai/code/session_01N6y6RV4dr9jnyYE4sbctVD" rel="noopener">session</a></figcaption>
+        </figure>
+      </div>
+    </article>
+
+    <!-- 5 ─────────────────────────────────────────────────────────── -->
+    <article class="entry" id="comic-export">
+      <div class="entry-head">
+        <span class="num">05</span>
+        <h2>The flip-book export with nine pages</h2>
+        <span class="date">27 Jul 2026</span>
+        <span class="kinds"><span class="kind kind-sendback">send-back</span></span>
+      </div>
+      <div class="pair">
+        <div class="side rejected">
+          <h3>Rejected</h3>
+          <p class="none">Not on disk. The nine downscaled, recompressed pages were dropped before the book was committed, so they are not in the history — c8e61b3 is the only record of them.</p>
+        </div>
+        <div class="side kept">
+          <h3>Kept</h3>
+          <img class="small" src="../assets/thumbs/reject-comic-page01.jpg" width="400" height="600" alt="Witch of the Vending Machines chapter 1, page 1, at reduced size" loading="lazy">
+          <p class="cap"><code>comic/page01.jpg</code> (1024×1536, shown at 400px) — the first of the twelve real pages the <a href="../comic/flip.html">book</a> now reads directly.</p>
+        </div>
+      </div>
+      <div class="direction">
+        <p class="lab">Direction</p>
+        <figure>
+          <blockquote class="q">It carried 9 pages; the chapter has 12. Comparing hashes and dimensions, its pages are the repo's own page01-09 downscaled to 1000x1500 and recompressed to ~68% of their size — so the book was also lower quality than what comic/ already served. It now reads comic/page01-12.jpg directly: the real resolution, no duplicated JPEGs, and 3.05 MB of bundled art dropped.</blockquote>
+          <figcaption>— <a href="https://github.com/zhangcheng0605/fableWebsite/commit/c8e61b327ab0505cb1179115729d10e0df32fb7b" rel="noopener">c8e61b3</a> <q class="q">Turn chapter 1 into a page-turning book; unify the back-links</q>, 27 Jul 2026 · <a href="https://claude.ai/code/session_01GoUDxHLKofQrvm9oqaSiiW" rel="noopener">session</a></figcaption>
+        </figure>
+      </div>
+    </article>
+
+    <!-- 6 ─────────────────────────────────────────────────────────── -->
+    <article class="entry" id="lucky-bunny-bundle">
+      <div class="entry-head">
+        <span class="num">06</span>
+        <h2>Lucky Bunny as a self-extracting bundle</h2>
+        <span class="date">27 Jul 2026</span>
+        <span class="kinds"><span class="kind kind-constraint">constraint</span></span>
+      </div>
+      <div class="pair">
+        <div class="side rejected">
+          <h3>Rejected</h3>
+          <p class="none">Not on disk. The 1.84 MB bundle was unpacked before anything was committed; the history holds only the real files that came out of it.</p>
+        </div>
+        <div class="side kept">
+          <h3>Kept</h3>
+          <p style="margin-top:0">Real files — <code>lucky-bunny/index.html</code>, <code>game.html</code>, <code>app.js</code> and a vendored React — 246 KB on disk, with fonts fetched through the same Google Fonts link every other page uses.</p>
+          <div class="links"><a class="btn" href="../lucky-bunny/">Open Lucky Bunny</a></div>
+        </div>
+      </div>
+      <div class="direction">
+        <p class="lab">Direction</p>
+        <figure>
+          <blockquote class="q">The export was a 1.84 MB self-extracting bundle: React, the runtime and ~180 woff2 subsets all base64'd into one file that mints blob URLs at load. That is a fine way to hand someone a page and a poor way to serve one, so it is now real files — 246 KB on disk, and the 1.1 MB of inlined font subsets became a Google Fonts &lt;link&gt; that fetches only the latin cuts, which is what every other page here already does.</blockquote>
+          <figcaption>— <a href="https://github.com/zhangcheng0605/fableWebsite/commit/d33feb1134571af154cd5a9cee26de07018c77a0" rel="noopener">d33feb1</a> <q class="q">Add Lucky Bunny Fortunes, and bring the typing game into the light</q>, 27 Jul 2026 · <a href="https://claude.ai/code/session_01GoUDxHLKofQrvm9oqaSiiW" rel="noopener">session</a></figcaption>
+        </figure>
+      </div>
+    </article>
+
+    <!-- 7 ─────────────────────────────────────────────────────────── -->
+    <article class="entry" id="nav-pill-clicks">
+      <div class="entry-head">
+        <span class="num">07</span>
+        <h2>The nav pill that ate SENTINEL-9's play button</h2>
+        <span class="date">28 Jul 2026</span>
+        <span class="kinds"><span class="kind kind-sendback">send-back</span></span>
+      </div>
+      <div class="pair">
+        <div class="side rejected">
+          <h3>Rejected</h3>
+          <p class="cap" style="margin-top:0">The header as it was in <code>mech/index.html</code>, and what c341c3b did to it:</p>
+<pre><code><span class="del">-  .nav-wrap{position:fixed;top:16px;left:0;right:0;z-index:9;display:flex;justify-content:center;padding:0 20px}</span>
+<span class="add">+  .nav-wrap{position:fixed;top:16px;left:0;right:0;z-index:9;display:flex;justify-content:center;
++    padding:0 20px;pointer-events:none}          /* the bar spans the page; only the pill takes clicks */
++  .nav{pointer-events:auto}</span></code></pre>
+          <p class="cap">The bug was not found by reading. It was found by a gate that clicks the button the way a visitor would, without forcing the click through.</p>
+        </div>
+        <div class="side kept">
+          <h3>Kept</h3>
+          <p style="margin-top:0">The header passes pointer events through; only the pill takes clicks. PLAY ASSEMBLY sits above the nav layer and, under 900px, drops to the bottom-right corner where the pill cannot reach it.</p>
+          <div class="links"><a class="btn" href="../mech/">Open SENTINEL-9</a></div>
+        </div>
+      </div>
+      <div class="direction">
+        <p class="lab">Direction</p>
+        <figure>
+          <blockquote class="q">The nav pill I added to the mech page sits in a full-width fixed header at z-index 9. The header is invisible but it still spans the whole top of the page, so it sat directly over the PLAY ASSEMBLY button (top-right, z-index 6) and ate every click on it. The button was fine; nothing could reach it.</blockquote>
+          <figcaption>— <a href="https://github.com/zhangcheng0605/fableWebsite/commit/c341c3b448964be38396530d0516a1e96ce960ab" rel="noopener">c341c3b</a> <q class="q">Stop the nav bar swallowing clicks on SENTINEL-9's play button</q>, 28 Jul 2026 · <a href="https://claude.ai/code/session_016iqP1cjAaZ4SHqYp99SfR5" rel="noopener">session</a></figcaption>
+        </figure>
+        <figure>
+          <blockquote class="q">Verified with real (un-forced) clicks at 1280 and 375: the button starts the assembly, the label flips to STOP, the scroll animates through the phases, a second click halts it, and the nav links stay hittable.</blockquote>
+          <figcaption>— same commit, the verification paragraph</figcaption>
+        </figure>
+      </div>
+    </article>
+
+    <!-- 8 ─────────────────────────────────────────────────────────── -->
+    <article class="entry" id="audit">
+      <div class="entry-head">
+        <span class="num">08</span>
+        <h2>This week's audit</h2>
+        <span class="date">6–7 Sep 2026</span>
+        <span class="kinds"><span class="kind kind-kill">kill</span><span class="kind kind-constraint">constraint</span><span class="kind kind-rework">rework</span><span class="kind kind-sendback">send-back</span></span>
+      </div>
+      <div class="pair">
+        <div class="side rejected">
+          <h3>Rejected</h3>
+          <ul>
+            <li>A pulsing <q>Live</q> dot on the landing page over a paper-trading desk that had stopped on 17 Jul 2026 — 51 days earlier.</li>
+            <li>Full-resolution manga chapter pages, 2.3 MB of them, used as 400-pixel thumbnails.</li>
+            <li>The influencer card still describing the hawker-food pipeline from entry 02, a page that no longer existed.</li>
+            <li>Unrendered template placeholders left in <code>&lt;img src&gt;</code> and <code>&lt;path d&gt;</code>, so the browser fetched them as URLs and got a 404 twice per load.</li>
+          </ul>
+          <p class="cap">The lines 124571f removed from <code>index.html</code>:</p>
+<pre><code><span class="del">-      &lt;a href="trading/" class="nav-live"&gt;Trading &lt;i&gt;&lt;/i&gt;&lt;/a&gt;
+-              &lt;p class="tag"&gt;&lt;span class="live"&gt;&lt;i&gt;&lt;/i&gt;Live&lt;/span&gt; · paper money&lt;/p&gt;</span></code></pre>
+        </div>
+        <div class="side kept">
+          <h3>Kept</h3>
+          <p style="margin-top:0">The live pages, as they are now:</p>
+          <div class="links">
+            <a class="btn" href="../">Landing — snapshot label, real thumbnails</a>
+            <a class="btn" href="../trading/">Trading desk — dated snapshot</a>
+            <a class="btn" href="../comic/flip.html">Comic flip-book — no template 404s</a>
+            <a class="btn" href="../lucky-bunny/game.html">Lucky Bunny — no template 404s</a>
+          </div>
+        </div>
+      </div>
+      <div class="direction">
+        <p class="lab">Direction</p>
+        <figure>
+          <blockquote class="q">index.html: the trading desk is a paper-trading snapshot of 17 Jul 2026 and is now labelled that way (no pulsing 'live' dot); the influencer card describes the page that actually ships (campaign portfolio, not the earlier hawker-food pipeline)</blockquote>
+          <figcaption>— <a href="https://github.com/zhangcheng0605/fableWebsite/commit/124571f57c0839c6d64f20827b4c3aaa5f93aeb4" rel="noopener">124571f</a> <q class="q">Site-wide head pass, honest copy, fow logo fix, README</q>, 7 Sep 2026 · <a href="https://claude.ai/code/session_017RZjsJduUQiXB46x9zonWD" rel="noopener">session</a></figcaption>
+        </figure>
+        <figure>
+          <blockquote class="q">index.html: the seven manga cards used full-resolution chapter pages (2.3 MB) as ~400px thumbs; real 800px thumbnails now live in assets/thumbs/ (originals untouched). Landing bytes 3.2 MB -&gt; 1.7 MB desktop, 2.8 MB -&gt; 0.8 MB mobile</blockquote>
+          <figcaption>— <a href="https://github.com/zhangcheng0605/fableWebsite/commit/a056d055f4629bae1a96e073e29839f9d1ce4d2b" rel="noopener">a056d05</a> <q class="q">Landing, trading, influencer: real thumbnails, phone-safe hero, nav fixes</q>, 6 Sep 2026 · <a href="https://claude.ai/code/session_017RZjsJduUQiXB46x9zonWD" rel="noopener">session</a></figcaption>
+        </figure>
+        <figure>
+          <blockquote class="q">comic/flip.html: {{ sheet.frontSrc }} / backSrc were parsed as literal &lt;img src&gt; before hydration (2x 404 per load); bind via sc-camel-src and warm only the current sheet ±2 instead of all 12 pages up front</blockquote>
+          <figcaption>— <a href="https://github.com/zhangcheng0605/fableWebsite/commit/20d5b52bcb954f33af2d887b8f0296e1d28d18b0" rel="noopener">20d5b52</a> <q class="q">Readers &amp; games: fix template 404s, add ways back, lazy-load pages</q>, 6 Sep 2026 · <a href="https://claude.ai/code/session_017RZjsJduUQiXB46x9zonWD" rel="noopener">session</a></figcaption>
+        </figure>
+        <figure>
+          <blockquote class="q">lucky-bunny/game.html: same fix for &lt;path d="{{ mouthD }}"&gt;</blockquote>
+          <figcaption>— same commit</figcaption>
+        </figure>
+      </div>
+    </article>
+
+    </div><!-- /#pile -->
+
+    <section class="schema" id="schema" aria-labelledby="schema-h">
+      <h2 id="schema-h">Recording rejects from here on</h2>
+      <p>Each reject is logged as one line of JSON when it happens, with the rejected artefact kept under <code>assets/rejects/</code> rather than deleted:</p>
+<pre><code>{"project":"influencer","rejected":"assets/rejects/…","kept":"…","score":0.71,"threshold":0.80,"direction":"…","date":"…"}</code></pre>
+      <p><code>score</code> and <code>threshold</code> appear only when a gate actually produced one; a direction given by hand carries neither.</p>
+      <div class="foot">
+        <a class="btn" href="../">&larr; ZAC Studios</a>
+        <a class="btn btn-primary" href="../direction/">Director's cut &rarr;</a>
+      </div>
+      <footer class="colophon">Quotes are verbatim from <code>git log</code>; commit hashes link to the commits, session links to the Claude sessions named in their trailers.</footer>
+    </section>
+  </main>
+
+  <script>
+    /* the nav pill scrolls sideways on phones: fade its right edge only
+       while there is more to the right (see .nav.nav-more in the styles) */
+    (function () {
+      var nav = document.querySelector('.nav');
+      if (!nav) return;
+      function edge() {
+        nav.classList.toggle('nav-more', nav.scrollWidth - nav.clientWidth - nav.scrollLeft > 4);
+      }
+      edge();
+      nav.addEventListener('scroll', edge, { passive: true });
+      window.addEventListener('resize', edge);
+      if (document.fonts) document.fonts.ready.then(edge);
+    })();
+  </script>
+</body>
+</html>

@@ -358,6 +358,33 @@
       a.tile-wide .tile-thumb{aspect-ratio:16/9;height:auto;min-height:0;
         border-right:none;border-bottom:2px solid var(--border)}
     }
+    /* flagship card: a live, scaled-down FoW walkthrough on the left, copy on the right */
+    .tile-flag{margin-bottom:24px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);align-items:stretch;
+      border-color:rgba(139,61,255,.35);box-shadow:var(--shadow-purple)}
+    .tile-flag:hover{transform:none;border-color:var(--pink)}
+    /* no aspect-ratio here: with a definite row height it would transfer into the column's
+       intrinsic width and push the stage into the copy column; the row height rules on desktop */
+    .flag-stage{position:relative;overflow:hidden;background:#f4f5fb;border-right:2px solid var(--border);min-height:420px}
+    .flag-stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity .6s}
+    .flag-live{position:absolute;top:0;left:0;width:1280px;height:800px;border:0;transform-origin:0 0;pointer-events:none;
+      opacity:0;transition:opacity .6s;background:#f6f7fb}
+    .flag-stage.on .flag-live{opacity:1}
+    .flag-stage.on img{opacity:0}
+    .flag-open{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:flex-end;padding:16px;text-decoration:none;
+      background:linear-gradient(180deg,transparent 60%,rgba(56,35,92,.28));opacity:0;transition:opacity .25s}
+    .flag-open span{background:#fff;color:var(--violet);font-weight:800;padding:12px 18px;border-radius:99px;box-shadow:var(--shadow-purple)}
+    .flag-stage:hover .flag-open,.flag-open:focus-visible{opacity:1}
+    .flag-badge{position:absolute;top:14px;left:14px;display:inline-flex;align-items:center;gap:7px;padding:6px 12px;border-radius:99px;
+      background:rgba(255,255,255,.9);color:var(--violet);font-family:"JetBrains Mono",monospace;font-size:max(.72rem,12px);letter-spacing:.1em;text-transform:uppercase}
+    .flag-badge i{width:7px;height:7px;border-radius:50%;background:var(--purple);opacity:.5}
+    .flag-stage.on .flag-badge i{background:var(--green);opacity:1;animation:livedot 1.8s ease-out infinite}
+    .tile-flag .tile-body{padding:28px 30px 30px}
+    .tile-flag .tile-cta{text-decoration:none}
+    @media(max-width:860px){
+      .tile-flag{grid-template-columns:1fr}
+      .flag-stage{aspect-ratio:16/9;min-height:0;height:auto;border-right:none;border-bottom:2px solid var(--border)}
+      .flag-open{opacity:1;background:none}
+    }
     .live{display:inline-flex;align-items:center;gap:7px;color:var(--green)}
     .live i{width:7px;height:7px;border-radius:50%;background:var(--green);animation:livedot 1.8s ease-out infinite}
     .chip{font-size:.76rem;font-weight:600;padding:5px 13px;border-radius:99px;
@@ -468,6 +495,7 @@
       <a href="#three-d">3D Projects</a>
       <a href="trading/">Trading</a>
       <a href="#experience">Experience</a>
+      <a href="direction/">Direction</a>
       <span class="spacer"></span>
       <a href="#contact" class="nav-cta">Contact</a>
     </nav>
@@ -638,11 +666,34 @@
       <span class="deco deco-lg" style="left:1.5%;bottom:160px;animation-delay:2s" aria-hidden="true">&#10024;</span>
       <div class="band-inner">
         <div class="sec-head reveal"><span class="sec-index">02</span><h2>Projects</h2></div>
-        <p class="sec-sub reveal">Six things you can open right now — two games, a live trading desk, a
-          spreadsheet engine, a future-of-work demo, and a virtual influencer built on my own face. The three 3D worlds have a
+        <p class="sec-sub reveal">Six things you can open right now — the Future of Work workspace first, then two games, a
+          paper-trading desk, a spreadsheet engine, and a virtual influencer built on my own face. The three 3D worlds have a
           category of their own, <a href="#three-d"><b>just below</b></a>.
           <b>All of them were built by AI agents under my direction.</b>
           Click any card.</p>
+
+        <!-- flagship: the enterprise AI workspace, with a live preview of one persona's walkthrough
+             (loaded only when it scrolls into view on a fine-pointer screen; phones get the still) -->
+        <div class="tile tile-flag reveal">
+          <div class="flag-stage" data-src="fow/?persona=finance&amp;story=1&amp;embed=1">
+            <img src="assets/thumbs/fow.jpg" width="1280" height="720" loading="lazy"
+                 alt="The FoW lobby: the Mediacorp M over a seat picker of seven roles, Maya Chen selected">
+            <iframe class="flag-live" title="FoW preview — the finance seat's guided walkthrough" tabindex="-1" aria-hidden="true"></iframe>
+            <a class="flag-open" href="fow/" aria-label="Open FoW — the Future of Work workspace"><span>Open the workspace &rarr;</span></a>
+            <span class="flag-badge" aria-hidden="true"><i></i>Preview · finance seat</span>
+          </div>
+          <div class="tile-body">
+            <p class="tag">Flagship · FoW · one offline HTML file</p>
+            <h3>Future of Work &middot; an enterprise AI workspace</h3>
+            <p class="desc">Pick a seat — HR, FP&amp;A, procurement, IT ops, legal, sales or creative — and step
+              into that person's workday with an AI copilot already in it: approvals pre-read and risk-scored,
+              drafts waiting, the low-risk items stamped on Autopilot, an agent crew clearing the queue while
+              a guided tour walks you through it. Every response is simulated; nothing leaves the browser.</p>
+            <p class="metric">7 seats · 7 guided tours · 1 copilot · 0 servers</p>
+            <div class="foot"><span class="chip">Agentic workflows</span><span class="chip">MCP-style tiles</span><span class="chip">Simulated copilot</span><span class="chip">Vanilla JS</span></div>
+            <a class="tile-cta" href="fow/">Step in <i aria-hidden="true">&rarr;</i></a>
+          </div>
+        </div>
 
         <div class="tiles">
           <a class="tile reveal" href="influencer/" aria-label="See the project — a virtual influencer rendered from my own licensed likeness">
@@ -731,23 +782,6 @@
           </div>
         </a>
 
-        <a class="tile tile-wide reveal" href="fow/" aria-label="Open the demo — FoW, a Future of Work workspace with an AI copilot">
-          <div class="tile-thumb">
-            <img src="assets/thumbs/fow.svg" width="1280" height="720" loading="lazy"
-                 alt="FoW workspace: a seat picker of seven roles beside a queue of approvals pre-read by the copilot, one already stamped approved">
-          </div>
-          <div class="tile-body">
-            <p class="tag">Demo · one offline HTML file</p>
-            <h3>FoW &middot; Future of Work</h3>
-            <p class="desc">Pick a seat — HR, FP&amp;A, procurement, IT ops, legal, sales or creative — and step
-              into that person's workday with an AI copilot already in it: approvals pre-read and risk-scored,
-              drafts waiting, the low-risk items stamped on Autopilot. Every response is simulated; nothing
-              leaves the browser.</p>
-            <p class="metric">7 seats · 1 copilot · 0 servers</p>
-            <div class="foot"><span class="chip">Agentic workflows</span><span class="chip">Simulated copilot</span><span class="chip">Vanilla JS</span></div>
-            <span class="tile-cta">Step in <i aria-hidden="true">&rarr;</i></span>
-          </div>
-        </a>
       </div>
     </section>
 
@@ -939,12 +973,14 @@
       <div class="band-inner">
         <h2 class="reveal">Let's build the next thing.</h2>
         <p class="reveal">Looking for someone who can turn AI capability into shipped product?
-          The vanguard is already marching.</p>
+          The agents are already at work.</p>
         <a class="email reveal" href="mailto:zhangcheng1997@gmail.com">zhangcheng1997@gmail.com</a>
         <div class="socials reveal">
           <a href="https://www.linkedin.com/in/zhangcheng1997" target="_blank" rel="noopener">LinkedIn</a>
           <a href="https://github.com/zhangcheng0605" target="_blank" rel="noopener">GitHub</a>
           <a href="trading/">Trading desk</a>
+          <a href="direction/">Director's cut</a>
+          <a href="rejects/">Reject pile</a>
           <a href="#three-d">3D projects</a>
         </div>
       </div>
@@ -991,6 +1027,37 @@
         if (!ticking) { ticking = true; requestAnimationFrame(update); }
       }, { passive: true });
       update();
+    })();
+
+    /* flagship preview: mount the FoW walkthrough only while the card is on screen, and only
+       on screens that can afford it — an 800 KB app with animations is not a phone's preview */
+    (function () {
+      var stage = document.querySelector('.flag-stage');
+      if (!stage || !('IntersectionObserver' in window)) return;
+      var frame = stage.querySelector('.flag-live');
+      var ok = function () {
+        var c = navigator.connection || {};
+        return matchMedia('(min-width:700px) and (pointer:fine)').matches &&
+               !matchMedia('(prefers-reduced-motion:reduce)').matches && !c.saveData;
+      };
+      var fit = function () {
+        var w = stage.clientWidth, h = stage.clientHeight, sc = w / 1280;
+        frame.style.transform = 'scale(' + sc + ')';
+        frame.style.height = Math.ceil(h / sc) + 'px';
+      };
+      var mounted = false;
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (e.isIntersecting && ok()) {
+            if (!mounted) { mounted = true; fit(); frame.src = stage.getAttribute('data-src');
+              frame.addEventListener('load', function () { stage.classList.add('on'); }, { once: true }); }
+          } else if (mounted) {
+            mounted = false; stage.classList.remove('on'); frame.removeAttribute('src');
+          }
+        });
+      }, { rootMargin: '120px 0px' });
+      io.observe(stage);
+      addEventListener('resize', function () { if (mounted) fit(); }, { passive: true });
     })();
   </script>
   <script src="assets/bunny.js" defer></script>
