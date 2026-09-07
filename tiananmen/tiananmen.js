@@ -322,11 +322,16 @@ function whiteFence(x0, z0, x1, z1) {                 // crowd-control railing
 }
 
 const flowerPalette = [0xd42a3c, 0xe8b81e, 0xd668b4, 0xc23a20, 0xe8b81e];
+// Phones get half the planting: fourteen thousand instances is a lot of fill
+// for a small GPU, and at phone size the rings read the same at half density.
+const COARSE = matchMedia('(pointer: coarse)').matches;
 function flowerBed(w, d) {                            // concentric festival planting
   const g = new THREE.Group();
   const soil = box(w, 0.55, d, M.hedge); soil.position.y = 0.28; g.add(soil);
-  const n = Math.floor(w * d / 0.85);
-  const im = new THREE.InstancedMesh(new THREE.SphereGeometry(0.34, 7, 6), new THREE.MeshStandardMaterial({ roughness: .9, name: 'flowers' }), n);
+  const n = Math.floor(w * d / (COARSE ? 1.7 : 0.85));
+  // 5×4 segments: the beds are never seen from nearer than ~60m, a dozen
+  // pixels a bloom, where the fuller sphere bought nothing but triangles.
+  const im = new THREE.InstancedMesh(new THREE.SphereGeometry(0.34, 5, 4), new THREE.MeshStandardMaterial({ roughness: .9, name: 'flowers' }), n);
   const m4 = new THREE.Matrix4(), col = new THREE.Color();
   for (let i = 0; i < n; i++) {
     const fx = (Math.random() - 0.5) * (w - 0.8), fz = (Math.random() - 0.5) * (d - 0.8);
@@ -335,7 +340,7 @@ function flowerBed(w, d) {                            // concentric festival pla
     im.setMatrixAt(i, m4);
     im.setColorAt(i, col.setHex(flowerPalette[Math.min(4, Math.floor(rr * 3.4))]));
   }
-  im.castShadow = true; g.add(im);
+  g.add(im);
   return g;
 }
 
@@ -606,6 +611,9 @@ for (const s of [-1, 1]) {
 const lawnC = new THREE.Mesh(new THREE.PlaneGeometry(70, 30), grass); lawnC.rotation.x = -Math.PI / 2; lawnC.position.set(0, 0.14, 150); gardens.add(lawnC);
 const bC = flowerBed(64, 24); bC.position.set(0, 0, 150); gardens.add(bC);
 reg(gardens, 0.12, 0.20, 'pop', true);
+// …except the blooms: 0.6m blobs on flat paving cast nothing anyone can see,
+// and in the shadow pass they were half the triangles of the whole scene.
+gardens.traverse((n) => { if (n.isInstancedMesh) n.castShadow = false; });
 
 const fences = new THREE.Group();
 for (const s of [-1, 1]) {
@@ -634,8 +642,10 @@ let peopleCount = 0;
 {
   const N = 900;
   const mkIM = (geo, opts, count) => new THREE.InstancedMesh(geo, new THREE.MeshStandardMaterial(Object.assign({ roughness: .85 }, opts)), count);
-  const torsos = mkIM(new THREE.CapsuleGeometry(0.19, 0.42, 4, 10), { name: 'crowdJacket' }, N);
-  const heads = mkIM(new THREE.SphereGeometry(0.115, 10, 9), { roughness: .6, name: 'crowdSkin' }, N);
+  // The crowd is never nearer than ~80m — a person is twenty pixels tall, a
+  // torso four wide — so six segments round a capsule as well as ten did.
+  const torsos = mkIM(new THREE.CapsuleGeometry(0.19, 0.42, 2, 6), { name: 'crowdJacket' }, N);
+  const heads = mkIM(new THREE.SphereGeometry(0.115, 6, 5), { roughness: .6, name: 'crowdSkin' }, N);
   const hairs = mkIM(new THREE.SphereGeometry(0.121, 9, 7), { roughness: .9, name: 'crowdHair' }, N);
   const legs = mkIM(new THREE.CapsuleGeometry(0.075, 0.42, 3, 8), { name: 'crowdPants' }, N * 2);
   const arms = mkIM(new THREE.CapsuleGeometry(0.052, 0.36, 3, 8), { name: 'crowdArms' }, N * 2);
@@ -670,7 +680,7 @@ let peopleCount = 0;
   for (let k2 = 0; k2 < 430; k2++) put((Math.random() - 0.5) * 380, 125 + Math.random() * 420);   // across the square
   for (let k2 = 0; k2 < 120; k2++) put((Math.random() - 0.5) * 100, 395 + Math.random() * 110);   // around the monument
   torsos.count = heads.count = hairs.count = i; legs.count = arms.count = i * 2;
-  torsos.castShadow = legs.castShadow = true;
+  torsos.castShadow = true;   // the torso is the shadow; legs at that size are noise in the map
   peopleCount = i;
   crowd.add(torsos, heads, hairs, legs, arms);
 }
@@ -890,6 +900,7 @@ window.addEventListener('pointermove', (e) => {
   pitch = Math.max(-0.5, Math.min(0.6, pitch + (m.y - anchor.y) * 0.003));
   anchor = m;
   stopPlay();
+  requestStill();
 });
 const release = (e) => { active.delete(e.pointerId); anchor = dragging() ? mid() : null; };
 window.addEventListener('pointerup', release);
@@ -970,6 +981,7 @@ function playFrame(now) {
     readScroll();
   } else {
     target = v;
+    requestStill();
   }
   if (t >= 1) { stopPlay(); return; }
   play.raf = requestAnimationFrame(playFrame);
@@ -1000,10 +1012,10 @@ if (btnPlay) btnPlay.addEventListener('click', () => { if (play) stopPlay(); els
 const NAV_KEY = /^(Arrow|Page|Home|End| )/;
 ['wheel', 'touchstart'].forEach((ev) => window.addEventListener(ev, () => { if (play) stopPlay(); }, { passive: true }));
 window.addEventListener('keydown', (e) => { if (play && NAV_KEY.test(e.key)) stopPlay(); });
-document.addEventListener('visibilitychange', () => { if (document.hidden) stopPlay(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) stopPlay(); setLoop(); });
 
 const btnReset = document.getElementById('btnReset');
-if (btnReset) btnReset.addEventListener('click', () => { yaw = 0; pitch = 0; stopPlay(); });
+if (btnReset) btnReset.addEventListener('click', () => { yaw = 0; pitch = 0; stopPlay(); requestStill(); });
 
 // Export buttons live in the page's own chrome (the stage runs hide-chrome).
 document.querySelectorAll('[data-tiananmen-export]').forEach((btn) => {
@@ -1053,15 +1065,34 @@ function loop() {
   waveFlags(t);
   renderer.render(scene, camera);
 }
-renderer.setAnimationLoop(loop);
-
-/* Don't render a hidden canvas: the notes below the build are a long read,
-   and a 60fps WebGL loop behind them is pure battery burn. */
+/* The loop runs only while there is something to see it. Not with the stage
+   scrolled away — the notes below the build are a long read, and a 60fps
+   WebGL loop behind them is pure battery burn — not in a hidden tab, and not
+   under reduced motion, where the square is a still, redrawn on demand. */
+let stageVisible = true;
+function running() { return stageVisible && !document.hidden && !REDUCE; }
+function setLoop() { renderer.setAnimationLoop(running() ? loop : null); }
 new IntersectionObserver((entries) => {
-  const visible = entries.some((e) => e.isIntersecting);
-  renderer.setAnimationLoop(visible ? loop : null);
-  if (!visible) stopPlay();
+  stageVisible = entries.some((e) => e.isIntersecting);
+  setLoop();
+  if (!stageVisible) stopPlay();
 }, { rootMargin: '120px' }).observe(track);
+setLoop();
+/* With no loop, a drag, a button or the playback asks for one frame instead:
+   the build snapped straight to `target` (nothing to trail behind when
+   nothing is scrolling) and the flags left still. A no-op while the loop is
+   running; it will draw it anyway. */
+let stillQueued = false;
+function requestStill() {
+  if (running() || stillQueued) return;
+  stillQueued = true;
+  requestAnimationFrame(() => {
+    stillQueued = false;
+    smooth = target;
+    updateParts(smooth); placeCamera(smooth); paintChrome(smooth); labelPlayBtn(smooth);
+    renderer.render(scene, camera);
+  });
+}
 
 /* ================= counted, not typed =================
    The figures in the notes are read off the finished model, so the copy
@@ -1102,6 +1133,8 @@ if (REDUCE) {
   updateParts(1);
   placeCamera(1);
   paintChrome(1);
+  labelPlayBtn(1);
   if (titleCard) titleCard.style.opacity = '0';
+  renderer.render(scene, camera);   // the one frame: no loop is coming to draw it
 }
 window.dispatchEvent(new Event('tiananmen-ready'));

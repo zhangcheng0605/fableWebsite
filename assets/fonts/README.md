@@ -1,4 +1,15 @@
-# zacink.woff2
+# Fonts
+
+## fonts.css + g/ — the site's web fonts, self-hosted
+
+Every Google Fonts family and weight the pages use (Baloo 2, Quicksand, JetBrains Mono, Inter,
+Space Grotesk, Playfair Display, Bodoni Moda, Cormorant Garamond, IBM Plex Mono, Manrope, Bebas Neue,
+Archivo, Figtree, Gaegu, Caprasimo), latin + latin-ext subsets, as the woff2 files
+fonts.gstatic.com serves and the same `@font-face` rules (`font-display: swap`, `unicode-range`), so
+no page makes a third-party request for type. All are SIL OFL 1.1. Rebuild by re-running the
+fetch script in the session scratchpad against the `family=` lists in each page's old Google Fonts URL.
+
+## zacink.woff2
 
 The face the ink array (`assets/ink-array.js`) draws with — Noto Serif SC (OFL),
 cut to the 61 glyphs that piece can actually put on screen: the particle pool,

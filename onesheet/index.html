@@ -46,7 +46,7 @@
  * ============================================================ */
 :root{
   --bg:#fafafa; --canvas:#ffffff; --panel:#ffffff; --panel-2:#f4f4f5;
-  --ink:#1a1a1a; --ink-2:#52525b; --muted:#8b8b94;
+  --ink:#1a1a1a; --ink-2:#52525b; --muted:#6b6b75;   /* 5.3:1 on white, 4.8:1 on --panel-2 — status bar, fx, sliders read at 10–12px */
   --line:#e6e6ea; --line-2:#d4d4d8; --gridline:#ececf1;
   --accent:#4f46e5; --accent-ink:#ffffff; --accent-soft:#eef2ff; --accent-line:#c7d2fe;
   --blue:#2563eb; --orange:#ea580c; --red:#dc2626; --green:#16a34a; --amber:#f59e0b;
@@ -61,7 +61,7 @@
 }
 [data-theme="dark"]{
   --bg:#111318; --canvas:#15171d; --panel:#1a1d25; --panel-2:#22262f;
-  --ink:#e7e9ee; --ink-2:#a8adba; --muted:#767c8c;
+  --ink:#e7e9ee; --ink-2:#a8adba; --muted:#8b92a4;   /* ≥4.8:1 on every dark surface */
   --line:#272b35; --line-2:#333846; --gridline:#22262f;
   --accent:#7c74ff; --accent-ink:#0b0d12; --accent-soft:#1e1c3a; --accent-line:#3a3570;
   --blue:#5b93ff; --orange:#ff8a4c; --red:#ff6b6b; --green:#4ade80; --amber:#fbbf24;
@@ -356,9 +356,11 @@ kbd{
 /* in-cell widgets */
 .wg{display:flex;align-items:center;width:100%;height:100%;gap:4px;padding:0 2px}
 .wg input[type=range]{
-  -webkit-appearance:none;appearance:none;flex:1;height:4px;border-radius:3px;
-  background:var(--line-2);outline:none;min-width:20px;cursor:ew-resize;
+  -webkit-appearance:none;appearance:none;flex:1;height:24px;border-radius:3px;
+  /* the hit area is the full cell height; the painted track stays a 4px line down its middle */
+  background:linear-gradient(var(--line-2),var(--line-2)) center/100% 4px no-repeat;outline:none;min-width:20px;cursor:ew-resize;
 }
+.wg input[type=range]:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .wg input[type=range]::-webkit-slider-thumb{
   -webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:var(--accent);
   border:2px solid var(--canvas);box-shadow:0 1px 3px rgba(0,0,0,.3);cursor:ew-resize;
@@ -377,6 +379,9 @@ kbd{
 .wg .stars{display:flex;gap:1px;margin:auto;cursor:pointer;font-size:12px;line-height:1}
 .wg .stars i{font-style:normal;color:var(--line-2)}
 .wg .stars i.on{color:var(--amber)}
+
+/* visually hidden, still read by assistive tech (heading, grid hint, selection announcer) */
+.vh{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
 /* ============================================================ *
  * ===== STATUS BAR ============================================
@@ -568,11 +573,11 @@ kbd{
 [data-theme="win97"] .chartcard .ch-head{background:linear-gradient(90deg,#000080,#1084d0);color:#fff;border:0;padding:2px 3px}
 .chartcard .ch-title{flex:1;font-size:11.5px;font-family:var(--mono);color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 [data-theme="win97"] .chartcard .ch-title{color:#fff;font-family:var(--font);font-weight:700;font-size:12px}
-.chartcard .ch-t{font-size:10.5px;padding:2px 6px;border-radius:5px;color:var(--muted);border:1px solid transparent}
+.chartcard .ch-t{font-size:10.5px;padding:2px 6px;min-height:24px;border-radius:5px;color:var(--muted);border:1px solid transparent}
 .chartcard .ch-t.on{background:var(--accent-soft);color:var(--accent);border-color:var(--accent-line)}
 [data-theme="win97"] .chartcard .ch-t{border-radius:0;background:#c0c0c0;color:#000;box-shadow:var(--bevel-out)}
 [data-theme="win97"] .chartcard .ch-t.on{box-shadow:var(--bevel-in)}
-.chartcard .ch-x{width:18px;height:18px;display:grid;place-items:center;border-radius:4px;color:var(--muted)}
+.chartcard .ch-x{width:24px;height:24px;display:grid;place-items:center;border-radius:4px;color:var(--muted)}
 .chartcard .ch-x:hover{background:var(--red);color:#fff}
 [data-theme="win97"] .chartcard .ch-x{box-shadow:var(--bevel-out);background:#c0c0c0;color:#000;border-radius:0;font-size:9px;font-weight:700}
 .chartcard .ch-body{background:var(--panel);padding:2px}
@@ -716,11 +721,13 @@ kbd{
   </div>
 
   <!-- ===== grid ===== -->
-  <div id="gridwrap">
+  <div id="gridwrap" role="main">
+    <h1 class="vh">OneSheet — a spreadsheet in one HTML file</h1>
+    <p id="gridHelp" class="vh">Arrow keys move between cells, Enter moves down, Tab moves right. Shift+Tab from column A leaves the grid for the formula bar, and Shift+Tab again reaches the toolbar; Tab past the last column leaves it forwards. Ctrl+K opens the command palette.</p>
     <div id="corner" title="Select all (Ctrl+A)"></div>
     <div id="colhead"><div id="colheadInner"></div></div>
     <div id="rowhead"><div id="rowheadInner"></div></div>
-    <div id="scroller">
+    <div id="scroller" role="grid" aria-label="Spreadsheet" aria-rowcount="5000" aria-colcount="702" aria-multiselectable="true" aria-describedby="gridHelp">
       <div id="canvas">
         <div id="cellLayer"></div>
         <div id="refLayer"></div>
@@ -736,6 +743,7 @@ kbd{
   <!-- ===== status bar ===== -->
   <div id="statusbar">
     <span class="st" id="stSel">A1</span>
+    <span id="srSel" class="vh" aria-live="polite" aria-atomic="true"></span>
     <div class="stats" id="stStats"></div>
     <div class="spacer" style="flex:1"></div>
     <span class="st" id="stCells">0 cells</span>
@@ -752,7 +760,7 @@ kbd{
 <div id="ttBanner">⏳ TIME TRAVEL — READ ONLY</div>
 <div id="drawer">
   <div class="drow">
-    <h4>Time Travel</h4>
+    <h4 id="ttTitle">Time Travel</h4>
     <span class="mono" id="ttPos" style="color:var(--muted);font-size:11.5px"></span>
     <div class="spacer" style="flex:1"></div>
     <button class="mini" id="ttPlay">▶ Play</button>
@@ -764,7 +772,7 @@ kbd{
   <div id="ttTrackWrap">
     <div id="ttTicks"></div>
     <div id="ttLabel"></div>
-    <input type="range" id="ttRange" min="0" max="0" value="0" step="1">
+    <input type="range" id="ttRange" min="0" max="0" value="0" step="1" aria-labelledby="ttTitle">
   </div>
 </div>
 
@@ -2407,6 +2415,13 @@ const Grid = (() => {
     }
     $("#namebox").textContent = rectLabel(q);
     $("#stSel").textContent = rectLabel(q);
+    {   // screen readers: the cells are anonymous boxes, so say where we are and what is there
+      const cell = Engine.cell(K(sel.r, sel.c)), raw = cell ? cell.raw : null;
+      let say = rectLabel(q) + (raw == null || raw === "" ? ": empty" : ": " + raw);
+      if (cell && typeof raw === "string" && raw[0] === "=" && cell.value != null) say += " = " + (cell.value instanceof Err ? cell.value.code || "error" : String(cell.value));
+      const sr = $("#srSel");
+      if (sr.textContent !== say) sr.textContent = say;
+    }
     renderStats(q);
     for (const f of renderHooks) f(q);
   }
@@ -2964,6 +2979,17 @@ const Editor = (() => {
     }
     if (k === "Escape") { e.preventDefault(); cancel(); return; }
     if (k === "Enter") { e.preventDefault(); commit({ dr: e.shiftKey ? -1 : 1, dc: 0 }); return; }
+    if (k === "Tab" && e.shiftKey && target === "fx") {
+      // The formula bar sits in the page's tab order and commit() hands focus back to the grid, which
+      // would trap a keyboard user between the two. Shift+Tab here commits and steps back to the toolbar.
+      e.preventDefault();
+      const all = Array.from(document.querySelectorAll('a[href],button,input,select,textarea,[tabindex]:not([tabindex="-1"])'))
+        .filter(n => !n.disabled && n.tabIndex >= 0 && n.offsetParent !== null);
+      const back = all[all.indexOf(fxinput) - 1];
+      commit(null);
+      if (back) back.focus();
+      return;
+    }
     if (k === "Tab") { e.preventDefault(); commit({ dr: 0, dc: e.shiftKey ? -1 : 1 }); return; }
     if (k.startsWith("Arrow")) {
       const d = { ArrowUp: [-1, 0], ArrowDown: [1, 0], ArrowLeft: [0, -1], ArrowRight: [0, 1] }[k];
@@ -3011,6 +3037,10 @@ document.addEventListener("keydown", e => {
   if (e.key === "F9") { e.preventDefault(); Actions.run("chart"); return; }
 
   if (Editor.editing || (inField && t.id !== "scroller")) return;
+  // A focused button, link or select outside the grid (toolbar, drawer, chart cards) keeps its own
+  // keys: Tab moves on, Enter and Space activate it. The modifier shortcuts still work from anywhere.
+  const gridOwnsKeys = !t || t === document.body || t === document.documentElement || t === Grid.scroller || Grid.scroller.contains(t);
+  if (!gridOwnsKeys && !mod) return;
 
   const q = Grid.rect(), s = Grid.sel;
   switch (e.key) {
@@ -3018,7 +3048,9 @@ document.addEventListener("keydown", e => {
     case "ArrowDown":  e.preventDefault(); mod ? Grid.jump(1, 0, e.shiftKey)  : Grid.select(s.r + 1, s.c, e.shiftKey); return;
     case "ArrowLeft":  e.preventDefault(); mod ? Grid.jump(0, -1, e.shiftKey) : Grid.select(s.r, s.c - 1, e.shiftKey); return;
     case "ArrowRight": e.preventDefault(); mod ? Grid.jump(0, 1, e.shiftKey)  : Grid.select(s.r, s.c + 1, e.shiftKey); return;
-    case "Tab":        e.preventDefault(); Grid.select(s.r, s.c + (e.shiftKey ? -1 : 1), false); return;
+    case "Tab":        { const nc = s.c + (e.shiftKey ? -1 : 1);
+                         if (nc < 1 || nc > MAXCOL) return;   // at the sheet's edge Tab leaves the grid — the keyboard way out
+                         e.preventDefault(); Grid.select(s.r, nc, false); return; }
     case "Enter":      e.preventDefault(); Grid.select(s.r + (e.shiftKey ? -1 : 1), s.c, false); return;
     case "F2":         e.preventDefault(); Editor.begin(null, true); return;
     case "Home":       e.preventDefault(); mod ? Grid.select(1, 1, e.shiftKey) : Grid.select(s.r, 1, e.shiftKey); return;
@@ -3604,6 +3636,7 @@ const TimeTravel = (() => {
     range.max = String(n);
     if (!scrubbing) at = Commands.cursor;
     range.value = String(at);
+    range.setAttribute("aria-valuetext", describe(at));
     pos.textContent = "#" + at + " of " + n + (at < n ? " · " + (n - at) + " ahead" : " · present");
     drawTicks();
   }
@@ -3784,6 +3817,7 @@ const Widgets = (() => {
       }
       const inp = wrap.firstElementChild;
       inp.min = w.min; inp.max = w.max; inp.step = w.step || 1;
+      { const pk = parseKey(key); if (pk) inp.setAttribute("aria-label", A1(pk.r, pk.c) + " value"); }
       if (document.activeElement !== inp || dragging !== node._k) inp.value = String(isNum(v) ? v : w.min);
       wrap.lastElementChild.textContent = numToStr(isNum(v) ? v : w.min);
       return;
@@ -4091,10 +4125,12 @@ const Charts = (() => {
     head.append(title);
     ["bar", "line", "pie", "scatter"].forEach(t => {
       const b = el("button", "ch-t" + (ch.type === t ? " on" : ""), t);
+      b.setAttribute("aria-label", t + " chart");
       b.onclick = () => { ch.type = t; Array.from(head.querySelectorAll(".ch-t")).forEach(x => x.classList.toggle("on", x.textContent === t)); render(ch); Persist.save(); };
       head.append(b);
     });
     const x = el("button", "ch-x", "✕");
+    x.setAttribute("aria-label", "Close chart");
     x.onclick = () => remove(ch.id);
     head.append(x);
     n.append(head, el("div", "ch-body"));
@@ -4458,7 +4494,7 @@ const AIRuntime = (() => {
     if (args[0] instanceof Err) return args[0];
     const prompt = Engine.str(args[0] instanceof RangeRef ? flat1d(args[0])[0] : args[0]);
     const input = args.length > 1 ? tsvOf(args[1]) : "";
-    const h = hash32(prompt + " " + input + " " + (apiKey ? "live" : "mock"));
+    const h = hash32(prompt + "\0" + input + "\0" + (apiKey ? "live" : "mock"));
     const cell = Engine.cell(ctx.key);
     if (cell) cell.ai = true;
     if (!apiKey) return mock(prompt, input, h);

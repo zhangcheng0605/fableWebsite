@@ -344,11 +344,10 @@
         if (cur === target && performance.now() - lastScroll > 150) { running = false; return; }
         requestAnimationFrame(tick);
       };
-      const wake = () => {
-        lastScroll = performance.now();
-        if (!running) { running = true; requestAnimationFrame(tick); }
-      };
-      const setH = () => { document.body.style.height = scroller.scrollHeight + "px"; measure(); wake(); };
+      // kick: a single frame to re-apply cached geometry; wake: keep running while scrolling
+      const kick = () => { if (!running) { running = true; requestAnimationFrame(tick); } };
+      const wake = () => { lastScroll = performance.now(); kick(); };
+      const setH = () => { document.body.style.height = scroller.scrollHeight + "px"; measure(); kick(); };
       setH();
       addEventListener("resize", setH);
       addEventListener("load", setH);

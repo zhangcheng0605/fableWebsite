@@ -25,6 +25,8 @@
   "imports": { "three": "../campus/vendor/three/three.module.min.js" }
 }
 </script>
+<!-- three.js is Act II: fetch it from the head rather than after the blueprint script has run (must follow the import map) -->
+<link rel="modulepreload" href="../campus/vendor/three/three.module.min.js">
 <style>
   html, body { margin:0; padding:0; background:#e9e6e0; }
   body { font-family:"SF Mono","Cascadia Code",Consolas,monospace; }
@@ -41,6 +43,7 @@
            font-family:"IBM Plex Mono",ui-monospace,"SF Mono",Consolas,monospace; }
   #sec2d .pin { background:#e9e6e0; }
   #bp { position:absolute; inset:0; width:100%; height:100%; display:block; }
+  #bp.bp-wait { opacity:0; }   /* the timeline build is deferred; until it lands, the assembled fallback would flash and vanish */
   .bp-copy { position:absolute; left:5.2vw; top:8vh; max-width:min(30ch,26vw); pointer-events:none; }
   .bp-copy .kick { font-size:11px; letter-spacing:.22em; opacity:.5; margin-bottom:14px; }
   .bp-copy h1 { font-family:Archivo,"Helvetica Neue",sans-serif; font-weight:700; font-size:clamp(26px,3.1vw,54px);
@@ -87,6 +90,11 @@
   #handoff .up { opacity:.35; }
   #handoff .dn { color:#c8332b; }
   #handoff .rule { width:1px; height:56px; background:linear-gradient(#16161a33,#16161a); }
+  #handoff:focus { outline:none; }               /* the skip link lands here; the divider itself needs no ring */
+  /* skip link — the same pattern the other 3D pages use, in this scene's accent */
+  .skip-link{position:fixed;top:-100px;left:16px;z-index:100;padding:10px 18px;border-radius:99px;
+    background:#c8332b;color:#fff;font-weight:700;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12px;letter-spacing:.08em;transition:top .2s}
+  .skip-link:focus{top:16px}
 
   /* ===================== ACT II — real-time 3D assembly ===================== */
   #sec3d { height:1200vh; background:#eef0f2; }
@@ -96,12 +104,12 @@
   #flash { position:absolute; inset:0; background:#fff; opacity:0; pointer-events:none; }
   #title { position:absolute; top:11vh; left:0; right:0; text-align:center; pointer-events:none; color:#2b3238; transition:opacity .3s; }
   #title .nm { font-size:min(9vw,74px); letter-spacing:.3em; margin-left:.3em; font-weight:700; }
-  #title .sub { font-size:clamp(12px,2.6vw,15px); letter-spacing:.5em; margin-left:.5em; color:#6d7a85; margin-top:12px; }
+  #title .sub { font-size:clamp(12px,2.6vw,15px); letter-spacing:.5em; margin-left:.5em; color:#55616c; margin-top:12px; }
   #hud { position:absolute; left:4vw; bottom:8vh; pointer-events:none; color:#28323a; opacity:0; transition:opacity .2s; }
-  #hud .ph { font-size:13px; letter-spacing:.35em; color:#8794a0; margin-bottom:6px; }
+  #hud .ph { font-size:13px; letter-spacing:.35em; color:#55616c; margin-bottom:6px; }
   #hud .st { font-size:24px; letter-spacing:.12em; }
-  #hud .pc { font-size:13px; margin-top:6px; color:#8794a0; }
-  #hint { position:absolute; bottom:3.5vh; left:0; right:0; text-align:center; pointer-events:none; font-size:11px; letter-spacing:.45em; text-transform:uppercase; color:#8794a0; transition:opacity .4s; }
+  #hud .pc { font-size:13px; margin-top:6px; color:#55616c; }
+  #hint { position:absolute; bottom:3.5vh; left:0; right:0; text-align:center; pointer-events:none; font-size:11px; letter-spacing:.45em; text-transform:uppercase; color:#55616c; transition:opacity .4s; }
   #hint .coarse { display:none; }                /* "two fingers" wording only where there are fingers */
   @media (pointer:coarse){ #hint .fine { display:none; } #hint .coarse { display:inline; } }
   #hint.nogl { text-transform:none; letter-spacing:.06em; font-size:13px; color:#2b3238; padding:0 6vw; }   /* the WebGL fallback reads as a sentence */
@@ -145,6 +153,7 @@
 </style>
 </head>
 <body>
+<a class="skip-link" href="#handoff">Skip to the 3D assembly</a>
 <header class="nav-wrap">
   <nav class="nav" aria-label="Site">
     <a class="logo" href="../" aria-label="ZAC Studios — home">ZA<span>C</span></a>
@@ -157,6 +166,7 @@
     <a href="../#contact">Contact</a>
   </nav>
 </header>
+<main>
 <!-- ============================ ACT I — 2D exploded blueprint ============================ -->
 <section id="sec2d" class="act">
   <div class="pin">
@@ -477,7 +487,7 @@
   </button>
 </section>
 
-<div id="handoff">
+<div id="handoff" tabindex="-1">
   <div class="in">
     <div class="up">▲ MK XLIV · 2D blueprint</div>
     <div class="rule"></div>
@@ -488,7 +498,7 @@
 <!-- ============================ ACT II — real-time 3D assembly ============================ -->
 <section id="sec3d" class="act">
   <div class="pin">
-    <canvas id="stage"></canvas>
+    <canvas id="stage" role="img" aria-label="3D model of the SENTINEL-9 exo-frame, assembling as you scroll"></canvas>
     <div id="flash"></div>
     <div id="title"><div class="nm">SENTINEL-9</div><div class="sub">HEAVY EXO-FRAME · SCROLL TO ASSEMBLE</div></div>
     <div id="hud"><div class="ph" id="hudPh"></div><div class="st" id="hudSt"></div><div class="pc" id="hudPc"></div></div>
@@ -497,6 +507,7 @@
   <div id="bar" class="fixed"></div>
   <button id="playBtn" class="fixed">▶ PLAY ASSEMBLY</button>
 </section>
+</main>
 
 <script src="vendor/anime.umd.min.js"></script>
 <script>
@@ -523,12 +534,28 @@
   fitView();
   addEventListener('resize', fitView);
 
-  let tries = 0;
+  /* Building the timeline measures every module outline and flight path — the better part of a
+     second — so it no longer runs while the parser is still inside this script. The page paints,
+     three.js starts fetching, and the build waits for the act to be near the viewport and the
+     main thread to be idle. `build` reads scrollY itself, so a late start lands on the right frame. */
+  let tries = 0, kicked = false;
+  svg.classList.add('bp-wait');
   const start = () => {
-    if (window.anime) return build(window.anime);
+    if (window.anime){ svg.classList.remove('bp-wait'); return build(window.anime); }
     if (++tries < 60) setTimeout(start, 80);     // vendored bundle still parsing; if it never lands,
-  };                                             // the svg stays a clean assembled blueprint
-  start();
+    else svg.classList.remove('bp-wait');        // the svg stays a clean assembled blueprint
+  };
+  const kick = () => {
+    if (kicked) return;
+    kicked = true;
+    if (window.requestIdleCallback) requestIdleCallback(start, { timeout:1000 }); else setTimeout(start, 0);
+  };
+  if (window.IntersectionObserver){
+    const io = new IntersectionObserver((es) => { if (es.some(e => e.isIntersecting)){ io.disconnect(); kick(); } },
+                                        { rootMargin:'400px 0px' });
+    io.observe(act);
+    addEventListener('load', () => setTimeout(kick, 1500));   // belt and braces: never leave it unbuilt
+  } else kick();
 
   function build(A){
     const defs = svg.querySelector('defs');
@@ -577,8 +604,9 @@
 
     /* ---- each module gets its own curved flight path, in its local offset space ---- */
     const CX = 800, CY = 520, S = OPT.spread;
-    for (const el of parts){
-      const b = el.getBBox();
+    const boxes = parts.map(el => el.getBBox());   // read every box before the loop starts writing, one layout instead of one per module
+    parts.forEach((el, i) => {
+      const b = boxes[i];
       const dx = b.x + b.width / 2 - CX, dy = b.y + b.height / 2 - CY;
       const L = Math.hypot(dx, dy) || 1, d = S * (0.55 + Math.random() * 0.95);
       const fx = (dx / L) * d + (Math.random() - 0.5) * S * 0.5;
@@ -589,9 +617,22 @@
       const p = document.createElementNS(NS, 'path');
       p.setAttribute('d', 'M' + fx + ',' + fy + ' Q' + (fx * 0.5 - fy * bow) + ',' + (fy * 0.5 + fx * bow) + ' 0,0');
       arcs.appendChild(p);
-      el._path = A.svg.createMotionPath(p);
+      el._arc = p;
       A.utils.set(el, { translateX:fx, translateY:fy, rotate:el._fr, scale:el._fs, opacity:1 });
       A.utils.set(el._solid, { opacity:0 });
+    });
+    /* anime's own motion paths call getPointAtLength every time they are evaluated, and each call forces a
+       layout of the whole drawing — most of the build, and a layout per module per scrolled frame. Sample
+       each arc once, now that they are all in the DOM, and fly along the samples instead. */
+    const ARC_N = 48;
+    for (const el of parts){
+      const p = el._arc, L = p.getTotalLength(), pts = [];
+      for (let i = 0; i <= ARC_N; i++){ const q = p.getPointAtLength(L * i / ARC_N); pts.push(q.x, q.y); }
+      const along = (axis) => () => ({ from:0, to:1, modifier:(v) => {
+        const f = Math.min(ARC_N, Math.max(0, v * ARC_N)), i = Math.floor(f), t = f - i, j = Math.min(ARC_N, i + 1);
+        return pts[i * 2 + axis] * (1 - t) + pts[j * 2 + axis] * t;
+      } });
+      el._path = { translateX:along(0), translateY:along(1) };
     }
 
     const ordered = parts.slice().sort((a, b) => (+a.dataset.o) - (+b.dataset.o));

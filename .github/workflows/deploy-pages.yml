@@ -34,4 +34,9 @@ jobs:
             assets/film/gate-sm,
             assets/film/vanguard,
             assets/film/vanguard-sm,
-            assets/fonts/build-subset.py
+            assets/fonts/build-subset.py,
+            campus/vendor/three/three.module.js,
+            campus/vendor/three/three.core.js,
+            campus/vendor/three/OrbitControls.js,
+            campus/vendor/three/OBJExporter.js,
+            campus/vendor/three/GLTFExporter.js

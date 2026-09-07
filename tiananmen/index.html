@@ -54,6 +54,9 @@
       --vermilion:#b5382a; /* the one colour borrowed from the scene */
       --radius:18px;
       --grad:linear-gradient(95deg,#ef1f96,#7a2df0 46%,#0f9fe0);
+      /* the same sweep, deeper, for anything with white text on it: --grad
+         is 3.0:1 at the cyan end, this holds 5.5:1 across (WCAG 1.4.3) */
+      --cta-text:linear-gradient(95deg,#c41377,#5b1fc4 46%,#0a6f9e);
       --glass:rgba(255,255,255,.86);
     }
     *{margin:0;padding:0;box-sizing:border-box}
@@ -68,7 +71,7 @@
     :focus-visible{outline:3px solid var(--ring);outline-offset:3px;border-radius:6px}
     .mono{font-family:"JetBrains Mono",monospace}
     .skip-link{position:fixed;top:-100px;left:16px;z-index:100;padding:10px 18px;border-radius:99px;
-      background:var(--pink);color:#fff;font-weight:700;transition:top .2s}
+      background:var(--pink-ink);color:#fff;font-weight:700;transition:top .2s}
     .skip-link:focus{top:16px}
 
     .bg{position:fixed;inset:0;z-index:-2;pointer-events:none;background:
@@ -84,7 +87,8 @@
          backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
          box-shadow:0 10px 34px rgba(139,61,255,.14)}
     .nav a{font-size:.92rem;color:var(--foreground);font-weight:600;transition:color .2s;padding:8px 2px;white-space:nowrap}
-    .nav a:hover,.nav a[aria-current]{color:var(--pink)}
+    .nav a:hover{color:var(--pink)}
+    .nav a[aria-current]{color:var(--pink-ink)} /* the deeper pink: this one is read, not just seen */
     .logo{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.1rem;color:var(--foreground)!important}
     .logo span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
     .nav-live{display:inline-flex;align-items:center;gap:7px}
@@ -125,7 +129,7 @@
       border-radius:99px;padding:9px 14px;line-height:1;transition:border-color .2s,color .2s,background .2s;
       backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
     .hud-btns button:hover{border-color:var(--pink);color:var(--pink-ink)}
-    .hud-btns button.active{background:var(--grad);color:#fff;border-color:transparent;font-weight:700}
+    .hud-btns button.active{background:var(--cta-text);color:#fff;border-color:transparent;font-weight:700}
 
     /* title card over the empty site */
     #titleCard{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;justify-content:center;
@@ -241,7 +245,7 @@
       border:2px solid var(--border);
       background:#fff;color:var(--violet);transition:transform .2s,border-color .2s,box-shadow .2s,color .2s}
     .btn:hover{transform:translateY(-2px);border-color:var(--pink);color:var(--pink)}
-    .btn-primary{background:var(--grad);color:#fff;border-color:transparent;
+    .btn-primary{background:var(--cta-text);color:#fff;border-color:transparent;
       box-shadow:0 10px 30px rgba(255,63,174,.28)}
     .btn-primary:hover{color:#fff}
     .btn-ghost:hover{border-color:var(--pink);color:var(--pink)}
@@ -283,7 +287,8 @@
     <!-- ===== the scroll-raised gate ===== -->
     <section id="build" aria-label="Tiananmen, raised as you scroll">
       <div class="sticky">
-        <three-d-stage name="tiananmen" background="#a9cbe4" hide-chrome></three-d-stage>
+        <three-d-stage name="tiananmen" background="#a9cbe4" hide-chrome
+          aria-label="3D model of Tiananmen and the square, raised as you scroll"></three-d-stage>
         <div class="stage-veil" aria-hidden="true"></div>
 
         <div id="titleCard">
@@ -295,7 +300,7 @@
         </div>
 
         <div id="hud">
-          <p class="hud-title">Tiananmen · 天安门</p>
+          <p class="hud-title">Tiananmen · <span lang="zh">天安门</span></p>
           <div class="hud-btns">
             <button id="btnPlay" type="button">Raise the gate</button>
             <button id="btnReset" type="button">Reset view</button>
