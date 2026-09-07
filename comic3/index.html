@@ -5,16 +5,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#fdf4ff">
-  <title>Witch of the Vending Machines — Ch.3 · Zhang Cheng</title>
-  <meta name="description" content="Witch of the Vending Machines — an AI-generated anime comic. Chapter 2: Exact Change.">
+  <title>Witch of the Vending Machines — Ch.3 · ZAC Studios</title>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:url" content="https://zhangcheng0605.github.io/fableWebsite/comic3/">
+  <link rel="canonical" href="https://zhangcheng0605.github.io/fableWebsite/comic3/">
+  <meta name="description" content="Witch of the Vending Machines — an AI-generated anime comic. Chapter 3: No Refunds. Exact change does not buy you out. It buys you in.">
   <meta property="og:title" content="Witch of the Vending Machines — Chapter 3: No Refunds">
   <meta property="og:description" content="Exact change does not buy you out. It buys you in. Written and drawn with AI.">
   <meta property="og:type" content="article">
-  <meta property="og:image" content="page01.jpg">
+  <meta property="og:image" content="https://zhangcheng0605.github.io/fableWebsite/comic3/page01.jpg">
+  <meta property="og:image:width" content="1400">
+  <meta property="og:image:height" content="2100">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥤</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
   <style>
     :root{
       /* design tokens — shadcn/ui architecture, neon-noir brand */
@@ -46,6 +52,7 @@
     .skip-link{position:fixed;top:-100px;left:16px;z-index:100;padding:10px 18px;border-radius:99px;
       background:var(--primary);color:var(--primary-foreground);font-weight:600;transition:top .2s}
     .skip-link:focus{top:16px}
+    #reader:focus{outline:none}
 
     /* ambient: neon bloom + grain */
     .amb{position:fixed;inset:0;z-index:0;pointer-events:none;background:
@@ -161,6 +168,12 @@
     @media (max-width:600px){
       .reader{gap:11svh;padding-top:11svh}
       .cap{flex-wrap:wrap;gap:10px}
+      /* the fixed chrome sits on the cover art's baked-in masthead on phones —
+         frost the back link and the meter so both stay legible over it */
+      .back,.meter{background:rgba(253,244,255,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+        box-shadow:0 2px 12px rgba(56,35,92,.10)}
+      .back{margin:0;padding:8px 14px;border-radius:999px}
+      .meter{padding:6px 12px 7px;border-radius:14px}
     }
     @media (prefers-reduced-motion:reduce){
       .mask>span,.fade-in{transition:none;transform:none;opacity:1}
@@ -203,7 +216,7 @@
     </section>
 
     <!-- pages -->
-    <main class="reader" id="reader"></main>
+    <main class="reader" id="reader" tabindex="-1"></main>
 
     <!-- end -->
     <section class="endcard" id="endcard">
@@ -286,38 +299,76 @@
       meterEl.textContent = "EXACT";
       pbar.style.transform = "scaleX(1)";
     } else {
-      let cur = window.scrollY;
-      const setH = () => { document.body.style.height = scroller.scrollHeight + "px"; };
-      setH();
-      addEventListener("resize", setH);
-      addEventListener("load", setH);
-      frames.forEach((im) => im.addEventListener("load", setH));
+      let cur = window.scrollY, max = 1, vh = innerHeight;
+      let running = false, lastScroll = 0, lastMeter = "";
+      // Page geometry is static inside the transformed #scroller, so measure it
+      // once per resize/load instead of forcing a layout on every frame.
+      let tops = [], hts = [];
+      const measure = () => {
+        vh = innerHeight;
+        max = Math.max(scroller.scrollHeight - vh, 1);
+        tops = frames.map((im) => {
+          let y = 0, el = im.parentElement;
+          while (el && el !== scroller) { y += el.offsetTop; el = el.offsetParent; }
+          return y;
+        });
+        hts = frames.map((im) => im.parentElement.offsetHeight);
+      };
 
       const tick = () => {
-        const max = Math.max(scroller.scrollHeight - innerHeight, 1);
-        cur = lerp(cur, window.scrollY, 0.085);
-        if (Math.abs(cur - window.scrollY) < 0.05) cur = window.scrollY;
+        const target = window.scrollY;
+        cur = lerp(cur, target, 0.085);
+        if (Math.abs(cur - target) < 0.05) cur = target;
         scroller.style.transform = `translate3d(0,${-cur}px,0)`;
 
         const p = clamp(cur / max, 0, 1);
         pbar.style.transform = `scaleX(${p})`;
-        meterEl.textContent = fmtChange(p);
+        const txt = fmtChange(p);
+        if (txt !== lastMeter) { lastMeter = txt; meterEl.textContent = txt; }
 
         // cover parallax + fade
-        if (cur < innerHeight * 1.2) {
+        if (cur < vh * 1.2) {
           coverArt.style.transform = `translateY(${cur * 0.35}px)`;
-          coverArt.style.opacity = `${1 - clamp(cur / (innerHeight * 0.9), 0, 1) * 0.9}`;
+          coverArt.style.opacity = `${1 - clamp(cur / (vh * 0.9), 0, 1) * 0.9}`;
         }
-        // inner parallax per page
-        for (const im of frames) {
-          const r = im.parentElement.getBoundingClientRect();
-          if (r.bottom < -80 || r.top > innerHeight + 80) continue;
-          const rel = (r.top + r.height / 2 - innerHeight / 2) / innerHeight;
-          im.style.transform = `scale(1.06) translateY(${(-rel * 3).toFixed(3)}%)`;
+        // inner parallax per page (cached geometry — no layout reads in the loop)
+        for (let i = 0; i < frames.length; i++) {
+          const top = tops[i] - cur, h = hts[i];
+          if (top + h < -80 || top > vh + 80) continue;
+          const rel = (top + h / 2 - vh / 2) / vh;
+          frames[i].style.transform = `scale(1.06) translateY(${(-rel * 3).toFixed(3)}%)`;
         }
+        // run only while scrolling: once the lerp has settled and the wheel has
+        // been quiet for ~150ms, stop — the scroll listener wakes it again
+        if (cur === target && performance.now() - lastScroll > 150) { running = false; return; }
         requestAnimationFrame(tick);
       };
-      requestAnimationFrame(tick);
+      const wake = () => {
+        lastScroll = performance.now();
+        if (!running) { running = true; requestAnimationFrame(tick); }
+      };
+      const setH = () => { document.body.style.height = scroller.scrollHeight + "px"; measure(); wake(); };
+      setH();
+      addEventListener("resize", setH);
+      addEventListener("load", setH);
+      addEventListener("scroll", wake, { passive: true });
+      frames.forEach((im) => im.addEventListener("load", setH));
+      if ("ResizeObserver" in window) new ResizeObserver(setH).observe(scroller);
+
+      // The scroller is position:fixed, so native focus scrolling can't reach it:
+      // pull a focused control into view ourselves, and make the skip link land
+      // on the reader (WCAG 2.4.1 / 2.4.7).
+      addEventListener("focusin", (e) => {
+        const el = e.target;
+        if (!(el instanceof Element) || !scroller.contains(el)) return;
+        const r = el.getBoundingClientRect();
+        if (r.top >= 0 && r.bottom <= vh) return;
+        const y = clamp(r.top + cur - Math.max(0, (vh - r.height) / 2), 0, max);
+        cur = y; window.scrollTo(0, y); wake();
+      });
+      document.querySelector(".skip-link").addEventListener("click", (e) => {
+        e.preventDefault(); reader.focus({ preventScroll: true });
+      });
     }
 
     document.getElementById("again").addEventListener("click", () =>

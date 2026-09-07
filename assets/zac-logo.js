@@ -12,11 +12,12 @@
      2. orbit controls are off and the mark sways on its own axis instead —
         a hero must never eat a scroll, and a wordmark that turns all the way
         around spends half its time backwards
-     3. the render loop parks itself when the hero scrolls away, and never
-        starts at all under prefers-reduced-motion (one still frame instead)
+     3. the render loop parks itself when the hero scrolls away, and the
+        whole thing is skipped — three.js never fetched — on phones, coarse
+        pointers, data-saver, low memory and prefers-reduced-motion
 
-   No WebGL, or anything thrown on the way up, leaves the flat SVG lockup in
-   the markup untouched. */
+   No WebGL, a lost WebGL context, or anything thrown on the way up, leaves
+   the flat SVG lockup in the markup untouched. */
 
 const host = document.querySelector('.hero-logo');
 const STILL = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -24,7 +25,11 @@ const STILL = matchMedia('(prefers-reduced-motion: reduce)').matches;
 function hasWebGL() {
   try {
     const c = document.createElement('canvas');
-    return !!(c.getContext('webgl2') || c.getContext('webgl'));
+    const gl = c.getContext('webgl2') || c.getContext('webgl');
+    // Release the probe: a page only gets a handful of WebGL contexts, and
+    // the real one is created by the stage a moment later.
+    if (gl) { const ext = gl.getExtension('WEBGL_lose_context'); ext && ext.loseContext(); }
+    return !!gl;
   } catch (e) {
     return false;
   }
@@ -42,13 +47,49 @@ function hasWebGL() {
 // correct the entire time this waits; the 3D mark fades in over it a beat
 // later. The idle callback keeps it off the critical path, and the timeout
 // means a permanently busy tab still gets its logo.
-if (host && hasWebGL()) {
+//
+// Phones and constrained devices never get this far: three.js is ~700 KB to
+// download, unpack and compile for a decorative mark that a small GPU then
+// has to render every frame — the flat lockup is the design there. Desktop
+// keeps the 3D mark. hasWebGL() runs last so those devices never even open a
+// probe context.
+const LOW = STILL
+  || matchMedia('(pointer: coarse)').matches
+  || innerWidth <= 768
+  || !!(navigator.connection && navigator.connection.saveData)
+  || (navigator.deviceMemory !== undefined && navigator.deviceMemory < 4);
+if (host && !LOW && hasWebGL()) {
   const go = () => boot().catch(() => { /* flat lockup stays */ });
   const soon = () => (window.requestIdleCallback
     ? requestIdleCallback(go, { timeout: 1800 })
     : setTimeout(go, 250));
-  if (document.readyState === 'complete') soon();
-  else addEventListener('load', soon, { once: true });
+  // ...and only once the hero is actually on screen — a visitor who lands on
+  // #projects or #manga never pays for it. A fragment landing glides away
+  // from the hero smoothly (html{scroll-behavior:smooth}), and the glide can
+  // begin a good while after load — so when the hash points below the fold,
+  // the observer starts only after that scroll has happened and gone quiet.
+  // If the browser never scrolls at all, a timeout starts it anyway.
+  const settled = (fn) => {
+    let t = 0;
+    function done() { removeEventListener('scroll', bump); fn(); }
+    function bump() { clearTimeout(t); t = setTimeout(done, 250); }
+    addEventListener('scroll', bump, { passive: true });
+    setTimeout(() => { if (!t) bump(); }, 2500);
+  };
+  const whenSeen = () => {
+    if (!('IntersectionObserver' in window)) return soon();
+    const io = new IntersectionObserver((entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      soon();
+    }, { threshold: 0 });
+    const observe = () => io.observe(host);
+    const target = location.hash.length > 1 && document.getElementById(location.hash.slice(1));
+    if (target && target.getBoundingClientRect().top > innerHeight) settled(observe);
+    else observe();
+  };
+  if (document.readyState === 'complete') whenSeen();
+  else addEventListener('load', whenSeen, { once: true });
 }
 
 async function boot() {
@@ -323,16 +364,13 @@ async function boot() {
 
   host.classList.add('is-3d');
 
-  // Reduced motion: one still frame of the mark, then nothing moves again.
-  if (STILL) {
-    stage._loop = () => stage._renderer.render(stage._scene, stage._camera);
-    stage._renderer.setAnimationLoop(() => {
-      stage._loop();
-      stage._renderer.setAnimationLoop(null);
-    });
-    new ResizeObserver(() => { frame(); stage._loop(); }).observe(stage);
-    return;
-  }
+  // A lost WebGL context (a backgrounded tab on iOS, a GPU reset) would leave
+  // a blank box where the mark was: hand the hero back to the flat lockup
+  // until the browser restores the context. three.js re-initialises itself on
+  // restore, so the 3D mark simply fades back in over it.
+  const glCanvas = stage._renderer.domElement;
+  glCanvas.addEventListener('webglcontextlost', () => host.classList.remove('is-3d'));
+  glCanvas.addEventListener('webglcontextrestored', () => host.classList.add('is-3d'));
 
   // ===== FX: drifting embers, hover petals and sparks, click to burst =====
   const clock = new THREE.Clock();

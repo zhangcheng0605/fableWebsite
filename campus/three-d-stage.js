@@ -1,5 +1,5 @@
 // @ds-adherence-ignore -- omelette starter scaffold (raw elements/hex/px by design)
-// Copied omelette starter. Re-running copy_starter_component with this kind overwrites this file with the latest version (page content is unaffected).
+// Copied omelette starter. Re-running copy_starter_component with this kind overwrites this file with the latest version (page content is unaffected) — and would drop the site-local edits below: the vendored import map in this header, the WebGL context-loss handling in _boot(), and the three changes listed in the usage block.
 /* BEGIN USAGE */
 /**
  * <three-d-stage> — 3D object viewer + exporter shell (three.js).
@@ -18,27 +18,30 @@
  * OBJ + MTL or GLB (binary glTF). FBX cannot be exported in the browser;
  * GLB is the interchange format every modern 3D tool imports.
  *
- * three.js loads through the page's import map. Include this EXACT pinned
- * map in <head>, before any module runs — versions and integrity hashes
- * stay together (same map the "3D object" skill mandates):
+ * three.js loads through the page's import map. three.js is vendored under
+ * campus/vendor/three — see its README; do not load from a CDN. Include this
+ * map in <head>, before any module runs (paths are relative to the consumer
+ * page: campus/index.html uses it as written, index.html prefixes ./campus/):
  *
  *   <script type="importmap">
  *   {
  *     "imports": {
- *       "three": "https://unpkg.com/three@0.184.0/build/three.module.js",
- *       "three/addons/controls/OrbitControls.js": "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js",
- *       "three/addons/exporters/OBJExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js",
- *       "three/addons/exporters/GLTFExporter.js": "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js"
- *     },
- *     "integrity": {
- *       "https://unpkg.com/three@0.184.0/build/three.module.js": "sha384-8FCZ1eVO6it4+pbec2aDtnTrwjWXZLJRC+MAGCIPDgsYnUrl/E0A2YlF8ioMKI/J",
- *       "https://unpkg.com/three@0.184.0/build/three.core.js": "sha384-dw2ooPewaEIrAgl6oFDBmmBWCE9oW9LxRGcfwZ0hLvEprzo202wXl7vCYHRlSnOT",
- *       "https://unpkg.com/three@0.184.0/examples/jsm/controls/OrbitControls.js": "sha384-4rziNxOBZKQ69i+w+f89KJ55TCYquwchVbByQwmaOeIOXdOU2PLDn3kOfXHwIJC9",
- *       "https://unpkg.com/three@0.184.0/examples/jsm/exporters/OBJExporter.js": "sha384-nbwtoZENJD3Vq+ACK0CuGQdPMuDWHkamC2KJD70EV5nfg6jQjfppKOea07YJN+N3",
- *       "https://unpkg.com/three@0.184.0/examples/jsm/exporters/GLTFExporter.js": "sha384-VofkvpG6HERhFCYbsUOHeNXBCqID2nfqkQqnVzE1jc/oPcz+qJ13ADdXH08hE+cQ"
+ *       "three": "./vendor/three/three.module.min.js",
+ *       "three/addons/controls/OrbitControls.js": "./vendor/three/OrbitControls.min.js",
+ *       "three/addons/exporters/OBJExporter.js": "./vendor/three/OBJExporter.min.js",
+ *       "three/addons/exporters/GLTFExporter.js": "./vendor/three/GLTFExporter.min.js"
  *     }
  *   }
  *   </script>
+ *
+ * Provenance of the vendored unminified sources (sha384 of each file as
+ * shipped in three@0.184.0 — the .min.js builds are made from these, see the
+ * README for the rebuild command):
+ *   build/three.module.js                   8FCZ1eVO6it4+pbec2aDtnTrwjWXZLJRC+MAGCIPDgsYnUrl/E0A2YlF8ioMKI/J
+ *   build/three.core.js                     dw2ooPewaEIrAgl6oFDBmmBWCE9oW9LxRGcfwZ0hLvEprzo202wXl7vCYHRlSnOT
+ *   examples/jsm/controls/OrbitControls.js  4rziNxOBZKQ69i+w+f89KJ55TCYquwchVbByQwmaOeIOXdOU2PLDn3kOfXHwIJC9
+ *   examples/jsm/exporters/OBJExporter.js   nbwtoZENJD3Vq+ACK0CuGQdPMuDWHkamC2KJD70EV5nfg6jQjfppKOea07YJN+N3
+ *   examples/jsm/exporters/GLTFExporter.js  VofkvpG6HERhFCYbsUOHeNXBCqID2nfqkQqnVzE1jc/oPcz+qJ13ADdXH08hE+cQ
  *
  * Usage:
  *   <style>three-d-stage:not(:defined){visibility:hidden}</style>
@@ -244,6 +247,19 @@
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       this._renderer = renderer;
       this.shadowRoot.insertBefore(renderer.domElement, this._err);
+      // A lost context (a backgrounded tab on iOS, a GPU reset) would
+      // otherwise be a silent black stage. three.js preventDefault()s the
+      // event so the browser tries to restore it, and re-initialises itself
+      // when it does — the message just covers the gap.
+      renderer.domElement.addEventListener('webglcontextlost', () => {
+        this._err.style.display = 'flex';
+        this._err.textContent =
+          'The 3D view lost its graphics context — it will resume when the browser restores it.';
+      });
+      renderer.domElement.addEventListener('webglcontextrestored', () => {
+        this._err.style.display = 'none';
+        this._err.textContent = '';
+      });
 
       const scene = new THREE.Scene();
       this._scene = scene;

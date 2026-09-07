@@ -3,17 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tiananmen — the Gate of Heavenly Peace, raised as you scroll · Zhang Cheng</title>
-  <meta name="description" content="A procedural three.js Tiananmen: the five arched tunnels, the double-eaved gatehouse, the marble bridges over the Golden Water moat and 900 people on the square — every mesh hand-written, every texture painted into a canvas at runtime, and exportable as GLB or OBJ.">
+  <title>Tiananmen — the Gate of Heavenly Peace in 3D · ZAC Studios</title>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:url" content="https://zhangcheng0605.github.io/fableWebsite/tiananmen/">
+  <link rel="canonical" href="https://zhangcheng0605.github.io/fableWebsite/tiananmen/">
+  <meta name="description" content="A procedural three.js Tiananmen: five arched tunnels, the double-eaved gatehouse, marble bridges and 900 people on the square, raised as you scroll.">
   <meta property="og:title" content="Tiananmen — the Gate of Heavenly Peace, raised as you scroll">
   <meta property="og:description" content="No model files, no image files. Five real arch tunnels cut through 36 metres of extruded wall, a swept curve makes the golden hip roof, and the whole square — Monument, Great Hall, Museum, Mausoleum — drops into place phase by phase as you scroll.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="../assets/thumbs/tiananmen.svg">
+  <meta property="og:image" content="https://zhangcheng0605.github.io/fableWebsite/assets/thumbs/tiananmen.jpg">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="720">
   <meta name="theme-color" content="#fdf4ff">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#127983;</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Quicksand:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Quicksand:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Quicksand:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
 
   <!-- three.js is served from this repo — no CDN, works offline. The pinned
        copy and the <three-d-stage> element live in campus/, which is where
@@ -28,6 +34,10 @@
     }
   }
   </script>
+  <!-- three.js is the page: fetch it now rather than after three-d-stage.js
+       has run and reached its import() — one round trip less before the scene -->
+  <link rel="modulepreload" href="../campus/vendor/three/three.module.min.js">
+  <link rel="modulepreload" href="../campus/vendor/three/OrbitControls.min.js">
 
   <style>
     :root{
@@ -80,8 +90,18 @@
     .nav-live{display:inline-flex;align-items:center;gap:7px}
     .nav-live i{width:6px;height:6px;border-radius:50%;background:var(--green);animation:livedot 1.8s ease-out infinite}
     @keyframes livedot{0%{box-shadow:0 0 0 0 rgba(18,185,129,.55)}70%{box-shadow:0 0 0 9px rgba(18,185,129,0)}100%{box-shadow:0 0 0 0 rgba(18,185,129,0)}}
-    @media(max-width:700px){.nav{gap:14px;padding:2px 14px;max-width:calc(100vw - 32px);overflow-x:auto;scrollbar-width:none}
-      .nav::-webkit-scrollbar{display:none}.nav a{font-size:.82rem}}
+    @media(max-width:880px){
+      /* the pill scrolls sideways: snap to the links, 44px-tall tap targets */
+      .nav{gap:14px;padding:2px 14px;max-width:calc(100vw - 32px);overflow-x:auto;scrollbar-width:none;
+           scroll-snap-type:x proximity;scroll-padding:0 14px}
+      .nav::-webkit-scrollbar{display:none}
+      .nav a{font-size:.82rem;padding:12px 2px;scroll-snap-align:start}
+      /* right-edge fade while there is more to the right — the inline script
+         at the foot of the page toggles .nav-more, so the last link is never
+         ghosted once you have scrolled to the end */
+      .nav.nav-more{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 40px),transparent);
+           mask-image:linear-gradient(90deg,#000 calc(100% - 40px),transparent)}
+    }
 
     /* ===== the build: a tall section with a sticky stage inside it ===== */
     #build{position:relative;height:900svh}
@@ -155,11 +175,19 @@
     @media(max-width:760px){
       #hud{top:78px;left:14px;max-width:calc(100vw - 28px)}
       .hud-btns{gap:6px}
-      .hud-btns button{font-size:.68rem;padding:8px 12px}
+      .hud-btns button{font-size:max(.75rem,12px);padding:8px 12px}
       #rail{left:14px;width:calc(100vw - 28px)}
       #caption{left:14px;bottom:104px;max-width:calc(100vw - 28px)}
-      #scrollHint{bottom:70px}
+      #scrollHint{bottom:70px;letter-spacing:.12em}
       #dragHint{display:none}
+      /* 12px floor for the small mono labels on phones; ease the tracking
+         instead so the wide ones still fit the HUD, the caption and the cards */
+      .hud-title,#caption .k,#railLabel,#scrollHint{font-size:max(.75rem,12px)}
+      .hud-title,#caption .k{letter-spacing:.1em}
+    }
+    /* touch: the HUD buttons become 44px-tall tap targets */
+    @media(pointer:coarse){
+      .hud-btns button{min-height:44px;padding:12px 16px}
     }
 
     /* ===== notes below the build ===== */
@@ -194,6 +222,8 @@
     .card:hover{transform:translateY(-4px);border-color:var(--pink);box-shadow:0 12px 38px rgba(255,63,174,.18)}
     .card .tag{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
       color:var(--pink-ink);margin-bottom:12px}
+    /* phones: the same 12px floor as the HUD labels */
+    @media(max-width:760px){.fig .k,.card .tag{font-size:max(.75rem,12px);letter-spacing:.1em}}
     .card h3{font-size:1.2rem;margin-bottom:9px}
     .card p{color:var(--muted-foreground);font-size:.94rem}
     .card code{font-family:"JetBrains Mono",monospace;font-size:.82rem;color:var(--violet);
@@ -240,9 +270,9 @@
     <nav class="nav" aria-label="Site">
       <a class="logo" href="../" aria-label="ZAC Studios — home">ZA<span>C</span></a>
       <a href="../#manga">Manga</a>
-      <a href="../prompt-injection/">Games</a>
-      <a href="../trading/" class="nav-live">Trading <i></i></a>
+      <a href="../#projects">Projects</a>
       <a href="../#three-d" aria-current="page">3D Projects</a>
+      <a href="../trading/" class="nav-live">Trading <i></i></a>
       <a href="../#experience">Experience</a>
       <a href="../#contact">Contact</a>
     </nav>
@@ -445,6 +475,20 @@
   <script type="module" src="tiananmen.js"></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* the nav pill scrolls sideways on phones: fade its right edge only
+       while there is more to the right (see .nav.nav-more in the styles) */
+    (function () {
+      var nav = document.querySelector('.nav');
+      if (!nav) return;
+      function edge() {
+        nav.classList.toggle('nav-more', nav.scrollWidth - nav.clientWidth - nav.scrollLeft > 4);
+      }
+      edge();
+      nav.addEventListener('scroll', edge, { passive: true });
+      window.addEventListener('resize', edge);
+      if (document.fonts) document.fonts.ready.then(edge);
+    })();
 
     /* stage status: spinner until the scene reports in, a plain message if
        WebGL is unavailable or three.js fails to load */

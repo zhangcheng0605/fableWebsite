@@ -5,17 +5,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#fdf4ff">
-  <title>SEEN — Chapter 2: After Hours (scrolling edition) · Zhang Cheng</title>
-  <meta name="description" content="SEEN — an AI-drawn office manga. Chapter 2: After Hours, as one long scroll. The counter was never counting what they say. It is counting what they are planning.">
-  <link rel="canonical" href="./">
+  <title>SEEN — Chapter 2: After Hours (scrolling) · ZAC Studios</title>
+<meta name="robots" content="noindex">
+  <meta name="description" content="SEEN, an AI-drawn office manga. Chapter 2: After Hours, as one long scroll. The counter was never counting what they say; it counts what they are planning.">
+  <link rel="canonical" href="https://zhangcheng0605.github.io/fableWebsite/seen2/">
   <meta property="og:title" content="SEEN — Chapter 2: After Hours">
   <meta property="og:description" content="The nicest person in the building has 60,109 lies. The honest one has 9. And Marcus’s counter climbs while he is completely silent.">
   <meta property="og:type" content="article">
-  <meta property="og:image" content="c2_p12_03.jpg">
+  <meta property="og:image" content="https://zhangcheng0605.github.io/fableWebsite/seen2/c2_p12_03.jpg">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👁</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap"></noscript>
   <style>
     :root{
       /* design tokens — shadcn/ui architecture, neon-noir brand (SEEN gold reader keeps its own bg/ink/edge) */
@@ -219,7 +221,7 @@
       </div>
     </section>
 
-    <main class="reader" id="reader"></main>
+    <main class="reader" id="reader" tabindex="-1"></main>
 
     <section class="endcard" id="endcard">
       <p class="fin">END OF CHAPTER 2</p>
@@ -250,7 +252,7 @@
       var d = DIMS[file], size = d ? ' width="' + d[0] + '" height="' + d[1] + '"' : "";
       reader.insertAdjacentHTML("beforeend",
         '<figure class="page">' +
-          '<div class="frame"><img src="' + file + '.jpg" alt="Panel ' + (i + 1) + ' — ' + alt + '"' + size + ' loading="lazy"></div>' +
+          '<div class="frame"><img src="' + file + '.jpg" alt="Panel ' + (i + 1) + ' — ' + alt + '"' + size + ' loading="' + (i < 2 ? 'eager' : 'lazy') + '" decoding="async"></div>' +
           '<figcaption class="cap">' +
             '<span class="cap-top"><span class="tag">' + tag + '</span><span class="rule"></span>' +
             '<span class="pageno">' + n + ' / ' + PANELS.length + '</span></span>' +
@@ -280,46 +282,101 @@
     var lerp = function (a, b, t) { return a + (b - a) * t; };
     var clamp = function (v, lo, hi) { return Math.min(Math.max(v, lo), hi); };
 
-    var FINAL = 1203;
-    var fmt = function (p) { return p > 0.992 ? "149,071" : Math.round(FINAL * p).toLocaleString("en-US"); };
+    // Marcus's count: 148,663 at the start of the night, 149,071 by the garage (same run as the book)
+    var fmt = function (p) { return Math.round(148663 + 408 * p).toLocaleString("en-US"); };
 
     if (reduceMotion) {
       document.body.classList.add("no-smooth");
       meterEl.textContent = "149,071";
       pbar.style.transform = "scaleX(1)";
     } else {
-      var cur = window.scrollY;
-      var setH = function () { document.body.style.height = scroller.scrollHeight + "px"; };
+      var cur = window.scrollY, running = false, native = false;
+      var maxY = 1, tops = [], hts = [], lastMeter = "";
+      // where every panel sits inside #scroller — the block moves as one, so this only changes on relayout
+      var measure = function () {
+        for (var j = 0; j < frames.length; j++) {
+          var el = frames[j].parentElement, y = 0;
+          hts[j] = el.offsetHeight;
+          for (; el && el !== scroller; el = el.offsetParent) y += el.offsetTop;
+          tops[j] = y;
+        }
+      };
+
+      // one frame of the ride; runs only while the page is moving, then sleeps
+      var tick = function () {
+        var y = window.scrollY;
+        if (native) cur = y;
+        else {
+          cur = lerp(cur, y, 0.085);
+          if (Math.abs(cur - y) < 0.05) cur = y;
+          scroller.style.transform = "translate3d(0," + (-cur) + "px,0)";
+        }
+
+        var p = clamp(cur / maxY, 0, 1);
+        pbar.style.transform = "scaleX(" + p + ")";
+        var m = fmt(p);
+        if (m !== lastMeter) { lastMeter = m; meterEl.textContent = m; }
+
+        if (!native) {
+          if (cur < innerHeight * 1.2) {
+            coverArt.style.transform = "translateY(" + (cur * 0.35) + "px)";
+            coverArt.style.opacity = String(1 - clamp(cur / (innerHeight * 0.9), 0, 1) * 0.9);
+          }
+          for (var j = 0; j < frames.length; j++) {
+            var top = tops[j] - cur, h = hts[j];
+            if (top + h < -80 || top > innerHeight + 80) continue;
+            var rel = (top + h / 2 - innerHeight / 2) / innerHeight;
+            frames[j].style.transform = "scale(1.05) translateY(" + (-rel * 2.6).toFixed(3) + "%)";
+          }
+        }
+        if (cur === y) { running = false; return; }   // settled: sleep until the next scroll wakes us
+        requestAnimationFrame(tick);
+      };
+      var wake = function () { if (!running) { running = true; requestAnimationFrame(tick); } };
+      var setH = function () {
+        var sh = scroller.scrollHeight;
+        maxY = Math.max(sh - innerHeight, 1);
+        if (!native) document.body.style.height = sh + "px";
+        measure();
+        wake();
+      };
+      // straight to a spot on the page, no easing — for when focus has to land somewhere
+      var jumpTo = function (y) {
+        cur = clamp(y, 0, maxY);
+        window.scrollTo(0, cur);
+        if (!native) scroller.style.transform = "translate3d(0," + (-cur) + "px,0)";
+        wake();
+      };
+      // keyboard users get the page itself to scroll, so focus can never land off-screen
+      var goNative = function () {
+        if (native) return;
+        native = true;
+        document.body.classList.add("no-smooth");
+        scroller.style.transform = "";
+        document.body.style.height = "";
+        coverArt.style.transform = ""; coverArt.style.opacity = "";
+        for (var j = 0; j < frames.length; j++) frames[j].style.transform = "";
+        window.scrollTo(0, cur);
+        wake();
+      };
+
       setH();
       addEventListener("resize", setH);
       addEventListener("load", setH);
-      frames.forEach(function (im) { im.addEventListener("load", setH); });
-      setInterval(setH, 1000);
-
-      var tick = function () {
-        var max = Math.max(scroller.scrollHeight - innerHeight, 1);
-        cur = lerp(cur, window.scrollY, 0.085);
-        if (Math.abs(cur - window.scrollY) < 0.05) cur = window.scrollY;
-        scroller.style.transform = "translate3d(0," + (-cur) + "px,0)";
-
-        var p = clamp(cur / max, 0, 1);
-        pbar.style.transform = "scaleX(" + p + ")";
-        meterEl.textContent = fmt(p);
-
-        if (cur < innerHeight * 1.2) {
-          coverArt.style.transform = "translateY(" + (cur * 0.35) + "px)";
-          coverArt.style.opacity = String(1 - clamp(cur / (innerHeight * 0.9), 0, 1) * 0.9);
-        }
-        for (var j = 0; j < frames.length; j++) {
-          var im = frames[j];
-          var r = im.parentElement.getBoundingClientRect();
-          if (r.bottom < -80 || r.top > innerHeight + 80) continue;
-          var rel = (r.top + r.height / 2 - innerHeight / 2) / innerHeight;
-          im.style.transform = "scale(1.05) translateY(" + (-rel * 2.6).toFixed(3) + "%)";
-        }
-        requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
+      if (window.ResizeObserver) new ResizeObserver(setH).observe(scroller);   // art and fonts arriving late
+      else { frames.forEach(function (im) { im.addEventListener("load", setH); }); setInterval(setH, 1000); }
+      addEventListener("scroll", wake, { passive: true });
+      addEventListener("keydown", function (e) { if (e.key === "Tab") goNative(); });
+      addEventListener("focusin", function (e) {
+        if (native || !scroller.contains(e.target)) return;
+        var r = e.target.getBoundingClientRect();
+        if (r.top < 0 || r.bottom > innerHeight) jumpTo(r.top + cur - Math.max(0, innerHeight - r.height) / 2);
+      });
+      document.querySelector(".skip-link").addEventListener("click", function (e) {
+        e.preventDefault();
+        jumpTo(reader.getBoundingClientRect().top + (native ? window.scrollY : cur));
+        reader.focus({ preventScroll: true });
+      });
     }
 
     document.getElementById("again").addEventListener("click", function () {
