@@ -36,10 +36,13 @@
       --bg:var(--background); --bg2:#f3e9ff; --panel:var(--card);
       --edge:var(--border); --text:var(--foreground); --muted:var(--muted-foreground);
       --cyan:#0779a8; --magenta:#c9106f; --violet:#6428d8;
-      --up:#0d9668; --down:#dc2646;
+      /* --up is used as text (gains, ARMED, RESOLVED), so it must clear 4.5:1 on white; dots keep the brighter green */
+      --up:#0a7a55; --up-fill:#0d9668; --down:#dc2646;
       /* chart series (CVD-validated on this surface) */
-      --s-bot:#0b7fb0; --s-spy:#6a55e0; --s-qqq:#c23a92; --s-frozen:#96731f;
+      --s-bot:#0b7fb0; --s-spy:#6a55e0; --s-qqq:#c23a92; --s-frozen:#96731f; --s-cash:#b3a2de;
       --grad:linear-gradient(95deg,#ef1f96,#7a2df0 46%,#0f9fe0);
+      /* darker trio for surfaces that carry white text (buttons, nav CTA) — #fff is ≥5.5:1 on every stop */
+      --cta-text:linear-gradient(95deg,#c41377,#5b1fc4 46%,#0a6f9e);
     }
     *{margin:0;padding:0;box-sizing:border-box}
     html{scroll-behavior:smooth;scroll-padding-top:96px}
@@ -50,7 +53,7 @@
     :focus-visible{outline:2px solid var(--ring);outline-offset:3px;border-radius:4px}
     .btn:focus-visible,a.chapter:focus-visible,.sib:focus-visible{outline-offset:4px}
     .skip-link{position:fixed;top:-100px;left:16px;z-index:100;padding:10px 18px;border-radius:99px;
-      background:var(--primary);color:var(--primary-foreground);font-weight:600;transition:top .2s}
+      background:var(--magenta);color:var(--primary-foreground);font-weight:600;transition:top .2s}
     .skip-link:focus{top:16px}
     h1,h2,h3,h4{text-wrap:balance}
     .mono{font-family:"JetBrains Mono",monospace}
@@ -79,9 +82,9 @@
     .nav a[aria-current]{color:var(--text)}
     .nav .sep{width:1px;height:18px;background:var(--edge);flex:none;margin:0 -8px}
     .nav-live{display:inline-flex;align-items:center;gap:7px}
-    .nav-live i{width:6px;height:6px;border-radius:50%;background:var(--up);animation:livedot 1.8s ease-out infinite}
+    .nav-live i{width:6px;height:6px;border-radius:50%;background:var(--up-fill);animation:livedot 1.8s ease-out infinite}
     @keyframes livedot{0%{box-shadow:0 0 0 0 rgba(13,150,104,.55)}70%{box-shadow:0 0 0 9px rgba(13,150,104,0)}100%{box-shadow:0 0 0 0 rgba(13,150,104,0)}}
-    .nav-cta{background:var(--grad);color:#fff!important;border-radius:99px;padding:8px 16px!important;font-weight:600;
+    .nav-cta{background:var(--cta-text);color:#fff!important;border-radius:99px;padding:8px 16px!important;font-weight:600;
       box-shadow:0 6px 18px rgba(255,63,174,.28)}
     .nav-cta:hover{filter:brightness(1.06)}
     @media(max-width:1180px){.nav{gap:18px;padding:4px 18px}.nav a{font-size:.86rem}}
@@ -130,22 +133,28 @@
          cursor:pointer;min-height:44px}
     .btn:hover{transform:translateY(-2px)}
     .btn:active{transform:translateY(0) scale(.98)}
-    .btn-primary{background:var(--grad);color:#fff;border:none;box-shadow:0 6px 34px rgba(255,63,174,.3)}
+    .btn-primary{background:var(--cta-text);color:#fff;border:none;box-shadow:0 6px 34px rgba(255,63,174,.3)}
     .btn-primary:hover{box-shadow:0 10px 44px rgba(255,63,174,.42)}
     .btn-ghost{background:var(--panel)}
 
     /* ticker tape */
     .tape-wrap{border-top:1px solid var(--edge);border-bottom:1px solid var(--edge);
         background:rgba(255,255,255,.82);backdrop-filter:blur(8px);overflow:hidden;padding:10px 0;
-        margin-top:auto;width:100%}
+        margin-top:auto;width:100%;position:relative}
     .tape{display:flex;gap:44px;width:max-content;animation:scroll 38s linear infinite}
-    .tape-wrap:hover .tape{animation-play-state:paused}
+    /* WCAG 2.2.2: the tape pauses on hover, on keyboard focus, and via the Pause button (which toggles .paused) */
+    .tape-wrap:hover .tape,.tape-wrap:focus-within .tape,.tape-wrap.paused .tape{animation-play-state:paused}
+    .tape-pause{position:absolute;top:50%;right:10px;transform:translateY(-50%);z-index:1;min-height:32px;padding:4px 12px;
+        border-radius:99px;border:1px solid var(--edge);background:rgba(255,255,255,.96);color:var(--text);
+        font:500 .72rem/1.4 "JetBrains Mono",monospace;letter-spacing:.06em;cursor:pointer;
+        box-shadow:0 0 0 8px rgba(255,255,255,.82)}
+    .tape-pause:hover{border-color:var(--ring)}
     @keyframes scroll{to{transform:translateX(-50%)}}
     .tk{display:flex;gap:9px;align-items:baseline;font-family:"JetBrains Mono",monospace;font-size:.8rem;white-space:nowrap}
     .tk .sym{color:var(--text);font-weight:700}
     .tk .px{color:var(--muted)}
     .tk .chg.up{color:var(--up)} .tk .chg.down{color:var(--down)}
-    @media (prefers-reduced-motion:reduce){.tape{animation:none}}
+    @media (prefers-reduced-motion:reduce){.tape{animation:none}.tape-pause{display:none}}
 
     /* sections */
     section{max-width:1080px;margin:0 auto;padding:104px 24px 10px}
@@ -241,11 +250,14 @@
         font-size:.8rem;color:var(--text)}
     .bar-name{position:absolute;bottom:24px;left:0;right:0;text-align:center;font-size:.8rem;color:var(--muted)}
     .bar-dollar{position:absolute;bottom:2px;left:0;right:0;text-align:center;font-family:"JetBrains Mono",monospace;font-size:.68rem;color:var(--muted)}
+    /* phones: a taller chart so the two-line names clear the 100%-height bar, and right padding gives
+       the '0%' axis label its own lane instead of overprinting the last column's value */
+    @media(max-width:480px){.bench{height:300px;gap:8px;padding:0 24px 0 0}.bar-slot{bottom:88px}.bar-name{bottom:44px}}
     .legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:18px;font-size:.8rem;color:var(--muted)}
-    .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:7px;vertical-align:-1px}
-    .tooltip{position:fixed;z-index:99;pointer-events:none;background:rgba(10,10,18,.95);border:1px solid var(--edge);
+    .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:7px;vertical-align:-1px;border:1px solid rgba(56,35,92,.15)}
+    .tooltip{position:fixed;z-index:99;pointer-events:none;background:var(--panel);border:1px solid var(--edge);
         border-radius:10px;padding:10px 14px;font-family:"JetBrains Mono",monospace;font-size:.75rem;color:var(--text);
-        opacity:0;transition:opacity .15s;max-width:260px;line-height:1.7}
+        box-shadow:0 12px 32px rgba(56,35,92,.18);opacity:0;transition:opacity .15s;max-width:260px;line-height:1.7}
     .tooltip b{color:var(--cyan)}
     table.data{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:8px}
     table.data th,table.data td{text-align:left;padding:9px 12px;border-bottom:1px solid rgba(56,35,92,.12)}
@@ -390,8 +402,9 @@
         <a class="btn btn-primary" href="#money">Show me the money</a>
         <a class="btn btn-ghost" href="https://github.com/zhangcheng0605/alpaca-paper-trading-shareout" target="_blank" rel="noopener">Source on GitHub</a>
       </div>
-      <div class="tape-wrap reveal" style="margin-top:60px" aria-hidden="true">
-        <div class="tape" id="tape"></div>
+      <div class="tape-wrap reveal" style="margin-top:60px">
+        <div class="tape" id="tape" aria-hidden="true"></div>
+        <button class="tape-pause" type="button" aria-label="Pause ticker">Pause</button>
       </div>
     </section>
 
@@ -656,24 +669,24 @@
         <h3>What the accounts hold</h3>
         <p class="sub">Composition by market value. Hover the segments.</p>
         <div class="row-lbl"><span>Stock account — $97.9k</span><span>25 positions + cash</span></div>
-        <div class="stack" aria-label="Stock account composition">
+        <div class="stack" role="group" aria-label="Stock account composition">
           <div class="seg" tabindex="0" role="img" aria-label="SPY index layer: $29.7k, 30% of the account — passive base, no bot may sell it" style="flex:30.3;background:var(--s-spy)" data-tt="<b>SPY index layer</b><br>$29.7k · 30% of the account<br>passive base — no bot may sell it"></div>
           <div class="seg" tabindex="0" role="img" aria-label="Stock picks: $53.1k, core basket + dip positions — managed by Bot v2 &amp; the RSI bot" style="flex:54.2;background:var(--s-bot)" data-tt="<b>Stock picks</b><br>$53.1k · core basket + dip positions<br>managed by Bot v2 &amp; the RSI bot"></div>
-          <div class="seg" tabindex="0" role="img" aria-label="Cash: $15.2k, 15.5% — 10% reserve is enforced by risk.py" style="flex:15.5;background:rgba(255,255,255,.22)" data-tt="<b>Cash</b><br>$15.2k · 15.5%<br>10% reserve is enforced by risk.py"></div>
+          <div class="seg" tabindex="0" role="img" aria-label="Cash: $15.2k, 15.5% — 10% reserve is enforced by risk.py" style="flex:15.5;background:var(--s-cash)" data-tt="<b>Cash</b><br>$15.2k · 15.5%<br>10% reserve is enforced by risk.py"></div>
         </div>
         <div class="row-lbl"><span>Crypto account — $1.007M</span><span>23 positions + cash</span></div>
-        <div class="stack" aria-label="Crypto account composition">
+        <div class="stack" role="group" aria-label="Crypto account composition">
           <div class="seg" tabindex="0" role="img" aria-label="BTC core: $349.6k, 5.45 BTC — permanent market-exposure layer" style="flex:34.7;background:var(--s-frozen)" data-tt="<b>BTC core</b><br>$349.6k · 5.45 BTC<br>permanent market-exposure layer"></div>
           <div class="seg" tabindex="0" role="img" aria-label="ETH core: $149.1k, 80.9 ETH — the 30 in the 70/30 core" style="flex:14.8;background:var(--s-qqq)" data-tt="<b>ETH core</b><br>$149.1k · 80.9 ETH<br>the 30 in the 70/30 core"></div>
           <div class="seg" tabindex="0" role="img" aria-label="Alt sleeve: about $171k, 21 alts, gold (PAXG), even the meme tier — SOL, XRP, ADA, DOGE, PEPE and more" style="flex:17.0;background:var(--s-bot)" data-tt="<b>Alt sleeve</b><br>~$171k · 21 alts, gold (PAXG), even the meme tier<br>SOL · XRP · ADA · DOGE · PEPE …"></div>
-          <div class="seg" tabindex="0" role="img" aria-label="Cash: $337.5k, 33.5% — dry powder for the dip-buyer" style="flex:33.5;background:rgba(255,255,255,.22)" data-tt="<b>Cash</b><br>$337.5k · 33.5%<br>dry powder for the dip-buyer"></div>
+          <div class="seg" tabindex="0" role="img" aria-label="Cash: $337.5k, 33.5% — dry powder for the dip-buyer" style="flex:33.5;background:var(--s-cash)" data-tt="<b>Cash</b><br>$337.5k · 33.5%<br>dry powder for the dip-buyer"></div>
         </div>
         <div class="legend">
           <span><i style="background:var(--s-spy)"></i>SPY layer</span>
           <span><i style="background:var(--s-frozen)"></i>BTC core</span>
           <span><i style="background:var(--s-qqq)"></i>ETH core</span>
           <span><i style="background:var(--s-bot)"></i>bot-managed</span>
-          <span><i style="background:rgba(255,255,255,.22)"></i>cash</span>
+          <span><i style="background:var(--s-cash)"></i>cash</span>
         </div>
       </div>
     </section>
@@ -988,26 +1001,31 @@
     tape.innerHTML=[...ticks,...ticks].map(([s,p,c])=>
       `<span class="tk"><span class="sym">${s}</span><span class="px">${fmt(p)}</span>`+
       `<span class="chg ${c>=0?'up':'down'}">${c>=0?'▲':'▼'} ${Math.abs(c).toFixed(2)}%</span></span>`).join('');
+    /* pause/play button — the tape also pauses on hover and keyboard focus (see .tape-wrap CSS) */
+    const tapeWrap=tape.parentElement,tapeBtn=tapeWrap.querySelector('.tape-pause');
+    tapeBtn.addEventListener('click',()=>{const on=tapeWrap.classList.toggle('paused');
+      tapeBtn.textContent=on?'Play':'Pause';tapeBtn.setAttribute('aria-label',(on?'Play':'Pause')+' ticker');});
 
     /* candlestick canvas */
     const cv=document.getElementById('candles'),cx=cv.getContext('2d');
-    let W,H,candles=[],px=0,candlesVisible=false,drawing=false;
-    function sizeCv(){W=cv.width=cv.offsetWidth*devicePixelRatio;H=cv.height=cv.offsetHeight*devicePixelRatio;}
-    sizeCv();addEventListener('resize',sizeCv);
+    let W,H,dpr=1,candles=[],px=0,candlesVisible=false,drawing=false;
+    /* DPR capped at 2 — a 3× phone would otherwise back a decorative, half-transparent chart with a 1170×1164 bitmap */
+    function sizeCv(){dpr=Math.min(devicePixelRatio||1,2);W=cv.width=cv.offsetWidth*dpr;H=cv.height=cv.offsetHeight*dpr;}
+    sizeCv();addEventListener('resize',()=>{sizeCv();if(!drawing)draw();});
     let last=100;
     function mkCandle(){const o=last,c=o+(Math.random()-.48)*6,h=Math.max(o,c)+Math.random()*3,l=Math.min(o,c)-Math.random()*3;last=c;return{o,c,h,l};}
     for(let i=0;i<260;i++)candles.push(mkCandle());
     const reduced=matchMedia('(prefers-reduced-motion:reduce)').matches;
     function draw(){
       cx.clearRect(0,0,W,H);
-      const cw=12*devicePixelRatio,gap=5*devicePixelRatio,n=Math.ceil(W/(cw+gap))+2;
+      const cw=12*dpr,gap=5*dpr,n=Math.ceil(W/(cw+gap))+2;
       const vis=candles.slice(-n);
       let mn=1e9,mx=-1e9;vis.forEach(k=>{mn=Math.min(mn,k.l);mx=Math.max(mx,k.h);});
       const y=v=>H-((v-mn)/(mx-mn||1))*(H*.86)-H*.07;
       vis.forEach((k,i)=>{
-        const x=i*(cw+gap)-px*devicePixelRatio, up=k.c>=k.o,
+        const x=i*(cw+gap)-px*dpr, up=k.c>=k.o,
               col=up?'rgba(13,150,104,.7)':'rgba(220,38,70,.6)';
-        cx.strokeStyle=col;cx.fillStyle=col;cx.lineWidth=1.4*devicePixelRatio;
+        cx.strokeStyle=col;cx.fillStyle=col;cx.lineWidth=1.4*dpr;
         cx.beginPath();cx.moveTo(x+cw/2,y(k.h));cx.lineTo(x+cw/2,y(k.l));cx.stroke();
         const top=y(Math.max(k.o,k.c)),hgt=Math.max(Math.abs(y(k.o)-y(k.c)),2);
         cx.fillRect(x,top,cw,hgt);

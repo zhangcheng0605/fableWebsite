@@ -7,7 +7,7 @@
   <meta name="twitter:card" content="summary_large_image">
   <meta property="og:url" content="https://zhangcheng0605.github.io/fableWebsite/">
   <link rel="canonical" href="https://zhangcheng0605.github.io/fableWebsite/">
-  <meta name="description" content="Zhang Cheng, Senior Engineer, Enterprise AI at Mediacorp. AI-drawn manga, two browser games, a paper-trading desk, a one-file spreadsheet and three 3D worlds.">
+  <meta name="description" content="Zhang Cheng, Senior Engineer, Enterprise AI at Mediacorp. AI-drawn manga, two browser games, a paper-trading desk, a virtual influencer, a one-file spreadsheet and three 3D worlds.">
   <meta property="og:title" content="ZAC Studios — Zhang Cheng, AI Engineer &amp; Builder">
   <meta property="og:description" content="AI-drawn manga, two browser games, a paper-trading desk, and three 3D worlds — a media campus, Tiananmen and the SENTINEL-9 mech — that build themselves as you scroll. Directed by a human, built by agents.">
   <meta property="og:type" content="website">
@@ -53,9 +53,12 @@
       --card:#ffffff;
       --border:rgba(139,61,255,.20); --border-pink:rgba(255,63,174,.30);
       /* full rainbow for decoration; the darker trio for anything with white
-         text on it (buttons, marquee, contact band) so contrast holds */
+         text on it (buttons, marquee, chips) so contrast holds: white is
+         5.0:1 on the pink, 7.9:1 on the purple, 4.7:1 on the cyan — and an
+         sRGB gradient is never lighter between two stops than at the lighter
+         one, so the whole run clears 4.5:1 for small text */
       --rainbow:linear-gradient(95deg,#ff3fae,#8b3dff 34%,#25c4ff 68%,#ffd166);
-      --cta:linear-gradient(95deg,#ef1f96,#7a2df0 46%,#0f9fe0);
+      --cta:linear-gradient(95deg,#d3157f,#5f1fd6 46%,#0b7ab3);
       --radius:24px;
       --shadow-pink:0 12px 38px rgba(255,63,174,.25);
       --shadow-purple:0 14px 44px rgba(139,61,255,.22);
@@ -73,7 +76,7 @@
     .mono{font-family:"JetBrains Mono",monospace}
     :focus-visible{outline:3px solid var(--purple);outline-offset:3px;border-radius:6px}
     .skip-link{position:fixed;top:-100px;left:16px;z-index:100;padding:10px 18px;border-radius:99px;
-      background:var(--pink);color:#fff;font-weight:700;transition:top .2s}
+      background:var(--pink-ink);color:#fff;font-weight:700;transition:top .2s} /* --pink is 3.2:1 under white */
     .skip-link:focus{top:16px}
 
     /* ===== bright aurora background ===== */
@@ -112,8 +115,6 @@
     .logo{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.35rem}
     .logo span{background:var(--rainbow);-webkit-background-clip:text;background-clip:text;color:transparent}
     .nav .spacer{flex:1}
-    .nav-live{display:inline-flex;align-items:center;gap:7px}
-    .nav-live i{width:7px;height:7px;border-radius:50%;background:var(--green);animation:livedot 1.8s ease-out infinite}
     @keyframes livedot{0%{box-shadow:0 0 0 0 rgba(18,185,129,.55)}70%{box-shadow:0 0 0 9px rgba(18,185,129,0)}100%{box-shadow:0 0 0 0 rgba(18,185,129,0)}}
     .nav-cta{background:var(--cta);color:#fff!important;border-radius:99px;padding:9px 20px!important;
       box-shadow:var(--shadow-pink);font-weight:800}
@@ -284,6 +285,9 @@
     .marquee-track span{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.02rem;
       letter-spacing:.14em;text-transform:uppercase;color:#fff;padding:0 22px}
     @keyframes slide{to{transform:translateX(-50%)}}
+    /* WCAG 2.2.2 — moving text needs a way to hold still: hovering the band
+       (or focusing anything in it) pauses the run; reduced motion stops it */
+    .marquee-clip:hover .marquee-track,.marquee-clip:focus-within .marquee-track{animation-play-state:paused}
 
     /* ===== manga ===== */
     .series{padding-bottom:38px;margin-bottom:38px;border-bottom:2px dashed rgba(139,61,255,.18)}
@@ -435,7 +439,7 @@
       color:var(--violet);letter-spacing:.06em}
 
     /* ===== contact — full-bleed rainbow ===== */
-    .band-contact{background:linear-gradient(120deg,#ef1f96,#7a2df0 42%,#0f9fe0 82%,#12b981);
+    .band-contact{background:linear-gradient(120deg,#ef1f96,#7a2df0 42%,#0f9fe0 82%,#0a7a55);
       text-align:center;color:#fff}
     .band-contact h2{background:none;-webkit-text-fill-color:#fff;color:#fff;
       text-shadow:0 4px 30px rgba(60,20,120,.35)}
@@ -469,7 +473,7 @@
     .reveal.visible{opacity:1;transform:none}
     @media (prefers-reduced-motion:reduce){
       .reveal{opacity:1;transform:none;transition:none}
-      .nav-live i,.live i,.scroll-hint,.deco,.bg::before,.bg::after{animation:none}
+      .live i,.scroll-hint,.deco,.bg::before,.bg::after{animation:none}
       .marquee{transform:none}
       .marquee-track{animation:none}
       html{scroll-behavior:auto}
@@ -570,8 +574,9 @@
       <div class="marquee-track">
         <span>&#10022; Manga</span><span>&#10022; Games</span><span>&#10022; Paper Trading</span>
         <span>&#10022; 3D Campus</span><span>&#10022; Tiananmen</span><span>&#10022; SENTINEL-9</span><span>&#10022; OneSheet</span><span>&#10022; Future of Work</span><span>&#10022; Virtual Influencer</span><span>&#10022; Built by AI agents</span>
-        <span>&#10022; Manga</span><span>&#10022; Games</span><span>&#10022; Live Trading</span>
-        <span>&#10022; 3D Campus</span><span>&#10022; Tiananmen</span><span>&#10022; OneSheet</span><span>&#10022; Built by AI agents</span>
+        <!-- second copy, identical to the first: the loop slides by half the track -->
+        <span>&#10022; Manga</span><span>&#10022; Games</span><span>&#10022; Paper Trading</span>
+        <span>&#10022; 3D Campus</span><span>&#10022; Tiananmen</span><span>&#10022; SENTINEL-9</span><span>&#10022; OneSheet</span><span>&#10022; Future of Work</span><span>&#10022; Virtual Influencer</span><span>&#10022; Built by AI agents</span>
       </div>
     </div>
     </div>
@@ -747,7 +752,7 @@
             </div>
           </a>
 
-          <a class="tile reveal" href="trading/" aria-label="Open the desk — the live autonomous trading desk">
+          <a class="tile reveal" href="trading/" aria-label="Open the desk — the autonomous paper-trading desk">
             <div class="tile-thumb">
               <img src="assets/thumbs/trading-800.jpg" width="800" height="450" loading="lazy"
                    alt="The trading desk's money page: both paper accounts with day P&amp;L, biggest winner and loser, cash reserve and drawdown">
@@ -776,7 +781,7 @@
             <p class="desc">A real spreadsheet in a single file — a Pratt-parsed formula engine, an incremental
               dependency graph, a virtualised grid over 3.5M cells, and genuine .xlsx import. One agent wrote
               the spec, another built every line of it.</p>
-            <p class="metric">56 functions · 260 KB · 0 frameworks</p>
+            <p class="metric">56 functions · ~270 KB · 0 frameworks</p>
             <div class="foot"><span class="chip">Formula engine</span><span class="chip">Dependency graph</span><span class="chip">Vanilla JS</span></div>
             <span class="tile-cta">Open the sheet <i aria-hidden="true">&rarr;</i></span>
           </div>
@@ -821,7 +826,7 @@
             </div>
             <div class="tile-body">
               <p class="tag">Interactive · three.js</p>
-              <h3>Tiananmen &middot; 天安门</h3>
+              <h3>Tiananmen &middot; <span lang="zh">天安门</span></h3>
               <p class="desc">The Gate of Heavenly Peace, raised piece by piece: five arches cut clean through
                 36&nbsp;metres of wall, two golden roofs swept from one profile function, the marble bridges
                 over the Golden Water — then the whole square behind it, 900 people and all.</p>

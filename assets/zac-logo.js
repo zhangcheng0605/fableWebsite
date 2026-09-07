@@ -481,6 +481,11 @@ async function boot() {
   const tmpQ = new THREE.Quaternion();
   // pointer parallax, -1..1 across the mark's box
   const point = { x: 0, y: 0 };
+  // Picking raycasts the whole stamp row — 61 meshes, about a millisecond —
+  // and pointermove can arrive faster than frames. The handler only notes
+  // where the pointer is; tick picks once per frame.
+  const pickAt = { clientX: 0, clientY: 0 };
+  let pendingPick = false;
 
   const baseLoop = stage._loop;
   const tick = () => {
@@ -517,6 +522,12 @@ async function boot() {
       }
     });
     studios.children.forEach((g, i) => { g.position.y = g.userData.by + 0.16 * Math.sin(t * 2 + i * 0.7); });
+
+    if (pendingPick) {
+      pendingPick = false;
+      hovered = pick(pickAt);
+      stage.style.cursor = hovered ? 'pointer' : '';
+    }
 
     if (hovered && t - lastSpawn > 0.12 && fx.children.length < 48) {
       lastSpawn = t;
@@ -570,7 +581,7 @@ async function boot() {
   new IntersectionObserver((entries) => {
     const on = entries[0].isIntersecting;
     stage._renderer.setAnimationLoop(on ? tick : null);
-    if (!on) { hovered = null; point.x = 0; point.y = 0; }
+    if (!on) { hovered = null; pendingPick = false; point.x = 0; point.y = 0; }
   }, { threshold: 0 }).observe(host);
 
   // ===== pointer: hover lifts a stamp, a click bursts it and cycles its ink =====
@@ -615,11 +626,14 @@ async function boot() {
     const rect = stage.getBoundingClientRect();
     point.x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
     point.y = ((e.clientY - rect.top) / rect.height) * 2 - 1;
-    hovered = pick(e);
-    stage.style.cursor = hovered ? 'pointer' : '';
+    pickAt.clientX = e.clientX;
+    pickAt.clientY = e.clientY;
+    pendingPick = true;
   });
   stage.addEventListener('pointerleave', () => {
     hovered = null;
+    pendingPick = false;
+    stage.style.cursor = '';
     point.x = 0;
     point.y = 0;
   });
