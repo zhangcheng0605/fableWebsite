@@ -87,8 +87,9 @@ Direction · Contact); on phones the pill scrolls sideways with a fade on the ed
 - Every page: `<title>… · ZAC Studios</title>`, a meta description, absolute `og:image` +
   `og:url` + canonical, `twitter:card`. Secondary editions (flip books, `game.html`) are
   `noindex` and canonical to their primary page.
-- Google Fonts are loaded with the non-blocking preload pattern; every family uses
-  `display=swap`.
+- Web fonts are self-hosted (`assets/fonts/fonts.css` + `assets/fonts/g/*.woff2`, latin and
+  latin-ext subsets of every family the site uses) and loaded with the non-blocking preload
+  pattern with `font-display: swap`; no page makes a third-party request.
 - Text never renders below 12px on phones; tap targets are 44px on coarse pointers.
 - Images: `loading="lazy"` + `decoding="async"` except the first one or two above the fold;
   `width`/`height` always set.

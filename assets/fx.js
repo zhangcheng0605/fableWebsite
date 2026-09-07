@@ -42,7 +42,7 @@
     if (!s) {
       s = { rx: 0, ry: 0, trx: 0, try_: 0, lift: 0, tlift: 0,
             mx: 0, my: 0, tmx: 0, tmy: 0, phase: 0, float_: false,
-            mode: '', hover: false };
+            mode: '', hover: false, parked: false };
       states.set(el, s);
     }
     return s;
@@ -62,10 +62,11 @@
         s.rx = lerp(s.rx, s.hover ? s.trx : 0, 0.12);
         s.ry = lerp(s.ry, s.hover ? s.try_ : 0, 0.12);
         s.lift = lerp(s.lift, s.hover ? LIFT : 0, 0.12);
-        var fy = s.float_ ? Math.sin((now / FLOAT_PERIOD) * Math.PI * 2 + s.phase) * FLOAT_AMP : 0;
+        var drifting = s.float_ && !s.parked;
+        var fy = drifting ? Math.sin((now / FLOAT_PERIOD) * Math.PI * 2 + s.phase) * FLOAT_AMP : 0;
         t = 'perspective(900px) rotateX(' + s.rx.toFixed(3) + 'deg) rotateY(' + s.ry.toFixed(3) +
             'deg) translateY(' + (s.lift + fy).toFixed(2) + 'px)';
-        settled = !s.hover && !s.float_ &&
+        settled = !s.hover && !drifting &&
           Math.abs(s.rx) < 0.02 && Math.abs(s.ry) < 0.02 && Math.abs(s.lift) < 0.02;
       } else if (s.mode === 'magnet') {
         s.mx = lerp(s.mx, s.hover ? s.tmx : 0, 0.2);
@@ -76,7 +77,7 @@
         var fy2 = Math.sin((now / FLOAT_PERIOD) * Math.PI * 2 + s.phase) * FLOAT_AMP;
         var rz = Math.cos((now / FLOAT_PERIOD) * Math.PI * 2 + s.phase) * 0.35;
         t = 'translateY(' + fy2.toFixed(2) + 'px) rotate(' + rz.toFixed(3) + 'deg)';
-        settled = false;
+        settled = s.parked;
       }
       if (settled) {
         el.style.transform = '';
@@ -139,13 +140,32 @@
   }
 
   /* --- weightless drift (all pointer types) --- */
+  /* A float never settles on its own, so it is parked whenever its element
+     is off screen — otherwise the one .hero-terminal at the top of the
+     trading page keeps this loop, and a style recalc, running every frame
+     for the whole visit. */
   $all(FLOAT).forEach(function (el, i) {
     var s = state(el);
-    if (s.mode === 'tilt') { s.float_ = true; s.phase = i * 1.7; wake(el); return; }
-    if (s.mode) return;
-    s.mode = 'float';
-    s.phase = i * 1.7;
-    /* wait for the page's own entrance transitions before drifting */
-    setTimeout(function () { wake(el); }, 1600);
+    if (s.mode === 'tilt') { s.float_ = true; s.phase = i * 1.7; }
+    else if (s.mode) return;
+    else { s.mode = 'float'; s.phase = i * 1.7; }
+    /* a plain float waits for the page's own entrance transitions before drifting */
+    var delay = s.float_ ? 0 : 1600;
+    var park = function () {
+      s.parked = true;
+      if (s.hover) return; // a tilted card mid-hover finishes its lean, then settles
+      active.delete(el);
+      el.style.transform = '';
+      el.classList.remove('fx-active');
+    };
+    var drift = function () { s.parked = false; wake(el); };
+    if (!('IntersectionObserver' in window)) { setTimeout(drift, delay); return; }
+    var first = true;
+    new IntersectionObserver(function (es) {
+      if (!es[es.length - 1].isIntersecting) { park(); return; }
+      if (!first) { drift(); return; }
+      first = false;
+      setTimeout(function () { if (!s.parked) drift(); }, delay);
+    }).observe(el);
   });
 })();

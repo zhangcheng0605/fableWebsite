@@ -423,6 +423,19 @@ for (let i = 0; i < 8; i++) car(-150 + (i % 4) * 8, -42 - ((i / 4) | 0) * 12, Ma
 for (let i = 0; i < 6; i++) person(-60 + rnd() * 110, -40 - rnd() * 45);
 
 stage.setObject(model);
+/* setObject makes every mesh a shadow caster, and each caster is drawn a
+   second time into the shadow map. The small stuff — shrubs, benches,
+   people, cars, flags, the context blocks past the roads — casts nothing
+   anyone can see at this scale, so it sits the shadow pass out. */
+model.traverse((o) => {
+  if (o.isMesh && /^(shrub|bench|body|head|car_body|car_cabin|flag|ctx_bldg)_\d+$/.test(o.name)) o.castShadow = false;
+});
+// Phones: a 2048² shadow map is a lot of fill for a small GPU, and the
+// campus is a few hundred pixels wide there anyway.
+if (matchMedia('(pointer: coarse)').matches) {
+  stage._key.shadow.mapSize.set(1024, 1024);
+  if (stage._key.shadow.map) { stage._key.shadow.map.dispose(); stage._key.shadow.map = null; }
+}
 camera.position.set(-135, 34, 248); // first waypoint of the scroll path below
 controls.target.set(-5, 12, 0);
 controls.update();
@@ -480,18 +493,18 @@ for (let i = 0; i < 14; i++) {
   }
   cloudGroup.add(cl);
 }
-/* Clouds drift on their own clock. `stageVisible` is flipped by the observer
-   further down, so this loop idles while the stage is scrolled away rather
-   than moving geometry nobody is rendering. */
+/* Clouds drift on their own clock — but only inside a frame of the render
+   loop further down, which stops whenever the stage is scrolled away, the
+   tab is hidden, or the reader prefers reduced motion; the clouds stop with
+   it instead of moving geometry nobody is rendering. */
+const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
 let stageVisible = true;
-(function driftClouds() {
-  requestAnimationFrame(driftClouds);
-  if (!stageVisible) return;
+function driftClouds() {
   const t = performance.now() / 1000;
   cloudGroup.children.forEach((cl) => {
     cl.position.x = ((cl.userData.x0 + t * cl.userData.speed + 700) % 1400) - 700;
   });
-})();
+}
 // sun / moon sprites + stars
 function glowSprite(inner, outer, hardEdge) {
   const c = document.createElement('canvas'); c.width = c.height = 256;
@@ -600,6 +613,7 @@ function tickOrbit(now) {
   const h = 55 + 40 * Math.sin(orbitT * 0.22 + 1.2);
   camera.position.set(CENTER.x + r * Math.cos(a), Math.max(14, h), CENTER.z + r * Math.sin(a));
   controls.target.copy(CENTER);
+  requestRender();
   requestAnimationFrame(tickOrbit);
 }
 function setOrbit(on) {
@@ -680,6 +694,7 @@ function setProgress(p) {
     const c = caption(progress);
     if (c !== railLabel.textContent) railLabel.textContent = c;
   }
+  requestRender();
 }
 /* Name the chapter the leading edge of the assembly is in. */
 function caption(p) {
@@ -743,8 +758,8 @@ function requestSync() {
 }
 /* Reduced motion: no scroll-driven assembly and no six-screen scroll track —
    the section collapses to one viewport showing the finished campus. The
-   buttons still work, because clicking one is a choice. */
-const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+   buttons still work, because clicking one is a choice. (REDUCE itself is
+   read up by the clouds, which it also stills.) */
 if (!REDUCE) {
   window.addEventListener('scroll', requestSync, { passive: true });
   window.addEventListener('resize', requestSync);
@@ -855,21 +870,44 @@ const NAV_KEY = /^(Arrow|Page|Home|End| )/;
 ['wheel', 'touchstart'].forEach((ev) =>
   window.addEventListener(ev, () => { if (play) stopPlay(); }, { passive: true }));
 window.addEventListener('keydown', (e) => { if (play && NAV_KEY.test(e.key)) stopPlay(); });
-document.addEventListener('visibilitychange', () => { if (document.hidden) stopPlay(); });
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) { stopPlay(); if (orbiting) setOrbit(false); }
+  setLoop();
+});
 document.getElementById('btnReset').addEventListener('click', () => {
   setOrbit(false);
   stopPlay();
   sync();
 });
 
-/* Don't render a hidden canvas: the notes below the build section are a
-   long read, and a 60fps WebGL loop behind them is pure battery burn. */
+/* One frame: drift the clouds, then the stage's own step (orbit damping and
+   the draw). This replaces the loop the stage started at boot, so the clouds
+   ride the render's clock and stop with it. */
+function frame() { driftClouds(); stage._loop(); }
+/* The loop runs only while there is something to see it. Not with the stage
+   scrolled away — the notes below the build are a long read, and a 60fps
+   WebGL loop behind them is pure battery burn — not in a hidden tab, and not
+   under reduced motion, where the campus is a still, redrawn on demand. */
+function running() { return stageVisible && !document.hidden && !REDUCE; }
+function setLoop() { renderer.setAnimationLoop(running() ? frame : null); }
 new IntersectionObserver((entries) => {
-  const visible = entries.some((e) => e.isIntersecting);
-  stageVisible = visible;
-  renderer.setAnimationLoop(visible ? stage._loop : null);
-  if (!visible) { if (orbiting) setOrbit(false); stopPlay(); }
+  stageVisible = entries.some((e) => e.isIntersecting);
+  setLoop();
+  if (!stageVisible) { if (orbiting) setOrbit(false); stopPlay(); }
 }, { rootMargin: '120px' }).observe(track);
+setLoop();
+/* With no loop, anything that moves the camera or the build asks for one
+   frame instead: setProgress (scroll sync, the buttons, the look & light
+   panel), the drone orbit, and a drag — OrbitControls fires 'change' while
+   its damping settles, so a drag keeps asking until the camera comes to
+   rest. A no-op while the loop is running; it will draw it anyway. */
+let renderQueued = false;
+function requestRender() {
+  if (running() || renderQueued) return;
+  renderQueued = true;
+  requestAnimationFrame(() => { renderQueued = false; stage._loop(); });
+}
+controls.addEventListener('change', requestRender);
 
 // Export buttons live in the page's own HUD (the stage runs hide-chrome).
 document.querySelectorAll('[data-campus-export]').forEach((btn) => {

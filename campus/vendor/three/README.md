@@ -10,16 +10,20 @@ Unmodified files from the `three@0.184.0` npm package:
 | `OBJExporter.js` | `examples/jsm/exporters/OBJExporter.js` |
 | `GLTFExporter.js` | `examples/jsm/exporters/GLTFExporter.js` |
 
-They are served from this repo rather than a CDN so `campus/` is self-contained:
-no third-party request, no CDN outage, and the page still works offline. The
-import map in `campus/index.html` maps the bare `three` and `three/addons/…`
-specifiers onto these paths — `three.module.js` imports `./three.core.js`
-relatively, so the two must stay side by side.
+They are served from this repo rather than a CDN so the 3D pages are
+self-contained: no third-party request, no CDN outage, and the pages still work
+offline. Every consumer — `campus/index.html`, `tiananmen/index.html`,
+`mech/index.html` and the hero mark on the root `index.html` — carries an import
+map that points the bare `three` and `three/addons/…` specifiers at this
+directory (`campus/` as `./vendor/three/…`, the others as
+`../campus/vendor/three/…` or `./campus/vendor/three/…`). `three.module.js`
+imports `./three.core.js` relatively, so the two must stay side by side.
 
 ## What the pages actually load: the `.min.js` files
 
-The import maps point at minified builds, not the sources above. The sources stay
-here as the thing those were built from; nothing on the site requests them.
+All four import maps point at the minified builds, not the sources above. The
+sources stay here as the thing those were built from; nothing on the site
+requests them (`grep -rn "vendor/three" --include=*.html` to check).
 
 | served | built from | raw | gzipped |
 | --- | --- | --- | --- |

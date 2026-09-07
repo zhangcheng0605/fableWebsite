@@ -16,10 +16,8 @@
   <meta property="og:image:height" content="720">
   <meta name="theme-color" content="#fdf4ff">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#127959;</text></svg>">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Quicksand:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Quicksand:wght@500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
+  <link rel="preload" as="style" href="../assets/fonts/fonts.css" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="../assets/fonts/fonts.css"></noscript>
 
   <!-- three.js is served from this repo (campus/vendor/three) — no CDN, works offline. -->
   <script type="importmap">
@@ -51,6 +49,9 @@
       --cyan:#25c4ff; --green:#12b981;
       --radius:18px;
       --grad:linear-gradient(95deg,#ef1f96,#7a2df0 46%,#0f9fe0);
+      /* the same sweep, deeper, for anything with white text on it: --grad
+         is 3.0:1 at the cyan end, this holds 5.5:1 across (WCAG 1.4.3) */
+      --cta-text:linear-gradient(95deg,#c41377,#5b1fc4 46%,#0a6f9e);
       --glass:rgba(255,255,255,.86);
     }
     *{margin:0;padding:0;box-sizing:border-box}
@@ -66,7 +67,7 @@
     .mono{font-family:"JetBrains Mono",monospace}
     .grad-text{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
     .skip-link{position:fixed;top:-100px;left:16px;z-index:100;padding:10px 18px;border-radius:99px;
-      background:var(--pink);color:#fff;font-weight:700;transition:top .2s}
+      background:var(--pink-ink);color:#fff;font-weight:700;transition:top .2s}
     .skip-link:focus{top:16px}
 
     .bg{position:fixed;inset:0;z-index:-2;pointer-events:none;background:
@@ -82,7 +83,8 @@
          backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
          box-shadow:0 10px 34px rgba(139,61,255,.14)}
     .nav a{font-size:.92rem;color:var(--foreground);font-weight:600;transition:color .2s;padding:8px 2px;white-space:nowrap}
-    .nav a:hover,.nav a[aria-current]{color:var(--pink)}
+    .nav a:hover{color:var(--pink)}
+    .nav a[aria-current]{color:var(--pink-ink)} /* the deeper pink: this one is read, not just seen */
     .logo{font-family:"Baloo 2",sans-serif;font-weight:800;font-size:1.1rem;color:var(--foreground)!important}
     .logo span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
     .nav-live{display:inline-flex;align-items:center;gap:7px}
@@ -123,7 +125,7 @@
       border-radius:99px;padding:9px 14px;line-height:1;transition:border-color .2s,color .2s,background .2s;
       backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
     .hud-btns button:hover{border-color:var(--pink);color:var(--pink-ink)}
-    .hud-btns button.active{background:var(--grad);color:#fff;border-color:transparent;font-weight:700}
+    .hud-btns button.active{background:var(--cta-text);color:#fff;border-color:transparent;font-weight:700}
     .hud-btns button[disabled]{opacity:.45;cursor:default}
 
     /* tweaks panel */
@@ -265,7 +267,7 @@
       border:2px solid var(--border);
       background:#fff;color:var(--violet);transition:transform .2s,border-color .2s,box-shadow .2s,color .2s}
     .btn:hover{transform:translateY(-2px);border-color:var(--pink);color:var(--pink)}
-    .btn-primary{background:var(--grad);color:#fff;border-color:transparent;
+    .btn-primary{background:var(--cta-text);color:#fff;border-color:transparent;
       box-shadow:0 10px 30px rgba(255,63,174,.28)}
     .btn-primary:hover{color:#fff}
     .btn-ghost:hover{border-color:var(--pink);color:var(--pink)}
@@ -307,7 +309,8 @@
     <!-- ===== the scroll-built campus ===== -->
     <section id="build" aria-label="The campus, assembled as you scroll">
       <div class="sticky">
-        <three-d-stage name="media-campus" background="#eaf1f8" hide-chrome></three-d-stage>
+        <three-d-stage name="media-campus" background="#eaf1f8" hide-chrome
+          aria-label="3D model of the media campus, built up as you scroll"></three-d-stage>
         <div class="stage-veil" aria-hidden="true"></div>
 
         <div id="titleCard">

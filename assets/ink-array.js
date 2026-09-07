@@ -212,7 +212,9 @@ function boot() {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'ink-move';
-    b.innerHTML = `<span class="num">${NUM[i]}</span><span class="name">${s.name}</span>`;
+    // lang="zh": the labels are Chinese on an English page — without it a
+    // screen reader spells them in the English voice
+    b.innerHTML = `<span class="num" lang="zh">${NUM[i]}</span><span class="name" lang="zh">${s.name}</span>`;
     // Reduced motion still gets to choose a formation — it just arrives
     // already formed instead of flying in.
     b.addEventListener('click', () => {

@@ -4,12 +4,19 @@
 /**
  * <three-d-stage> — 3D object viewer + exporter shell (three.js).
  *
- * Site-local copy. Three changes from the starter, all called out inline:
+ * Site-local copy. Changes from the starter, all called out inline:
  *   1. the toolbar / note / error chrome is themed to the Ink & Lantern palette
  *   2. `hide-chrome` drops the built-in toolbar + note so the host page can
  *      render its own controls (campus/index.html does)
  *   3. `download(format)` is public, so those host controls can trigger an
  *      export without reaching into private methods
+ *   4. preserveDrawingBuffer is off unless `preserve-buffer` is set — it
+ *      costs a framebuffer copy every frame, and only canvas-reading
+ *      screenshot tools need it
+ *   5. the host is a named `role="img"` for assistive tech and the canvas
+ *      inside is aria-hidden — the pages narrate progress themselves
+ *   6. a resize redraws once, so a stage whose loop is paused (off-screen,
+ *      reduced motion) never shows a stretched or blank frame
  *
  * The stage owns the whole scene: WebGL renderer, neutral studio lighting
  * with a soft ground shadow, orbit controls (drag to orbit, wheel to zoom,
@@ -57,9 +64,14 @@
  *   </script>
  *
  * Attributes:
- *   name       — export file basename (default "model")
- *   background — CSS color behind the scene (default a warm paper tone)
- *   autorotate — when present, a slow turntable until the user interacts
+ *   name            — export file basename (default "model")
+ *   background      — CSS color behind the scene (default a warm paper tone)
+ *   autorotate      — when present, a slow turntable until the user interacts
+ *   aria-label      — the accessible name of the picture (the host becomes
+ *                     role="img"; default "Interactive 3D model")
+ *   preserve-buffer — keep the last frame readable after compositing, for
+ *                     tooling that calls toDataURL() on the canvas; off by
+ *                     default because it costs a framebuffer copy per frame
  *
  * Model in real-world meters, centered on the origin, y-up — exports
  * inherit the scene's units and orientation. The stage fills its own box;
@@ -207,6 +219,11 @@
         return;
       }
       this._booted = true;
+      // To assistive tech the stage is one named picture: the canvas inside
+      // has nothing to read, and the host pages narrate the build in their
+      // own live regions. The host's own role/label win when set.
+      if (!this.hasAttribute('role')) this.setAttribute('role', 'img');
+      if (!this.hasAttribute('aria-label')) this.setAttribute('aria-label', 'Interactive 3D model');
       this._boot().catch((err) => {
         this._err.style.display = 'flex';
         this._err.textContent =
@@ -235,17 +252,22 @@
       ]);
       this._THREE = THREE;
       // preserveDrawingBuffer keeps the last frame readable after
-      // compositing (toDataURL / drawImage) — it's what lets the
-      // screenshot tools capture the scene instead of a blank canvas.
+      // compositing (toDataURL / drawImage) — what a canvas-reading
+      // screenshot tool needs. It also stops the browser swapping buffers,
+      // so every frame is copied instead: off unless the host opts in with
+      // `preserve-buffer`. (Compositor screenshots — Playwright, the OS —
+      // never needed it; neither does render-then-toDataURL in one task.)
       const renderer = new THREE.WebGLRenderer({
         antialias: true,
         alpha: true,
-        preserveDrawingBuffer: true,
+        preserveDrawingBuffer: this.hasAttribute('preserve-buffer'),
       });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       this._renderer = renderer;
+      // the host carries the name (connectedCallback); the canvas is just pixels
+      renderer.domElement.setAttribute('aria-hidden', 'true');
       this.shadowRoot.insertBefore(renderer.domElement, this._err);
       // A lost context (a backgrounded tab on iOS, a GPU reset) would
       // otherwise be a silent black stage. three.js preventDefault()s the
@@ -309,6 +331,10 @@
         renderer.setSize(w, h);
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
+        // Redraw at the new size right away: a host may have paused the
+        // loop (stage scrolled away, reduced motion) and would otherwise
+        // show the old frame stretched, or nothing, until its next frame.
+        if (this._object) renderer.render(scene, camera);
       };
       fit();
       this._ro = new ResizeObserver(fit);

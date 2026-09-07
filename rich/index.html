@@ -16,10 +16,8 @@
   <meta property="og:image:height" content="1536">
   <meta name="theme-color" content="#fdf4ff">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💸</text></svg>">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;1,700&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"></noscript>
+  <link rel="preload" as="style" href="../assets/fonts/fonts.css" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="../assets/fonts/fonts.css"></noscript>
   <style>
     :root{
       /* design tokens — shadcn/ui architecture, gold-noir brand */
@@ -332,11 +330,10 @@
         if (cur === target && performance.now() - lastScroll > 150) { running = false; return; }
         requestAnimationFrame(tick);
       };
-      const wake = () => {
-        lastScroll = performance.now();
-        if (!running) { running = true; requestAnimationFrame(tick); }
-      };
-      const setH = () => { document.body.style.height = scroller.scrollHeight + "px"; measure(); wake(); };
+      // kick: a single frame to re-apply cached geometry; wake: keep running while scrolling
+      const kick = () => { if (!running) { running = true; requestAnimationFrame(tick); } };
+      const wake = () => { lastScroll = performance.now(); kick(); };
+      const setH = () => { document.body.style.height = scroller.scrollHeight + "px"; measure(); kick(); };
       setH();
       addEventListener("resize", setH);
       addEventListener("load", setH);

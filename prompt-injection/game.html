@@ -3,6 +3,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Prompt Injection — play · ZAC Studios</title>
+<meta name="description" content="Prompt Injection, full-screen: a typing-defence game where hostile prompts descend toward your context window.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128737;</text></svg>">
 <meta name="robots" content="noindex">
 <link rel="canonical" href="https://zhangcheng0605.github.io/fableWebsite/prompt-injection/">
@@ -33,6 +34,13 @@
     cursor: none;
     image-rendering: auto;
   }
+  /* Focus ring when focus arrives by keyboard; it clears on the first click or
+     keystroke into the game (typing is keyboard modality too, so :focus-visible
+     alone would frame the whole play session). The canvas paints its own
+     "click to focus" hint whenever it loses focus. */
+  #game:focus-visible:not(.no-ring) { outline: 3px solid #7a2df0; outline-offset: -3px; }
+  /* visually-hidden live region for screen readers */
+  .vh { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   /* Standalone-only way back to the game page; hidden when prompt-injection/index.html
      embeds this game in its iframe (see the script under the link). */
   .site-back {
@@ -62,7 +70,17 @@
     back.addEventListener('keydown', function (e) { if (e.key === 'Enter') e.stopPropagation(); });
   })();
 </script>
-<canvas id="game"></canvas>
+<canvas id="game" role="application" aria-label="Prompt Injection — a typing defence game. Type the falling words; Enter starts or retries, Escape drops the lock.">Your browser cannot show the game canvas.</canvas>
+<div id="sr" class="vh" aria-live="polite" aria-atomic="true"></div>
+<script>
+  (function () {
+    var game = document.getElementById('game');
+    function noRing() { game.classList.add('no-ring'); }
+    window.addEventListener('pointerdown', noRing, true);
+    window.addEventListener('keydown', function (e) { if (e.key === 'Tab') game.classList.remove('no-ring'); else noRing(); }, true);
+    game.addEventListener('blur', function () { game.classList.remove('no-ring'); });
+  })();
+</script>
 <script>
 (function () {
 'use strict';
@@ -836,6 +854,13 @@ PI.Core = (function () {
   let state = 'TITLE', resumeState = 'PLAYING', pausedByBlur = false;
   let initialStateFired = false;
   let hasFocus = true, swallowNext = false, audioKicked = false;
+  let offscreen = false;               // canvas scrolled out of the top-level viewport
+  // prefers-reduced-motion: flash, shake and zoom-punch become no-ops (WCAG 2.3.3)
+  let reduceFx = false;
+  try {
+    reduceFx = !!(typeof window !== 'undefined' && window.matchMedia
+      && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  } catch (_) { reduceFx = false; }
   let overlayHooked = false, overlayFrame = -1;
   let errHooked = false, debugHooked = false;
 
@@ -876,6 +901,8 @@ PI.Core = (function () {
       flow: function () { return !!(PI.Score && PI.Score.flow); },
       integrity: function () { return PI.Game ? PI.Game.integrity : 0; },
       wave: function () { return PI.Entities ? PI.Entities.wave : 0; },
+      offscreen: function () { return offscreen; },
+      reduceFx: function () { return reduceFx; },
       boss: function () { return !!(PI.Entities && PI.Entities.boss); },
       enemies: function () {
         const l = (PI.Entities && PI.Entities.list) ? PI.Entities.list : [];
@@ -920,7 +947,7 @@ PI.Core = (function () {
     const s = canvas.style;
     s.position = 'fixed'; s.left = '0'; s.top = '0';
     s.width = '100%'; s.height = '100%';
-    s.display = 'block'; s.outline = 'none';
+    s.display = 'block';
     s.background = '#fdf4ff';
     s.touchAction = 'none';
     s.imageRendering = 'auto';
@@ -1022,12 +1049,14 @@ PI.Core = (function () {
   // ---------------------------------------------------------------- camera
   function addTrauma(amount) {
     if (typeof amount !== 'number' || !isFinite(amount)) return trauma;
+    if (reduceFx) return trauma;
     trauma = PI.U.clamp(trauma + amount, 0, 1);
     api.trauma = trauma;
     return trauma;
   }
 
   function punch(zoomAmount, seconds) {
+    if (reduceFx) return;
     const z = (typeof zoomAmount === 'number' && isFinite(zoomAmount))
       ? PI.U.clamp(zoomAmount, -0.4, 0.6)
       : (J.punch || 0.08);
@@ -1043,6 +1072,7 @@ PI.Core = (function () {
   }
 
   function flash(alpha, seconds, color) {
+    if (reduceFx) return;
     const a = (typeof alpha === 'number' && isFinite(alpha)) ? PI.U.clamp(alpha, 0, 1) : 0.2;
     if (a <= 0) return;
     const dur = (typeof seconds === 'number' && seconds > 0)
@@ -1178,6 +1208,16 @@ PI.Core = (function () {
     if (hidden) { hasFocus = false; api.hasFocus = false; autoPause(); }
   }
   function onResize() { needResize = true; }
+  // An iframe'd game below the fold has no viewer: park the loop (and auto-pause
+  // a live run) while the canvas is outside the top-level viewport.
+  function onIntersect(entries) {
+    let visible = true;
+    for (let i = 0; i < entries.length; i++) visible = !!entries[i].isIntersecting;
+    if (visible === !offscreen) return;
+    offscreen = !visible;
+    if (offscreen) autoPause();        // frameStep parks itself on the next tick
+    else start();
+  }
 
   function detectTouchOnly() {
     try {
@@ -1205,6 +1245,9 @@ PI.Core = (function () {
     try { document.addEventListener('visibilitychange', onVisibility, false); } catch (_) { }
     if (typeof ResizeObserver !== 'undefined') {
       try { new ResizeObserver(onResize).observe(canvas); } catch (_) { }
+    }
+    if (typeof IntersectionObserver !== 'undefined') {
+      try { new IntersectionObserver(onIntersect, { threshold: 0 }).observe(canvas); } catch (_) { }
     }
   }
 
@@ -1282,6 +1325,7 @@ PI.Core = (function () {
 
   // ---------------------------------------------------------------- loop
   function frameStep(ts) {
+    if (offscreen) { running = false; rafId = 0; return; }   // parked; see onIntersect
     rafId = raf(frameStep);        // re-armed first: a throw below can't kill the loop
     frame++;
 
@@ -5739,5 +5783,36 @@ PI.Game = (function () {
 
 
 PI.Game.boot();
+
+/* ==== a11y-live (site addition) ==== */
+// Screen-reader feedback for the canvas: state changes, wave starts and score
+// milestones go to the polite live region (#sr), at most one line a second.
+(function () {
+  const sr = (typeof document !== 'undefined') ? document.getElementById('sr') : null;
+  if (!sr) return;
+  let seenState = null, seenWave = 0, seenScore = 0, pending = '', lastAt = 0;
+  function poll() {
+    const C = PI.Core, E = PI.Entities, S = PI.Score;
+    const st = C ? C.state : null;
+    const wave = E ? Math.round(E.wave || 0) : 0;
+    const score = S ? Math.round(S.value || 0) : 0;
+    if (st !== seenState) {
+      if (st === 'TITLE') pending = 'Title screen. Press Enter to start, then type the falling words.';
+      else if (st === 'PLAYING' && seenState === 'PAUSED') pending = 'Resumed.';
+      else if (st === 'PLAYING') pending = 'Run started. Wave ' + Math.max(1, wave) + '.';
+      else if (st === 'PAUSED') pending = 'Paused. Press any key to resume.';
+      else if (st === 'GAME_OVER') pending = 'Context corrupted. Game over. Final score ' + score + '. Press Enter to retry.';
+      seenState = st;
+    } else if (st === 'PLAYING' && wave > 0 && wave !== seenWave) {
+      pending = 'Wave ' + wave + '.';
+    } else if (st === 'PLAYING' && Math.floor(score / 1000) > Math.floor(seenScore / 1000)) {
+      pending = 'Score ' + score + '.';
+    }
+    seenWave = wave; seenScore = score;
+    const now = Date.now();
+    if (pending && now - lastAt >= 1000) { sr.textContent = pending; pending = ''; lastAt = now; }
+  }
+  setInterval(poll, 500);
+})();
 })();
 </script>

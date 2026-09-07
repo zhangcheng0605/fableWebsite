@@ -5,8 +5,9 @@
                    and stars along the path
      2. scroll   — every scroll tick sprinkles a little burst at the last known
                    pointer position, so the page glitters while you scroll
-     3. ambient  — an occasional lone sparkle anywhere, so the page is never
-                   completely still
+     3. ambient  — an occasional lone sparkle anywhere, so the hero is never
+                   completely still (only the hero: the rest of the page
+                   parks, the same way the 3D mark and the ink array do)
    Everything is emoji drawn with fillText — no image assets. The rAF loop
    only runs while particles exist; reduced motion turns the whole file off. */
 (function () {
@@ -20,6 +21,9 @@
   var DPR = Math.min(window.devicePixelRatio || 1, 2);
   var W = 0, H = 0;
   function size() {
+    // re-read on every resize — the window may have moved to a screen with a
+    // different pixel ratio, or the zoom level changed
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
     W = window.innerWidth; H = window.innerHeight;
     canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
@@ -117,11 +121,23 @@
     if (now - lastScrollSpawn > 90) { lastScrollSpawn = now; spawn(lx, ly, 2); }
   }, { passive: true });
 
-  /* ambient — a lone sparkle somewhere, every so often */
+  /* ambient — a lone sparkle somewhere, every so often. Only while the hero
+     is on screen: below it the mark and the ink array have already parked,
+     and one sparkle every 900 ms was the one thing keeping a full-viewport
+     canvas clearing and repainting at 60 fps for the rest of the visit. The
+     interval is longer than a sparkle lives, so the loop parks between them
+     as well. */
+  var heroOn = true;
+  var hero = document.querySelector('.hero');
+  if (hero && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (es) {
+      heroOn = es[es.length - 1].isIntersecting;
+    }, { threshold: 0 }).observe(hero);
+  }
   setInterval(function () {
-    if (document.hidden) return;
+    if (document.hidden || !heroOn) return;
     spawn(Math.random() * W, H * (0.2 + Math.random() * 0.65), 1);
-  }, 900);
+  }, 3000);
 
   document.addEventListener('visibilitychange', function () {
     if (document.hidden) P.length = 0;

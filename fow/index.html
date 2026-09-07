@@ -37,7 +37,8 @@ body {
   --soft: #f7f8fb;
   --ink: #1b2540;
   --ink-2: #5b667f;
-  --ink-3: #9099ad;
+  --ink-3: #5f6a84;   /* 5.4:1 on white, 5:1 on --ground; the old #9099ad lives on as --line-3 for dots and ticks */
+  --line-3: #9099ad;
   --ink-mono: #1f66c1;
   --grid-line: #eef0f4;
   --axis-line: #dde1ea;
@@ -74,7 +75,8 @@ body[data-theme="dark"] {
   --soft: rgba(255, 255, 255, 0.04);
   --ink: #eef2fa;
   --ink-2: #a6b0c3;
-  --ink-3: #5d6880;
+  --ink-3: #8a94ab;   /* 6:1 on the dark card */
+  --line-3: #5d6880;
   --ink-mono: #8fd4ff;
   --grid-line: rgba(255, 255, 255, 0.055);
   --axis-line: rgba(255, 255, 255, 0.12);
@@ -167,16 +169,8 @@ body[data-theme="dark"] #aurora .dotgrid { background-image: radial-gradient(rgb
 }
 body[data-theme="dark"] #onboard { background: radial-gradient(ellipse 100% 90% at 50% -10%, rgba(20, 30, 58, 0.9), rgba(7, 10, 18, 0.97)); }
 #onboard.gone { opacity: 0; pointer-events: none; }
-.ob-inner { text-align: center; padding: 32px; max-width: 1080px; width: 100%; }
 .ob-brand { font-size: 14px; font-weight: 680; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-2); animation: obIn 700ms cubic-bezier(.2,.9,.25,1) both; }
 .ob-brand em { font-style: normal; color: var(--ink-3); font-weight: 500; letter-spacing: 0.08em; }
-.ob-mark { color: var(--acc); margin-right: 2px; }
-.ob-title {
-  margin: 22px 0 10px; font-size: clamp(30px, 4.2vw, 44px); font-weight: 730;
-  letter-spacing: -0.028em; text-wrap: balance; color: var(--ink);
-  animation: obIn 700ms 60ms cubic-bezier(.2,.9,.25,1) both;
-}
-.ob-sub { margin: 0 0 34px; color: var(--ink-2); font-size: 15px; animation: obIn 700ms 120ms cubic-bezier(.2,.9,.25,1) both; }
 /* ---------- the Lobby: choose-your-seat stage ---------- */
 .lb-wrap { text-align: center; padding: 28px 24px; max-width: 1080px; width: 100%; display: flex; flex-direction: column; align-items: center; gap: 4px; min-height: 0; }
 .lb-stage { display: flex; align-items: center; gap: 18px; width: 100%; justify-content: center; margin-top: 8px; }
@@ -240,37 +234,18 @@ body[data-theme="dark"] #onboard { background: radial-gradient(ellipse 100% 90% 
 .pp-avatar.has-av svg, .tb-avatar.has-av svg { width: 100%; height: 100%; display: block; }
 .pm-item .p-avatar { width: 30px; height: 30px; border-radius: 50%; overflow: hidden; }
 
-.ob-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
-.ob-card {
-  --pa: var(--acc);
-  position: relative; text-align: left; padding: 20px 18px 17px; border-radius: var(--r);
-  background: var(--card);
-  border: 1px solid var(--hairline);
-  box-shadow: var(--shadow-card);
-  transition: transform 220ms cubic-bezier(.2,.9,.3,1.4), border-color 220ms ease, box-shadow 220ms ease;
-  animation: obIn 650ms calc(160ms + var(--i) * 70ms) cubic-bezier(.2,.9,.25,1) both;
-  overflow: hidden;
-}
-.ob-card::before {
-  content: ""; position: absolute; inset: 0 0 auto; height: 3px;
-  background: linear-gradient(90deg, var(--pa), color-mix(in oklab, var(--pa) 30%, transparent));
-  opacity: 0.85;
-}
-.ob-card:hover { transform: translateY(-4px); border-color: color-mix(in oklab, var(--pa) 38%, var(--hairline)); box-shadow: var(--shadow-pop); }
 .ob-ava {
   width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center;
   font-weight: 700; font-size: 15px; letter-spacing: 0.02em; color: #fff;
   background: linear-gradient(140deg, color-mix(in oklab, var(--pa) 80%, #fff), var(--pa));
   box-shadow: 0 6px 16px -7px var(--pa);
 }
-.ob-name { margin-top: 12px; font-size: 16.5px; font-weight: 680; letter-spacing: -0.01em; color: var(--ink); }
-.ob-role { color: var(--ink-2); font-size: 13px; margin-top: 1px; }
-.ob-tag { color: var(--ink-3); font-size: 12px; margin-top: 9px; }
-.ob-enter { position: absolute; right: 14px; top: 18px; font-size: 11px; color: var(--ink-3); opacity: 0; transform: translateX(-4px); transition: all 200ms ease; }
-.ob-card:hover .ob-enter { opacity: 1; transform: none; color: var(--pa); }
 .ob-foot { margin-top: 30px; color: var(--ink-3); font-size: 12px; animation: obIn 700ms 620ms both; }
 .ob-foot a { color: var(--ink-2); text-decoration: none; font-weight: 600; }
 .ob-foot a:hover { color: var(--ink); text-decoration: underline; }
+.ob-foot-touch { display: none; }
+/* visually hidden, still read by screen readers (the chat's live region) */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; }
 @keyframes obIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 
 /* ============================== top bar */
@@ -285,7 +260,6 @@ body[data-theme="dark"] #onboard { background: radial-gradient(ellipse 100% 90% 
 .brand { display: flex; align-items: baseline; gap: 7px; padding: 6px 8px; border-radius: 10px; }
 .site-home { display: flex; align-items: center; height: 34px; padding: 0 9px; border-radius: 10px; font-size: 12px; font-weight: 650; letter-spacing: 0.06em; color: var(--ink-3); text-decoration: none; white-space: nowrap; transition: color 160ms, background 160ms; }
 .site-home:hover { color: var(--ink); background: var(--hov); }
-.brand-mark { color: var(--acc); font-size: 15px; transition: color 500ms ease; }
 .brand-name { font-weight: 770; font-size: 16.5px; letter-spacing: -0.01em; }
 .brand-co { color: var(--ink-3); font-size: 12px; font-weight: 500; letter-spacing: 0.05em; }
 .persona-pill {
@@ -331,7 +305,7 @@ body[data-theme="dark"] #onboard { background: radial-gradient(ellipse 100% 90% 
 }
 
 /* ============================== frame + canvas */
-#frame { position: relative; z-index: 1; display: flex; height: 100vh; padding: 56px 0 30px; }
+#frame { position: relative; z-index: 1; display: flex; height: 100vh; height: 100dvh; padding: 56px 0 30px; }
 #canvas {
   flex: 1; overflow-y: auto; padding: 18px 18px 40px;
   display: grid; grid-template-columns: repeat(12, 1fr); gap: 13px;
@@ -471,7 +445,7 @@ body[data-theme="dark"] #onboard { background: radial-gradient(ellipse 100% 90% 
 .ag-item:hover { background: var(--hov); }
 .ag-time { font-family: var(--font-mono); font-size: 11px; color: var(--ink-2); width: 40px; flex: none; padding-top: 2px; font-variant-numeric: tabular-nums; }
 .ag-line { width: 3px; border-radius: 2px; align-self: stretch; background: var(--acc); opacity: 0.8; flex: none; }
-.ag-item.past .ag-line { background: var(--ink-3); opacity: 0.35; }
+.ag-item.past .ag-line { background: var(--line-3); opacity: 0.35; }
 .ag-item.now .ag-line { box-shadow: 0 0 8px var(--acc); animation: pulse 2s ease-in-out infinite; }
 @keyframes pulse { 50% { opacity: 0.5; } }
 .ag-body { min-width: 0; flex: 1; }
@@ -502,7 +476,7 @@ body[data-theme="dark"] .inb-urgent { color: var(--serious); background: transpa
 .ap-item.done { opacity: 0.42; }
 .ap-item.done .ap-title { text-decoration: line-through; }
 .ap-urg { width: 3.5px; border-radius: 2px; align-self: stretch; flex: none; }
-.ap-urg.high { background: var(--crit); } .ap-urg.med { background: var(--warn); } .ap-urg.low { background: var(--ink-3); opacity: 0.4; }
+.ap-urg.high { background: var(--crit); } .ap-urg.med { background: var(--warn); } .ap-urg.low { background: var(--line-3); opacity: 0.4; }
 .ap-body { min-width: 0; flex: 1; }
 .ap-title { font-size: 12.5px; font-weight: 630; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ap-meta { font-size: 11px; color: var(--ink-3); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -747,7 +721,7 @@ body[data-theme="dark"] .orb::after {
 }
 .cd-send:hover { transform: translateY(-1px); box-shadow: 0 6px 18px -6px var(--acc); }
 .cd-send:active { transform: scale(0.94); }
-.cd-hint { margin-top: 7px; text-align: center; font-size: 10px; color: var(--ink-3); }
+.cd-hint { margin-top: 7px; text-align: center; font-size: 11px; color: var(--ink-3); }
 .cd-hint .mono { font-size: 9.5px; color: var(--ink-3); border: 1px solid var(--hairline-soft); padding: 0.5px 5px; border-radius: 5px; background: var(--kbd-bg); }
 
 #frame.chat-hidden #chatdock { display: none; }
@@ -835,7 +809,6 @@ body[data-theme="dark"] .orb::after {
 }
 @media (max-width: 860px) {
   #canvas [data-span] { grid-column: span 12 !important; }
-  .ob-grid { grid-template-columns: 1fr; }
   .tb-center { display: none; }
   .wk-stats { grid-template-columns: 1fr 1fr; }
 }
@@ -857,10 +830,14 @@ body[data-theme="dark"] .orb::after {
 }
 /* touch: there is no hover, so hover-only affordances are simply shown; chrome buttons grow to a 44px target */
 @media (hover: none) {
-  .ob-enter, .ch-acts, .ag-join { opacity: 1; transform: none; }
+  .ch-acts, .ag-join { opacity: 1; transform: none; }
 }
 @media (pointer: coarse) {
   #topbar .tb-btn, .site-home, .cd-tools, .cd-collapse, .cd-send { min-width: 44px; min-height: 44px; }
+  /* touch keyboards: 16px inputs stop iOS Safari zooming the page on focus; the lobby hint talks about swiping, not keys */
+  #cdInput, #ckInput { font-size: 16px; }
+  .ob-foot-kbd { display: none; }
+  .ob-foot-touch { display: inline; }
 }
 
 /* ============================== joined chart — the loud one */
@@ -1114,6 +1091,13 @@ body.dragging-chip #chatdock {
 .pb-call { margin-top: 7px; font-size: 9.5px; color: var(--ink-3); border-left: 2px solid var(--good); padding-left: 7px; }
 body.presenting #pet { display: none; }
 #toasts { bottom: 116px; }
+/* phones: Emmi shrinks into the corner and toasts move up top, so neither sits on the hero buttons or the composer */
+@media (max-width: 760px) {
+  #pet { width: 44px; bottom: 34px; left: 8px; }
+  .pet-bubble { width: min(252px, calc(100vw - 40px)); }
+  #toasts { top: 64px; bottom: auto; left: 10px; right: 10px; }
+  #frame:not(.chat-hidden) ~ #pet { display: none; } /* the dock is full-bleed here — Emmi would sit on the composer */
+}
 
 /* ============================== CNA morning scan */
 .news-card .ch-ico.cna-ico { background: #c0161d; color: #fff; font-weight: 800; font-size: 7.5px; letter-spacing: 0.02em; }
@@ -1203,14 +1187,6 @@ body[data-theme="dark"] .mc-word { color: #cdd7f2; }
 .ob-logo svg { width: 76px; height: 49px; display: block; margin: 0 auto; }
 .ob-word { font-size: 23px; line-height: 1; }
 .ob-brand em { font-style: normal; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 640; color: var(--ink-3); }
-.ob-play {
-  position: absolute; right: 14px; bottom: 14px; display: inline-flex; align-items: center; gap: 5px;
-  font-size: 10.5px; font-weight: 720; color: var(--pa);
-  border: 1px solid color-mix(in oklab, var(--pa) 45%, transparent); border-radius: 999px;
-  padding: 4px 11px; background: color-mix(in oklab, var(--pa) 7%, var(--card));
-  transition: all 150ms; cursor: pointer;
-}
-.ob-play:hover { background: var(--pa); color: #fff; transform: translateY(-1px); box-shadow: 0 6px 16px -7px var(--pa); }
 
 /* ============================== MCP console */
 #mcp { position: fixed; inset: 0; z-index: 74; }
@@ -1300,22 +1276,13 @@ body[data-theme="dark"] { --pr-dim: rgba(0, 0, 0, 0.66); }
 .pr-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--hairline); transition: all 250ms; }
 .pr-dot.done { background: var(--acc-line); }
 .pr-dot.cur { background: var(--acc); transform: scale(1.35); }
-.ob-tour {
-  margin-top: 26px; display: inline-flex; align-items: center; gap: 9px;
-  font-size: 13px; font-weight: 660; color: #fff;
-  background: var(--acc); border-radius: 999px; padding: 10px 22px;
-  box-shadow: 0 10px 26px -10px var(--acc);
-  transition: transform 160ms, box-shadow 160ms;
-  animation: obIn 700ms 560ms both;
-}
-.ob-tour:hover { transform: translateY(-2px); box-shadow: 0 14px 32px -10px var(--acc); }
 body.presenting #toasts { bottom: 90px; }
 
 @media (prefers-reduced-motion: reduce) {
   #aurora .blob { animation: none; }
   .tk-tape { animation: none; }
   .orb i { animation-duration: 30s; }
-  .card, .ob-card, .ob-title, .ob-sub, .ob-brand, .ob-foot { animation-duration: 1ms !important; animation-delay: 0ms !important; }
+  .card, .ob-brand, .ob-foot { animation-duration: 1ms !important; animation-delay: 0ms !important; }
 }
 
 .msg .askme-av { width: 26px; height: 26px; margin-top: 2px; }
@@ -1323,7 +1290,7 @@ body.presenting #toasts { bottom: 90px; }
 
 /* == crew.css == */
 /* ============================== The Crew — tiny animated office
-   Namespaced under #crew. Keyframes prefixed cw. Auto-included by build.py. */
+   Namespaced under #crew. Keyframes prefixed cw. Everything lives in this one file. */
 
 #crew { position: fixed; inset: 0; z-index: 76; }
 #crew[hidden] { display: none; }
@@ -2112,7 +2079,7 @@ body.presenting #toasts { bottom: 90px; }
 #canvas.studio-hr .hr-ava.crit { --halo: var(--crit); }
 #canvas.studio-hr .hr-ava.warn { --halo: var(--warn); }
 #canvas.studio-hr .hr-ava.go   { --halo: var(--acc); }
-#canvas.studio-hr .hr-ava.dim  { --halo: var(--ink-3); }
+#canvas.studio-hr .hr-ava.dim  { --halo: var(--line-3); }
 #canvas.studio-hr .hr-ava.dim::before { opacity: 0.3; }
 #canvas.studio-hr .hr-ava.crit::after {
   content: ""; position: absolute; inset: -5px; border-radius: 50%;
@@ -2536,7 +2503,7 @@ body.presenting #toasts { bottom: 90px; }
 #canvas.studio-it .it-q-lamp { flex: none; width: 9px; height: 9px; border-radius: 50%; }
 #canvas.studio-it .it-q-lamp.high { background: var(--crit); box-shadow: 0 0 9px var(--crit); animation: itBlink 0.9s infinite; }
 #canvas.studio-it .it-q-lamp.med { background: var(--warn); box-shadow: 0 0 8px var(--warn); animation: itBlink 1.7s infinite; }
-#canvas.studio-it .it-q-lamp.low { background: var(--ink-3); }
+#canvas.studio-it .it-q-lamp.low { background: var(--line-3); }
 #canvas.studio-it .it-q.done .it-q-lamp { background: var(--good-ink); box-shadow: 0 0 8px var(--good-ink); animation: none; }
 #canvas.studio-it .it-q-pri {
   flex: none; font-family: var(--font-mono); font-size: 9.5px; font-weight: 780;
@@ -2686,7 +2653,7 @@ body.presenting #toasts { bottom: 90px; }
 
 /* ---------- chapter heads: numbered docket entries ---------- */
 #canvas.studio-legal .st-head {
-  border-bottom: 1px dotted color-mix(in srgb, var(--ink-3) 55%, transparent);
+  border-bottom: 1px dotted color-mix(in srgb, var(--line-3) 55%, transparent);
   padding-bottom: 11px;
   margin-bottom: 20px;
   gap: 14px;
@@ -2924,7 +2891,7 @@ body.presenting #toasts { bottom: 90px; }
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--ink-3);
-  border-bottom: 1px dotted color-mix(in srgb, var(--ink-3) 55%, transparent);
+  border-bottom: 1px dotted color-mix(in srgb, var(--line-3) 55%, transparent);
   padding-bottom: 8px;
   margin-bottom: 14px;
 }
@@ -3410,7 +3377,7 @@ body.presenting #toasts { bottom: 90px; }
   height: 26px;
   border-radius: 50%;
   background: var(--card);
-  border: 2px solid var(--ink-3);
+  border: 2px solid var(--line-3);
   display: grid;
   place-items: center;
   transition: transform 150ms ease, box-shadow 150ms ease;
@@ -4233,7 +4200,7 @@ body.presenting #toasts { bottom: 90px; }
 #canvas.studio-sales .flr-urg { width: 4px; height: 36px; border-radius: 2px; }
 #canvas.studio-sales .flr-urg.high { background: var(--crit); }
 #canvas.studio-sales .flr-urg.med { background: var(--warn); }
-#canvas.studio-sales .flr-urg.low { background: var(--ink-3); opacity: 0.4; }
+#canvas.studio-sales .flr-urg.low { background: var(--line-3); opacity: 0.4; }
 #canvas.studio-sales .flr-row-bd { min-width: 0; }
 #canvas.studio-sales .flr-row-t { display: flex; align-items: center; gap: 8px; min-width: 0; flex-wrap: wrap; }
 #canvas.studio-sales .flr-type {
@@ -4421,7 +4388,7 @@ body.presenting #toasts { bottom: 90px; }
   <div class="dotgrid"></div>
 </div>
 
-<div id="onboard" role="dialog" aria-label="Choose your seat">
+<div id="onboard" role="dialog" aria-modal="true" aria-label="Choose your seat">
   <div class="lb-wrap">
     <div class="ob-brand"><span class="ob-logo" id="obLogo"></span><span class="mc-word ob-word">mediacorp</span><em>FoW · Future of Work workspace</em></div>
     <div class="lb-stage">
@@ -4441,7 +4408,7 @@ body.presenting #toasts { bottom: 90px; }
       <button class="lb-arrow" id="lbNext" aria-label="Next person">›</button>
     </div>
     <div class="lb-rail" id="lbRail"></div>
-    <p class="ob-foot"><a href="../" aria-label="Back to ZAC Studios">← ZAC Studios</a> · A personal concept demo, not a Mediacorp product · <a href="../direction/#fow">Director's cut</a> · demo data · ‹ › or scroll to meet the team</p>
+    <p class="ob-foot"><a href="../" aria-label="Back to ZAC Studios">← ZAC Studios</a> · A personal concept demo, not a Mediacorp product · <a href="../direction/#fow">Director's cut</a> · demo data · <span class="ob-foot-kbd">‹ › or scroll to meet the team</span><span class="ob-foot-touch">swipe or tap a face to meet the team</span></p>
   </div>
 </div>
 
@@ -4449,12 +4416,12 @@ body.presenting #toasts { bottom: 90px; }
   <div class="tb-left">
     <a class="site-home" href="../" aria-label="Back to ZAC Studios" title="Back to ZAC Studios">← ZAC</a>
     <button class="brand" id="brandBtn" title="FoW — Future of Work at Mediacorp"><span class="brand-logo" id="brandLogo"></span><span class="brand-name">FoW</span><span class="brand-co mc-word">mediacorp</span></button>
-    <button class="persona-pill" id="personaPill" aria-haspopup="true" title="Switch persona">
+    <button class="persona-pill" id="personaPill" aria-haspopup="true" aria-expanded="false" aria-controls="personaMenu" aria-label="Switch persona" title="Switch persona">
       <span class="pp-avatar" id="ppAvatar">–</span>
       <span class="pp-meta"><span class="pp-name" id="ppName">…</span><span class="pp-role" id="ppRole">…</span></span>
       <svg class="pp-caret" viewBox="0 0 12 12" width="10" height="10"><path d="M2.5 4.5 6 8l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </button>
-    <div class="persona-menu" id="personaMenu" hidden></div>
+    <div class="persona-menu" id="personaMenu" role="menu" aria-label="Switch persona" hidden></div>
   </div>
   <div class="tb-center" id="tbDate"></div>
   <div class="tb-right">
@@ -4462,15 +4429,15 @@ body.presenting #toasts { bottom: 90px; }
       <svg viewBox="0 0 16 16" width="14" height="14"><circle cx="7" cy="7" r="4.4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m10.6 10.6 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
       <span>Ask or jump to…</span><kbd>⌘K</kbd>
     </button>
-    <button class="tb-btn tb-ico" id="crewBtn" title="The Crew — your agents at work"><svg viewBox="0 0 16 16" width="14" height="14"><circle cx="5.5" cy="5.5" r="2.2" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="10.8" cy="6.5" r="1.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2.2 13.2a3.4 3.4 0 0 1 6.6 0M8.9 12.6a2.9 2.9 0 0 1 5 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
-    <button class="tb-btn tb-ico" id="mcpBtn" title="MCP Console — connected servers &amp; tools">
+    <button class="tb-btn tb-ico" id="crewBtn" title="The Crew — your agents at work" aria-label="The Crew — your agents at work"><svg viewBox="0 0 16 16" width="14" height="14"><circle cx="5.5" cy="5.5" r="2.2" fill="none" stroke="currentColor" stroke-width="1.4"/><circle cx="10.8" cy="6.5" r="1.8" fill="none" stroke="currentColor" stroke-width="1.4"/><path d="M2.2 13.2a3.4 3.4 0 0 1 6.6 0M8.9 12.6a2.9 2.9 0 0 1 5 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
+    <button class="tb-btn tb-ico" id="mcpBtn" title="MCP Console — connected servers &amp; tools" aria-label="MCP Console — connected servers and tools">
       <svg viewBox="0 0 16 16" width="14" height="14"><path d="M5.5 2v3.4M10.5 2v3.4M4 5.4h8v2.2a4 4 0 0 1-8 0Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 11.6V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
     </button>
-    <button class="tb-btn tb-ico" id="presentBtn" title="Play this workspace's highlights">
+    <button class="tb-btn tb-ico" id="presentBtn" title="Play this workspace's highlights" aria-label="Play this workspace's highlights">
       <svg viewBox="0 0 16 16" width="13" height="13"><path d="M4.4 2.9v10.2L13 8Z" fill="currentColor"/></svg>
     </button>
-    <button class="tb-btn tb-ico" id="themeBtn" title="Switch light / dark theme"><span id="themeIco"></span></button>
-    <button class="tb-btn tb-ico" id="bellBtn" title="Notifications">
+    <button class="tb-btn tb-ico" id="themeBtn" title="Switch light / dark theme" aria-label="Switch light / dark theme"><span id="themeIco"></span></button>
+    <button class="tb-btn tb-ico" id="bellBtn" title="Notifications" aria-label="Notifications">
       <svg viewBox="0 0 16 16" width="15" height="15"><path d="M8 1.8a4 4 0 0 0-4 4v2.4L2.6 11h10.8L12 8.2V5.8a4 4 0 0 0-4-4Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/><path d="M6.4 13a1.7 1.7 0 0 0 3.2 0" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
       <i class="badge" id="bellBadge" hidden></i>
     </button>
@@ -4488,29 +4455,30 @@ body.presenting #toasts { bottom: 90px; }
         <span class="cd-name">askMElah</span>
         <span class="cd-status" id="cdStatus">connecting…</span>
       </div>
-      <button class="cd-tools" id="cdToolsBtn" title="Connected tools &amp; skills">
+      <button class="cd-tools" id="cdToolsBtn" title="Connected tools &amp; skills" aria-label="Connected tools and skills" aria-expanded="false" aria-controls="cdDrawer">
         <svg viewBox="0 0 16 16" width="14" height="14"><path d="M2 4.5h12M2 8h12M2 11.5h12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
       </button>
-      <button class="cd-collapse" id="cdCollapse" title="Collapse chat">
+      <button class="cd-collapse" id="cdCollapse" title="Collapse chat" aria-label="Collapse chat">
         <svg viewBox="0 0 16 16" width="14" height="14"><path d="m6 3.5 4.5 4.5L6 12.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
     </div>
     <div class="cd-drawer" id="cdDrawer" hidden></div>
-    <div class="cd-msgs" id="cdMsgs" aria-live="polite"></div>
+    <div class="cd-msgs" id="cdMsgs"></div>
+    <div class="sr-only" id="cdLive" aria-live="polite" aria-atomic="true"></div>
     <div class="cd-drop" id="cdDrop"><span>✦ Drop it here — askMElah will take a look</span></div>
     <div class="cd-foot">
       <div class="cd-sugg" id="cdSugg"></div>
       <div class="cd-chips" id="cdChips"></div>
       <div class="cd-composer">
         <textarea id="cdInput" rows="1" placeholder="Ask me anything, lah… or drag a card in" aria-label="Message askMElah"></textarea>
-        <button class="cd-send" id="cdSend" title="Send">
+        <button class="cd-send" id="cdSend" title="Send" aria-label="Send message">
           <svg viewBox="0 0 16 16" width="15" height="15"><path d="M2.2 8 13.8 2.6 10.9 8l2.9 5.4L2.2 8Z" fill="currentColor"/></svg>
         </button>
       </div>
-      <div class="cd-hint">askMElah is a demo agent · responses are simulated · <span class="mono">fable-5</span></div>
+      <div class="cd-hint">askMElah is a demo agent · responses are simulated · no live model</div>
     </div>
   </aside>
-  <button id="chatFab" title="Open chat" hidden><span class="askme-av mini" id="fabAv"></span></button>
+  <button id="chatFab" title="Open chat" aria-label="Open chat" hidden><span class="askme-av mini" id="fabAv"></span></button>
 </main>
 
 <footer id="ticker" aria-hidden="true">
@@ -4519,26 +4487,26 @@ body.presenting #toasts { bottom: 90px; }
   <span class="tk-clock" id="tkClock"></span>
 </footer>
 
-<div id="cmdk" hidden>
+<div id="cmdk" role="dialog" aria-modal="true" aria-label="Command palette" hidden>
   <div class="ck-back"></div>
   <div class="ck-panel">
     <div class="ck-inputrow">
       <svg viewBox="0 0 16 16" width="15" height="15"><circle cx="7" cy="7" r="4.4" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m10.6 10.6 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-      <input id="ckInput" placeholder="Type a command, a question, or a name…" autocomplete="off">
+      <input id="ckInput" placeholder="Type a command, a question, or a name…" autocomplete="off" role="combobox" aria-expanded="true" aria-controls="ckList" aria-autocomplete="list">
       <kbd>esc</kbd>
     </div>
-    <div class="ck-list" id="ckList"></div>
+    <div class="ck-list" id="ckList" role="listbox" aria-label="Results"></div>
   </div>
 </div>
 
-<div id="mcp" hidden>
+<div id="mcp" role="dialog" aria-modal="true" aria-labelledby="mcpTitle" hidden>
   <div class="mcp-back" id="mcpBack"></div>
   <div class="mcp-panel">
     <div class="mcp-head">
       <span class="ch-ico"><svg viewBox="0 0 16 16" width="14" height="14"><path d="M5.5 2v3.4M10.5 2v3.4M4 5.4h8v2.2a4 4 0 0 1-8 0Z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M8 11.6V14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
-      <div class="ch-title"><div class="t">MCP Console</div><div class="s">Model Context Protocol · the servers this workspace is wired into</div></div>
+      <div class="ch-title"><div class="t" id="mcpTitle">MCP Console</div><div class="s">Model Context Protocol · the servers this workspace is wired into</div></div>
       <span class="mcp-count" id="mcpCount"></span>
-      <button class="ch-act mcp-x" id="mcpClose" title="Close">✕</button>
+      <button class="ch-act mcp-x" id="mcpClose" title="Close" aria-label="Close MCP console">✕</button>
     </div>
     <div class="mcp-body">
       <div class="mcp-grid" id="mcpGrid"></div>
@@ -4751,6 +4719,21 @@ const ICONS = {
 /* ---------- DOM helpers ---------- */
 const $ = (s, r) => (r || document).querySelector(s);
 const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+/* overlays are dialogs: Tab stays inside while one is open, and focus goes back to the trigger when it closes */
+/* autofocus is only safe at top level: inside the landing page's preview iframe it would steal the visitor's focus */
+const canAutofocus = () => { try { return window.self === window.top && !document.documentElement.classList.contains("embed"); } catch (_) { return false; } };
+const restoreFocus = elm => { try { if (elm && elm !== document.body && document.contains(elm) && !elm.closest("[inert]") && elm.focus) elm.focus({ preventScroll: true }); } catch (_) { } };
+function trapTab(root) {
+  if (!root) return;
+  root.addEventListener("keydown", e => {
+    if (e.key !== "Tab" || root.hidden) return;
+    const f = $$('a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])', root).filter(x => x.getClientRects().length);
+    if (!f.length) return;
+    const first = f[0], last = f[f.length - 1], cur = document.activeElement;
+    if (e.shiftKey && (cur === first || !root.contains(cur))) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && (cur === last || !root.contains(cur))) { e.preventDefault(); first.focus(); }
+  });
+}
 
 function el(tag, cls, text) {
   const n = document.createElement(tag);
@@ -5540,6 +5523,15 @@ function renderBlock(b) {
   if (b.t === "embed") return buildEmbed(b.kind, b.id);
   const p = el("p"); renderInline(p, b.s); return p;
 }
+/* screen readers hear each reply once, when it is complete — #cdMsgs itself is not live, so the
+   word-by-word stream does not re-announce partial sentences 100+ times per answer */
+function announce(text) {
+  const live = $("#cdLive");
+  if (!live) return;
+  const plain = String(text || "").replace(/[*_`#>]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 600);
+  live.textContent = "";
+  setTimeout(() => { live.textContent = plain; }, 40);
+}
 async function streamRich(container, text) {
   const rich = el("div", "rich");
   container.appendChild(rich);
@@ -5745,6 +5737,7 @@ function runChain(chain) {
     }
     await sleep(300);
     await streamRich(body, "**Done.** " + chain.outcome);
+    announce("Done. " + chain.outcome);
     if (chain.insight) { await sleep(350); body.appendChild(buildInsight(chain.insight)); scrollChat(); }
     addActions(body, [
       { label: "Schedule this chain weekly", toast: "Scheduled — Mondays 08:30, you'll get the digest" },
@@ -5765,7 +5758,7 @@ function agentReply(spec) {
     await sleep(spec.thinkMs || 650);
     stopTyping();
     if (spec.tools) await runTools(body, spec.tools);
-    if (spec.text) await streamRich(body, spec.text);
+    if (spec.text) { await streamRich(body, spec.text); announce(spec.text); }
     if (spec.insight) { body.appendChild(buildInsight(spec.insight)); scrollChat(); }
     addActions(body, spec.actions);
     chat.busy = false;
@@ -5794,6 +5787,7 @@ let fallbackCount = 0;
 function routeMessage(text, chips) {
   const p = FOW.data();
   const m = (text || "").toLowerCase();
+  if (!p) return { thinkMs: 300, text: "Choose a persona to get started — step in from the lobby." };
 
   /* 0 — the recap button must always win */
   if (/(end.of.week|week recap|weekly recap|eod report|end of day recap|weekly report|status report)/.test(m)) { const r = recapFlow(); petReact("recap"); return r; }
@@ -5824,8 +5818,15 @@ function routeMessage(text, chips) {
   /* 2.5 — easter-egg intents */
   if (/\b(time now|what.*time|current time)\b/.test(m)) {
     const now = new Date();
-    const hhmm = now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
-    const curMin = now.getHours() * 60 + now.getMinutes();
+    /* "in Singapore" means Singapore time — read the clock in the persona's own zone (falls back to local) */
+    const TZ = { Singapore: "Asia/Singapore", London: "Europe/London", Austin: "America/Chicago", "New York": "America/New_York", Stockholm: "Europe/Stockholm" };
+    let hh = now.getHours(), mi = now.getMinutes();
+    try {
+      const parts = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: TZ[p.user.location] }).formatToParts(now);
+      hh = Number(parts.find(x => x.type === "hour").value) % 24; mi = Number(parts.find(x => x.type === "minute").value);
+    } catch (_) { }
+    const hhmm = String(hh).padStart(2, "0") + ":" + String(mi).padStart(2, "0");
+    const curMin = hh * 60 + mi;
     const upcoming = (p.meetings || []).find(mt => {
       const parts = String(mt.time).split(":");
       return (Number(parts[0]) * 60 + Number(parts[1])) > curMin;
@@ -6277,6 +6278,7 @@ function renderChips() {
   });
 }
 function sendMessage(raw) {
+  if (!FOW.data()) { toast("Pick a seat first — step in from the lobby", "info"); return; } /* nothing to route to before sign-in */
   const text = (raw != null ? raw : $("#cdInput").value).trim();
   const chips = chat.chips.slice();
   if (!text && !chips.length) return;
@@ -6369,6 +6371,7 @@ function toast(msg, kind) {
 }
 
 /* ---------------- confetti ---------------- */
+let confettiFrame = 0; /* shared across bursts so a new burst cancels the one still running */
 function confetti() {
   const cv = $("#fx"), ctx = cv.getContext("2d");
   cv.width = innerWidth; cv.height = innerHeight;
@@ -6383,7 +6386,6 @@ function confetti() {
       r: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.3, life: 1,
     });
   }
-  let frame;
   const tick = () => {
     ctx.clearRect(0, 0, cv.width, cv.height);
     let alive = 0;
@@ -6398,10 +6400,10 @@ function confetti() {
       ctx.fillRect(-p.s / 2, -p.s / 2, p.s, p.s * 0.62);
       ctx.restore();
     });
-    if (alive) frame = requestAnimationFrame(tick);
+    if (alive) confettiFrame = requestAnimationFrame(tick);
     else ctx.clearRect(0, 0, cv.width, cv.height);
   };
-  cancelAnimationFrame(frame);
+  cancelAnimationFrame(confettiFrame);
   tick();
 }
 
@@ -6717,10 +6719,12 @@ function renderStudio(p, cv) {
   const auto = el("button", "autopilot" + (state.autopilot[state.personaId] ? " on" : ""));
   auto.title = "When on, askMElah auto-clears low-risk approvals within policy";
   auto.append(el("span", "", "Autopilot"), el("span", "sw"));
+  auto.setAttribute("role", "switch"); auto.setAttribute("aria-checked", state.autopilot[state.personaId] ? "true" : "false");
   auto.addEventListener("click", () => {
     const on = !state.autopilot[state.personaId];
     state.autopilot[state.personaId] = on;
     auto.classList.toggle("on", on);
+    auto.setAttribute("aria-checked", on ? "true" : "false");
     if (!on) { toast("Autopilot off — everything waits for you again", "info"); return; }
     const low = FOW.pendingApprovals().filter(a => a.urgency === "low");
     low.forEach((a, i) => setTimeout(() => { FOW.approve(a.id, i === low.length - 1); buildDeck(); }, 600 + i * 450));
@@ -6854,7 +6858,7 @@ function greeting() {
 function renderCanvas() {
   const p = FOW.data();
   const cv = $("#canvas");
-  /* per-persona studio renderers: marketing is built in; others load from studio-<id>.js */
+  /* per-persona studio renderers: marketing is renderStudio; the others are the renderStudio_<id> functions further down this file */
   let studioFn = null;
   if (p) {
     if (p.personaId === "marketing") studioFn = renderStudio;
@@ -6867,7 +6871,7 @@ function renderCanvas() {
   cv.textContent = "";
   if (!p) {
     const none = el("div", "card"); none.dataset.span = "12";
-    none.style.padding = "40px"; none.textContent = "No data pack found for this persona — run build.py after generating src/data/*.json.";
+    none.style.padding = "40px"; none.textContent = "Demo data is not available for this seat yet — pick another person from the menu.";
     cv.appendChild(none);
     return;
   }
@@ -7149,10 +7153,12 @@ function renderCanvas() {
   const auto = el("button", "autopilot" + (state.autopilot[state.personaId] ? " on" : ""));
   auto.title = "When on, Flow auto-clears low-risk approvals within policy";
   auto.append(el("span", "", "Autopilot"), el("span", "sw"));
+  auto.setAttribute("role", "switch"); auto.setAttribute("aria-checked", state.autopilot[state.personaId] ? "true" : "false");
   auto.addEventListener("click", () => {
     const on = !state.autopilot[state.personaId];
     state.autopilot[state.personaId] = on;
     auto.classList.toggle("on", on);
+    auto.setAttribute("aria-checked", on ? "true" : "false");
     if (!on) { toast("Autopilot off — everything waits for you again", "info"); return; }
     const low = FOW.pendingApprovals().filter(a => a.urgency === "low");
     if (!low.length) { toast("Autopilot on — nothing low-risk in the queue right now", "info"); return; }
@@ -7446,11 +7452,18 @@ function hashN(s, lo, hi) {
   let h = 0; for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 9973;
   return lo + (h % (hi - lo));
 }
+let mcpRet = null; /* where focus goes back to when the console closes */
 function mcpOpen() {
   renderMcp();
+  mcpRet = document.activeElement;
   $("#mcp").hidden = false;
+  const x = $("#mcpClose"); if (x) x.focus({ preventScroll: true });
 }
-function mcpClose() { $("#mcp").hidden = true; }
+function mcpClose() {
+  if ($("#mcp").hidden) return;
+  $("#mcp").hidden = true;
+  restoreFocus(mcpRet); mcpRet = null;
+}
 function renderMcp() {
   const p = FOW.data() || { connections: [] };
   const conns = p.connections || [];
@@ -7467,7 +7480,7 @@ function renderMcp() {
     top.appendChild(el("span", "mcp-name", s.name));
     const st = el("span", "mcp-st");
     st.appendChild(el("span", "cn-dot" + (syncing ? " sync" : "")));
-    if (!on) $(".cn-dot", st) && ($(".cn-dot", st).style.background = "var(--ink-3)", $(".cn-dot", st).style.boxShadow = "none");
+    if (!on) $(".cn-dot", st) && ($(".cn-dot", st).style.background = "var(--line-3)", $(".cn-dot", st).style.boxShadow = "none");
     st.appendChild(el("span", "", on ? (syncing ? "syncing" : "connected") : "available"));
     top.appendChild(st);
     cardEl.appendChild(top);
@@ -7607,12 +7620,17 @@ function lobbyFocus(which, instant) {
       stats.appendChild(c);
     });
   }
-  $$("#lbRail .lb-face").forEach((f, i) => f.classList.toggle("cur", i === LOBBY.idx));
+  $$("#lbRail .lb-face").forEach((f, i) => { f.classList.toggle("cur", i === LOBBY.idx); f.setAttribute("aria-pressed", i === LOBBY.idx ? "true" : "false"); });
   const center = $("#lbCenter");
   if (!instant) { center.classList.remove("pop"); void center.offsetWidth; center.classList.add("pop"); }
 }
 function lobbyStep(d) { LOBBY.touched = true; lobbyFocus(LOBBY.idx + d); }
 function lobbyTouch() { LOBBY.touched = true; }
+/* the lobby is modal: the workspace behind it is inert (Tab cannot reach the hidden chrome) and focus starts on "Step in" */
+function lobbyModal(on) {
+  ["#topbar", "#frame", "#ticker", "#pet"].forEach(s => { const e = $(s); if (e) { if (on) e.setAttribute("inert", ""); else e.removeAttribute("inert"); } });
+  if (on && canAutofocus()) { const b = $("#lbEnter"); if (b) b.focus({ preventScroll: true }); }
+}
 
 function renderOnboarding() {
   const rail = $("#lbRail");
@@ -7620,6 +7638,7 @@ function renderOnboarding() {
   PERSONAS.forEach((p, i) => {
     const b = el("button", "lb-face");
     b.title = p.name + " — " + p.role;
+    b.setAttribute("aria-label", p.name + ", " + p.role);
     b.style.setProperty("--pa", p.accent);
     b.appendChild(avatarEl(p.id, 52));
     b.addEventListener("click", () => { lobbyTouch(); lobbyFocus(i); });
@@ -7633,6 +7652,7 @@ function renderOnboarding() {
       lobbyTouch();
       const p = PERSONAS[LOBBY.idx];
       $("#onboard").classList.add("gone");
+      lobbyModal(false);
       setTimeout(() => { $("#onboard").style.display = "none"; }, 520);
       selectPersona(p.id, true);
     });
@@ -7641,6 +7661,7 @@ function renderOnboarding() {
       const ob = $("#onboard");
       if (!ob || ob.classList.contains("gone") || getComputedStyle(ob).display === "none") return;
       if (PRESENT.on) return;
+      if (e.target && e.target.closest && e.target.closest("#cmdk, #mcp, #crew, input, textarea")) return; /* Enter in the ⌘K palette must not Step in */
       if (e.key === "ArrowLeft") { e.preventDefault(); lobbyStep(-1); }
       else if (e.key === "ArrowRight") { e.preventDefault(); lobbyStep(1); }
       else if (e.key === "Enter" && !e.target.closest("button")) { $("#lbEnter").click(); }
@@ -7652,26 +7673,39 @@ function renderOnboarding() {
       wheelAt = now;
       lobbyStep(e.deltaY > 0 || e.deltaX > 0 ? 1 : -1);
     }, { passive: true });
+    /* no auto-rotate for people who asked for less motion; any focus move or key inside the lobby also stops it */
+    try { if (matchMedia("(prefers-reduced-motion: reduce)").matches) LOBBY.touched = true; } catch (_) { }
+    $("#onboard").addEventListener("focusin", e => { if (e.target !== $("#lbEnter")) lobbyTouch(); });
+    $("#onboard").addEventListener("keydown", lobbyTouch);
+    /* phones: swipe sideways to meet the next person (the arrows are hidden there) */
+    let tx = 0, ty = 0;
+    $("#onboard").addEventListener("touchstart", e => { const t = e.changedTouches[0]; tx = t.clientX; ty = t.clientY; }, { passive: true });
+    $("#onboard").addEventListener("touchend", e => {
+      const t = e.changedTouches[0]; const dx = t.clientX - tx, dy = t.clientY - ty;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) lobbyStep(dx < 0 ? 1 : -1);
+    }, { passive: true });
     /* gentle auto-rotate until the user touches anything */
     LOBBY.auto = setInterval(() => {
       const ob = $("#onboard");
-      if (LOBBY.touched || !ob || ob.classList.contains("gone") || getComputedStyle(ob).display === "none" || PRESENT.on) return;
+      if (LOBBY.touched || document.hidden || !ob || ob.classList.contains("gone") || getComputedStyle(ob).display === "none" || PRESENT.on) return;
       lobbyFocus(LOBBY.idx + 1);
     }, 5200);
   }
   lobbyFocus(state.personaId || 0, true);
+  lobbyModal(true);
 }
 function renderPersonaMenu() {
   const menu = $("#personaMenu");
   menu.textContent = "";
   PERSONAS.forEach(p => {
     const it = el("button", "pm-item" + (p.id === state.personaId ? " cur" : ""));
+    it.setAttribute("role", "menuitem");
     it.appendChild(avatarEl(p.id, 30));
     const bd = el("div");
     bd.appendChild(el("div", "pm-name", p.name));
     bd.appendChild(el("div", "pm-role", p.role + " · " + p.dept));
     it.appendChild(bd);
-    it.addEventListener("click", () => { menu.hidden = true; if (p.id !== state.personaId) selectPersona(p.id); });
+    it.addEventListener("click", () => { menu.hidden = true; $("#personaPill").setAttribute("aria-expanded", "false"); if (p.id !== state.personaId) selectPersona(p.id); });
     menu.appendChild(it);
   });
 }
@@ -7765,24 +7799,31 @@ function ckRender() {
   list.textContent = "";
   let lastSect = null;
   ckState.items.forEach((it, i) => {
-    if (it.sect !== lastSect) { list.appendChild(el("div", "ck-sect", it.sect)); lastSect = it.sect; }
+    if (it.sect !== lastSect) { const s = el("div", "ck-sect", it.sect); s.setAttribute("role", "presentation"); list.appendChild(s); lastSect = it.sect; }
     const b = el("button", "ck-item" + (i === ckState.sel ? " sel" : ""));
+    b.id = "ckOpt" + i; b.setAttribute("role", "option"); b.setAttribute("aria-selected", i === ckState.sel ? "true" : "false");
     b.appendChild(el("span", "ck-ico", it.icon));
     b.appendChild(el("span", "ck-lab", it.label));
     b.appendChild(el("span", "ck-sub", it.sub));
     b.addEventListener("click", () => { ckClose(); it.run(); });
     list.appendChild(b);
   });
+  const inp = $("#ckInput"); if (inp) inp.setAttribute("aria-activedescendant", ckState.items.length ? "ckOpt" + ckState.sel : "");
 }
 function ckOpen() {
   ckState.open = true; ckState.sel = 0;
+  ckState.ret = document.activeElement;
   $("#cmdk").hidden = false;
   const inp = $("#ckInput");
   inp.value = ""; inp.focus();
   ckState.items = ckBuild("");
   ckRender();
 }
-function ckClose() { ckState.open = false; $("#cmdk").hidden = true; }
+function ckClose() {
+  if (!ckState.open) return;
+  ckState.open = false; $("#cmdk").hidden = true;
+  restoreFocus(ckState.ret); ckState.ret = null;
+}
 function flashCard(title) {
   const target = $$(".card").find(c => { const t = $(".ch-title .t", c); return t && t.textContent === title; });
   if (!target) return;
@@ -7810,16 +7851,23 @@ function init() {
   $("#crewBtn").addEventListener("click", () => { if (typeof crewOpen === "function") crewOpen(); });
   $("#mcpClose").addEventListener("click", mcpClose);
   $("#mcpBack").addEventListener("click", mcpClose);
-  document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("#mcp").hidden) mcpClose(); });
+  document.addEventListener("keydown", e => {
+    if (e.key !== "Escape") return;
+    if (!$("#mcp").hidden) mcpClose();
+    const pm = $("#personaMenu");
+    if (!pm.hidden) { pm.hidden = true; $("#personaPill").setAttribute("aria-expanded", "false"); $("#personaPill").focus(); }
+  });
+  trapTab($("#mcp")); trapTab($("#cmdk")); trapTab($("#onboard"));
 
   $("#personaPill").addEventListener("click", e => {
     e.stopPropagation();
     const m = $("#personaMenu");
-    if (m.hidden) { renderPersonaMenu(); m.hidden = false; m.style.left = Math.max(8, Math.round($("#personaPill").getBoundingClientRect().left)) + "px"; } else m.hidden = true;
+    if (m.hidden) { renderPersonaMenu(); m.hidden = false; m.style.left = Math.max(8, Math.round($("#personaPill").getBoundingClientRect().left)) + "px"; const first = $(".pm-item", m); if (first) first.focus(); } else m.hidden = true;
+    $("#personaPill").setAttribute("aria-expanded", m.hidden ? "false" : "true");
   });
   document.addEventListener("click", e => {
     const m = $("#personaMenu");
-    if (!m.hidden && !m.contains(e.target)) m.hidden = true;
+    if (!m.hidden && !m.contains(e.target)) { m.hidden = true; $("#personaPill").setAttribute("aria-expanded", "false"); }
   });
 
   const input = $("#cdInput");
@@ -7831,7 +7879,7 @@ function init() {
     input.style.height = Math.min(120, input.scrollHeight) + "px";
   });
   $("#cdSend").addEventListener("click", () => sendMessage());
-  $("#cdToolsBtn").addEventListener("click", () => { $("#cdDrawer").hidden = !$("#cdDrawer").hidden; });
+  $("#cdToolsBtn").addEventListener("click", () => { $("#cdDrawer").hidden = !$("#cdDrawer").hidden; $("#cdToolsBtn").setAttribute("aria-expanded", $("#cdDrawer").hidden ? "false" : "true"); });
   $("#cdCollapse").addEventListener("click", () => { $("#frame").classList.add("chat-hidden"); $("#chatFab").hidden = false; });
   $("#chatFab").addEventListener("click", () => { $("#frame").classList.remove("chat-hidden"); $("#chatFab").hidden = true; });
   /* phones: start with the dock collapsed so the dashboard is visible — the FAB brings it back */
@@ -7852,6 +7900,7 @@ function init() {
     ob.style.display = "";
     void ob.offsetWidth;
     ob.classList.remove("gone");
+    lobbyModal(true); /* again now that the lobby is displayed — focus cannot land on a display:none button */
   });
 
   $("#cmdkBtn").addEventListener("click", ckOpen);
@@ -7920,6 +7969,7 @@ function petBuild() {
   const pet = el("div");
   pet.id = "pet";
   pet.title = "Emmi — your workspace buddy";
+  pet.setAttribute("role", "button"); pet.tabIndex = 0; pet.setAttribute("aria-label", "Emmi — your workspace buddy");
   pet.innerHTML =
     '<svg viewBox="0 0 100 78" aria-label="Emmi">' +
     '<g id="petBody">' +
@@ -7943,6 +7993,8 @@ function petBuild() {
     '<text class="pet-zzz" x="88" y="14" font-size="9" fill="#8a93a8" opacity="0">z</text>' +
     '</g></svg>' +
     '<div class="pet-bubble" id="petBubble" hidden><div class="pb-text" id="petText"></div><div class="pb-call mono" id="petCall" hidden></div></div>';
+  pet.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pet.click(); } });
+  if ($("#topbar") && $("#topbar").hasAttribute("inert")) pet.setAttribute("inert", ""); /* built while the lobby is up: stay out of the Tab order like the rest of the chrome */
   document.body.appendChild(pet);
   PET.el = pet;
   PET.pupils = $$(".pet-pupil", pet);
@@ -8030,6 +8082,7 @@ function petReact(kind) {
 function petWelcome(personaId) {
   const info = PET_LEAVE[personaId];
   if (!info) return;
+  if (matchMedia("(max-width: 760px)").matches) return; /* phones: a 9s bubble would sit on the hero buttons */
   setTimeout(() => { petHop(); petSay(info.line, info.call, 9500); }, 2600);
 }
 
@@ -8037,7 +8090,7 @@ function petWelcome(personaId) {
    FoW · Present mode — per-persona highlight reels
    Click ▶ on any person: their use case plays itself with a
    spotlight, ghost cursor and captions authored per persona
-   (src/data/tour-<id>.json). Pausable, skippable, stoppable.
+   (the prScript() steps below). Pausable, skippable, stoppable.
    ============================================================ */
 "use strict";
 
@@ -8073,6 +8126,7 @@ function prEl() { return $("#present"); }
 function prBuild() {
   const root = el("div");
   root.id = "present";
+  root.setAttribute("role", "dialog"); root.setAttribute("aria-label", "Guided tour");
   const spot = el("div", "pr-spot"); spot.id = "prSpot";
   const cursor = el("div", "pr-cursor"); cursor.id = "prCursor";
   cursor.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22"><path d="M5.5 3.2 19 11.4l-6.2 1.3-3.1 5.6z" fill="#1b2540" stroke="#ffffff" stroke-width="1.6" stroke-linejoin="round"/></svg>';
@@ -8081,7 +8135,7 @@ function prBuild() {
   $(".pr-kicker", cap).id = "prKicker"; $(".pr-title", cap).id = "prTitle"; $(".pr-text", cap).id = "prText";
   const bar = el("div", "pr-bar");
   const dots = el("div", "pr-dots"); dots.id = "prDots";
-  const mkBtn = (id, label, title) => { const b = el("button", "pr-btn", label); b.id = id; b.title = title; return b; };
+  const mkBtn = (id, label, title) => { const b = el("button", "pr-btn", label); b.id = id; b.title = title; b.setAttribute("aria-label", title); return b; };
   const play = mkBtn("prPlay", "⏸", "Pause / resume (space)");
   const next = mkBtn("prNext", "⏭", "Next step (→)");
   const speed = mkBtn("prSpeed", "1×", "Playback speed");
@@ -8090,6 +8144,8 @@ function prBuild() {
   bar.append(play, next, speed, dots, exit);
   root.append(spot, cursor, cap, bar);
   document.body.appendChild(root);
+  PRESENT.ret = document.activeElement;
+  if (canAutofocus()) exit.focus({ preventScroll: true });
 
   play.addEventListener("click", prTogglePause);
   next.addEventListener("click", () => { PRESENT.skip = true; });
@@ -8257,7 +8313,7 @@ function prScript() {
         LOBBY.touched = true;
         await psleep(800);
         await prClick($("#lbEnter"));
-      } else { onboardEl.classList.add("gone"); setTimeout(() => { onboardEl.style.display = "none"; }, 400); selectPersona(PRESENT.pid, true); }
+      } else { onboardEl.classList.add("gone"); if (typeof lobbyModal === "function") lobbyModal(false); setTimeout(() => { onboardEl.style.display = "none"; }, 400); selectPersona(PRESENT.pid, true); }
     } else if (state.personaId !== PRESENT.pid) {
       selectPersona(PRESENT.pid);
     }
@@ -8513,6 +8569,7 @@ function prStop() {
   const root = prEl();
   if (root) { root.classList.add("out"); setTimeout(() => root.remove(), 350); }
   document.body.classList.remove("presenting");
+  restoreFocus(PRESENT.ret); PRESENT.ret = null;
 }
 
 document.addEventListener("click", e => {
@@ -8588,8 +8645,8 @@ function sparkleAt(x, y, opts) {
 
 /* global press feedback — small for any button, a burst for primary actions */
 document.addEventListener("pointerdown", e => {
-  const big = e.target.closest(".cd-send, .ap-ok, .dg-btn, .hstat.primary, .ob-play, .m-act, .ins-panel");
-  const small = big || e.target.closest("button, .hstat, .sg, .ob-card, .rail-item, .chn-item");
+  const big = e.target.closest(".cd-send, .ap-ok, .dg-btn, .hstat.primary, .m-act, .ins-panel");
+  const small = big || e.target.closest("button, .hstat, .sg, .rail-item, .chn-item");
   if (!small) return;
   sparkleAt(e.clientX, e.clientY, big ? { n: 9, d: 34 } : { n: 3, d: 18, ring: false });
 }, { passive: true });
@@ -8856,6 +8913,7 @@ function crewBuild() {
   const root = el("div");
   root.id = "crew";
   root.hidden = true;
+  root.setAttribute("role", "dialog"); root.setAttribute("aria-modal", "true"); root.setAttribute("aria-label", "The Crew — your agents at work");
   const back = el("div", "cw-back");
   back.addEventListener("click", crewClose);
   const panel = el("div", "cw-panel");
@@ -8869,6 +8927,7 @@ function crewBuild() {
   const count = el("span", "cw-count", "7 agents · idle");
   const close = el("button", "ch-act", "✕");
   close.id = "crewClose";
+  close.setAttribute("aria-label", "Close the Crew");
   close.addEventListener("click", crewClose);
   head.append(hIco, hT, count, close);
   CW.count = count;
@@ -8927,6 +8986,7 @@ function crewBuild() {
   root.append(back, panel);
   document.body.appendChild(root);
   CW.root = root;
+  trapTab(root);
 
   document.addEventListener("keydown", e => { if (e.key === "Escape" && !root.hidden) crewClose(); });
 }
@@ -9014,8 +9074,10 @@ function cwLog(fromId, toId, text) {
 function crewOpen() {
   crewBuild();
   cwRefreshDesk();
+  if (CW.root.hidden) { CW.ret = document.activeElement; }
   CW.root.hidden = false;
   CW.open = true;
+  const x = $("#crewClose"); if (x) x.focus({ preventScroll: true });
   if (!CW.blinkTimer) CW.blinkTimer = setInterval(() => {
     const ids = Object.keys(CW.agents);
     const a = CW.agents[ids[Math.floor(Math.random() * ids.length)]];
@@ -9035,9 +9097,13 @@ function crewOpen() {
 }
 function crewClose() {
   if (!CW.root) return;
+  const wasOpen = !CW.root.hidden;
   CW.root.hidden = true;
   CW.open = false;
   clearTimeout(CW.ambientTimer);
+  /* blink + banter are re-created by crewOpen — stop them so hidden sprites don't keep toggling forever */
+  clearInterval(CW.blinkTimer); clearInterval(CW.banterTimer); CW.blinkTimer = CW.banterTimer = null;
+  if (wasOpen) { restoreFocus(CW.ret); CW.ret = null; }
 }
 function cwScheduleAmbient(delay) {
   clearTimeout(CW.ambientTimer);
@@ -9271,7 +9337,7 @@ function renderStudio_finance(p, cv) {
 
     /* budget guideline, carried across the page like a ruled line */
     const gl = svgEl("line", { x1: mL + 2, x2: xB, y1: Y(budget), y2: Y(budget), "stroke-dasharray": "5 4" });
-    gl.style.stroke = "var(--ink-3)"; gl.style.opacity = "0.45";
+    gl.style.stroke = "var(--line-3)"; gl.style.opacity = "0.45";
     svg.appendChild(gl);
 
     const col = (x, catLabel, delay) => {
@@ -9323,13 +9389,13 @@ function renderStudio_finance(p, cv) {
       }
       /* connector from the previous column at the new running level */
       const c = svgEl("line", { x1: bx(i) + barW, x2: x, y1: Y(from), y2: Y(from), "stroke-dasharray": "2 3" });
-      c.style.stroke = "var(--ink-3)"; c.style.opacity = "0.55";
+      c.style.stroke = "var(--line-3)"; c.style.opacity = "0.55";
       g.appendChild(c);
     });
 
     /* connector into Actual, then the Actual anchor */
     const cLast = svgEl("line", { x1: bx(n - 2) + barW, x2: bx(n - 1), y1: Y(actual), y2: Y(actual), "stroke-dasharray": "2 3" });
-    cLast.style.stroke = "var(--ink-3)"; cLast.style.opacity = "0.55";
+    cLast.style.stroke = "var(--line-3)"; cLast.style.opacity = "0.55";
     svg.appendChild(cLast);
     anchor(n - 1, actual, "ACTUAL", true);
 
@@ -9354,7 +9420,7 @@ function renderStudio_finance(p, cv) {
     /* the ledger rule — a hairline double rule under the figures */
     [0, 3].forEach(dy => {
       const ln = svgEl("line", { x1: mL, x2: xB, y1: base + 0.5 + dy, y2: base + 0.5 + dy });
-      ln.style.stroke = "var(--ink-3)"; ln.style.opacity = "0.6";
+      ln.style.stroke = "var(--line-3)"; ln.style.opacity = "0.6";
       svg.appendChild(ln);
     });
 
@@ -9454,6 +9520,7 @@ function renderStudio_finance(p, cv) {
   const auto = el("button", "autopilot" + (state.autopilot[state.personaId] ? " on" : ""));
   auto.title = "When on, askMElah auto-clears low-risk approvals within policy";
   auto.append(el("span", "", "Autopilot"), el("span", "sw"));
+  auto.setAttribute("role", "switch"); auto.setAttribute("aria-checked", state.autopilot[state.personaId] ? "true" : "false");
   h3.appendChild(auto);
 
   const ledger = el("div", "ldg-lines");
@@ -9529,6 +9596,7 @@ function renderStudio_finance(p, cv) {
     const on = !state.autopilot[state.personaId];
     state.autopilot[state.personaId] = on;
     auto.classList.toggle("on", on);
+    auto.setAttribute("aria-checked", on ? "true" : "false");
     if (!on) { toast("Autopilot off — every line waits for your signature again", "info"); return; }
     const low = FOW.pendingApprovals().filter(a => a.urgency === "low");
     if (!low.length) { toast("Autopilot on — nothing low-risk on the ledger right now", "info"); return; }
@@ -9917,10 +9985,12 @@ function renderStudio_hr(p, cv) {
   const auto = el("button", "autopilot" + (state.autopilot[state.personaId] ? " on" : ""));
   auto.title = "When on, askMElah auto-clears low-risk approvals within policy";
   auto.append(el("span", "", "Autopilot"), el("span", "sw"));
+  auto.setAttribute("role", "switch"); auto.setAttribute("aria-checked", state.autopilot[state.personaId] ? "true" : "false");
   auto.addEventListener("click", () => {
     const on = !state.autopilot[state.personaId];
     state.autopilot[state.personaId] = on;
     auto.classList.toggle("on", on);
+    auto.setAttribute("aria-checked", on ? "true" : "false");
     if (!on) { toast("Autopilot off — everyone waits for you again", "info"); return; }
     const low = FOW.pendingApprovals().filter(a => a.urgency === "low");
     if (!low.length) { toast("Autopilot on — nothing low-risk is waiting right now", "info"); return; }
@@ -10180,7 +10250,9 @@ function renderStudio_it(p, cv) {
   const tickFn = () => {
     if (!document.contains(clockEl)) { clearInterval(STUDIO.timer); return; }
     const now = new Date();
-    clockEl.textContent = z(now.getHours()) + ":" + z(now.getMinutes()) + ":" + z(now.getSeconds()) + " SGT";
+    /* the label says SGT, so show Singapore time — not the visitor's local clock */
+    let sgt; try { sgt = now.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false, timeZone: "Asia/Singapore" }); } catch (_) { sgt = z(now.getHours()) + ":" + z(now.getMinutes()) + ":" + z(now.getSeconds()); }
+    clockEl.textContent = sgt + " SGT";
     const diff = Math.max(0, nextTue9(now) - now);
     const dd = Math.floor(diff / 864e5), hh = Math.floor(diff / 36e5) % 24, mm = Math.floor(diff / 6e4) % 60, ss = Math.floor(diff / 1e3) % 60;
     cdV.textContent = (dd > 0 ? dd + "D " : "") + z(hh) + ":" + z(mm) + ":" + z(ss);
@@ -10285,10 +10357,12 @@ function renderStudio_it(p, cv) {
   const auto = el("button", "autopilot" + (state.autopilot[state.personaId] ? " on" : ""));
   auto.title = "When on, askMElah auto-clears low-risk approvals within policy";
   auto.append(el("span", "", "Autopilot"), el("span", "sw"));
+  auto.setAttribute("role", "switch"); auto.setAttribute("aria-checked", state.autopilot[state.personaId] ? "true" : "false");
   auto.addEventListener("click", () => {
     const on = !state.autopilot[state.personaId];
     state.autopilot[state.personaId] = on;
     auto.classList.toggle("on", on);
+    auto.setAttribute("aria-checked", on ? "true" : "false");
     if (!on) { toast("Autopilot off — everything waits for you again", "info"); return; }
     const low = FOW.pendingApprovals().filter(a => a.urgency === "low");
     low.forEach((a, i) => setTimeout(() => { FOW.approve(a.id, i === low.length - 1); }, 600 + i * 450));
@@ -10644,6 +10718,7 @@ function renderStudio_legal(p, cv) {
   const auto = el("button", "autopilot" + (state.autopilot[state.personaId] ? " on" : ""));
   auto.title = "When on, askMElah auto-clears low-risk approvals within policy";
   auto.append(el("span", "", "Autopilot"), el("span", "sw"));
+  auto.setAttribute("role", "switch"); auto.setAttribute("aria-checked", state.autopilot[state.personaId] ? "true" : "false");
   h3.appendChild(auto);
 
   const docket = el("div", "dk-lines");
@@ -10724,6 +10799,7 @@ function renderStudio_legal(p, cv) {
     const on = !state.autopilot[state.personaId];
     state.autopilot[state.personaId] = on;
     auto.classList.toggle("on", on);
+    auto.setAttribute("aria-checked", on ? "true" : "false");
     if (!on) { toast("Autopilot off — every instrument waits for your ink again", "info"); return; }
     const low = FOW.pendingApprovals().filter(a => a.urgency === "low");
     if (!low.length) { toast("Autopilot on — nothing low-risk on the docket right now", "info"); return; }
@@ -11111,6 +11187,7 @@ function renderStudio_procurement(p, cv) {
   const auto = el("button", "autopilot" + (state.autopilot[state.personaId] ? " on" : ""));
   auto.title = "When on, askMElah auto-clears low-risk approvals within policy";
   auto.append(el("span", "", "Autopilot"), el("span", "sw"));
+  auto.setAttribute("role", "switch"); auto.setAttribute("aria-checked", state.autopilot[state.personaId] ? "true" : "false");
   h3.appendChild(auto);
 
   const board = el("div", "twr-strips");
@@ -11178,6 +11255,7 @@ function renderStudio_procurement(p, cv) {
     const on = !state.autopilot[state.personaId];
     state.autopilot[state.personaId] = on;
     auto.classList.toggle("on", on);
+    auto.setAttribute("aria-checked", on ? "true" : "false");
     if (!on) { toast("Autopilot off — every strip waits for you again", "info"); return; }
     const low = FOW.pendingApprovals().filter(a => a.urgency === "low");
     if (!low.length) { toast("Autopilot on — nothing routine on the board right now", "info"); return; }
@@ -11531,6 +11609,7 @@ function renderStudio_sales(p, cv) {
   const auto = el("button", "autopilot" + (state.autopilot[state.personaId] ? " on" : ""));
   auto.title = "When on, askMElah auto-clears low-risk approvals within policy";
   auto.append(el("span", "", "Autopilot"), el("span", "sw"));
+  auto.setAttribute("role", "switch"); auto.setAttribute("aria-checked", state.autopilot[state.personaId] ? "true" : "false");
   h3.appendChild(auto);
 
   const desk = el("div", "flr-desk");
@@ -11606,6 +11685,7 @@ function renderStudio_sales(p, cv) {
     const on = !state.autopilot[state.personaId];
     state.autopilot[state.personaId] = on;
     auto.classList.toggle("on", on);
+    auto.setAttribute("aria-checked", on ? "true" : "false");
     if (!on) { toast("Autopilot off — every line waits for you again", "info"); return; }
     const low = FOW.pendingApprovals().filter(a => a.urgency === "low");
     if (!low.length) { toast("Autopilot on — nothing low-risk on the desk right now", "info"); return; }
