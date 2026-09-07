@@ -3,8 +3,17 @@
 <head>
 <meta charset="utf-8">
 <title>FoW — Future of Work · ZAC Studios</title>
+<meta name="theme-color" content="#f7f8fb">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128188;</text></svg>">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://zhangcheng0605.github.io/fableWebsite/fow/">
+  <link rel="canonical" href="https://zhangcheng0605.github.io/fableWebsite/fow/">
+  <meta property="og:image" content="https://zhangcheng0605.github.io/fableWebsite/assets/thumbs/fow.jpg">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="720">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="FoW is an interactive Future-of-Work demo from ZAC Studios: step into one of seven personas, ask the askMElah copilot, and watch MCP-connected agents clear the day's work — all in a single dependency-free HTML file.">
+<meta name="description" content="FoW, an interactive Future-of-Work demo: step into one of seven personas, ask the askMElah copilot and watch MCP-connected agents clear the day. One HTML file.">
 <style>
 /* ============================================================
    FoW — Future of Work · design system v2
@@ -4675,7 +4684,7 @@ const LOGO_ASKME =
   '</svg>';
 function askmeAv(sz) {
   const s = el("span", "askme-av");
-  s.innerHTML = LOGO_ASKME;
+  s.innerHTML = hoistDefs(LOGO_ASKME);
   if (sz) { s.style.width = sz + "px"; s.style.height = sz + "px"; }
   return s;
 }
@@ -4757,6 +4766,31 @@ function ico(name) {
   span.innerHTML = ICONS[name] || ICONS.spark;
   return span;
 }
+/* SVG gradients and clip paths are looked up by id across the whole document. Every copy of a
+   brand mark carries the same <defs>, so once the first copy sits inside a display:none subtree
+   (the lobby after "Step in") every other copy loses its fill — the topbar M and Emmi's body went
+   blank. Hoist each mark's <defs> once into a shared, always-rendered <svg> at the top of <body>. */
+function hoistDefs(svg) {
+  if (!svg || svg.indexOf("<defs>") < 0) return svg;
+  hoistDefs._seen = hoistDefs._seen || new Set();
+  return svg.replace(/<defs>[\s\S]*?<\/defs>/g, function (d) {
+    if (!hoistDefs._seen.has(d)) {
+      hoistDefs._seen.add(d);
+      let host = document.getElementById("svgDefsHost");
+      if (!host) {
+        const tmp = document.createElement("div");
+        tmp.innerHTML = '<svg id="svgDefsHost" aria-hidden="true" focusable="false" style="position:absolute;width:0;height:0;overflow:hidden"></svg>';
+        host = tmp.firstChild;
+        document.body.insertBefore(host, document.body.firstChild);
+      }
+      const tmp = document.createElement("div");
+      tmp.innerHTML = "<svg>" + d + "</svg>";
+      const defs = tmp.firstChild.firstChild;
+      if (defs) host.appendChild(defs);
+    }
+    return "";
+  });
+}
 function srvGlyph(id, sz) {
   const s = SERVERS[id] || { name: id, color: "#5d6880", glyph: "?" };
   let logo = null;
@@ -4765,7 +4799,7 @@ function srvGlyph(id, sz) {
   if (logo) {
     /* real brand mark on an app-icon style white tile */
     g = el("span", "srv-glyph logo");
-    g.innerHTML = logo;
+    g.innerHTML = hoistDefs(logo);
   } else {
     g = el("span", "srv-glyph", s.glyph);
     g.style.background = s.color;
@@ -7500,8 +7534,8 @@ function selectPersona(id, first) {
   let hasAv = false;
   try { hasAv = typeof AVATARS !== "undefined" && !!AVATARS[id]; } catch (_) { }
   if (hasAv) {
-    pill.innerHTML = AVATARS[id]; pill.classList.add("has-av");
-    tbav.innerHTML = AVATARS[id]; tbav.classList.add("has-av");
+    pill.innerHTML = hoistDefs(AVATARS[id]); pill.classList.add("has-av");
+    tbav.innerHTML = hoistDefs(AVATARS[id]); tbav.classList.add("has-av");
   } else {
     pill.classList.remove("has-av"); pill.textContent = meta.initials;
     tbav.classList.remove("has-av"); tbav.textContent = meta.initials;
@@ -7529,7 +7563,7 @@ function avatarEl(id, sz) {
   try { src = typeof AVATARS !== "undefined" && AVATARS[id]; } catch (_) { }
   if (src) {
     const s = el("span", "p-avatar");
-    s.innerHTML = src;
+    s.innerHTML = hoistDefs(src);
     if (sz) { s.style.width = sz + "px"; s.style.height = sz + "px"; }
     return s;
   }
@@ -7764,10 +7798,10 @@ function init() {
     applyTheme(!THEME.dark);
     toast(THEME.dark ? "Dark mode — for the late shift" : "Light mode — bright and crisp", "info");
   });
-  $("#brandLogo").innerHTML = LOGO_M;
-  $("#obLogo").innerHTML = LOGO_M;
-  $("#orb").innerHTML = LOGO_ASKME;
-  const fabAv = $("#fabAv"); if (fabAv) fabAv.innerHTML = LOGO_ASKME;
+  $("#brandLogo").innerHTML = hoistDefs(LOGO_M);
+  $("#obLogo").innerHTML = hoistDefs(LOGO_M);
+  $("#orb").innerHTML = hoistDefs(LOGO_ASKME);
+  const fabAv = $("#fabAv"); if (fabAv) fabAv.innerHTML = hoistDefs(LOGO_ASKME);
   $("#presentBtn").addEventListener("click", () => { if (PRESENT.on) prStop(); else startPresent(state.personaId); });
   $("#mcpBtn").addEventListener("click", mcpOpen);
   $("#crewBtn").addEventListener("click", () => { if (typeof crewOpen === "function") crewOpen(); });
@@ -8786,7 +8820,7 @@ function cwSprite(id) {
   const wrap = el("span", "cw-sprite idle-" + cwMeta(id).idle);
   let svg = null;
   try { svg = CREW_SVGS[id]; } catch (_) { }
-  wrap.innerHTML = svg || LOGO_ASKME;
+  wrap.innerHTML = hoistDefs(svg || LOGO_ASKME);
   return wrap;
 }
 
@@ -8828,7 +8862,7 @@ function crewBuild() {
   const stage = el("div", "cw-stage");
 
   const hub = el("div", "cw-hub");
-  hub.innerHTML = LOGO_ASKME;
+  hub.innerHTML = hoistDefs(LOGO_ASKME);
   hub.title = "askMElah — the mother agent";
   stage.appendChild(hub);
   CW.hub = hub;

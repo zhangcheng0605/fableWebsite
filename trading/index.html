@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Trading Desk · ZAC Studios</title>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:url" content="https://zhangcheng0605.github.io/fableWebsite/trading/">
+  <link rel="canonical" href="https://zhangcheng0605.github.io/fableWebsite/trading/">
+  <meta property="og:image" content="https://zhangcheng0605.github.io/fableWebsite/assets/thumbs/trading.jpg">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="720">
   <meta name="description" content="Three autonomous AI trading bots running on Alpaca paper accounts — strategies, schedules, risk engine, and the honest P&L. Built and operated by AI agents.">
   <meta property="og:title" content="AI Trading Desk · ZAC Studios">
   <meta property="og:description" content="Three AI bots, two paper accounts, zero humans on the hourly loop. Real strategies, fake dollars, honest numbers.">
@@ -12,7 +18,8 @@
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📈</text></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap"></noscript>
   <style>
     :root{
       /* design tokens — shadcn/ui architecture, neon-noir brand */
@@ -364,7 +371,7 @@
     <!-- HERO -->
     <section class="hero" style="max-width:none;padding-left:0;padding-right:0">
       <canvas id="candles" aria-hidden="true"></canvas>
-      <p class="eyebrow reveal">Autonomous · Live since 2026-07-14 · Paper accounts</p>
+      <p class="eyebrow reveal">Autonomous · Ran from 2026-07-14 · Paper accounts · Snapshot</p>
       <h1 class="title reveal">AI <span class="grad-text">Trading</span> Desk</h1>
       <p class="hero-sub reveal">Three trading bots, two Alpaca paper accounts, <b>zero humans on the hourly loop</b>.
          AI agents wrote the strategies, backtested them in a tournament, wired the schedules,
@@ -406,6 +413,7 @@
         </div>
       </div>
       <p class="asof reveal">as of 2026-07-17 21:20 UTC · <b>paper trading</b> — no real money is at risk, which is exactly why the numbers can be this honest</p>
+      <p class="asof reveal snapshot-note"><b>Snapshot.</b> Every number on this page is frozen at 17 Jul 2026, three days after launch; the desk does not update this page.</p>
     </section>
 
     <!-- BOTS -->
@@ -502,7 +510,7 @@
       </div>
 
       <div class="term reveal" aria-hidden="true">
-        <div class="term-bar"><i></i><i></i><i></i><span>bot.log — live tail</span></div>
+        <div class="term-bar"><i></i><i></i><i></i><span>bot.log — 17 Jul 2026</span></div>
         <div class="term-body" id="botlog"></div>
       </div>
     </section>
@@ -913,7 +921,7 @@
 
     /* candlestick canvas */
     const cv=document.getElementById('candles'),cx=cv.getContext('2d');
-    let W,H,candles=[],px=0;
+    let W,H,candles=[],px=0,candlesVisible=false,drawing=false;
     function sizeCv(){W=cv.width=cv.offsetWidth*devicePixelRatio;H=cv.height=cv.offsetHeight*devicePixelRatio;}
     sizeCv();addEventListener('resize',sizeCv);
     let last=100;
@@ -935,8 +943,11 @@
         cx.fillRect(x,top,cw,hgt);
       });
       if(!reduced){px+=.35;if(px>=17){px=0;candles.push(mkCandle());if(candles.length>400)candles.shift();}}
-      requestAnimationFrame(draw);
+      /* keep animating only while the canvas is on-screen and motion is allowed;
+         a single still frame is enough otherwise (see the IntersectionObserver below) */
+      if(!reduced&&candlesVisible)requestAnimationFrame(draw);else drawing=false;
     }
+    new IntersectionObserver(function(es){es.forEach(function(e){candlesVisible=e.isIntersecting;if(candlesVisible&&!reduced&&!drawing){drawing=true;requestAnimationFrame(draw);}});},{rootMargin:'120px'}).observe(cv);
     draw();
 
     /* tooltips */

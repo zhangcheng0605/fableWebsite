@@ -2,7 +2,8 @@
 <html lang="en"><head>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,600;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&display=swap"></noscript>
 <script>window.__resources={"https://unpkg.com/react@18.3.1/umd/react.production.min.js":"vendor/react.production.min.js","https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js":"vendor/react-dom.production.min.js"};</script>
 
 <meta charset="utf-8">
@@ -63,7 +64,7 @@ img{-webkit-user-drag:none}
             <sc-if value="{{ sheet.frontIsText }}" hint-placeholder-val="{{ false }}">
               <div style="position:absolute;inset:0;background:linear-gradient(160deg,#f7f2e6 0%,#efe7d6 55%,#e7ddc9 100%);padding:58px 52px 46px 46px;box-sizing:border-box;display:flex;flex-direction:column;color:#2c2620">
                 <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;letter-spacing:0.34em;text-transform:uppercase;color:#6b5c46">
-                  <div>Chapter One · Exact Change</div>
+                  <div>Chapter One · Where It Begins</div>
                   <div>{{ sheet.tx.folio }}</div>
                 </div>
                 <div style="height:1px;background:linear-gradient(to right,rgba(160,143,118,0.7),rgba(160,143,118,0));margin:14px 0 30px"></div>
