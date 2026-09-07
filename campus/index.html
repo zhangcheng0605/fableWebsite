@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3D Campus — a media campus that builds as you scroll · Zhang Cheng</title>
+  <title>3D Campus — a media campus that builds as you scroll · ZAC Studios</title>
   <meta name="description" content="A procedural three.js media campus: 1,027 meshes written by hand, every texture painted into a canvas at runtime, flown into place phase by phase as you scroll — and exportable as GLB or OBJ.">
   <meta property="og:title" content="3D Campus — a media campus that builds as you scroll">
   <meta property="og:description" content="No model files, no image files: hand-written geometry and canvas-painted textures. Scroll flies the campus together phase by phase — hull, sky terrace, roof, plaza, people — three lighting rigs change the hour, and the whole model exports to GLB.">
@@ -26,6 +26,10 @@
     }
   }
   </script>
+  <!-- three.js is the page: fetch it now rather than after three-d-stage.js
+       has run and reached its import() — one round trip less before the scene -->
+  <link rel="modulepreload" href="vendor/three/three.module.min.js">
+  <link rel="modulepreload" href="vendor/three/OrbitControls.min.js">
 
   <style>
     :root{
@@ -78,8 +82,18 @@
     .nav-live{display:inline-flex;align-items:center;gap:7px}
     .nav-live i{width:6px;height:6px;border-radius:50%;background:var(--green);animation:livedot 1.8s ease-out infinite}
     @keyframes livedot{0%{box-shadow:0 0 0 0 rgba(18,185,129,.55)}70%{box-shadow:0 0 0 9px rgba(18,185,129,0)}100%{box-shadow:0 0 0 0 rgba(18,185,129,0)}}
-    @media(max-width:700px){.nav{gap:14px;padding:2px 14px;max-width:calc(100vw - 32px);overflow-x:auto;scrollbar-width:none}
-      .nav::-webkit-scrollbar{display:none}.nav a{font-size:.82rem}}
+    @media(max-width:880px){
+      /* the pill scrolls sideways: snap to the links, 44px-tall tap targets */
+      .nav{gap:14px;padding:2px 14px;max-width:calc(100vw - 32px);overflow-x:auto;scrollbar-width:none;
+           scroll-snap-type:x proximity;scroll-padding:0 14px}
+      .nav::-webkit-scrollbar{display:none}
+      .nav a{font-size:.82rem;padding:12px 2px;scroll-snap-align:start}
+      /* right-edge fade while there is more to the right — the inline script
+         at the foot of the page toggles .nav-more, so the last link is never
+         ghosted once you have scrolled to the end */
+      .nav.nav-more{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 40px),transparent);
+           mask-image:linear-gradient(90deg,#000 calc(100% - 40px),transparent)}
+    }
 
     /* ===== the build: a tall section with a sticky stage inside it ===== */
     #build{position:relative;height:600svh}
@@ -178,11 +192,20 @@
     @media(max-width:760px){
       #hud{top:78px;left:14px;max-width:calc(100vw - 28px)}
       .hud-btns{gap:6px}
-      .hud-btns button{font-size:.68rem;padding:8px 12px}
+      .hud-btns button{font-size:max(.75rem,12px);padding:8px 12px}
       #rail{left:14px;width:calc(100vw - 28px)}
-      #scrollHint{bottom:70px}
+      #scrollHint{bottom:70px;letter-spacing:.12em}
       #dragHint{display:none}
       #tweaks{max-width:280px}
+      /* 12px floor for the small mono labels on phones; ease the tracking
+         instead so the wide ones still fit the HUD, the hints and the cards */
+      .hud-title,.tw-section,.tw-val,.tw-seg-opts label,.tw-reset,
+      #railLabel,#scrollHint,#titleCard .eyebrow{font-size:max(.75rem,12px)}
+      .hud-title,.tw-section,#titleCard .eyebrow{letter-spacing:.1em}
+    }
+    /* touch: the HUD buttons become 44px-tall tap targets */
+    @media(pointer:coarse){
+      .hud-btns button{min-height:44px;padding:12px 16px}
     }
 
     /* ===== notes below the build ===== */
@@ -217,6 +240,8 @@
     .card:hover{transform:translateY(-4px);border-color:var(--pink);box-shadow:0 12px 38px rgba(255,63,174,.18)}
     .card .tag{font-family:"JetBrains Mono",monospace;font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;
       color:var(--pink-ink);margin-bottom:12px}
+    /* phones: the same 12px floor as the HUD labels */
+    @media(max-width:760px){.fig .k,.card .tag{font-size:max(.75rem,12px);letter-spacing:.1em}}
     .card h3{font-size:1.2rem;margin-bottom:9px}
     .card p{color:var(--muted-foreground);font-size:.94rem}
     .card code{font-family:"JetBrains Mono",monospace;font-size:.82rem;color:var(--violet);
@@ -263,9 +288,9 @@
     <nav class="nav" aria-label="Site">
       <a class="logo" href="../" aria-label="ZAC Studios — home">ZA<span>C</span></a>
       <a href="../#manga">Manga</a>
-      <a href="../prompt-injection/">Games</a>
-      <a href="../trading/" class="nav-live">Trading <i></i></a>
+      <a href="../#projects">Projects</a>
       <a href="../#three-d" aria-current="page">3D Projects</a>
+      <a href="../trading/" class="nav-live">Trading <i></i></a>
       <a href="../#experience">Experience</a>
       <a href="../#contact">Contact</a>
     </nav>
@@ -454,6 +479,20 @@
   <script src="controls.js" defer></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
+
+    /* the nav pill scrolls sideways on phones: fade its right edge only
+       while there is more to the right (see .nav.nav-more in the styles) */
+    (function () {
+      var nav = document.querySelector('.nav');
+      if (!nav) return;
+      function edge() {
+        nav.classList.toggle('nav-more', nav.scrollWidth - nav.clientWidth - nav.scrollLeft > 4);
+      }
+      edge();
+      nav.addEventListener('scroll', edge, { passive: true });
+      window.addEventListener('resize', edge);
+      if (document.fonts) document.fonts.ready.then(edge);
+    })();
 
     /* stage status: spinner until the scene reports in, a plain message if
        WebGL is unavailable or three.js fails to load */

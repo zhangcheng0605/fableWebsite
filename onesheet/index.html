@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>OneSheet — a spreadsheet in one HTML file</title>
+<title>OneSheet — a spreadsheet in one HTML file · ZAC Studios</title>
 <meta name="description" content="OneSheet: a real spreadsheet — formula engine, dependency graph, xlsx import — in a single offline HTML file.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%234f46e5'/%3E%3Cpath d='M6 11h20M6 17h20M6 23h20M12 6v21M20 6v21' stroke='white' stroke-width='2' opacity='.75'/%3E%3C/svg%3E">
 
@@ -167,6 +167,8 @@ kbd{
 .brand svg{display:block}
 .brand b{font-size:13.5px;letter-spacing:-.01em}
 .brand .ver{font-size:10px;color:var(--muted);font-family:var(--mono)}
+.brand .site-home{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:28px;border-radius:var(--radius-sm);color:var(--ink-2);text-decoration:none;font-size:15px;line-height:1}
+.brand .site-home:hover{background:var(--panel-2);color:var(--ink)}
 [data-theme="win97"] .brand{border-right:2px groove #dfdfdf}
 [data-theme="win97"] .brand .ver{display:none}
 
@@ -601,6 +603,17 @@ kbd{
 @media (max-width:720px){
   .brand .ver,.tb .lbl{display:none}
   #namebox{width:70px}
+  /* the toolbar scrolls sideways instead of being cut off; the faded right edge says "more" */
+  #toolbar{overflow-x:auto;overflow-y:hidden;flex-wrap:nowrap;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+    -webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+  #toolbar::-webkit-scrollbar{display:none}
+  #toolbar>*{flex:0 0 auto}
+  #toolbar .spacer{flex:1 0 12px}
+  #toolbar::after{content:"";flex:0 0 30px} /* trailing room so the last button sits clear of the fade once scrolled to the end */
+}
+@media (pointer:coarse){
+  .tb,[data-theme="win97"] .tb,#toolbar .sel,.brand .site-home{height:44px;min-width:44px}
+  .tb-sep{height:28px}
 }
 </style>
 </head>
@@ -620,6 +633,7 @@ kbd{
   <!-- ===== toolbar ===== -->
   <header id="toolbar">
     <div class="brand">
+      <a class="site-home" href="../" aria-label="Back to ZAC Studios" title="Back to ZAC Studios">←</a>
       <svg width="20" height="20" viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="7" fill="var(--accent)"/><path d="M5 11h22M5 17h22M5 23h22M12 5v22M21 5v22" stroke="#fff" stroke-width="1.8" opacity=".8"/></svg>
       <b>OneSheet</b><span class="ver" id="verTag"></span>
     </div>
@@ -2230,7 +2244,7 @@ const Grid = (() => {
     }
     if (v instanceof Err) node.title = errorHelp(v.code);
     else if (cell && cell.imported) node.title = "imported as value — the original formula didn't parse in our grammar";
-    else if (cell && cell.ai) node.title = AIRuntime.hasKey() ? "Answered by claude-haiku-latest" : "Mock AI — add a key in Settings for the real thing.";
+    else if (cell && cell.ai) node.title = AIRuntime.hasKey() ? "Answered by claude-haiku-4-5-20251001" : "Mock AI — add a key in Settings for the real thing.";
     else if (node.title) node.removeAttribute("title");
   }
   function errorHelp(code) {
@@ -4305,15 +4319,25 @@ const GoalSeek = (() => {
  * Mock Mode is the default and needs no key, no network and no
  * apology: hash(prompt+input) seeds a deterministic fake model,
  * so a demo recorded today looks identical tomorrow. Add a key
- * in Settings and the same formula hits claude-haiku-latest,
+ * in Settings and the same formula hits claude-haiku-4-5-20251001,
  * resolving asynchronously through the normal recalc path.
  * ============================================================ */
 const AIRuntime = (() => {
   const KEYSTORE = "onesheet.anthropic-key";
   const cache = new Map();     // hash -> resolved value (string or Err)
   const inflight = new Map();  // hash -> Promise
+  // The key lives in sessionStorage: this tab only, gone when it closes. Never localStorage —
+  // GitHub Pages serves every project on this account from one origin, so a key left there would
+  // be readable by any page on it. Older builds did store it there: lift it once, then wipe it.
   let apiKey = "";
-  try { apiKey = localStorage.getItem(KEYSTORE) || ""; } catch (e) { apiKey = ""; }
+  try {
+    apiKey = sessionStorage.getItem(KEYSTORE) || "";
+    const legacy = localStorage.getItem(KEYSTORE);
+    if (legacy) {
+      localStorage.removeItem(KEYSTORE);
+      if (!apiKey) { apiKey = legacy; sessionStorage.setItem(KEYSTORE, apiKey); }
+    }
+  } catch (e) { apiKey = apiKey || ""; }
 
   const SENTIMENTS = ["positive", "negative", "neutral"];
   function tsvOf(v) {
@@ -4356,7 +4380,7 @@ const AIRuntime = (() => {
 
   async function fire(h, prompt, input, cellKey) {
     const body = {
-      model: "claude-haiku-latest",
+      model: "claude-haiku-4-5-20251001",
       max_tokens: 200,
       system: "You are a spreadsheet cell. Answer with the value only — no preamble, no explanation, no markdown, no trailing punctuation unless it belongs in the value. Keep it under 15 words.",
       messages: [{ role: "user", content: prompt + (input ? "\n\nInput:\n" + input : "") }],
@@ -4372,14 +4396,20 @@ const AIRuntime = (() => {
         },
         body: JSON.stringify(body),
       });
-      if (!res.ok) throw new Error("HTTP " + res.status + " " + (await res.text()).slice(0, 200));
+      if (!res.ok) {
+        // Surface the API's own message so an authentication_error and a not_found_error (bad model id) are distinguishable.
+        const raw = (await res.text()).slice(0, 400);
+        let detail = raw;
+        try { const j = JSON.parse(raw); detail = (j.error && (j.error.message || j.error.type)) || raw; } catch (e2) {}
+        throw new Error("HTTP " + res.status + " " + detail);
+      }
       const json = await res.json();
       const text = (json.content || []).filter(b => b.type === "text").map(b => b.text).join("").trim();
       cache.set(h, text || "");
     } catch (e) {
       console.warn("[OneSheet] AI call failed:", e);
       cache.set(h, new Err("#AI!"));
-      toast("AI call failed — check your key in AI settings");
+      toast("AI call failed — " + String((e && e.message) || e).slice(0, 120) + " · see AI settings");
     } finally {
       inflight.delete(h);
       // Rejoin the normal recalc path so dependents update too.
@@ -4403,21 +4433,24 @@ const AIRuntime = (() => {
   }
 
   function settings() {
-    const f = Modal.field("Anthropic API key", { type: "password", value: apiKey, placeholder: "sk-ant-…" });
+    const f = Modal.field("Anthropic API key (this tab only)", { type: "password", value: apiKey, placeholder: "sk-ant-…", autocomplete: "off" });
+    const warn = el("div", "note",
+      "Stored for this tab only (sessionStorage) and forgotten when the tab closes — you will re-enter it next visit. " +
+      "Prefer a dedicated, spend-capped key: any page on this GitHub Pages origin that this tab navigates to could read it.");
     const note = el("div", "note",
-      "Stays in your browser. It is written to localStorage on this device only and sent straight to api.anthropic.com — OneSheet has no server to send it to. " +
+      "It is sent straight to api.anthropic.com — OneSheet has no server to send it to. " +
       "Leave it empty to stay in Mock Mode, which works offline and always returns the same answer for the same inputs.");
-    Modal.open("AI settings", apiKey ? "Real mode: calls claude-haiku-latest." : "Mock mode: deterministic, offline, zero-config.",
-      [f.wrap, note],
+    Modal.open("AI settings", apiKey ? "Real mode: calls claude-haiku-4-5-20251001." : "Mock mode: deterministic, offline, zero-config.",
+      [f.wrap, warn, note],
       [
-        { label: "Clear key", onClick: close => { apiKey = ""; try { localStorage.removeItem(KEYSTORE); } catch (e) {} cache.clear(); close(); toast("Back to Mock Mode"); Engine.rebuildAll(); Grid.scheduleRender(); } },
+        { label: "Clear key", onClick: close => { apiKey = ""; try { sessionStorage.removeItem(KEYSTORE); localStorage.removeItem(KEYSTORE); } catch (e) {} cache.clear(); close(); toast("Back to Mock Mode"); Engine.rebuildAll(); Grid.scheduleRender(); } },
         { label: "Cancel", onClick: close => close() },
         { label: "Save", primary: true, onClick: close => {
             apiKey = f.input.value.trim();
-            try { apiKey ? localStorage.setItem(KEYSTORE, apiKey) : localStorage.removeItem(KEYSTORE); } catch (e) { toast("Couldn't write to localStorage"); }
+            try { apiKey ? sessionStorage.setItem(KEYSTORE, apiKey) : sessionStorage.removeItem(KEYSTORE); localStorage.removeItem(KEYSTORE); } catch (e) { toast("Couldn't write to sessionStorage"); }
             cache.clear(); inflight.clear();
             close();
-            toast(apiKey ? "Real mode on — =AI() now calls claude-haiku-latest" : "Mock Mode");
+            toast(apiKey ? "Real mode on — =AI() now calls claude-haiku-4-5-20251001" : "Mock Mode");
             Engine.rebuildAll(); Grid.scheduleRender();
           } },
       ]);

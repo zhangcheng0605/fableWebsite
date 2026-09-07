@@ -8,6 +8,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Lucky Bunny Fortunes · ZAC Studios</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://zhangcheng0605.github.io/fableWebsite/lucky-bunny/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128048;</text></svg>">
 <style>
 /* Standalone-only way back to the game page; hidden when lucky-bunny/index.html embeds this game in its iframe. */
 .site-back{position:fixed;top:12px;left:12px;z-index:25;display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 16px;border-radius:999px;border:2px solid #f2a8c2;background:#fff;color:#b34e73;font:600 14px/1 'Figtree',sans-serif;text-decoration:none;box-shadow:0 4px 0 #f2c4d6;pointer-events:auto}
@@ -23,9 +26,6 @@
 <script>if(window.self!==window.top){document.querySelector('.site-back').hidden=true}</script>
 <x-dc>
 <helmet>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  
   <style>
     html, body { margin: 0; padding: 0; }
     a { color: #d16a8f; } a:hover { color: #b34e73; }
@@ -39,6 +39,7 @@
     @keyframes toastUp { 0% { transform: translate(-50%, 20px); opacity: 0; } 100% { transform: translate(-50%, 0); opacity: 1; } }
     @keyframes shimmerText { 0%,100% { opacity: 0.85; } 50% { opacity: 1; text-shadow: 0 0 18px rgba(245,193,78,0.8); } }
     @keyframes shoot { 0% { transform: translate(0, 0); opacity: 0; } 8% { opacity: 1; } 85% { opacity: 1; } 100% { transform: translate(-42vw, 26vh); opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { [style*="animation"] { animation: none !important; } }
   </style>
 </helmet>
 <div style="min-height: 100vh; font-family: 'Figtree', sans-serif; color: #7a4a5c; background: linear-gradient(180deg, #e8d4f2 0%, #fbd3e2 34%, #ffdfd0 72%, #fff0e2 100%); position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; padding: 28px 16px 48px;">
@@ -61,13 +62,13 @@
 
   <header style="text-align: center; position: relative; z-index: 1;">
     <h1 style="font-family: 'Caprasimo', serif; font-weight: 400; font-size: clamp(30px, 6vw, 46px); margin: 0; color: #b34e73; text-shadow: 0 2px 0 #ffe3ee;">Lucky Bunny Fortunes</h1>
-    <p style="margin: 6px 0 0; font-size: 16px; color: #a06a7d;">scratch the card, little friend ♡ a blessing hides beneath</p>
+    <p style="margin: 6px 0 0; font-size: 16px; color: #7a4a5c;">scratch the card, little friend ♡ a blessing hides beneath</p>
   </header>
 
   <div style="position: relative; z-index: 1; margin-top: 18px; display: flex; flex-direction: column; align-items: center; gap: 4px;">
     <div style="background: #fff; border: 2px solid #f7c8d8; border-radius: 18px; border-bottom-right-radius: 4px; padding: 8px 16px; font-family: 'Gaegu', cursive; font-size: 19px; color: #b34e73; box-shadow: 0 3px 0 #f7c8d8; animation: popIn 0.4s ease both; max-width: 260px; text-align: center;">{{ bubbleText }}</div>
-    <div ref="{{ mascotRef }}" sc-camel-on-click="{{ boopMascot }}" style="cursor: pointer; transition: transform 0.25s ease;">
-      <div style="animation: {{ mascotAnim }}; transform-origin: 50% 90%;">
+    <button type="button" ref="{{ mascotRef }}" sc-camel-on-click="{{ boopMascot }}" aria-label="{{ boopLabel }}" style="cursor: pointer; transition: transform 0.25s ease; display: block; background: none; border: 0; padding: 0; margin: 0; color: inherit; font: inherit;" style-focus="outline: 2px solid #b34e73; outline-offset: 4px; border-radius: 50%;">
+      <span style="display: block; animation: {{ mascotAnim }}; transform-origin: 50% 90%;">
         <sc-if value="{{ isBunny }}" hint-placeholder-val="{{ true }}">
           <svg width="120" height="118" sc-camel-view-box="0 0 120 118" style="display: block; filter: drop-shadow(0 6px 10px rgba(179,78,115,0.25));">
             <ellipse cx="42" cy="26" rx="12" ry="25" fill="#fff6f8" stroke="#e8b8c8" stroke-width="2" transform="rotate(-10 42 26)"></ellipse>
@@ -111,52 +112,54 @@
             <path sc-camel-d="{{ mouthD }}" fill="none" stroke="#4a3222" stroke-width="2.4" stroke-linecap="round"></path>
           </svg>
         </sc-if>
-      </div>
-    </div>
+      </span>
+    </button>
   </div>
 
   <div style="position: relative; z-index: 1; margin-top: 14px; width: min(420px, 92vw); background: #fffaf5; border-radius: 28px; padding: 16px; box-shadow: 0 14px 34px rgba(179,78,115,0.22), 0 3px 0 #f7d8e2 inset; border: 2px solid #f9d8e4;">
     <div style="display: flex; align-items: center; justify-content: space-between; padding: 0 6px 10px;">
-      <span style="font-family: 'Caprasimo', serif; font-size: 17px; color: #c67191;">card no. {{ cardNumPadded }}</span>
-      <span style="font-size: 13px; font-weight: 600; color: #c99aab; letter-spacing: 0.04em;">SCRATCH &amp; SMILE ♡</span>
+      <span style="font-family: 'Caprasimo', serif; font-size: 17px; color: #965470;">card no. {{ cardNumPadded }}</span>
+      <span style="font-size: 13px; font-weight: 600; color: #7a4a5c; letter-spacing: 0.04em;">SCRATCH &amp; SMILE ♡</span>
     </div>
     <div style="position: relative; border-radius: 20px; overflow: hidden; aspect-ratio: 16 / 10; background: {{ prizeBg }}; touch-action: none;">
-      <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 18px 22px; gap: 6px;">
+      <div aria-hidden="{{ prizeHidden }}" style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 18px 22px; gap: 6px;">
         <span style="font-size: 30px; animation: {{ prizeIconAnim }};">{{ prizeIcon }}</span>
         <span style="font-family: 'Gaegu', cursive; font-size: clamp(19px, 4.6vw, 24px); line-height: 1.25; color: {{ prizeTextColor }}; font-weight: 700;">{{ fortuneText }}</span>
         <sc-if value="{{ isGolden }}" hint-placeholder-val="{{ false }}">
-          <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #b8862e; animation: shimmerText 1.6s ease-in-out infinite;">✨ GOLDEN FORTUNE ✨</span>
+          <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.12em; color: #6e4f14; animation: shimmerText 1.6s ease-in-out infinite;">✨ GOLDEN FORTUNE ✨</span>
         </sc-if>
       </div>
-      <canvas ref="{{ foilRef }}" sc-camel-on-pointer-down="{{ onDown }}" sc-camel-on-pointer-move="{{ onMove }}" sc-camel-on-pointer-up="{{ onUp }}" sc-camel-on-pointer-enter="{{ onEnter }}" sc-camel-on-pointer-leave="{{ onLeave }}" style="position: absolute; inset: 0; width: 100%; height: 100%; cursor: {{ foilCursor }}; opacity: {{ foilOpacity }}; clip-path: {{ foilClip }}; transition: opacity 0.8s ease, clip-path 0.35s ease; pointer-events: {{ foilPointer }};"></canvas>
+      <canvas role="img" aria-label="Scratch foil — drag across the card to scratch it, or use the reveal fortune button" ref="{{ foilRef }}" sc-camel-on-pointer-down="{{ onDown }}" sc-camel-on-pointer-move="{{ onMove }}" sc-camel-on-pointer-up="{{ onUp }}" sc-camel-on-pointer-enter="{{ onEnter }}" sc-camel-on-pointer-leave="{{ onLeave }}" style="position: absolute; inset: 0; width: 100%; height: 100%; cursor: {{ foilCursor }}; opacity: {{ foilOpacity }}; clip-path: {{ foilClip }}; transition: opacity 0.8s ease, clip-path 0.35s ease; pointer-events: {{ foilPointer }};"></canvas>
       <div style="position: absolute; right: 0; bottom: 0; width: 26%; height: 26%; pointer-events: none; opacity: {{ curlOpacity }}; transition: opacity 0.35s ease; clip-path: polygon(0 100%, 100% 0, 0 0); background: linear-gradient(135deg, #fff 0%, #ffd9e6 45%, #ef9dbd 100%); filter: drop-shadow(-3px -3px 5px rgba(179,78,115,0.3));"></div>
     </div>
     <div style="display: flex; align-items: center; gap: 10px; margin-top: 14px; padding: 0 4px;">
-      <span style="font-size: 13px; font-weight: 600; color: #b07d90; white-space: nowrap;">scratched</span>
+      <span style="font-size: 13px; font-weight: 600; color: #965470; white-space: nowrap;">scratched</span>
       <div style="flex: 1; height: 14px; background: #ffe4ee; border-radius: 999px; overflow: hidden; box-shadow: inset 0 2px 3px rgba(179,78,115,0.15);">
         <div style="height: 100%; width: {{ progressPct }}%; background: linear-gradient(90deg, #f9a8c3, #f27ba0); border-radius: 999px; transition: width 0.15s ease;"></div>
       </div>
-      <span style="font-size: 13px; font-weight: 700; color: #c67191; min-width: 38px; text-align: right;">{{ progressPct }}%</span>
+      <span style="font-size: 13px; font-weight: 700; color: #965470; min-width: 38px; text-align: right;">{{ progressPct }}%</span>
     </div>
   </div>
 
   <div style="position: relative; z-index: 1; display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; justify-content: center;">
     <button sc-camel-on-click="{{ newCard }}" style="font-family: 'Caprasimo', serif; font-size: 17px; color: #fff; background: linear-gradient(180deg, #f78fb0, #ef6f9a); border: none; border-radius: 999px; padding: 13px 28px; cursor: pointer; box-shadow: 0 5px 0 #d15c85, 0 10px 18px rgba(239,111,154,0.35);" style-hover="transform: translateY(-2px); box-shadow: 0 7px 0 #d15c85, 0 14px 22px rgba(239,111,154,0.4);" style-active="transform: translateY(2px); box-shadow: 0 2px 0 #d15c85;" style-focus="outline: 2px solid #b34e73; outline-offset: 2px;">♡ new card</button>
+    <button sc-camel-on-click="{{ revealAll }}" style="font-family: 'Caprasimo', serif; font-size: 17px; color: #b34e73; background: #fff; border: 2px solid #f2a8c2; border-radius: 999px; padding: 11px 26px; cursor: pointer; box-shadow: 0 5px 0 #f2c4d6;" style-hover="background: #fff0f6; transform: translateY(-2px); box-shadow: 0 7px 0 #f2c4d6;" style-active="transform: translateY(2px); box-shadow: 0 2px 0 #f2c4d6;" style-focus="outline: 2px solid #b34e73; outline-offset: 2px;">✨ reveal fortune</button>
     <button sc-camel-on-click="{{ share }}" style="font-family: 'Caprasimo', serif; font-size: 17px; color: #b34e73; background: #fff; border: 2px solid #f2a8c2; border-radius: 999px; padding: 11px 26px; cursor: pointer; box-shadow: 0 5px 0 #f2c4d6;" style-hover="background: #fff0f6; transform: translateY(-2px); box-shadow: 0 7px 0 #f2c4d6;" style-active="transform: translateY(2px); box-shadow: 0 2px 0 #f2c4d6;" style-focus="outline: 2px solid #b34e73; outline-offset: 2px;">💌 share fortune</button>
     <button sc-camel-on-click="{{ toggleSound }}" aria-label="toggle sound effects" title="sound effects" style="font-size: 17px; color: #b34e73; background: #fff; border: 2px solid #f2a8c2; border-radius: 999px; width: 48px; height: 48px; cursor: pointer; box-shadow: 0 5px 0 #f2c4d6;" style-hover="background: #fff0f6;" style-active="transform: translateY(2px); box-shadow: 0 2px 0 #f2c4d6;" style-focus="outline: 2px solid #b34e73; outline-offset: 2px;">{{ soundIcon }}</button>
     <button sc-camel-on-click="{{ toggleMusic }}" aria-label="toggle lofi music" title="lofi music" style="font-size: 17px; color: #b34e73; background: {{ musicBtnBg }}; border: 2px solid #f2a8c2; border-radius: 999px; width: 48px; height: 48px; cursor: pointer; box-shadow: 0 5px 0 #f2c4d6;" style-hover="background: #fff0f6;" style-active="transform: translateY(2px); box-shadow: 0 2px 0 #f2c4d6;" style-focus="outline: 2px solid #b34e73; outline-offset: 2px;">{{ musicIcon }}</button>
   </div>
 
   <div style="position: relative; z-index: 1; display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; justify-content: center;">
-    <span style="background: rgba(255,255,255,0.7); border-radius: 999px; padding: 7px 16px; font-size: 13px; font-weight: 600; color: #a06a7d;">🐾 {{ statPlayed }} cards scratched</span>
-    <span style="background: rgba(255,255,255,0.7); border-radius: 999px; padding: 7px 16px; font-size: 13px; font-weight: 600; color: #b8862e;">✨ {{ statGolden }} golden</span>
-    <span style="background: rgba(255,255,255,0.7); border-radius: 999px; padding: 7px 16px; font-size: 13px; font-weight: 600; color: #8a6ba0;">🌟 {{ statLuck }} luck</span>
+    <span style="background: rgba(255,255,255,0.7); border-radius: 999px; padding: 7px 16px; font-size: 13px; font-weight: 600; color: #7a4a5c;">🐾 {{ statPlayed }} cards scratched</span>
+    <span style="background: rgba(255,255,255,0.7); border-radius: 999px; padding: 7px 16px; font-size: 13px; font-weight: 600; color: #8a6420;">✨ {{ statGolden }} golden</span>
+    <span style="background: rgba(255,255,255,0.7); border-radius: 999px; padding: 7px 16px; font-size: 13px; font-weight: 600; color: #6b4d85;">🌟 {{ statLuck }} luck</span>
   </div>
-  <p style="position: relative; z-index: 1; margin: 10px 0 0; font-size: 12px; color: #bb8fa0;">psst — catch a shooting star for +1 luck ✦</p>
+  <p style="position: relative; z-index: 1; margin: 10px 0 0; font-size: 12px; color: #7a4a5c;">psst — catch a shooting star for +1 luck ✦</p>
 
   <sc-if value="{{ toastVisible }}" hint-placeholder-val="{{ false }}">
     <div style="position: fixed; bottom: 26px; left: 50%; transform: translateX(-50%); background: #7a4a5c; color: #ffeef5; font-size: 14px; font-weight: 600; padding: 12px 22px; border-radius: 999px; box-shadow: 0 8px 20px rgba(122,74,92,0.4); animation: toastUp 0.3s ease both; z-index: 30;">{{ toastText }}</div>
   </sc-if>
+  <div aria-live="polite" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap;">{{ announce }}</div>
   <canvas ref="{{ confettiRef }}" style="position: fixed; inset: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 20;"></canvas>
 </div>
 </x-dc>
@@ -329,6 +332,7 @@ class Component extends DCLogic {
   }
   scheduleStar(first) {
     clearTimeout(this._starT);
+    try { if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return; } catch (e) {}
     this._starT = setTimeout(() => {
       this.setState({ star: { top: (5 + Math.random() * 25) + '%', left: (50 + Math.random() * 38) + '%' } });
       this._starGone = setTimeout(() => { this.setState({ star: null }); this.scheduleStar(false); }, 2300);
@@ -594,8 +598,11 @@ class Component extends DCLogic {
       eyeLRef: el => { this.eyeL = el; },
       eyeRRef: el => { this.eyeR = el; },
       boopMascot: () => this.boopMascot(),
+      boopLabel: mascot === 'bear' ? 'Boop the bear' : 'Boop the bunny',
       cardNumPadded: String(st.cardNum).padStart(3, '0'),
       fortuneText: st.fortune,
+      prizeHidden: st.revealed ? 'false' : 'true',
+      announce: st.revealed ? (st.isGolden ? 'Golden fortune revealed: ' : 'Fortune revealed: ') + st.fortune : '',
       isGolden: st.isGolden,
       prizeBg: st.isGolden
         ? 'radial-gradient(circle at 50% 40%, #fff6dc, #fce7b8 70%, #f7d98e)'
@@ -627,6 +634,7 @@ class Component extends DCLogic {
       onEnter: e => { if (e.pointerType === 'mouse' && !this.state.revealed) this.setState({ peek: true }); },
       onLeave: () => { if (this.state.peek) this.setState({ peek: false }); },
       newCard: () => this.dealCard(true),
+      revealAll: () => { if (!this.state.revealed) this.reveal(); },
       share: () => {
         if (!st.revealed) { this.showToast('scratch your card first, silly ♡'); return; }
         const msg = '🐰✨ my lucky bunny fortune: \u201C' + st.fortune + '\u201D \u2014 scratched on card no. ' + String(st.cardNum).padStart(3, '0');

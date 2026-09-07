@@ -8,6 +8,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Witch of the Vending Machines — Ch.1, the book · ZAC Studios</title>
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://zhangcheng0605.github.io/fableWebsite/comic/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#128155;</text></svg>">
 <style>
 /* Standalone-only way back to the chapter page; hidden when comic/index.html embeds this book in its iframe. */
 .site-back{position:fixed;top:14px;left:14px;z-index:60;display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 16px;border-radius:999px;border:2px solid rgba(139,61,255,0.30);background:rgba(255,255,255,0.85);color:#6428d8;font:600 12px/1 'Cormorant Garamond',Georgia,serif;letter-spacing:0.18em;text-transform:uppercase;text-decoration:none;pointer-events:auto;transition:background .25s,border-color .25s}
@@ -32,8 +35,6 @@
 <script>if(window.self!==window.top){document.querySelector('.site-back').hidden=true}</script>
 <x-dc>
 <helmet>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
 <style>
 html,body{margin:0;padding:0;background:#f7ecff;overflow:hidden;overscroll-behavior:none;-webkit-tap-highlight-color:transparent}
 a{color:#c9106f;text-decoration:none}a:hover{color:#ff3fae}
@@ -45,7 +46,7 @@ img{-webkit-user-drag:none}
 </helmet>
 <div style="position:fixed;inset:0;background:radial-gradient(130% 110% at 50% 30%, #ffffff 0%, #f7ecff 42%, #ecdcfb 100%);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond', Georgia, serif;user-select:none">
   <div style="position:absolute;inset:0;background:radial-gradient(60% 40% at 50% 100%, rgba(255,63,174,0.12), rgba(255,255,255,0) 70%);pointer-events:none"></div>
-  <div class="masthead" style="position:absolute;top:26px;left:0;right:0;text-align:center;font-size:11px;letter-spacing:0.5em;text-transform:uppercase;color:#8b6fae;font-weight:600;pointer-events:none">Nightfall Comics &nbsp;·&nbsp; No. 1 &nbsp;·&nbsp; Apr 1994</div>
+  <div class="masthead" style="position:absolute;top:26px;left:0;right:0;text-align:center;font-size:11px;letter-spacing:0.5em;text-transform:uppercase;color:#6b4f94;font-weight:600;pointer-events:none">Nightfall Comics &nbsp;·&nbsp; No. 1 &nbsp;·&nbsp; Apr 1994</div>
 
   <div style="{{ stageStyle }}" sc-camel-on-pointer-down="{{ onDown }}" sc-camel-on-pointer-move="{{ onMove }}" sc-camel-on-pointer-up="{{ onUp }}" sc-camel-on-pointer-cancel="{{ onUp }}" sc-camel-on-pointer-leave="{{ onLeave }}">
     <div style="{{ shadowStyle }}"></div>
@@ -57,11 +58,11 @@ img{-webkit-user-drag:none}
 
           <div style="{{ sheet.faceFront }}">
             <sc-if value="{{ sheet.frontIsImage }}" hint-placeholder-val="{{ true }}">
-              <img sc-camel-src="{{ sheet.frontSrc }}" alt="{{ sheet.frontAlt }}" draggable="false" style="width:100%;height:100%;object-fit:cover;display:block">
+              <img sc-camel-src="{{ sheet.frontSrc }}" alt="{{ sheet.frontAlt }}" width="1024" height="1536" decoding="async" draggable="false" style="width:100%;height:100%;object-fit:cover;display:block">
             </sc-if>
             <sc-if value="{{ sheet.frontIsText }}" hint-placeholder-val="{{ false }}">
               <div style="position:absolute;inset:0;background:linear-gradient(160deg,#f7f2e6 0%,#efe7d6 55%,#e7ddc9 100%);padding:58px 52px 46px 46px;box-sizing:border-box;display:flex;flex-direction:column;color:#2c2620">
-                <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;letter-spacing:0.34em;text-transform:uppercase;color:#a08f76">
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px;letter-spacing:0.34em;text-transform:uppercase;color:#6b5c46">
                   <div>Chapter One · Exact Change</div>
                   <div>{{ sheet.tx.folio }}</div>
                 </div>
@@ -87,15 +88,15 @@ img{-webkit-user-drag:none}
 
           <div style="{{ sheet.faceBack }}">
             <sc-if value="{{ sheet.hasBackImg }}" hint-placeholder-val="{{ true }}">
-              <img sc-camel-src="{{ sheet.backSrc }}" alt="{{ sheet.backAlt }}" draggable="false" style="width:100%;height:100%;object-fit:cover;display:block">
+              <img sc-camel-src="{{ sheet.backSrc }}" alt="{{ sheet.backAlt }}" width="1024" height="1536" decoding="async" draggable="false" style="width:100%;height:100%;object-fit:cover;display:block">
             </sc-if>
             <sc-if value="{{ sheet.isEndpaper }}" hint-placeholder-val="{{ false }}">
               <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;background:linear-gradient(200deg,#f7f2e6,#e9dfcb);text-align:center;padding:48px;box-sizing:border-box">
-                <div style="font-size:11px;letter-spacing:0.5em;text-transform:uppercase;color:#a08f76">Nightfall Comics</div>
+                <div style="font-size:11px;letter-spacing:0.5em;text-transform:uppercase;color:#6b5c46">Nightfall Comics</div>
                 <div style="font-family:'Bodoni Moda',Didot,serif;font-style:italic;font-size:56px;color:#1f1a16;line-height:1">Fin.</div>
                 <div style="display:flex;align-items:center;gap:10px"><div style="width:34px;height:1px;background:#b5537a"></div><div style="width:4px;height:4px;background:#b5537a;transform:rotate(45deg)"></div><div style="width:34px;height:1px;background:#b5537a"></div></div>
                 <div style="font-size:19px;font-style:italic;color:#5d5245;max-width:280px;line-height:1.6;text-wrap:pretty">The machine took its payment and gave no receipt.</div>
-                <div style="font-size:11px;letter-spacing:0.4em;text-transform:uppercase;color:#a08f76;margin-top:6px">To be continued</div>
+                <div style="font-size:11px;letter-spacing:0.4em;text-transform:uppercase;color:#6b5c46;margin-top:6px">To be continued</div>
               </div>
             </sc-if>
             <div style="position:absolute;inset:0;background:linear-gradient(to left, rgba(20,12,8,0.30), rgba(20,12,8,0.07) 7%, rgba(255,255,255,0) 16%);pointer-events:none"></div>
@@ -110,13 +111,13 @@ img{-webkit-user-drag:none}
   </div>
 
   <sc-if value="{{ showHint }}" hint-placeholder-val="{{ true }}">
-    <div style="position:absolute;bottom:96px;left:0;right:0;text-align:center;font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:#8d7a97;pointer-events:none;animation:hintFade 7s ease-out forwards">Drag the bottom-right corner</div>
+    <div style="position:absolute;bottom:96px;left:0;right:0;text-align:center;font-size:12px;letter-spacing:0.3em;text-transform:uppercase;color:#6b4f94;pointer-events:none;animation:hintFade 7s ease-out forwards">Drag the bottom-right corner</div>
   </sc-if>
 
   <sc-if value="{{ showHud }}" hint-placeholder-val="{{ true }}">
     <div style="position:absolute;bottom:30px;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:24px">
       <button sc-camel-on-click="{{ prev }}" aria-label="Previous page" style="width:44px;height:44px;border-radius:50%;border:2px solid rgba(139,61,255,0.30);background:rgba(255,255,255,0.85);color:#6428d8;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .25s,border-color .25s" style-hover="background:rgba(139,61,255,0.12);border-color:rgba(220,140,180,0.7)">‹</button>
-      <div style="min-width:200px;text-align:center;font-size:12px;letter-spacing:0.34em;text-transform:uppercase;color:#9c8aa6">{{ hudLabel }}</div>
+      <div aria-live="polite" style="min-width:200px;text-align:center;font-size:12px;letter-spacing:0.34em;text-transform:uppercase;color:#6b4f94">{{ hudLabel }}</div>
       <button sc-camel-on-click="{{ next }}" aria-label="Next page" style="width:44px;height:44px;border-radius:50%;border:2px solid rgba(139,61,255,0.30);background:rgba(255,255,255,0.85);color:#6428d8;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .25s,border-color .25s" style-hover="background:rgba(139,61,255,0.12);border-color:rgba(220,140,180,0.7)">›</button>
     </div>
   </sc-if>
@@ -136,6 +137,22 @@ class Component extends DCLogic {
   // them downscaled to 1000x1500 — so read the originals instead: better art,
   // three more pages, and no duplicated JPEGs in the repo.
   pages = Array.from({ length: 12 }, (_, i) => 'page' + String(i + 1).padStart(2, '0') + '.jpg');
+  // What each page shows — the art has the dialogue baked in, so this is the
+  // only text alternative a screen reader gets (one entry per page, in order).
+  captions = [
+    "Nightfall Comics No. 1, April 1994. A woman's silhouette glows inside a pink vending machine in a rain-soaked neon alley.",
+    "Overtime. Again. Yui walks home through the neon rain, eyes on a phone that reads 02:14.",
+    "Tokyo, 2:17 AM. An alley that wasn't here yesterday, and a machine at the end of it selling COURAGE ¥120, SLEEP +1HR ¥150 and A SECOND CHANCE ¥???. Some choices don't come with instructions.",
+    "Shinjuku, 11:47 PM, rain. Yui turns a spiral-stamped coin she does not remember earning. '…Sure. Why not.'",
+    "CHOICE IS YOURS. Lightning crawls over the panel — REGRET, WHAT IF, IF ONLY, GO BACK — as Yui presses A SECOND CHANCE and the coin slot glows. ¥500.",
+    "The witch of the vending machines, pink hair and glowing eyes, reaches out through the glass: 'Wishes here cost honesty.'",
+    "Three years ago. A younger Yui, crying, tears up the Ōta Art School acceptance letter; a Tōzai Corporation employment contract waits on the desk.",
+    "Yui drinks a can labelled REDO. Rain rises instead of falling, clocks run backward, and the whole city hits undo.",
+    "'No one made me. I was afraid.' Nineteen-year-old Yui reads the job offer at the kitchen table while her older self watches from the doorway.",
+    "'We sell receipts, not second chances.' The witch behind the glass, a NO REFUNDS sticker on the machine, and Yui staring back.",
+    "Tokyo morning, 6:15 AM. Yui holds a can labelled BEGIN outside the Towa Corporation tower. 'So I'll show up too. Not for them. For me.'",
+    "Kaji, the vending machine witch, waits between transactions in the rain while a boy buys a drink. Next: Exact Change."
+  ];
 
   story = [
     { folio: 'II', title: 'Two Fourteen', drop: 'T',
@@ -486,11 +503,11 @@ class Component extends DCLogic {
         faceBack: Object.assign({}, face, { borderRadius: '7px 3px 3px 7px', transform: 'rotateY(180deg)', visibility: showBack ? 'visible' : 'hidden' }),
         frontIsImage: frontIdx >= 0 && this._warm.has(i), frontIsText: !!tx,
         frontSrc: frontIdx >= 0 ? (this.pages[frontIdx] || '') : '',
-        frontAlt: i === 0 ? 'Cover' : 'Page ' + (frontIdx + 1),
+        frontAlt: i === 0 ? 'Cover — ' + this.captions[0] : 'Page ' + (frontIdx + 1) + ' — ' + (this.captions[frontIdx] || ''),
         tx: tx ? { folio: tx.folio, title: tx.title, drop: tx.drop, first: tx.first, second: tx.second, hasSecond: !!tx.second, pull: tx.pull }
                : { folio: '', title: '', drop: '', first: '', second: '', hasSecond: false, pull: '' },
         hasBackImg: !!back && this._warm.has(i), isEndpaper: !back,
-        backSrc: back || '', backAlt: 'Page ' + (i + 2),
+        backSrc: back || '', backAlt: 'Page ' + (backIdx + 1) + ' — ' + (this.captions[backIdx] || ''),
         shadeFront: { position: 'absolute', inset: 0, pointerEvents: 'none',
           background: 'linear-gradient(to left, rgba(0,0,0,0.5), rgba(0,0,0,0.1) 42%, rgba(0,0,0,0) 75%)',
           opacity: active ? 0.7 * f.lift : 0 },

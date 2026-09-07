@@ -212,7 +212,7 @@
       </div>
     </section>
 
-    <main class="reader" id="reader"></main>
+    <main class="reader" id="reader" tabindex="-1"></main>
 
     <section class="endcard" id="endcard">
       <p class="fin">END OF CHAPTER 3</p>
@@ -370,38 +370,93 @@
       meterEl.textContent = "LAYER 4";
       pbar.style.transform = "scaleX(1)";
     } else {
-      var cur = window.scrollY;
-      var setH = function () { document.body.style.height = scroller.scrollHeight + "px"; };
+      var cur = window.scrollY, running = false, native = false;
+      var maxY = 1, tops = [], hts = [], lastMeter = "";
+      // where every panel sits inside #scroller — the block moves as one, so this only changes on relayout
+      var measure = function () {
+        for (var j = 0; j < frames.length; j++) {
+          var el = frames[j].parentElement, y = 0;
+          hts[j] = el.offsetHeight;
+          for (; el && el !== scroller; el = el.offsetParent) y += el.offsetTop;
+          tops[j] = y;
+        }
+      };
+
+      // one frame of the ride; runs only while the page is moving, then sleeps
+      var tick = function () {
+        var y = window.scrollY;
+        if (native) cur = y;
+        else {
+          cur = lerp(cur, y, 0.085);
+          if (Math.abs(cur - y) < 0.05) cur = y;
+          scroller.style.transform = "translate3d(0," + (-cur) + "px,0)";
+        }
+
+        var p = clamp(cur / maxY, 0, 1);
+        pbar.style.transform = "scaleX(" + p + ")";
+        var m = fmt(p);
+        if (m !== lastMeter) { lastMeter = m; meterEl.textContent = m; }
+
+        if (!native) {
+          if (cur < innerHeight * 1.2) {
+            coverArt.style.transform = "translateY(" + (cur * 0.35) + "px)";
+            coverArt.style.opacity = String(1 - clamp(cur / (innerHeight * 0.9), 0, 1) * 0.9);
+          }
+          for (var j = 0; j < frames.length; j++) {
+            var top = tops[j] - cur, h = hts[j];
+            if (top + h < -80 || top > innerHeight + 80) continue;
+            var rel = (top + h / 2 - innerHeight / 2) / innerHeight;
+            frames[j].style.transform = "scale(1.05) translateY(" + (-rel * 2.6).toFixed(3) + "%)";
+          }
+        }
+        if (cur === y) { running = false; return; }   // settled: sleep until the next scroll wakes us
+        requestAnimationFrame(tick);
+      };
+      var wake = function () { if (!running) { running = true; requestAnimationFrame(tick); } };
+      var setH = function () {
+        var sh = scroller.scrollHeight;
+        maxY = Math.max(sh - innerHeight, 1);
+        if (!native) document.body.style.height = sh + "px";
+        measure();
+        wake();
+      };
+      // straight to a spot on the page, no easing — for when focus has to land somewhere
+      var jumpTo = function (y) {
+        cur = clamp(y, 0, maxY);
+        window.scrollTo(0, cur);
+        if (!native) scroller.style.transform = "translate3d(0," + (-cur) + "px,0)";
+        wake();
+      };
+      // keyboard users get the page itself to scroll, so focus can never land off-screen
+      var goNative = function () {
+        if (native) return;
+        native = true;
+        document.body.classList.add("no-smooth");
+        scroller.style.transform = "";
+        document.body.style.height = "";
+        coverArt.style.transform = ""; coverArt.style.opacity = "";
+        for (var j = 0; j < frames.length; j++) frames[j].style.transform = "";
+        window.scrollTo(0, cur);
+        wake();
+      };
+
       setH();
       addEventListener("resize", setH);
       addEventListener("load", setH);
-      frames.forEach(function (im) { im.addEventListener("load", setH); });
-      setInterval(setH, 1000);
-
-      var tick = function () {
-        var max = Math.max(scroller.scrollHeight - innerHeight, 1);
-        cur = lerp(cur, window.scrollY, 0.085);
-        if (Math.abs(cur - window.scrollY) < 0.05) cur = window.scrollY;
-        scroller.style.transform = "translate3d(0," + (-cur) + "px,0)";
-
-        var p = clamp(cur / max, 0, 1);
-        pbar.style.transform = "scaleX(" + p + ")";
-        meterEl.textContent = fmt(p);
-
-        if (cur < innerHeight * 1.2) {
-          coverArt.style.transform = "translateY(" + (cur * 0.35) + "px)";
-          coverArt.style.opacity = String(1 - clamp(cur / (innerHeight * 0.9), 0, 1) * 0.9);
-        }
-        for (var j = 0; j < frames.length; j++) {
-          var im = frames[j];
-          var r = im.parentElement.getBoundingClientRect();
-          if (r.bottom < -80 || r.top > innerHeight + 80) continue;
-          var rel = (r.top + r.height / 2 - innerHeight / 2) / innerHeight;
-          im.style.transform = "scale(1.05) translateY(" + (-rel * 2.6).toFixed(3) + "%)";
-        }
-        requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
+      if (window.ResizeObserver) new ResizeObserver(setH).observe(scroller);   // art and fonts arriving late
+      else { frames.forEach(function (im) { im.addEventListener("load", setH); }); setInterval(setH, 1000); }
+      addEventListener("scroll", wake, { passive: true });
+      addEventListener("keydown", function (e) { if (e.key === "Tab") goNative(); });
+      addEventListener("focusin", function (e) {
+        if (native || !scroller.contains(e.target)) return;
+        var r = e.target.getBoundingClientRect();
+        if (r.top < 0 || r.bottom > innerHeight) jumpTo(r.top + cur - Math.max(0, innerHeight - r.height) / 2);
+      });
+      document.querySelector(".skip-link").addEventListener("click", function (e) {
+        e.preventDefault();
+        jumpTo(reader.getBoundingClientRect().top + (native ? window.scrollY : cur));
+        reader.focus({ preventScroll: true });
+      });
     }
 
     document.getElementById("again").addEventListener("click", function () {
