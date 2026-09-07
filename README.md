@@ -88,8 +88,10 @@ Direction · Contact); on phones the pill scrolls sideways with a fade on the ed
   `og:url` + canonical, `twitter:card`. Secondary editions (flip books, `game.html`) are
   `noindex` and canonical to their primary page.
 - Web fonts are self-hosted (`assets/fonts/fonts.css` + `assets/fonts/g/*.woff2`, latin and
-  latin-ext subsets of every family the site uses) and loaded with the non-blocking preload
-  pattern with `font-display: swap`; no page makes a third-party request.
+  latin-ext subsets of every family the site uses, deduplicated by content hash) and loaded with
+  the non-blocking preload pattern with `font-display: swap`; no page makes a third-party request.
+- `404.html` is the one file that must use `/fableWebsite/…` absolute paths: GitHub Pages serves it
+  at whatever URL the visitor mistyped, so a relative href would resolve against an unknown depth.
 - Text never renders below 12px on phones; tap targets are 44px on coarse pointers.
 - Images: `loading="lazy"` + `decoding="async"` except the first one or two above the fold;
   `width`/`height` always set.
