@@ -1,5 +1,3 @@
 User-agent: *
 Allow: /
-Disallow: /assets/film/
-
 Sitemap: https://zhangcheng0605.github.io/fableWebsite/sitemap.xml
