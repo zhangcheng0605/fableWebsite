@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FoW Wireframe</title>
+<link rel="canonical" href="https://zhangcheng0605.github.io/fableWebsite/fow/meiq/">
+<meta name="description" content="meIQ, the December policy assistant: five screens, desktop and phone, with PRD notes, decisions and open questions.">
+<style>
+html,body{margin:0}
+/* Wireframe language from fow/wireframe (Zac): black lines on white, #111 ink,
+   4–6px radius, no shadows, pill buttons, dashed drop zones. Single theme by choice. */
+:root{
+  --ink:#111; --ink-2:#444; --ink-3:#8c8c8c; --line:#cfcfcf; --hair:#e6e6e6; --paper:#fff;
+  --ui: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{background:var(--paper);color:var(--ink)}
+body{font-family:var(--ui);font-size:14px;line-height:1.45;padding-inline:16px;padding-block:0 56px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+button:focus-visible,a:focus-visible,[tabindex]:focus-visible,textarea:focus-visible,input:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+a{color:var(--ink)}
+
+/* ================= demo controls ================= */
+.top{max-width:1320px;margin:0 auto;padding-block:22px 16px;display:flex;flex-direction:column;gap:14px;border-bottom:1.5px solid var(--ink)}
+.top-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px}
+.top h1{margin:0;font-size:22px;letter-spacing:-.02em;text-wrap:balance}
+.top h1 span{color:var(--ink-3);font-weight:500}
+.top .sub{color:var(--ink-3);font-size:13px}
+.legend{margin-left:auto;display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:22px;height:12px;border:1.5px solid var(--ink);border-radius:3px;display:inline-block}
+.sw.res{border-style:dashed;border-color:var(--ink-3)}
+.ctrls{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tab{border:1.5px solid var(--ink);border-radius:999px;padding:6px 14px;font-size:12.5px;font-weight:650;display:inline-flex;gap:7px;align-items:center;white-space:nowrap}
+.tab b{font-family:var(--mono);font-size:11px;font-weight:600;color:var(--ink-3)}
+.tab[aria-selected="true"]{background:var(--ink);color:#fff}
+.tab[aria-selected="true"] b{color:#bdbdbd}
+.right-ctrls{margin-left:auto;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.seg{display:inline-flex;border:1.5px solid var(--ink);border-radius:999px;overflow:hidden}
+.seg button{padding:5px 13px;font-size:12.5px;font-weight:650}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.tog{font-size:12.5px;display:inline-flex;gap:8px;align-items:center;color:var(--ink-2);white-space:nowrap}
+.tog .knob{width:30px;height:16px;border:1.5px solid var(--ink);border-radius:999px;position:relative;flex:none}
+.tog .knob::after{content:"";position:absolute;top:2px;left:2px;width:9px;height:9px;border-radius:50%;background:var(--ink);transition:left .15s}
+.tog[aria-pressed="true"] .knob{background:var(--ink)}
+.tog[aria-pressed="true"] .knob::after{left:15px;background:#fff}
+
+/* ================= shared atoms ================= */
+.mark{width:24px;height:24px;border:1.5px solid var(--ink);border-radius:4px;display:grid;place-items:center;font-size:12px;font-weight:800;background:#fff;flex:none;letter-spacing:-.02em}
+.face{width:26px;height:26px;border:1.5px solid var(--ink);border-radius:50%;display:grid;place-items:center;font-size:10px;font-weight:700;flex:none}
+.label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.fine{font-size:11px;color:var(--ink-3)}
+.btn{align-self:flex-start;font-size:12.5px;font-weight:650;border:1.5px solid var(--ink);border-radius:999px;padding:5px 14px;background:var(--ink);color:#fff;white-space:nowrap}
+.btn:hover{background:#fff;color:var(--ink)}
+.btn[disabled]{background:#fff;color:var(--ink-3);border-color:var(--hair);cursor:default}
+.obtn{height:28px;border:1px solid var(--line);border-radius:4px;padding:0 10px;font-size:12px;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.obtn:hover{border-color:var(--ink)}
+.obtn[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+.msg{display:flex;flex-direction:column;gap:6px;max-width:100%}
+.msg.user{align-items:flex-end}
+.bubble{border:1px solid var(--ink);border-radius:4px;padding:9px 12px;font-size:13.5px;max-width:92%}
+.bubble.none{border-style:dashed}
+.bubble p{margin:0}
+.bubble p+p{margin-top:6px}
+.msg.user .bubble{background:var(--ink);color:#fff}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--ink);border-radius:3px;padding:2px 8px;font-size:11.5px;background:#fff;color:var(--ink)}
+.who-line{display:flex;align-items:center;gap:7px;font-size:11.5px;color:var(--ink-3)}
+.who-line .mark{width:20px;height:20px;font-size:9.5px}
+.src{position:relative;border:1px solid var(--ink);border-left-width:3px;border-radius:4px;padding:10px 12px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 10px;font-size:12.5px;max-width:92%;text-align:left}
+.src .ico{grid-row:span 3;width:22px;height:28px;border:1.5px solid var(--ink);border-radius:2px;position:relative;margin-top:2px}
+.src .ico::before,.src .ico::after{content:"";position:absolute;left:4px;right:4px;height:1.5px;background:var(--ink)}
+.src .ico::before{top:8px}.src .ico::after{top:14px}
+.src .ico.vid::before{top:8px;left:7px;right:auto;width:0;height:0;background:none;border-left:8px solid var(--ink);border-top:5px solid transparent;border-bottom:5px solid transparent}
+.src .ico.vid::after{display:none}
+.src b{font-size:13px}
+.src .meta{font-family:var(--mono);font-size:11px;color:var(--ink-2)}
+.src .go{font-size:12px;font-weight:650;text-decoration:underline;justify-self:start}
+.applies{font-size:12px;color:var(--ink-2)}
+.applies span{color:var(--ink-3)}
+.acts{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.sugs{display:flex;flex-direction:column;gap:8px}
+.sug{text-align:left;border:1px solid var(--ink);border-radius:4px;padding:8px 11px;font-size:13px}
+.sug:hover{background:var(--ink);color:#fff}
+.drop{display:grid;place-items:center;align-content:center;gap:6px;text-align:center;min-height:180px;border:1.5px dashed var(--ink);border-radius:6px;padding:18px;position:relative}
+.drop b{font-size:17px;letter-spacing:-.01em}
+.drop span{font-size:12.5px;color:var(--ink-3)}
+.search{border:1px solid var(--ink);border-radius:4px;padding:8px 10px;font:inherit;font-size:13px;width:100%;background:#fff;color:var(--ink)}
+.grp{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-top:10px}
+.hist{display:flex;justify-content:space-between;gap:10px;align-items:baseline;border-bottom:1px solid var(--hair);padding:10px 2px;text-align:left;width:100%}
+.hist span{font-size:13.5px}
+.hist em{font-style:normal;font-family:var(--mono);font-size:10.5px;color:var(--ink-3);flex:none}
+.hist:hover span{text-decoration:underline}
+
+/* annotation pins */
+.pin{display:none;flex:none;min-width:19px;height:19px;padding:0 4px;border-radius:999px;background:var(--ink);color:#fff;font:700 10.5px/19px var(--mono);text-align:center;font-style:normal;vertical-align:middle}
+body.notes .pin{display:inline-block}
+.pin.abs{position:absolute;top:-9px;right:-9px;z-index:3}
+body.notes .pin.abs{display:block}
+
+/* ================= desktop frame ================= */
+.stage{max-width:1320px;margin:18px auto 0;display:flex;flex-direction:column;gap:18px}
+.frame{border:1.5px solid var(--ink);border-radius:6px;display:flex;min-height:660px;overflow:hidden}
+.left{flex:1;min-width:0;display:flex;flex-direction:column}
+.bar{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--hair)}
+.brand{display:flex;align-items:center;gap:8px;font-weight:750;letter-spacing:-.01em;font-size:15px}
+.url{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);border:1px solid var(--hair);border-radius:3px;padding:2px 8px}
+.bar .who{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink-2)}
+.canvas{display:flex;flex-direction:column;gap:36px;padding:48px clamp(18px,4vw,56px) 48px;max-width:980px;width:100%;margin:0 auto}
+.hero h2{margin:0;font-size:clamp(30px,3.6vw,46px);line-height:1.05;letter-spacing:-.035em;text-wrap:balance}
+.hero p{margin:10px 0 0;font-size:17px;color:var(--ink-3);letter-spacing:-.01em}
+.hint{display:inline-flex;align-items:center;gap:10px;margin-top:20px;font-size:13px;border:1.5px dashed var(--ink);border-radius:999px;padding:7px 15px}
+.hint i{font-style:normal;animation:nudge 1.6s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(6px)}}
+.row{display:flex;flex-direction:column;gap:12px}
+.verb{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.verb b{font-size:21px;letter-spacing:-.02em}
+.verb span{font-size:13px;color:var(--ink-3)}
+.verb .tag{margin-left:auto;font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.tile{position:relative;display:flex;flex-direction:column;gap:4px;border:1.5px solid var(--ink);border-radius:6px;background:#fff;padding:16px 18px 18px;min-height:168px;cursor:grab;transition:transform .18s cubic-bezier(.2,.8,.3,1.2);text-align:left}
+.tile:hover{transform:translateY(-3px)}
+.tile.dragging{opacity:.35}
+.big{font-size:28px;font-weight:700;letter-spacing:-.03em;line-height:1.05}
+.line{font-size:13px;color:var(--ink-2)}
+.doc{margin-top:auto;padding-top:12px;display:flex;flex-direction:column;gap:5px}
+.doc i{display:block;height:5px;border-radius:2px;background:var(--hair)}
+.doc i.chg{background:var(--ink)}
+.doc-cap{font-family:var(--mono);font-size:10.5px;color:var(--ink-3);margin-top:4px}
+.later{border:1.5px dashed var(--ink-3);border-radius:6px;padding:18px 18px 16px;display:flex;flex-direction:column;gap:14px;position:relative}
+.later-h{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.later-h b{font-size:15px}
+.later-h span{font-size:12.5px;color:var(--ink-3)}
+.tile.res{border:1.5px dashed var(--ink-3);cursor:default;color:var(--ink-3);min-height:140px}
+.tile.res:hover{transform:none}
+.tile.res .big{color:var(--ink-3);font-size:22px}
+.tile.res .line{color:var(--ink-3)}
+.tile.res .btn{margin-top:auto}
+.tile.res.lit{border-color:var(--ink);color:var(--ink);outline:3px solid var(--ink);outline-offset:3px}
+.tile.res.lit .big,.tile.res.lit .line{color:var(--ink)}
+.job{display:flex;align-items:center;gap:14px;padding:10px 4px;border-top:1px solid var(--hair);color:var(--ink-3)}
+.job .mark{border-color:var(--ink-3);color:var(--ink-3)}
+.job b{font-weight:600;font-size:14px}
+.job .btn{margin-left:auto}
+
+.dock{width:404px;flex:none;display:flex;flex-direction:column;border-left:1.5px solid var(--ink);position:relative;background:#fff}
+.dock.over{outline:3px solid var(--ink);outline-offset:-3px}
+.d-head{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--hair);min-height:57px}
+.d-name{font-weight:720;font-size:14.5px}
+.d-name small{color:var(--ink-3);font-weight:500}
+.d-sub{font-size:11px;color:var(--ink-3)}
+.d-tools{margin-left:auto;display:flex;gap:6px}
+.d-body{flex:1;overflow:auto;padding:16px 14px;display:flex;flex-direction:column;gap:14px;min-height:420px}
+.d-foot{border-top:1px solid var(--hair);padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.composer{display:flex;gap:8px;align-items:flex-end;border:1px solid var(--ink);border-radius:4px;padding:8px;background:#fff}
+.composer textarea,.composer input{flex:1;min-width:0;border:0;resize:none;font:inherit;font-size:13.5px;outline:none;background:transparent;color:var(--ink)}
+.composer textarea{min-height:38px}
+.send{background:var(--ink);color:#fff;border-radius:4px;padding:7px 12px;font-size:12.5px;font-weight:650}
+.drawer{position:absolute;inset:57px 0 0 0;background:#fff;border-top:1px solid var(--ink);display:flex;flex-direction:column;z-index:5}
+.drawer .d-body{gap:4px}
+
+/* ================= phone ================= */
+.stage.mobile{max-width:1100px;display:grid;grid-template-columns:auto minmax(0,1fr);gap:32px;align-items:start}
+.phone{width:min(390px,100%);border:1.5px solid var(--ink);border-radius:40px;padding:9px;background:#fff}
+.screen{position:relative;border:1px solid var(--line);border-radius:31px;height:780px;display:flex;flex-direction:column;overflow:hidden;background:#fff}
+.status{display:flex;align-items:center;justify-content:space-between;padding:12px 26px 6px;font:600 12px var(--mono)}
+.status .island{width:96px;height:24px;border:1.5px solid var(--ink);border-radius:999px}
+.status .sig{display:flex;gap:2px;align-items:flex-end}
+.status .sig i{width:3px;background:var(--ink);border-radius:1px}
+.appbar{display:flex;align-items:center;gap:8px;padding:6px 16px 10px;border-bottom:1px solid var(--hair)}
+.appbar .brand{font-size:16px}
+.appbar .ic{margin-left:auto;display:flex;gap:6px;align-items:center}
+.icb{width:32px;height:32px;border:1px solid var(--line);border-radius:4px;display:grid;place-items:center;font-size:15px;line-height:1;position:relative}
+.icb[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.m-body{flex:1;overflow:auto;padding:20px 16px;display:flex;flex-direction:column;gap:16px}
+.m-hello h2{margin:0;font-size:28px;letter-spacing:-.03em;line-height:1.05}
+.m-hello p{margin:6px 0 0;color:var(--ink-3);font-size:15px}
+.m-sec{display:flex;flex-direction:column;gap:2px;position:relative}
+.m-sec .label{display:flex;gap:8px;align-items:center;margin-bottom:6px}
+.m-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:2px 10px;padding:11px 2px;border-top:1px solid var(--hair);text-align:left;width:100%}
+.m-row:last-child{border-bottom:1px solid var(--hair)}
+.m-row b{font-size:15px;letter-spacing:-.01em}
+.m-row small{grid-column:1;font-family:var(--mono);font-size:10.5px;color:var(--ink-3)}
+.m-row .chev{grid-row:1/3;grid-column:2;font-size:18px;color:var(--ink-3)}
+.m-later{display:flex;gap:6px;flex-wrap:wrap}
+.m-later span{border:1.5px dashed var(--ink-3);color:var(--ink-3);border-radius:999px;padding:4px 11px;font-size:12px;font-weight:600}
+.m-sugs{display:flex;flex-wrap:wrap;gap:8px}
+.m-sugs .sug{border-radius:999px;padding:7px 12px;font-size:12.5px}
+.m-body .bubble{max-width:88%;font-size:14px}
+.m-body .src{max-width:100%;padding:9px 11px}
+.m-body .src .ico{grid-row:span 2}
+.m-acts{display:flex;gap:16px;font-size:12.5px;position:relative}
+.m-acts button{text-decoration:underline;text-underline-offset:3px;color:var(--ink-2)}
+.m-stack{display:flex;flex-direction:column;gap:8px}
+.m-stack .btn{align-self:stretch;text-align:center;padding:10px 14px;font-size:13.5px}
+.m-stack .btn.alt{background:#fff;color:var(--ink)}
+.m-foot{border-top:1px solid var(--hair);padding:10px 12px 8px;position:relative}
+.m-foot .composer{align-items:center;padding:6px 6px 6px 12px}
+.m-foot .composer input{font-size:15px;height:32px}
+.m-foot .send{width:34px;height:34px;padding:0;font-size:16px;display:grid;place-items:center}
+.homebar{width:120px;height:4px;background:var(--ink);border-radius:2px;margin:10px auto 8px}
+.sheet{position:absolute;inset:0;background:#fff;display:flex;flex-direction:column;z-index:4}
+.sheet-h{display:flex;align-items:center;gap:10px;padding:52px 16px 12px;border-bottom:1px solid var(--hair)}
+.sheet-h b{font-size:17px}
+.sheet-h .icb{margin-left:auto}
+.sheet .m-body{gap:4px}
+
+/* ================= notes ================= */
+.notes-wrap{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px}
+.stage.mobile .notes-wrap{grid-template-columns:1fr}
+body:not(.notes) .notes-wrap{display:none}
+.np{border:1.5px solid var(--ink);border-radius:6px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.np.q{border-style:dashed}
+.np h3{margin:0;font-size:12.5px;letter-spacing:.12em;text-transform:uppercase}
+.np h3 small{letter-spacing:0;text-transform:none;font-weight:500;color:var(--ink-3);font-size:12px;margin-left:6px}
+.np ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:9px}
+.np li{display:grid;grid-template-columns:26px 1fr;gap:4px;font-size:13.5px;max-width:72ch}
+.np .pin{display:inline-block;justify-self:start}
+.np .dot{font-family:var(--mono);color:var(--ink-3);text-align:center;width:19px}
+.np .ok{font-family:var(--mono);font-weight:700;width:19px;text-align:center}
+.np .own{font-family:var(--mono);font-size:11px;color:var(--ink-3)}
+.np + .np{margin-top:0}
+.side{display:flex;flex-direction:column;gap:18px}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:#fff;border:1px solid var(--ink);border-left-width:3px;border-radius:4px;padding:9px 14px;font-size:12.5px;z-index:10;max-width:calc(100vw - 32px)}
+
+@media (max-width:1060px){
+  .frame{flex-direction:column}
+  .dock{width:auto;border-left:0;border-top:1.5px solid var(--ink)}
+  .notes-wrap{grid-template-columns:1fr}
+  .legend,.right-ctrls{margin-left:0}
+}
+@media (max-width:860px){
+  .stage.mobile{grid-template-columns:minmax(0,1fr);justify-items:center}
+  .stage.mobile .side{width:100%}
+}
+@media (max-width:760px){
+  .grid{grid-template-columns:1fr}
+  .tile{min-height:0}
+  .canvas{padding-top:28px;gap:28px}
+  .bar .who span,.url{display:none}
+}
+@media (max-width:440px){
+  .phone{border:0;padding:0;border-radius:0}
+  .screen{border-radius:18px;border-color:var(--ink);height:720px}
+  .status{display:none}
+  .sheet-h{padding-top:14px}
+}
+@media (prefers-reduced-motion:reduce){.hint i{animation:none}.tile{transition:none}}
+</style>
+
+</head>
+<body>
+<header class="top">
+  <div class="top-row">
+    <h1>meIQ <span>· December policy assistant</span></h1>
+    <span class="sub">Five screens for the web PRD, desktop and phone, in the FoW wireframe style. Content is sample.</span>
+    <div class="legend">
+      <span><i class="sw"></i>Goes live 31 Dec</span>
+      <span><i class="sw res"></i>Later phases, hidden at launch</span>
+    </div>
+  </div>
+  <div class="ctrls">
+    <div class="tabs" role="tablist" aria-label="Screens">
+      <button class="tab" role="tab" id="t-home" data-tab="home"><b>1</b>Home</button>
+      <button class="tab" role="tab" id="t-answer" data-tab="answer"><b>2</b>Answer with source</button>
+      <button class="tab" role="tab" id="t-cantfind" data-tab="cantfind"><b>3</b>Can't find it</button>
+      <button class="tab" role="tab" id="t-outofscope" data-tab="outofscope"><b>4</b>Not yet possible</button>
+      <button class="tab" role="tab" id="t-history" data-tab="history"><b>5</b>History</button>
+    </div>
+    <div class="right-ctrls">
+      <div class="seg" role="group" aria-label="Device">
+        <button id="v-desktop" data-view="desktop" aria-pressed="true">Desktop</button>
+        <button id="v-mobile" data-view="mobile" aria-pressed="false">Phone</button>
+      </div>
+      <button class="tog" id="slotsBtn" aria-pressed="false"><span class="knob"></span>Show later phases</button>
+      <button class="tog" id="notesBtn" aria-pressed="true"><span class="knob"></span>PRD notes</button>
+    </div>
+  </div>
+</header>
+
+<div id="stage"></div>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const S = { screen: "home", view: "desktop", slots: false, notes: true, policy: null };
+
+/* ---------------- sample content ---------------- */
+const POLICIES = [
+  {id:"fwa", bu:"HR", name:"Flexible work", date:"12 Aug 2026", what:"2 sections changed", doc:[0,1,0,0,1,0], ask:"Can I work from home on Fridays?"},
+  {id:"travel", bu:"Finance", name:"Travel & claims", date:"18 Nov 2026", what:"daily rates", doc:[0,0,1,0,0,0], ask:"What are the new daily travel rates?"},
+  {id:"it", bu:"IT", name:"Acceptable use", date:"4 Nov 2026", what:"personal devices", doc:[1,0,0,1,1,0], ask:"Can I use my own phone for work email?"},
+];
+const pol = id => POLICIES.find(p => p.id === id) || null;
+const LATER = [
+  {slot:"access", label:"Requests & access", big:"Request it", line:"Ask for a system, a licence or a card", when:"Later"},
+  {slot:"leave", label:"Leave & claims", big:"Apply for it", line:"Leave, claims and your balances", when:"Planned 2027"},
+  {slot:"approve", label:"Approvals", big:"Approve it", line:"What's waiting for you, in one place", when:"Later"},
+];
+const HIST = [
+  ["Today"], ["Can I work from home on Fridays?","09:12","answer"],
+  ["This week"], ["Dress code for the year-end party","Wed","cantfind"], ["Apply 2 days' leave next week","Tue","outofscope"], ["Overseas travel insurance cover","Mon","answer"],
+  ["Earlier"], ["Laptop replacement after 3 years","2 Dec","answer"], ["Carry-over of unused leave","14 Nov","answer"],
+];
+
+/* ---------------- chat pieces (shared by desktop and phone) ---------------- */
+const pin = (k, abs) => `<i class="pin${abs ? " abs" : ""}">${k}</i>`;
+const who = `<div class="who-line"><span class="mark">m</span>meIQ</div>`;
+const user = (q, chip) => `<div class="msg user">${chip ? `<span class="chip">▤ ${esc(chip)}</span>` : ""}<div class="bubble">${esc(q)}</div></div>`;
+
+function answerParts(){
+  const p = S.policy ? pol(S.policy) : null;
+  const main = !p || p.id === "fwa";
+  return {
+    q: p ? p.ask : "Can I work from home on Fridays?",
+    chip: p ? p.bu + " · " + p.name : null,
+    body: main
+      ? `<p>Yes, up to <b>2 days a week</b>, if your manager agrees.</p><p>Your team can fix its office days, so check with your manager before you book Fridays.</p>`
+      : `<p>Here is what the ${esc(p.name.toLowerCase())} policy says now, in short. The full wording is in section 2.4.</p><p style="color:var(--ink-3)">Sample answer. The real text comes from the policy.</p>`,
+    title: main ? "Flexible Work Arrangement Policy" : p.name + " Policy",
+    meta: main ? "HR · §3.1 · updated 12 Aug 2026" : p.bu + " · §2.4 · updated " + p.date,
+  };
+}
+
+function thread(m){ /* m = true for phone */
+  const s = S.screen;
+  if (s === "answer" || (s === "history" && !m)) {
+    const a = answerParts();
+    return `${user(a.q, a.chip)}
+    <div class="msg">${who}<div class="bubble">${a.body}</div>
+      <button class="src" data-toast="Opens the policy on the intranet">${pin(m ? "b" : "4", true)}<span class="ico"></span><b>${esc(a.title)}</b><span class="meta">${esc(a.meta)}</span>${m ? "" : `<span class="go">Open the policy ↗</span>`}</button>
+      <div class="applies">Applies to you: <b>Digital</b> <span>· from your login</span> ${pin(m ? "c" : "5")}</div>
+      ${m
+        ? `<div class="m-acts"><button data-toast="Thanks. Marked helpful">Helpful</button><button data-toast="Thanks. We'll look at this answer">Not helpful</button><button data-toast="Sent to the policy owner">Report outdated</button></div>`
+        : `<div class="acts"><button class="obtn" data-toast="Thanks. Marked helpful">Helpful</button><button class="obtn" data-toast="Thanks. We'll look at this answer">Not helpful</button><button class="obtn" data-toast="Sent to the policy owner">Report outdated</button>${pin("6")}</div>`}
+    </div>
+    ${m ? "" : `<div class="sugs"><div class="label">Ask next</div><button class="sug" data-go="cantfind">What if my manager says no?</button><button class="sug" data-go="outofscope">Apply for leave on Friday</button></div>`}`;
+  }
+  if (s === "cantfind") {
+    return `${user("What's the dress code for the year-end party?")}
+    <div class="msg">${who}<div class="bubble none"><p>I couldn't find this in the published policies.</p><p>The HR policy owner can answer it, or it may be on the intranet.</p></div>
+      ${m
+        ? `<div class="m-stack" style="position:relative">${pin("b", true)}<button class="btn alt" data-toast="Opens intranet search">Search the intranet ↗</button><button class="btn alt" data-toast="Sent to the HR policy owner">Ask the policy owner</button></div>`
+        : `<div class="acts"><button class="obtn" data-toast="Opens intranet search">Search the intranet ↗</button><button class="obtn" data-toast="Sent to the HR policy owner">Ask the policy owner</button>${pin("8")}</div>`}
+    </div>
+    ${user("How do I fill in the new expense template?")}
+    <div class="msg">${who}<div class="bubble"><p>This is explained in a video, and I can't read videos yet. Watch it here:</p></div>
+      <button class="src" data-toast="Opens the video on the intranet">${pin(m ? "c" : "9", true)}<span class="ico vid"></span><b>Expense claims walkthrough</b><span class="meta">Finance · video · 4 min</span>${m ? "" : `<span class="go">Watch the video ↗</span>`}</button>
+    </div>`;
+  }
+  if (s === "outofscope") {
+    return `${user("Apply 2 days' leave next week")}
+    <div class="msg">${who}<div class="bubble"><p>I can't apply for leave yet. That's planned for 2027.</p><p>For now, use the leave system. I can explain the leave rules, like notice and carry-over.</p></div>
+      ${m
+        ? `<div class="m-stack" style="position:relative">${pin("b", true)}<button class="btn" data-toast="Opens the leave system">Open the leave system ↗</button><button class="btn alt" data-go="answer">Explain the leave rules</button></div>`
+        : `<div class="acts"><button class="obtn" data-toast="Opens the leave system">Open the leave system ↗</button><button class="obtn" data-go="answer">Explain the leave rules</button>${pin("10")}</div>`}
+    </div>`;
+  }
+  return "";
+}
+
+function historyList(){
+  return `<input class="search" id="hsearch" type="search" placeholder="Search your chats" aria-label="Search your chats">
+  ${HIST.map(h => h.length === 1 ? `<div class="grp">${h[0]}</div>` : `<button class="hist" data-go="${h[2]}"><span>${esc(h[0])}</span><em>${h[1]}</em></button>`).join("")}
+  <p class="fine" style="margin-top:14px">Kept for 1 year, then deleted. Only you can see your chats. ${pin(S.view === "mobile" ? "a" : "H")}</p>`;
+}
+
+/* ---------------- desktop ---------------- */
+function desktop(){
+  const home = S.screen === "home";
+  const tiles = POLICIES.map(p => `<article class="tile" tabindex="0" draggable="true" data-policy="${p.id}" title="Click to ask, or drag into the chat">
+      <div class="label">${p.bu} · policy</div><div class="big">${esc(p.name)}</div><div class="line">Updated ${p.date} · ${p.what}</div>
+      <div class="doc" aria-hidden="true">${p.doc.map((c, i) => `<i class="${c ? "chg" : ""}" style="width:${64 + ((i * 17 + p.name.length * 3) % 34)}%"></i>`).join("")}</div>
+      <div class="doc-cap">■ changed lines</div></article>`).join("");
+  const later = S.slots ? `<section class="later">${pin("2", true)}
+      <div class="later-h"><b>Later phases</b><span>hidden at launch · shown here for the vision only</span></div>
+      <div class="grid">${LATER.map(l => `<article class="tile res${S.screen === "outofscope" && l.slot === "leave" ? " lit" : ""}"><div class="label">${l.label}</div><div class="big">${l.big}</div><div class="line">${l.line}</div><button class="btn" disabled>${l.when}</button></article>`).join("")}</div>
+      <div>${["Book my leave around the team calendar", "Chase my pending access request"].map(j => `<div class="job"><span class="mark">m</span><b>${j}</b><button class="btn" disabled>Later</button></div>`).join("")}</div>
+    </section>` : "";
+  const body = home
+    ? `<div class="drop">${pin("7", true)}<b>Drop a policy here</b><span>or just type your question below</span></div>
+       <div class="sugs"><div class="label">People often ask</div>
+       <button class="sug" data-go="answer">Can I work from home on Fridays?</button>
+       <button class="sug" data-go="answer" data-p="travel">What are the new daily travel rates?</button>
+       <button class="sug" data-go="cantfind">What's the dress code for the year-end party?</button></div>`
+    : thread(false);
+  return `<div class="frame">
+    <div class="left">
+      <div class="bar"><span class="brand"><span class="mark">m</span>meIQ</span><span class="url">meiq.[domain TBC]</span>${pin("S")}
+        <span class="who"><span>Signed in with SSO</span><span class="face">AL</span></span></div>
+      <main class="canvas">
+        <header class="hero"><h2>Good morning, Alex.</h2><p>Ask anything about company policy.</p>
+          <div class="hint"><span>Drag a policy into the chat to ask about it</span><i aria-hidden="true">→</i></div></header>
+        <section class="row"><div class="verb"><b>See</b><span>policies that changed lately</span>${pin("1")}<span class="tag">sample content</span></div><div class="grid">${tiles}</div></section>
+        ${later}
+      </main>
+    </div>
+    <aside class="dock" aria-label="Chat">
+      <div class="d-head"><span class="mark">m</span>
+        <div><div class="d-name">meIQ <small>· policies</small></div><div class="d-sub">All 14 BUs · policies only</div></div>
+        <div class="d-tools"><button class="obtn" data-hist aria-pressed="${S.screen === "history"}">History</button><button class="obtn" data-go="home">New chat</button></div></div>
+      <div class="d-body">${body}</div>
+      <div class="d-foot"><form class="composer" data-composer><textarea id="qd" rows="2" placeholder="Ask about any policy…" aria-label="Your question"></textarea><button class="send" type="submit">Send</button></form>
+        <div class="fine">Answers come from published policies. Check the source before you act. ${pin("3")}</div></div>
+      ${S.screen === "history" ? `<div class="drawer"><div class="d-body">${historyList()}</div></div>` : ""}
+    </aside>
+  </div>`;
+}
+
+/* ---------------- phone ---------------- */
+function phone(){
+  const s = S.screen;
+  let body;
+  if (s === "home") {
+    body = `<div class="m-hello"><h2>Morning, Alex.</h2><p>Ask anything about policy.</p></div>
+      ${S.slots ? `<div class="m-sec"><div class="label">Later phases</div><div class="m-later">${LATER.map(l => `<span>${l.big}</span>`).join("")}</div></div>` : ""}
+      <div class="m-sec"><div class="label">Changed lately ${pin("a")}</div>
+        ${POLICIES.map(p => `<button class="m-row" data-policy="${p.id}"><b>${esc(p.name)}</b><small>${p.bu} · ${p.date}</small><span class="chev">›</span></button>`).join("")}</div>
+      <div class="m-sec"><div class="label">Try asking</div><div class="m-sugs">
+        <button class="sug" data-go="answer">Work from home on Fridays?</button>
+        <button class="sug" data-go="cantfind">Year-end party dress code?</button></div></div>`;
+  } else {
+    body = thread(true);
+  }
+  const sheet = s === "history" ? `<div class="sheet"><div class="sheet-h"><b>History</b><button class="icb" data-go="home" aria-label="Close history">✕</button></div><div class="m-body">${historyList()}</div></div>` : "";
+  return `<div class="phone"><div class="screen">
+    <div class="status"><span>9:41</span><span class="island" aria-hidden="true"></span><span class="sig" aria-hidden="true"><i style="height:4px"></i><i style="height:7px"></i><i style="height:10px"></i></span></div>
+    <div class="appbar"><span class="brand"><span class="mark">m</span>meIQ</span>
+      <span class="ic"><button class="icb" data-hist aria-pressed="${s === "history"}" aria-label="History">≡</button><button class="icb" data-go="home" aria-label="New chat">+</button><span class="face">AL</span></span></div>
+    <div class="m-body">${body}</div>
+    <div class="m-foot">${s === "home" ? pin("d", true) : ""}<form class="composer" data-composer><input id="qm" type="text" placeholder="Ask about any policy" aria-label="Your question"><button class="send" type="submit" aria-label="Send">↑</button></form></div>
+    <div class="homebar" aria-hidden="true"></div>
+    ${sheet}
+  </div></div>`;
+}
+
+/* ---------------- notes ---------------- */
+const NOTES = {
+  home: ["Home", [
+    ["S","Standalone site: its own address and SSO sign-in. No other navigation on the page."],
+    ["1","Up to three recently changed policies from the 14 BUs. Click or drag one into the chat to ask about it. Needs each policy's owner BU and updated date in the index."],
+    ["7","The chat opens on an empty drop zone and three starter questions. No welcome essay."],
+    ["3","One line of trust copy under the composer. Every answer carries its source."],
+    ["2","Later-phase slots are hidden at launch. The layout keeps room for them, so adding one later doesn't mean rebuilding the page. Turn on “Show later phases” to see the vision."],
+  ]],
+  answer: ["Answer with source", [
+    ["·","Short answer first, then the detail. Plain words, two to four sentences."],
+    ["4","Source card on every answer: policy name, owner BU, section, last-updated date, link to the original."],
+    ["5","The BU comes from the SSO login, so the user is never asked. If their BU has its own version, that version wins and the line says so."],
+    ["6","Helpful / Not helpful / Report outdated. Reports go to that BU's policy owner."],
+    ["·","A dragged policy shows as a chip on the question, so the context stays visible."],
+  ]],
+  cantfind: ["Can't find it", [
+    ["·","When nothing matches, say so. Never guess or answer from general knowledge. A dashed bubble means no source."],
+    ["8","Two ways out: search the intranet, or send the question to the policy owner. Those questions become the list of gaps to fill."],
+    ["9","Videos are linked, not read (D17). Spreadsheets follow the same pattern until Tech finishes Excel handling."],
+  ]],
+  outofscope: ["Not yet possible", [
+    ["10","Requests to do something (leave, access, claims) get a clear “not yet”, a link to today's system, and an offer to explain the rules."],
+    ["·","With “Show later phases” on, the matching slot lights up so reviewers see where it will live. At launch it stays hidden."],
+    ["·","Same pattern for anything outside policy: no dead ends, always a next step."],
+  ]],
+  history: ["History", [
+    ["H","History opens as a drawer over the chat, grouped Today / This week / Earlier, and searchable. Click to reopen a chat."],
+    ["H","Kept for 1 year, same as the Outlook default, then deleted. Only the user sees their chats."],
+    ["·","A reopened answer keeps its source card and date, so an old answer shows when it may be out of date."],
+  ]],
+};
+const MNOTES = {
+  home: [
+    ["·","Same content as desktop, fewer words. Hero shrinks to one line and one sub-line."],
+    ["a","Changed policies become a plain list. Tap a row to ask about it. There's no drag on phones."],
+    ["·","Two starter questions, not three, written short."],
+    ["d","The composer stays pinned at the bottom and rises above the keyboard."],
+  ],
+  answer: [
+    ["b","The source card drops to two lines. Tap the card to open the policy."],
+    ["c","The “applies to you” line stays. BU from the login."],
+    ["·","Feedback becomes three text links, not boxed buttons. No follow-up suggestions."],
+  ],
+  cantfind: [
+    ["b","The ways out stack as full-width buttons within thumb reach."],
+    ["c","The video link is a tappable card, same as a source."],
+  ],
+  outofscope: [
+    ["b","One solid button to today's system, one outlined button to explain the rules."],
+    ["·","No later-phase slot on phones. The answer alone says “planned for 2027”."],
+  ],
+  history: [
+    ["·","History opens full screen from ≡ and closes with ✕."],
+    ["a","Same 1-year retention, stated at the bottom."],
+  ],
+};
+const DECIDED = [
+  "Where it lives: a standalone site (A84).",
+  "BU: taken from the SSO login. Nobody is asked.",
+  "Chat history: kept 1 year, same as the Outlook default.",
+  "Later-phase slots: hidden until they work. Keep it minimal.",
+  "Name: meIQ.",
+  "Phones: the same things, shown more minimally.",
+];
+const OPEN = [
+  ["Domain name for the standalone site. It is now on the critical path.", "CIS · A96"],
+  ["Standalone should still be internal-only behind SSO. That sets the CIS scope and how deep the pen test goes.", "Tech + CIS"],
+  ["Which SSO field holds the BU, and is it right for all 14 BUs?", "Tech"],
+  ["1-year history: confirm with the data protection officer and CIS. Who, if anyone, can read chats for audit?", "CIS + DPO"],
+  ["meIQ: check the name is free internally and agree it with Comms.", "Product"],
+  ["Phones: a responsive page on the same address, not an app.", "Product"],
+];
+function notes(){
+  const [t, items] = NOTES[S.screen];
+  const idx = ["home","answer","cantfind","outofscope","history"].indexOf(S.screen) + 1;
+  const list = S.view === "mobile" ? MNOTES[S.screen] : items;
+  const li = ([k, v]) => `<li>${k === "·" ? `<span class="dot">·</span>` : `<i class="pin">${k}</i>`}<span>${v}</span></li>`;
+  return `<div class="notes-wrap">
+    <div class="np"><h3>Screen ${idx} · ${t}<small>${S.view === "mobile" ? "phone" : "desktop"}</small></h3><ol>${list.map(li).join("")}</ol>
+      ${S.view === "mobile" ? `<p class="fine">Rules are the same as desktop. Switch to Desktop for the full notes on this screen.</p>` : ""}</div>
+    <div class="side">
+      <div class="np"><h3>Decided<small>Zac, 27 Sep</small></h3><ol>${DECIDED.map(d => `<li><span class="ok">✓</span><span>${d}</span></li>`).join("")}</ol></div>
+      <div class="np q"><h3>Still open<small>who answers</small></h3><ol>${OPEN.map(([q, o]) => `<li><span class="dot">?</span><span>${q} <span class="own">${o}</span></span></li>`).join("")}</ol></div>
+    </div>
+  </div>`;
+}
+
+/* ---------------- render + events ---------------- */
+function render(){
+  const st = $("#stage");
+  st.className = "stage" + (S.view === "mobile" ? " mobile" : "");
+  st.innerHTML = S.view === "mobile"
+    ? `${phone()}<div class="side">${notes()}</div>`
+    : `${desktop()}${notes()}`;
+  document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", t.dataset.tab === S.screen));
+  document.querySelectorAll("[data-view]").forEach(b => b.setAttribute("aria-pressed", b.dataset.view === S.view));
+  $("#slotsBtn").setAttribute("aria-pressed", S.slots);
+  $("#notesBtn").setAttribute("aria-pressed", S.notes);
+  document.body.classList.toggle("notes", S.notes);
+}
+function go(screen, policy){
+  S.screen = screen; S.policy = policy || null; render();
+  try { history.replaceState(null, "", "#" + screen); } catch (e) {}
+}
+
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-tab],[data-view],[data-go],[data-policy],[data-toast],[data-hist],#slotsBtn,#notesBtn");
+  if (!t) return;
+  if (t.dataset.tab) return go(t.dataset.tab);
+  if (t.dataset.view) { S.view = t.dataset.view; return render(); }
+  if (t.id === "slotsBtn") { S.slots = !S.slots; return render(); }
+  if (t.id === "notesBtn") { S.notes = !S.notes; return render(); }
+  if (t.hasAttribute("data-hist")) return go(S.screen === "history" ? "home" : "history");
+  if (t.dataset.go) return go(t.dataset.go, t.dataset.p);
+  if (t.dataset.policy) return go("answer", t.dataset.policy);
+  if (t.dataset.toast) toast(t.dataset.toast);
+});
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && e.target.matches(".tile[data-policy]")) go("answer", e.target.dataset.policy);
+});
+document.addEventListener("submit", e => {
+  if (!e.target.matches("[data-composer]")) return;
+  e.preventDefault(); toast("Wireframe only. Use the screen tabs to see each state.");
+});
+document.addEventListener("input", e => {
+  if (e.target.id !== "hsearch") return;
+  const q = e.target.value.toLowerCase();
+  e.target.parentElement.querySelectorAll(".hist").forEach(h => h.hidden = !h.textContent.toLowerCase().includes(q));
+});
+/* drag a tile into the chat (desktop) */
+document.addEventListener("dragstart", e => {
+  const t = e.target.closest && e.target.closest(".tile[data-policy]");
+  if (!t) return; t.classList.add("dragging"); e.dataTransfer.setData("text/plain", t.dataset.policy);
+});
+document.addEventListener("dragend", e => { const t = e.target.closest && e.target.closest(".tile"); if (t) t.classList.remove("dragging"); });
+document.addEventListener("dragover", e => { const d = e.target.closest && e.target.closest(".dock"); if (d) { e.preventDefault(); d.classList.add("over"); } });
+document.addEventListener("dragleave", e => { const d = e.target.closest && e.target.closest(".dock"); if (d && !d.contains(e.relatedTarget)) d.classList.remove("over"); });
+document.addEventListener("drop", e => {
+  const d = e.target.closest && e.target.closest(".dock"); if (!d) return;
+  e.preventDefault(); const id = e.dataTransfer.getData("text/plain"); if (pol(id)) go("answer", id);
+});
+
+let tt;
+function toast(m){
+  let t = $(".toast"); if (!t) { t = document.createElement("div"); t.className = "toast"; t.setAttribute("role", "status"); document.body.appendChild(t); }
+  t.textContent = m; clearTimeout(tt); tt = setTimeout(() => t.remove(), 2600);
+}
+
+const start = (location.hash || "").slice(1);
+if (NOTES[start]) S.screen = start;
+if (window.matchMedia && matchMedia("(max-width: 700px)").matches) S.view = "mobile";
+render();
+</script>
+</body>
+</html>
