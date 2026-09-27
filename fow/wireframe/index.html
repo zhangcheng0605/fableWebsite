@@ -45,6 +45,11 @@ a{color:var(--ink)}
 .seg button{padding:5px 13px;font-size:12.5px;font-weight:650}
 .seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
 .tog{font-size:12.5px;display:inline-flex;gap:8px;align-items:center;color:var(--ink-2);white-space:nowrap}
+.prof{font-size:12.5px;display:inline-flex;gap:8px;align-items:center;color:var(--ink-2);white-space:nowrap}
+.sel{position:relative;display:inline-flex}
+.sel::after{content:"▾";position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:11px;pointer-events:none;color:var(--ink)}
+.sel select{appearance:none;-webkit-appearance:none;font:inherit;font-size:12.5px;font-weight:650;color:var(--ink);background:#fff;border:1.5px solid var(--ink);border-radius:999px;padding:5px 30px 5px 13px;cursor:pointer;max-width:100%}
+.sel select:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
 .tog .knob{width:30px;height:16px;border:1.5px solid var(--ink);border-radius:999px;position:relative;flex:none}
 .tog .knob::after{content:"";position:absolute;top:2px;left:2px;width:9px;height:9px;border-radius:50%;background:var(--ink);transition:left .15s}
 .tog[aria-pressed="true"] .knob{background:var(--ink)}
@@ -274,6 +279,7 @@ body:not(.notes) .notes-wrap{display:none}
       <button class="tab" role="tab" id="t-history" data-tab="history"><b>5</b>History</button>
     </div>
     <div class="right-ctrls">
+      <label class="prof">View as <span class="sel"><select id="profileSel" aria-label="View as profile"></select></span></label>
       <div class="seg" role="group" aria-label="Device">
         <button id="v-desktop" data-view="desktop" aria-pressed="true">Desktop</button>
         <button id="v-mobile" data-view="mobile" aria-pressed="false">Phone</button>
@@ -289,22 +295,71 @@ body:not(.notes) .notes-wrap{display:none}
 <script>
 const $ = (s, r = document) => r.querySelector(s);
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const S = { screen: "home", view: "desktop", slots: false, notes: true, policy: null };
+const S = { screen: "home", view: "desktop", slots: false, notes: true, policy: null, chip: false, profile: "digital" };
 
 /* ---------------- sample content ---------------- */
 const POLICIES = [
-  {id:"fwa", bu:"HR", name:"Flexible work", date:"12 Aug 2026", what:"2 sections changed", doc:[0,1,0,0,1,0], ask:"Can I work from home on Fridays?"},
-  {id:"travel", bu:"Finance", name:"Travel & claims", date:"18 Nov 2026", what:"daily rates", doc:[0,0,1,0,0,0], ask:"What are the new daily travel rates?"},
-  {id:"it", bu:"IT", name:"Acceptable use", date:"4 Nov 2026", what:"personal devices", doc:[1,0,0,1,1,0], ask:"Can I use my own phone for work email?"},
+  {id:"fwa", bu:"HR", name:"Flexible work", title:"Flexible Work Arrangement Policy", sec:"§3.1", date:"12 Aug 2026", what:"2 sections changed", doc:[0,1,0,0,1,0], ask:"Can I work from home on Fridays?", short:"Work from home on Fridays?",
+    a:`<p>Yes, up to <b>2 days a week</b>, if your manager agrees.</p><p>Your team can fix its office days, so check with your manager before you book Fridays.</p>`, next:"What if my manager says no?"},
+  {id:"travel", bu:"Finance", name:"Travel & claims", sec:"§2.4", date:"18 Nov 2026", what:"daily rates", doc:[0,0,1,0,0,0], ask:"What are the new daily travel rates?", short:"New daily travel rates?",
+    a:`<p>From 18 Nov, meals are covered up to <b>$95 a day</b> in tier-1 cities and $70 elsewhere.</p><p>Hotel caps are set by city and haven't changed.</p>`},
+  {id:"aup", bu:"IT", name:"Acceptable use", sec:"§4.2", date:"4 Nov 2026", what:"personal devices", doc:[1,0,0,1,1,0], ask:"Can I use my own phone for work email?", short:"Own phone for work email?",
+    a:`<p>Yes, if the phone is <b>enrolled in device management</b> first.</p><p>Enrolment takes about 10 minutes from the IT portal.</p>`},
+  {id:"parental", bu:"HR", name:"Parental leave", sec:"§2.1", date:"2 Oct 2026", what:"16 weeks for all parents", doc:[0,1,1,0,0,0], ask:"How much parental leave do I get now?", short:"Parental leave now?",
+    a:`<p><b>16 weeks paid</b>, for every parent, from 1 Oct 2026.</p><p>You can take it in up to 3 blocks within the child's first year.</p>`},
+  {id:"referral", bu:"HR", name:"Referrals", sec:"§5.3", date:"21 Oct 2026", what:"bonus timing", doc:[0,0,0,1,0,0], ask:"When is the referral bonus paid?", short:"Referral bonus timing?",
+    a:`<p>Once your referral <b>passes probation</b>, usually 3 months after they start.</p><p>It's paid with the following month's salary.</p>`},
+  {id:"delegation", bu:"Finance", name:"Delegation of authority", sec:"§3.2", date:"30 Oct 2026", what:"new approval limits", doc:[1,1,0,0,0,1], ask:"What can I approve without my director?", short:"My approval limit?",
+    a:`<p>Purchases up to <b>$50,000</b>.</p><p>Above that your director approves, and above $250,000 the CFO does.</p>`},
+  {id:"incident", bu:"IT", name:"Security incidents", sec:"§1.4", date:"15 Sep 2026", what:"report within 1 hour", doc:[1,0,0,0,1,0], ask:"How fast must I report a phishing click?", short:"Report a phishing click?",
+    a:`<p>Within <b>1 hour</b>. Use Report Phishing in Outlook or call the IT service desk.</p><p>Don't delete the email. The security team needs it.</p>`},
+  {id:"access", bu:"IT", name:"Access management", sec:"§6.1", date:"9 Nov 2026", what:"quarterly reviews", doc:[0,0,1,1,0,0], ask:"How often do I review system access?", short:"Access reviews, how often?",
+    a:`<p><b>Every quarter</b>, for each system you own.</p><p>The task arrives on the 1st of Jan, Apr, Jul and Oct and is due in 14 days.</p>`},
+  {id:"contracts", bu:"Legal", name:"Contract signing", sec:"§2.2", date:"27 Oct 2026", what:"e-signature rules", doc:[0,1,0,1,0,0], ask:"Who can sign a contract for the company?", short:"Who can sign contracts?",
+    a:`<p>Only people on the <b>signatory list</b>, within their limit, after Legal review.</p><p>E-signature through DocuSign is now the default.</p>`},
+  {id:"gifts", bu:"Legal", name:"Gifts & hospitality", sec:"§3.1", date:"6 Nov 2026", what:"new $150 limit", doc:[0,0,1,0,0,1], ask:"Can I accept a gift from a supplier?", short:"Gift from a supplier?",
+    a:`<p>Yes, if it's worth <b>under $150</b> and you log it in the gifts register within 5 days.</p><p>Anything more, or any cash, you decline.</p>`},
+  {id:"data", bu:"Legal", name:"Data protection", sec:"§7.3", date:"1 Sep 2026", what:"retention periods", doc:[1,0,0,0,0,1], ask:"How long can we keep customer data?", short:"Keep customer data how long?",
+    a:`<p>Only as long as the purpose needs it, and <b>no more than 7 years</b> after the relationship ends.</p><p>A law that asks for longer wins.</p>`},
+  {id:"purchasing", bu:"Procurement", name:"Purchasing", sec:"§2.3", date:"3 Nov 2026", what:"3 quotes above $20k", doc:[0,1,0,0,1,0], ask:"When do I need three quotes?", short:"When are 3 quotes needed?",
+    a:`<p>For any purchase <b>above $20,000</b>.</p><p>Below that one quote is enough, but you still raise a PO before you order.</p>`},
+  {id:"supplier", bu:"Procurement", name:"Supplier onboarding", sec:"§4.1", date:"16 Oct 2026", what:"due diligence checks", doc:[0,0,1,1,0,0], ask:"What checks does a new supplier need?", short:"New supplier checks?",
+    a:`<p><b>Sanctions screening</b>, a bank-detail check and, if they'll handle our data, a security questionnaire.</p><p>Procurement runs them. Allow 5 working days.</p>`},
+  {id:"discount", bu:"Sales", name:"Discount approvals", sec:"§1.2", date:"22 Oct 2026", what:"new approval bands", doc:[1,1,0,0,0,0], ask:"What discount can I give without approval?", short:"Discount without approval?",
+    a:`<p>Up to <b>10%</b>.</p><p>10–20% needs your sales director, and anything above 20% needs the CFO.</p>`},
+  {id:"commission", bu:"Sales", name:"Sales commission", sec:"§4.4", date:"1 Oct 2026", what:"new FY27 plan", doc:[0,0,0,1,1,0], ask:"When is commission paid on a multi-year deal?", short:"Commission on multi-year deals?",
+    a:`<p>Year 1 is paid when the customer <b>pays the first invoice</b>.</p><p>Later years are paid as each year is invoiced.</p>`},
+  {id:"brand", bu:"Marketing", name:"Brand & social media", sec:"§5.2", date:"29 Oct 2026", what:"AI-made content", doc:[0,1,0,0,0,1], ask:"Can I post AI-made images on company channels?", short:"Post AI-made images?",
+    a:`<p>Yes, if <b>Brand approves them</b> first and the post says AI was used.</p><p>Never use AI to show real people.</p>`},
+  {id:"sponsor", bu:"Marketing", name:"Sponsorships", sec:"§2.1", date:"12 Oct 2026", what:"Legal sign-off", doc:[1,0,0,1,0,0], ask:"Does a sponsorship need Legal sign-off?", short:"Sponsorship sign-off?",
+    a:`<p>Yes, <b>every one</b>, whatever the value.</p><p>Send the draft to Legal before you agree anything in writing.</p>`},
 ];
 const pol = id => POLICIES.find(p => p.id === id) || null;
+/* Demo only: in the product the BU comes from the SSO login and there is no picker. */
+const PROFILES = [
+  {id:"digital", name:"Alex", ini:"AL", bu:"Digital", pols:["fwa","travel","aup"]},
+  {id:"hr", name:"Maya Chen", ini:"MC", bu:"HR", pols:["parental","referral","fwa"]},
+  {id:"finance", name:"Daniel Okafor", ini:"DO", bu:"Finance", pols:["delegation","travel","fwa"]},
+  {id:"it", name:"Marcus Webb", ini:"MW", bu:"IT", pols:["incident","access","aup"]},
+  {id:"legal", name:"Sofia Reyes", ini:"SR", bu:"Legal", pols:["contracts","gifts","data"]},
+  {id:"procurement", name:"Priya Nair", ini:"PN", bu:"Procurement", pols:["purchasing","supplier","delegation"]},
+  {id:"sales", name:"Jonas Lindqvist", ini:"JL", bu:"Sales", pols:["discount","commission","travel"],
+    own:{fwa:{title:"Sales Field Work Policy", bu:"Sales", sec:"§2", date:"5 Sep 2026",
+      a:`<p>Yes. Sales has its own version: field sellers can work away from the office <b>up to 3 days a week</b>.</p><p>The group policy allows 2, but your BU's version wins.</p>`}}},
+  {id:"marketing", name:"Chloe Tan", ini:"CT", bu:"Marketing", pols:["brand","sponsor","fwa"]},
+];
+const prof = () => PROFILES.find(p => p.id === S.profile) || PROFILES[0];
+const first = () => prof().name.split(" ")[0];
+const myPols = () => prof().pols.map(pol);
+/* the two starter questions: the profile's top policy, plus flexible work (or its second policy) */
+const starters = () => { const ps = myPols(); return [ps[0], ps[0].id === "fwa" ? ps[1] : pol("fwa")]; };
 const LATER = [
   {slot:"access", label:"Requests & access", big:"Request it", line:"Ask for a system, a licence or a card", when:"Later"},
   {slot:"leave", label:"Leave & claims", big:"Apply for it", line:"Leave, claims and your balances", when:"Planned 2027"},
   {slot:"approve", label:"Approvals", big:"Approve it", line:"What's waiting for you, in one place", when:"Later"},
 ];
-const HIST = [
-  ["Today"], ["Can I work from home on Fridays?","09:12","answer"],
+const HIST = () => [
+  ["Today"], [myPols()[0].ask,"09:12","answer",myPols()[0].id],
   ["This week"], ["Dress code for the year-end party","Wed","cantfind"], ["Apply 2 days' leave next week","Tue","outofscope"], ["Overseas travel insurance cover","Mon","answer"],
   ["Earlier"], ["Laptop replacement after 3 years","2 Dec","answer"], ["Carry-over of unused leave","14 Nov","answer"],
 ];
@@ -315,16 +370,18 @@ const who = `<div class="who-line"><span class="mark">m</span>meIQ</div>`;
 const user = (q, chip) => `<div class="msg user">${chip ? `<span class="chip">▤ ${esc(chip)}</span>` : ""}<div class="bubble">${esc(q)}</div></div>`;
 
 function answerParts(){
-  const p = S.policy ? pol(S.policy) : null;
-  const main = !p || p.id === "fwa";
+  const p = pol(S.policy) || pol("fwa");
+  const own = (prof().own || {})[p.id];
+  const v = own || p;
+  const next = p.next ? [p.next, "cantfind", ""] : (() => { const o = myPols().find(x => x.id !== p.id); return [o.ask, "answer", o.id]; })();
   return {
-    q: p ? p.ask : "Can I work from home on Fridays?",
-    chip: p ? p.bu + " · " + p.name : null,
-    body: main
-      ? `<p>Yes, up to <b>2 days a week</b>, if your manager agrees.</p><p>Your team can fix its office days, so check with your manager before you book Fridays.</p>`
-      : `<p>Here is what the ${esc(p.name.toLowerCase())} policy says now, in short. The full wording is in section 2.4.</p><p style="color:var(--ink-3)">Sample answer. The real text comes from the policy.</p>`,
-    title: main ? "Flexible Work Arrangement Policy" : p.name + " Policy",
-    meta: main ? "HR · §3.1 · updated 12 Aug 2026" : p.bu + " · §2.4 · updated " + p.date,
+    q: p.ask,
+    chip: S.chip ? p.bu + " · " + p.name : null,
+    body: v.a,
+    title: v.title || p.name.replace(/\w+/g, w => /^(of|and)$/.test(w) ? w : w[0].toUpperCase() + w.slice(1)) + " Policy",
+    meta: `${v.bu} · ${v.sec} · updated ${v.date}`,
+    own: !!own,
+    next,
   };
 }
 
@@ -335,12 +392,12 @@ function thread(m){ /* m = true for phone */
     return `${user(a.q, a.chip)}
     <div class="msg">${who}<div class="bubble">${a.body}</div>
       <button class="src" data-toast="Opens the policy on the intranet">${pin(m ? "b" : "4", true)}<span class="ico"></span><b>${esc(a.title)}</b><span class="meta">${esc(a.meta)}</span>${m ? "" : `<span class="go">Open the policy ↗</span>`}</button>
-      <div class="applies">Applies to you: <b>Digital</b> <span>· from your login</span> ${pin(m ? "c" : "5")}</div>
+      <div class="applies">Applies to you: <b>${esc(prof().bu)}</b> <span>· from your login${a.own ? ` · ${esc(prof().bu)} version used` : ""}</span> ${pin(m ? "c" : "5")}</div>
       ${m
         ? `<div class="m-acts"><button data-toast="Thanks. Marked helpful">Helpful</button><button data-toast="Thanks. We'll look at this answer">Not helpful</button><button data-toast="Sent to the policy owner">Report outdated</button></div>`
         : `<div class="acts"><button class="obtn" data-toast="Thanks. Marked helpful">Helpful</button><button class="obtn" data-toast="Thanks. We'll look at this answer">Not helpful</button><button class="obtn" data-toast="Sent to the policy owner">Report outdated</button>${pin("6")}</div>`}
     </div>
-    ${m ? "" : `<div class="sugs"><div class="label">Ask next</div><button class="sug" data-go="cantfind">What if my manager says no?</button><button class="sug" data-go="outofscope">Apply for leave on Friday</button></div>`}`;
+    ${m ? "" : `<div class="sugs"><div class="label">Ask next</div><button class="sug" data-go="${a.next[1]}"${a.next[2] ? ` data-p="${a.next[2]}"` : ""}>${esc(a.next[0])}</button><button class="sug" data-go="outofscope">Apply for leave on Friday</button></div>`}`;
   }
   if (s === "cantfind") {
     return `${user("What's the dress code for the year-end party?")}
@@ -367,14 +424,14 @@ function thread(m){ /* m = true for phone */
 
 function historyList(){
   return `<input class="search" id="hsearch" type="search" placeholder="Search your chats" aria-label="Search your chats">
-  ${HIST.map(h => h.length === 1 ? `<div class="grp">${h[0]}</div>` : `<button class="hist" data-go="${h[2]}"><span>${esc(h[0])}</span><em>${h[1]}</em></button>`).join("")}
+  ${HIST().map(h => h.length === 1 ? `<div class="grp">${h[0]}</div>` : `<button class="hist" data-go="${h[2]}"${h[3] ? ` data-p="${h[3]}"` : ""}><span>${esc(h[0])}</span><em>${h[1]}</em></button>`).join("")}
   <p class="fine" style="margin-top:14px">Kept for 1 year, then deleted. Only you can see your chats. ${pin(S.view === "mobile" ? "a" : "H")}</p>`;
 }
 
 /* ---------------- desktop ---------------- */
 function desktop(){
   const home = S.screen === "home";
-  const tiles = POLICIES.map(p => `<article class="tile" tabindex="0" draggable="true" data-policy="${p.id}" title="Click to ask, or drag into the chat">
+  const tiles = myPols().map(p => `<article class="tile" tabindex="0" draggable="true" data-policy="${p.id}" title="Click to ask, or drag into the chat">
       <div class="label">${p.bu} · policy</div><div class="big">${esc(p.name)}</div><div class="line">Updated ${p.date} · ${p.what}</div>
       <div class="doc" aria-hidden="true">${p.doc.map((c, i) => `<i class="${c ? "chg" : ""}" style="width:${64 + ((i * 17 + p.name.length * 3) % 34)}%"></i>`).join("")}</div>
       <div class="doc-cap">■ changed lines</div></article>`).join("");
@@ -386,16 +443,15 @@ function desktop(){
   const body = home
     ? `<div class="drop">${pin("7", true)}<b>Drop a policy here</b><span>or just type your question below</span></div>
        <div class="sugs"><div class="label">People often ask</div>
-       <button class="sug" data-go="answer">Can I work from home on Fridays?</button>
-       <button class="sug" data-go="answer" data-p="travel">What are the new daily travel rates?</button>
+       ${starters().map(p => `<button class="sug" data-go="answer" data-p="${p.id}">${esc(p.ask)}</button>`).join("")}
        <button class="sug" data-go="cantfind">What's the dress code for the year-end party?</button></div>`
     : thread(false);
   return `<div class="frame">
     <div class="left">
       <div class="bar"><span class="brand"><span class="mark">m</span>meIQ</span><span class="url">meiq.[domain TBC]</span>${pin("S")}
-        <span class="who"><span>Signed in with SSO</span><span class="face">AL</span></span></div>
+        <span class="who"><span>Signed in with SSO · ${esc(prof().bu)}</span><span class="face">${prof().ini}</span></span></div>
       <main class="canvas">
-        <header class="hero"><h2>Good morning, Alex.</h2><p>Ask anything about company policy.</p>
+        <header class="hero"><h2>Good morning, ${esc(first())}.</h2><p>Ask anything about company policy.</p>
           <div class="hint"><span>Drag a policy into the chat to ask about it</span><i aria-hidden="true">→</i></div></header>
         <section class="row"><div class="verb"><b>See</b><span>policies that changed lately</span>${pin("1")}<span class="tag">sample content</span></div><div class="grid">${tiles}</div></section>
         ${later}
@@ -418,12 +474,12 @@ function phone(){
   const s = S.screen;
   let body;
   if (s === "home") {
-    body = `<div class="m-hello"><h2>Morning, Alex.</h2><p>Ask anything about policy.</p></div>
+    body = `<div class="m-hello"><h2>Morning, ${esc(first())}.</h2><p>Ask anything about policy.</p></div>
       ${S.slots ? `<div class="m-sec"><div class="label">Later phases</div><div class="m-later">${LATER.map(l => `<span>${l.big}</span>`).join("")}</div></div>` : ""}
       <div class="m-sec"><div class="label">Changed lately ${pin("a")}</div>
-        ${POLICIES.map(p => `<button class="m-row" data-policy="${p.id}"><b>${esc(p.name)}</b><small>${p.bu} · ${p.date}</small><span class="chev">›</span></button>`).join("")}</div>
+        ${myPols().map(p => `<button class="m-row" data-policy="${p.id}"><b>${esc(p.name)}</b><small>${p.bu} · ${p.date}</small><span class="chev">›</span></button>`).join("")}</div>
       <div class="m-sec"><div class="label">Try asking</div><div class="m-sugs">
-        <button class="sug" data-go="answer">Work from home on Fridays?</button>
+        <button class="sug" data-go="answer" data-p="${starters()[0].id}">${esc(starters()[0].short)}</button>
         <button class="sug" data-go="cantfind">Year-end party dress code?</button></div></div>`;
   } else {
     body = thread(true);
@@ -432,7 +488,7 @@ function phone(){
   return `<div class="phone"><div class="screen">
     <div class="status"><span>9:41</span><span class="island" aria-hidden="true"></span><span class="sig" aria-hidden="true"><i style="height:4px"></i><i style="height:7px"></i><i style="height:10px"></i></span></div>
     <div class="appbar"><span class="brand"><span class="mark">m</span>meIQ</span>
-      <span class="ic"><button class="icb" data-hist aria-pressed="${s === "history"}" aria-label="History">≡</button><button class="icb" data-go="home" aria-label="New chat">+</button><span class="face">AL</span></span></div>
+      <span class="ic"><button class="icb" data-hist aria-pressed="${s === "history"}" aria-label="History">≡</button><button class="icb" data-go="home" aria-label="New chat">+</button><span class="face">${prof().ini}</span></span></div>
     <div class="m-body">${body}</div>
     <div class="m-foot">${s === "home" ? pin("d", true) : ""}<form class="composer" data-composer><input id="qm" type="text" placeholder="Ask about any policy" aria-label="Your question"><button class="send" type="submit" aria-label="Send">↑</button></form></div>
     <div class="homebar" aria-hidden="true"></div>
@@ -447,12 +503,13 @@ const NOTES = {
     ["1","Up to three recently changed policies from the 14 BUs. Click or drag one into the chat to ask about it. Needs each policy's owner BU and updated date in the index."],
     ["7","The chat opens on an empty drop zone and three starter questions. No welcome essay."],
     ["3","One line of trust copy under the composer. Every answer carries its source."],
+    ["·","“View as” is a review control, not part of the product. It swaps the signed-in person so reviewers can see each BU's home and answers. The live site has no picker: the BU comes from SSO."],
     ["2","Later-phase slots are hidden at launch. The layout keeps room for them, so adding one later doesn't mean rebuilding the page. Turn on “Show later phases” to see the vision."],
   ]],
   answer: ["Answer with source", [
     ["·","Short answer first, then the detail. Plain words, two to four sentences."],
     ["4","Source card on every answer: policy name, owner BU, section, last-updated date, link to the original."],
-    ["5","The BU comes from the SSO login, so the user is never asked. If their BU has its own version, that version wins and the line says so."],
+    ["5","The BU comes from the SSO login, so the user is never asked. If their BU has its own version, that version wins and the line says so. View as Sales to see it."],
     ["6","Helpful / Not helpful / Report outdated. Reports go to that BU's policy owner."],
     ["·","A dragged policy shows as a chip on the question, so the context stays visible."],
   ]],
@@ -477,6 +534,7 @@ const MNOTES = {
     ["·","Same content as desktop, fewer words. Hero shrinks to one line and one sub-line."],
     ["a","Changed policies become a plain list. Tap a row to ask about it. There's no drag on phones."],
     ["·","Two starter questions, not three, written short."],
+    ["·","The greeting, changed policies and starter question follow the “View as” profile, same as desktop."],
     ["d","The composer stays pinned at the bottom and rises above the keyboard."],
   ],
   answer: [
@@ -537,14 +595,17 @@ function render(){
     : `${desktop()}${notes()}`;
   document.querySelectorAll(".tab").forEach(t => t.setAttribute("aria-selected", t.dataset.tab === S.screen));
   document.querySelectorAll("[data-view]").forEach(b => b.setAttribute("aria-pressed", b.dataset.view === S.view));
+  $("#profileSel").value = S.profile;
   $("#slotsBtn").setAttribute("aria-pressed", S.slots);
   $("#notesBtn").setAttribute("aria-pressed", S.notes);
   document.body.classList.toggle("notes", S.notes);
 }
-function go(screen, policy){
-  S.screen = screen; S.policy = policy || null; render();
-  try { history.replaceState(null, "", "#" + screen); } catch (e) {}
+function go(screen, policy, chip){
+  S.screen = screen; S.policy = policy || null; S.chip = !!chip; render();
+  try { history.replaceState(null, "", "#" + screen + (S.profile === "digital" ? "" : "/" + S.profile)); } catch (e) {}
 }
+$("#profileSel").innerHTML = PROFILES.map(p => `<option value="${p.id}">${esc(p.name)} · ${esc(p.bu)}</option>`).join("");
+$("#profileSel").addEventListener("change", e => { S.profile = e.target.value; go(S.screen); });
 
 document.addEventListener("click", e => {
   const t = e.target.closest("[data-tab],[data-view],[data-go],[data-policy],[data-toast],[data-hist],#slotsBtn,#notesBtn");
@@ -555,11 +616,11 @@ document.addEventListener("click", e => {
   if (t.id === "notesBtn") { S.notes = !S.notes; return render(); }
   if (t.hasAttribute("data-hist")) return go(S.screen === "history" ? "home" : "history");
   if (t.dataset.go) return go(t.dataset.go, t.dataset.p);
-  if (t.dataset.policy) return go("answer", t.dataset.policy);
+  if (t.dataset.policy) return go("answer", t.dataset.policy, true);
   if (t.dataset.toast) toast(t.dataset.toast);
 });
 document.addEventListener("keydown", e => {
-  if (e.key === "Enter" && e.target.matches(".tile[data-policy]")) go("answer", e.target.dataset.policy);
+  if (e.key === "Enter" && e.target.matches(".tile[data-policy]")) go("answer", e.target.dataset.policy, true);
 });
 document.addEventListener("submit", e => {
   if (!e.target.matches("[data-composer]")) return;
@@ -580,7 +641,7 @@ document.addEventListener("dragover", e => { const d = e.target.closest && e.tar
 document.addEventListener("dragleave", e => { const d = e.target.closest && e.target.closest(".dock"); if (d && !d.contains(e.relatedTarget)) d.classList.remove("over"); });
 document.addEventListener("drop", e => {
   const d = e.target.closest && e.target.closest(".dock"); if (!d) return;
-  e.preventDefault(); const id = e.dataTransfer.getData("text/plain"); if (pol(id)) go("answer", id);
+  e.preventDefault(); const id = e.dataTransfer.getData("text/plain"); if (pol(id)) go("answer", id, true);
 });
 
 let tt;
@@ -589,8 +650,9 @@ function toast(m){
   t.textContent = m; clearTimeout(tt); tt = setTimeout(() => t.remove(), 2600);
 }
 
-const start = (location.hash || "").slice(1);
+const [start, startProf] = (location.hash || "").slice(1).split("/");
 if (NOTES[start]) S.screen = start;
+if (PROFILES.some(p => p.id === startProf)) S.profile = startProf;
 if (window.matchMedia && matchMedia("(max-width: 700px)").matches) S.view = "mobile";
 render();
 </script>
