@@ -59,6 +59,10 @@ Direction · Contact); on phones the pill scrolls sideways with a fade on the ed
   walkthrough, `&embed=1` hides the site chrome (the landing card mounts
   `fow/?persona=finance&story=1&embed=1` in an iframe only while it is on screen, on fine-pointer
   screens over 700px, and never under reduced motion or save-data).
+- `rea/` — REA: igloo.inc reverse-engineered with [REA](https://github.com/morluto/rea) and rebuilt as
+  the Eiffel Tower. Three looping scroll scenes (the tower building itself at winter dusk, four glass
+  exhibit cubes with `#exhibit-*` deep links, the tower at night as golden particles) joined by a
+  seam-blend shader; all sound is synthesized with WebAudio. One HTML file, three.js 0.160 from jsDelivr.
 - `onesheet/` — a spreadsheet engine in a single offline HTML file. `=AI()` runs in mock mode
   by default; a real key is kept in `sessionStorage` for the tab only. The ⚙ Gate button runs the
   40 checks in `onesheet/gate.json` against the live engine (39 pass; the one known-failing row is
